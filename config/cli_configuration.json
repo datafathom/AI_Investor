@@ -1,0 +1,157 @@
+{
+    "commands": {
+        "start-all": {
+            "description": "Start all AI Investor services and agents.",
+            "handler": "scripts.runners.system_control:start_all"
+        },
+        "stop-all": {
+            "description": "Gracefully stop all services.",
+            "handler": "scripts.runners.system_control:stop_all"
+        },
+        "verify-pipeline": {
+            "description": "Run End-to-End verification of the Data->Signal->Trade pipeline.",
+            "handler": "scripts.runners.system_control:verify_pipeline"
+        },
+        "docker": {
+            "description": "Docker infrastructure management",
+            "subcommands": {
+                "up": {
+                    "description": "Start Docker containers (localhost only)",
+                    "handler": "scripts.runners.docker_control:docker_up"
+                },
+                "down": {
+                    "description": "Stop Docker containers",
+                    "handler": "scripts.runners.docker_control:docker_down"
+                },
+                "status": {
+                    "description": "Show Docker container status",
+                    "handler": "scripts.runners.docker_control:docker_status"
+                }
+            }
+        },
+        "test-ingestion": {
+            "description": "Test Phase 6 data ingestion pipeline.",
+            "arguments": [
+                {
+                    "name": "symbol",
+                    "type": "string",
+                    "default": "SPY",
+                    "help": "Ticker symbol to fetch"
+                }
+            ],
+            "handler": "scripts.runners.test_data_ingestion:run_test_ingestion"
+        },
+        "test-crowd": {
+            "description": "Test Phase 7 Crowd Wisdom (Google Trends) logic.",
+            "handler": "scripts.runners.test_crowd_wisdom:run_test_crowd_wisdom"
+        },
+        "test-broker": {
+            "description": "Test Phase 24 Broker (Robinhood) integration.",
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run in simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_broker:run_test_broker"
+        },
+        "backfill-history": {
+            "description": "Backfill historical OHLCV data from Alpha Vantage.",
+            "arguments": [
+                {
+                    "name": "symbol",
+                    "type": "string",
+                    "default": "SPY",
+                    "help": "Ticker symbol to backfill"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "size",
+                    "type": "string",
+                    "default": "compact",
+                    "help": "Output size: 'compact' or 'full'"
+                }
+            ],
+            "handler": "scripts.runners.historical_backfill:run_historical_backfill"
+        },
+        "persist-trends": {
+            "description": "Fetch and persist Google Trends scores to Neo4j.",
+            "flags": [
+                {
+                    "name": "keywords",
+                    "type": "string",
+                    "default": "margin call,AMZN debt",
+                    "help": "Comma-separated keywords"
+                }
+            ],
+            "handler": "scripts.runners.persist_trends:run_persist_trends"
+        },
+        "test-reddit": {
+            "description": "Test Phase 8 Social NLP (Reddit + FinBERT) logic.",
+            "flags": [
+                {
+                    "name": "tickers",
+                    "type": "string",
+                    "default": "TSLA,NVDA,SPY",
+                    "help": "Comma-separated tickers"
+                }
+            ],
+            "handler": "scripts.runners.test_reddit:run_test_reddit"
+        },
+        "test-options": {
+            "description": "Test Phase 9 Options Flow Tracking logic.",
+            "arguments": [
+                {
+                    "name": "symbol",
+                    "type": "string",
+                    "default": "TSLA",
+                    "help": "Ticker symbol to fetch options for"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run in simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_options_flow:run_test_options_flow"
+        },
+        "test-macro": {
+            "description": "Test Phase 10 Macro Data Integration (FRED).",
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run with simulated macro data"
+                }
+            ],
+            "handler": "scripts.runners.test_macro:run_test_macro"
+        },
+        "test-fusion": {
+            "description": "Test Phase 11 Data Fusion & Normalization.",
+            "arguments": [
+                {
+                    "name": "symbol",
+                    "type": "string",
+                    "default": "TSLA",
+                    "help": "Ticker symbol"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run with simulated data"
+                }
+            ],
+            "handler": "scripts.runners.test_fusion:run_test_fusion"
+        }
+    }
+}

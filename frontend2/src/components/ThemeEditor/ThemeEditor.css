@@ -1,0 +1,244 @@
+/**
+ * Theme Editor Styles
+ */
+
+.theme-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-backgrounds-card, #fefae8);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.theme-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-borders-secondary, #ddd4a8);
+  background: var(--color-backgrounds-main, #fffef0);
+}
+
+.theme-editor-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #2a0a0f);
+}
+
+.theme-editor-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--color-text-secondary, #5a4a3a);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.theme-editor-close:hover {
+  background: var(--color-backgrounds-hover, #faf5d8);
+  color: var(--color-text-primary, #2a0a0f);
+}
+
+.theme-editor-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.theme-editor-sidebar {
+  width: 250px;
+  border-right: 1px solid var(--color-borders-secondary, #ddd4a8);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-backgrounds-main, #fffef0);
+}
+
+.theme-editor-sidebar h3 {
+  margin: 0;
+  padding: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-secondary, #5a4a3a);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--color-borders-secondary, #ddd4a8);
+}
+
+.theme-editor-theme-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.theme-editor-theme-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: var(--color-backgrounds-card, #fefae8);
+  border: 1px solid var(--color-borders-secondary, #ddd4a8);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.theme-editor-theme-item:hover {
+  background: var(--color-backgrounds-hover, #faf5d8);
+  border-color: var(--color-burgundy-primary, #5a1520);
+}
+
+.theme-editor-theme-item.active {
+  border-color: var(--color-burgundy-primary, #5a1520);
+  border-width: 2px;
+  background: var(--color-backgrounds-hover, #faf5d8);
+}
+
+.theme-editor-theme-name {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--color-text-primary, #2a0a0f);
+}
+
+.theme-editor-theme-badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--color-burgundy-primary, #5a1520);
+  color: var(--color-text-on_burgundy, #fffef0);
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.theme-editor-actions {
+  padding: 1rem;
+  border-top: 1px solid var(--color-borders-secondary, #ddd4a8);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.theme-editor-btn {
+  padding: 0.75rem;
+  border: 1px solid var(--color-borders-secondary, #ddd4a8);
+  border-radius: 6px;
+  background: var(--color-backgrounds-card, #fefae8);
+  color: var(--color-text-primary, #2a0a0f);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.theme-editor-btn:hover {
+  background: var(--color-backgrounds-hover, #faf5d8);
+  border-color: var(--color-burgundy-primary, #5a1520);
+}
+
+.theme-editor-btn-primary {
+  background: var(--color-burgundy-primary, #5a1520);
+  color: var(--color-text-on_burgundy, #fffef0);
+  border-color: var(--color-burgundy-primary, #5a1520);
+}
+
+.theme-editor-btn-primary:hover {
+  background: var(--color-burgundy-dark, #3d0e15);
+}
+
+.theme-editor-import {
+  padding: 1rem;
+  border-top: 1px solid var(--color-borders-secondary, #ddd4a8);
+}
+
+.theme-editor-import-textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 0.75rem;
+  border: 1px solid var(--color-borders-secondary, #ddd4a8);
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 0.75rem;
+  margin-bottom: 0.5rem;
+  resize: vertical;
+}
+
+.theme-editor-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.theme-editor-main h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #2a0a0f);
+}
+
+.theme-editor-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.theme-editor-section {
+  border: 1px solid var(--color-borders-secondary, #ddd4a8);
+  border-radius: 6px;
+  padding: 1rem;
+  background: var(--color-backgrounds-main, #fffef0);
+}
+
+.theme-editor-section h4 {
+  margin: 0 0 1rem 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-secondary, #5a4a3a);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.theme-editor-color-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.theme-editor-color-item label {
+  font-size: 0.875rem;
+  color: var(--color-text-primary, #2a0a0f);
+  font-weight: 500;
+  min-width: 120px;
+}
+
+.theme-editor-color-inputs {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.theme-editor-color-picker {
+  width: 50px;
+  height: 32px;
+  border: 1px solid var(--color-borders-secondary, #ddd4a8);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.theme-editor-color-text {
+  width: 100px;
+  padding: 0.5rem;
+  border: 1px solid var(--color-borders-secondary, #ddd4a8);
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.875rem;
+}
+
+.theme-editor-color-text:focus {
+  outline: none;
+  border-color: var(--color-burgundy-primary, #5a1520);
+}
+

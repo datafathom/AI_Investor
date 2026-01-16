@@ -1,0 +1,97 @@
+/**
+ * Performance Monitor Styles
+ */
+
+.performance-monitor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-backgrounds-card, #fefae8);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.performance-monitor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-borders-secondary, #ddd4a8);
+  background: var(--color-backgrounds-main, #fffef0);
+}
+
+.performance-monitor-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #2a0a0f);
+}
+
+.performance-monitor-overall {
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.performance-monitor-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.performance-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.performance-metric-card {
+  padding: 1rem;
+  background: var(--color-backgrounds-main, #fffef0);
+  border: 1px solid var(--color-borders-secondary, #ddd4a8);
+  border-radius: 6px;
+}
+
+.performance-metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.performance-metric-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary, #5a4a3a);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.performance-metric-score {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.performance-metric-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #2a0a0f);
+  font-family: monospace;
+}
+
+.performance-monitor-info {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-borders-secondary, #ddd4a8);
+}
+
+.performance-monitor-note {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary, #5a4a3a);
+  margin: 0;
+  line-height: 1.5;
+}
+

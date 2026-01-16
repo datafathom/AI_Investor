@@ -1,0 +1,61 @@
+/**
+ * Offline Indicator Styles
+ */
+
+.offline-indicator {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  animation: slideInUp 0.3s ease-out;
+}
+
+.offline-indicator.online {
+  background: var(--color-burgundy-primary, #5a1520);
+  color: var(--color-text-on_burgundy, #fffef0);
+}
+
+.offline-indicator.offline {
+  background: #ff5f57;
+  color: white;
+}
+
+.offline-indicator-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.offline-indicator-icon {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.offline-indicator-text {
+  flex: 1;
+}
+
+.offline-indicator-queue {
+  font-size: 0.75rem;
+  opacity: 0.9;
+  padding: 0.25rem 0.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+

@@ -1,0 +1,53 @@
+/**
+ * Snap Zones Styles
+ */
+
+.snap-zones-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10000;
+}
+
+.snap-zone {
+  position: absolute;
+  border: 2px dashed transparent;
+  transition: all 0.2s ease;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.snap-zone-active {
+  border-color: var(--color-burgundy-primary, #5a1520);
+  background: rgba(90, 21, 32, 0.1);
+  border-width: 3px;
+  border-style: solid;
+}
+
+.snap-zone-label {
+  background: var(--color-burgundy-primary, #5a1520);
+  color: var(--color-text-on_burgundy, #fffef0);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: snap-zone-pulse 1s ease-in-out infinite;
+}
+
+@keyframes snap-zone-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+

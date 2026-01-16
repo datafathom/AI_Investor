@@ -1,0 +1,35 @@
+# Development Dockerfile for React/Node/Socket.io Boilerplate
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install build dependencies needed for native modules (better-sqlite3)
+# These are kept for development as they may be needed for hot-reloading
+RUN apk add --no-cache python3 make g++
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev dependencies)
+RUN npm install
+
+# Copy the rest of the application
+COPY . .
+
+# Make startup script executable
+RUN chmod +x start-dev.sh
+
+# Expose ports
+# 3002 for the backend server
+# 5176 for Vite dev server
+EXPOSE 3002 5176
+
+# Set environment variables
+ENV NODE_ENV=development
+ENV PORT=3002
+ENV BACKEND_PORT=3002
+ENV VITE_PORT=5176
+
+# Default command - can be overridden in docker-compose
+CMD ["npm", "run", "dev"]
+

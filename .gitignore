@@ -1,0 +1,55 @@
+# AI Investor Git Ignore
+
+# Data & Storage (Local development only)
+data/
+**/data/**
+*.db
+*.sqlite3
+
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+venv/
+ENV/
+env/
+.python-version
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+nosetests.xml
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Logs
+logs/
+*.log
+activity/
+
+# IDEs & System
+.vscode/
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+screenshots/
+
+# Node / Frontend
+node_modules/
+dist/
+.npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker
+.docker

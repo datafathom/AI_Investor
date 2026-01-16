@@ -1,0 +1,109 @@
+/* View Source Modal Styles */
+
+.view-source-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 10001;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.view-source-container {
+  background: var(--color-cream-primary, #fefae8);
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  max-width: 90vw;
+  max-height: 90vh;
+  width: 800px;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.view-source-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--color-borders-secondary, #ddd4a8);
+  background: var(--color-cream-medium, #faf5d8);
+}
+
+.view-source-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--color-text-primary, #2a0a0f);
+}
+
+.view-source-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--color-text-primary, #2a0a0f);
+  padding: 0.25rem 0.5rem;
+  line-height: 1;
+  border-radius: 0.25rem;
+  transition: background 0.2s;
+}
+
+.view-source-close:hover {
+  background: var(--color-cream-dark, #f5ecc8);
+}
+
+.view-source-content {
+  flex: 1;
+  overflow: auto;
+  padding: 0;
+}
+
+/* Dark mode support */
+.theme-dark .view-source-container {
+  background: var(--color-burgundy-dark, #3d0e15);
+}
+
+.theme-dark .view-source-header {
+  background: var(--color-burgundy-primary, #5a1520);
+  border-bottom-color: var(--color-burgundy-accent, #7a2230);
+}
+
+.theme-dark .view-source-header h3 {
+  color: var(--color-text-light, #fffef0);
+}
+
+.theme-dark .view-source-close {
+  color: var(--color-text-light, #fffef0);
+}
+
+.theme-dark .view-source-close:hover {
+  background: var(--color-burgundy-accent, #7a2230);
+}
+

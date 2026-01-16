@@ -1,0 +1,53 @@
+{
+  "palette": {
+    "name": "Burgundy & Cream",
+    "description": "Elegant burgundy and cream color palette for Content Flywheel",
+    
+    "burgundy": {
+      "primary": "#5a1520",
+      "dark": "#3d0e15",
+      "darker": "#2a0a0f",
+      "light": "#6b1d2a",
+      "accent": "#7a2230"
+    },
+    
+    "cream": {
+      "light": "#fffef0",
+      "primary": "#fefae8",
+      "medium": "#faf5d8",
+      "dark": "#f5ecc8",
+      "darker": "#ede2b8",
+      "border": "#ddd4a8"
+    },
+    
+    "text": {
+      "primary": "#2a0a0f",
+      "secondary": "#5a4a3a",
+      "light": "#fffef0",
+      "on_burgundy": "#fffef0",
+      "on_cream": "#2a0a0f"
+    },
+    
+    "backgrounds": {
+      "main": "#fffef0",
+      "card": "#fefae8",
+      "hover": "#faf5d8",
+      "active": "#f5ecc8",
+      "code": "#3d0e15",
+      "code_text": "#fffef0"
+    },
+    
+    "borders": {
+      "primary": "#5a1520",
+      "secondary": "#ddd4a8",
+      "subtle": "#ede2b8"
+    },
+    
+    "shadows": {
+      "light": "rgba(90, 21, 32, 0.1)",
+      "medium": "rgba(90, 21, 32, 0.2)",
+      "dark": "rgba(61, 14, 21, 0.3)"
+    }
+  }
+}
+

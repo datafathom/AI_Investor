@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Dancing+Script:wght@400;500;600;700&display=swap');
+
+:root {
+  font-size: 16px;
+  --radius-card: 20px;
+  --radius-chip: 12px;
+  --blur-strength: 24px;
+  --glass-surface: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.35);
+  --glass-shadow: rgba(90, 21, 32, 0.15);
+  --surface-50: rgba(254, 250, 232, 0.95);
+  --surface-100: rgba(250, 245, 216, 0.9);
+  --surface-200: rgba(245, 236, 200, 0.85);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--color-bg-main, #fffef0);
+  color: var(--color-text-primary, #2a0a0f);
+  min-height: 100vh;
+  line-height: 1.7;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.theme-dark {
+  background: radial-gradient(circle at 0% 0%, rgba(122, 34, 48, 0.6), rgba(42, 10, 15, 0.95));
+  color: var(--color-text-on_burgundy, #fffef0);
+}
+
+body.theme-dark .glass {
+  --glass-surface: rgba(15, 8, 11, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: rgba(0, 0, 0, 0.45);
+  --surface-50: rgba(90, 21, 32, 0.8);
+  --surface-100: rgba(58, 12, 21, 0.8);
+  --surface-200: rgba(42, 10, 15, 0.85);
+}
+
+code {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  background: var(--color-bg-code, #3d0e15);
+  color: var(--color-code-text, #fffef0);
+  padding: 0.2em 0.5em;
+  border-radius: 6px;
+  font-size: 0.9em;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Custom Scrollbar Styling with Color Palette */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-cream-medium, #faf5d8);
+  border-radius: 6px;
+}
+
+body.theme-dark ::-webkit-scrollbar-track {
+  background: var(--color-burgundy-dark, #3d0e15);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-burgundy-primary, #5a1520);
+  border-radius: 6px;
+  border: 2px solid var(--color-cream-medium, #faf5d8);
+  transition: background 0.2s;
+}
+
+body.theme-dark ::-webkit-scrollbar-thumb {
+  background: var(--color-burgundy-accent, #7a2230);
+  border-color: var(--color-burgundy-dark, #3d0e15);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-burgundy-accent, #7a2230);
+}
+
+body.theme-dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-burgundy-light, #6b1d2a);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-burgundy-primary, #5a1520) var(--color-cream-medium, #faf5d8);
+}
+
+body.theme-dark * {
+  scrollbar-color: var(--color-burgundy-accent, #7a2230) var(--color-burgundy-dark, #3d0e15);
+}
+

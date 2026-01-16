@@ -1,0 +1,21 @@
+--- Testing Macro Data Integration (Mock: True) ---
+2026-01-16 11:54:16 [    INFO] kafka.conn: <BrokerConnection client_id=kafka-python-producer-1, node_id=bootstrap-0 host=localhost:9092 <connecting> [IPv6 ('::1', 9092, 0, 0)]>: connecting to localhost:9092 [('::1', 9092, 0, 0) IPv6]
+2026-01-16 11:54:16 [    INFO] kafka.conn: <BrokerConnection client_id=kafka-python-producer-1, node_id=bootstrap-0 host=localhost:9092 <checking_api_versions_recv> [IPv6 ('::1', 9092, 0, 0)]>: Broker version identified as 2.6
+2026-01-16 11:54:16 [    INFO] kafka.conn: <BrokerConnection client_id=kafka-python-producer-1, node_id=bootstrap-0 host=localhost:9092 <connected> [IPv6 ('::1', 9092, 0, 0)]>: Connection complete.
+
+[MACRO REGIME DATA]
+Status:    RECESSION_WARNING
+Timestamp: 2026-01-16T11:54:16.110942
+
+[SIGNALS]
+ - YIELD_CURVE_INVERTED
+ - INFLATION_LEVEL_307.6
+
+[METRICS]
+ - YIELD_CURVE: -0.15
+ - INFLATION: 307.6
+ - UNEMPLOYMENT: 3.7
+ - FED_FUNDS: 5.33
+
+SUCCESS: Macro regime logic verified.
+2026-01-16 11:54:16 [    INFO] kafka.conn: <BrokerConnection client_id=kafka-python-producer-1, node_id=bootstrap-0 host=localhost:9092 <connected> [IPv6 ('::1', 9092, 0, 0)]>: Closing connection. 

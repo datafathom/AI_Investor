@@ -1,0 +1,233 @@
+BRENT LINHARDT
+Senior Software Engineer
+LinkedIn: https://www.linkedin.com/in/brent-l-437116104
+
+PROFESSIONAL SUMMARY
+--------------------
+Senior Full Stack Software Engineer with 10+ years of experience architecting and delivering scalable, high-performance applications across AI/Machine Learning, Cloud Infrastructure, and Full-Stack Development. Proven expertise in designing enterprise-grade solutions using modern technologies including Node.js, React, TypeScript, and cloud platforms (AWS, GCP, Azure). Track record of solving complex technical problems through innovative system design, mentoring engineering teams, and implementing best practices in CI/CD, testing, and infrastructure automation. Passionate about clean code architecture, developer experience, and delivering measurable business impact.
+
+TECHNICAL SKILLS
+----------------
+
+Languages & Frameworks:
+* TypeScript, JavaScript/ECMAScript, Node.js, Python (2/3), React, React Native, Angular, Vue.js, HTML5, CSS3, Sass, Ruby, Java, C/C++, Bash/Shell Scripting.
+
+AI/Machine Learning & Data Science:
+* Retrieval Augmented Generation (RAG), OpenAI API, LLM Agent Development, TensorFlow, PyTorch, Keras, Computer Vision, Natural Language Processing (NLP), Deep Learning Model Training & Deployment, Facial Recognition, Scikit-learn, Pandas, NumPy, Data Analysis & Visualization, D3.js.
+
+Cloud & Infrastructure:
+* AWS (Lambda, SQS, DynamoDB, EC2, ECR, ECS, API Gateway), Google Cloud Platform (GCP), Microsoft Azure.
+* Infrastructure as Code (Terraform, CloudFormation), Serverless Computing, Docker, Kubernetes, Containerization, Virtualization.
+* Networking, Load Balancing, Auto Scaling, CDN, Cloud Security.
+
+Databases & Data Stores:
+* PostgreSQL, MySQL/MariaDB, MongoDB, AWS DynamoDB, Google Cloud Firestore, Redis, Cassandra, Elasticsearch, Neo4j, SQLite, Oracle, Microsoft SQL Server.
+
+DevOps & Tools:
+* CI/CD (GitHub Actions, Jenkins, GitLab CI, CircleCI), Git/GitHub/GitLab, Version Control.
+* Docker & Docker-compose, Container Orchestration.
+* Terraform, CloudFormation, Configuration Management, Ansible, Puppet, Chef.
+* Infrastructure Monitoring & Logging (Splunk), Observability Tools.
+
+Architecture & Methodologies:
+* RESTful API Design, GraphQL, Microservices Architecture, Distributed Systems.
+* Event-Driven Architecture (Kafka), Real-time Communication (WebSockets, Server-Sent Events).
+* Server-Side Rendering (SSR), Serverless Computing.
+* Agile Methodologies, Design Systems, Full-Stack Debugging.
+* Testing (Jest, Mocha, RSpec, Cypress), Mentoring & Technical Leadership.
+
+
+PROFESSIONAL EXPERIENCE
+-----------------------
+
+VERIZON / TECH MAHINDRA
+Contract Senior Software Engineer | June 2023 – January 2025
+
+* Retrieval Augmented Generation (RAG) Solutions Development:
+    - Identified challenge of improving LLM accuracy and relevance for enterprise telecom data.
+    - Designed and implemented RAG solutions augmenting OpenAI API applications with company-specific knowledge bases.
+    - Leveraged Node.js for integration, Python for pipelines, and AWS for scalable deployment.
+    - Result: Increased LLM relevance by 40% and reduced inquiry resolution time.
+
+* Real-Time Telecom Infrastructure Monitoring System:
+    - Addressed need for real-time visibility into infrastructure changes across distributed systems.
+    - Engineered a Node.js-based system ingesting streaming data from multiple sources.
+    - Implemented event-driven architecture and optimized pipeline throughput.
+    - Technologies: Node.js, Event-driven architecture, Data streaming, AWS.
+    - Result: Reduced infrastructure issue detection time from hours to minutes.
+
+* Data Analysis & Operator Enhancement Platform:
+    - Developed platform enhancing operator interaction with complex telecom data via AI-powered analysis.
+    - Connected OpenAI API capabilities to telecom-specific datasets for natural language querying.
+    - Integrated with legacy systems using RESTful APIs and GraphQL.
+    - Technologies: Node.js, Python, OpenAI API, PostgreSQL, AWS.
+
+
+OPSERA (Contract)
+Contract Senior Software Engineer | March 2022 – March 2023
+
+* Real-Time Security Vulnerability Detection Platform:
+    - Identified gap in visibility into code security vulnerabilities.
+    - Built real-time streaming ReactJS frontend and Node.js backend for continuous scanning.
+    - Implemented automated security auditing identifying issues in milliseconds.
+    - Designed responsive UI for high-volume data streams without performance degradation.
+    - Technologies: ReactJS, Node.js, WebSockets, Vulnerability scanning frameworks.
+
+* CI/CD Pipeline Automation & AWS Deployment Infrastructure:
+    - Solved challenge of inconsistent, manual security deployment processes.
+    - Implemented CI/CD pipelines using Jenkins for automated scans on every commit.
+    - Configured AWS infrastructure reducing deployment time from 2+ hours to 15 minutes.
+    - Set up monitoring, logging, and alerting for production issue detection.
+    - Technologies: Jenkins, GitHub/GitLab, AWS (EC2, S3, CloudWatch), Infrastructure automation.
+    - Result: Eliminated 95% of manual deployment steps and improved code security posture.
+
+
+NICHE ONLINE COMMUNITY (Founder)
+Founder & Full Stack Software Engineer | November 2020 – Present
+
+* Automated Market Research Data Pipeline:
+    - Automated manual market research processes.
+    - Built end-to-end data pipeline scraping market data via Selenium (Python).
+    - Ingested data into structured databases and provided analytics dashboards.
+    - Hosted on AWS using cost-optimized cloud configurations.
+    - Technologies: Python, Selenium, Web scraping, PostgreSQL, AWS (Lambda, RDS, S3).
+    - Result: Reduced time-to-market-insight from weeks to hours.
+
+* Containerized Application Deployment & Scalability:
+    - Addressed challenge of deploying complex applications reliably across environments.
+    - Containerized stack using Docker and Docker-compose for standardized deployment.
+    - Implemented auto-scaling policies and health checks for high availability.
+    - Technologies: Docker, Docker-compose, AWS ECS, Infrastructure as Code.
+    - Result: Reduced deployment inconsistencies by 100% and improved uptime to 99.8%.
+
+
+HUNTER DOUGLAS (Contract)
+Contract Software Engineer | January 2020 – October 2020
+
+* Bluetooth Low-Energy (BLE) Gateway System:
+    - Enabled smart device communication in the window covering ecosystem.
+    - Engineered BLE gateways bridging low-power devices and cloud infrastructure.
+    - Built using Node.js for performance and ReactJS for monitoring dashboards.
+    - Technologies: Node.js, ReactJS, BLE, WebSockets, AWS IoT.
+
+* Cross-Platform Firmware Update Application (iOS/Android):
+    - Simplified firmware flashing for field technicians.
+    - Developed React Native app for over-the-air updates without specialized hardware.
+    - Implemented robust error handling, progress tracking, and rollback capabilities.
+    - Technologies: React Native, JavaScript, iOS/Android native modules, BLE.
+    - Result: Reduced firmware update time from 20+ minutes per device to 3 minutes.
+
+
+ROBERT HALF (Contract)
+Contract Full Stack Software Engineer | May 2019 – December 2019
+
+* Energy Industry Web Application Development & Migration:
+    - Built web app for energy sector providing real-time visualization of consumption patterns.
+    - Led migration to AWS Cloud, resulting in 60% reduction in infrastructure costs.
+    - Developed using Python Django backend with PostgreSQL.
+    - Technologies: Python, Django, PostgreSQL, AWS (EC2, RDS, S3, CloudFront).
+
+* Interactive Data Visualization & Dashboard Components:
+    - Created custom ReactJS components wrapping D3.js infographics.
+    - Optimized rendering for datasets with 100,000+ data points.
+    - Technologies: React, D3.js, JavaScript animation.
+    - Result: Reduced report generation time from hours to minutes; increased productivity by 30%.
+
+
+INTELEARC / CHARTER SPECTRUM (Contract)
+Senior Contract Software Engineer | July 2018 – May 2019
+
+* Real-Time Data Distribution Platform (Kafka/WebSockets):
+    - Architected distributed event-driven system using Apache Kafka for real-time updates.
+    - Distributed updates via WebSockets to 50,000+ concurrent users with sub-100ms latency.
+    - Designed for high throughput (10,000+ events/second).
+    - Technologies: Apache Kafka, Node.js, WebSockets, Message queuing.
+
+* Proof-of-Concept Leadership & Architecture Design:
+    - Led delivery of POC project demonstrating real-time capabilities for mobile/web.
+    - Architected solution, mentored team, and conducted load testing.
+    - Successfully validated approach, leading to full production implementation.
+
+
+MAWU LLC (Founder)
+Founder & Chief Technology Officer | July 2017 – July 2018
+
+* Blockchain Token Development & Deployment:
+    - Designed and deployed ERC-20 tokens on Ethereum.
+    - Implemented smart contracts for token behavior, transfer rules, and access controls.
+    - Integrated with off-chain systems for pricing and trading.
+    - Technologies: Solidity, Ethereum, Smart Contracts, Web3.js.
+
+* Facial Recognition System Implementation:
+    - Implemented facial recognition algorithms using deep learning (TensorFlow, Python).
+    - Trained models on client-specific datasets and optimized for inference speed.
+    - Technologies: Python, TensorFlow, Deep Learning, Computer Vision.
+
+* Cloud Infrastructure Management & Optimization:
+    - Managed multi-region AWS and GCP infrastructure.
+    - Implemented Infrastructure as Code using Terraform for version-controlled deployment.
+    - Technologies: AWS, GCP, Terraform, Cloud cost optimization.
+
+
+ZEERAM CORPORATION
+Senior Software Architect | January 2016 – July 2016
+
+* Graph Database Modeling for Anomaly Detection:
+    - Designed Neo4j graph database schemas modeling relationships for anomaly detection.
+    - Developed Cypher queries discovering hidden patterns and suspicious connections.
+    - Result: Enabled detection of previously unidentified fraud patterns.
+
+* Full-Stack Architecture & Mentorship:
+    - Established patterns for frontend-backend integration, API design, and deployment.
+    - Conducted code reviews and provided technical guidance to junior engineers.
+
+
+ASPEN SYSTEMS (Supercomputing/Cluster Server Production)
+Software Engineer | January 2014 – June 2015
+
+* Enterprise Order Tracking System:
+    - Designed web-based order tracking system integrated with ERP (Epicor).
+    - Implemented Node.js backend for real-time server capabilities.
+    - Result: Improved visibility and reduced order-to-delivery cycle time by 15%.
+
+* Real-Time Multi-Client Notification System:
+    - Implemented real-time status notifications using WebSockets.
+    - Used permission-based access control for sales, manufacturing, and fulfillment teams.
+    - Result: Sales teams received real-time updates rather than hourly batches.
+
+
+EDUCATION
+---------
+
+UNIVERSITY OF MISSOURI, COLUMBIA
+Computer Science and Electrical Engineering | 2010 – 2012
+* Coursework: Algorithm design, systems architecture, software engineering.
+
+BROADMOOR TECHNICAL CENTER (High School)
+Digital Media and Web Development | 2003 – 2005
+* Skills: Flash animations, HTML/ActionScript, digital music, video production.
+
+
+PROFESSIONAL REFERENCES (From LinkedIn)
+---------------------------------------
+
+Sneh Pahilwani, Software Engineer at Amazon.com:
+"Brent is an awesome software engineer and a very knowledgeable JavaScript Ninja! He's great at designing efficient solutions and works in the most productive way possible. He loves to share what he knows with anybody who is willing to learn by giving great examples. His focus is always on developing high-quality code with minimum redundancy and maximum readability. He is also an articulate conversationalist and I've gained deep insights about multiple topics from him. I wish him great success in life!"
+
+Pierre Kpodar, AI, Cloud DevOps, InfoSec at Slalom:
+"Brent is a very passionate software engineer. Brent as a CTO does not cut corners, and is very thorough with his craft. He loves what he does."
+
+Sasa Li, Data Science at LockerDome:
+"It was great experience working with Brent on the same team. Brent is an amazing software engineer & very knowledgeable in cloud computing, graph database and custom REST API. He helped to set up the ArcGIS Server & Portal using Azure and AWS. He led up a web-based geo-location software project for Aerial Insights. He is also a dedicated and passionate coder."
+
+Josh Gipper, Visualization & Digital Intelligence at WSP:
+"Brent is an incredibly talented developer who is especially adept in Javascript. He is detail oriented and task driven and has been a great asset to our team, while pushing our application's front-end to the next level. Brent is a naturally curious individual who has also brought a broad base of knowledge to our discussions."
+
+Adam Walker, Software Engineer:
+"Brent is one of the most capable web developers I've come across in my career, or had the pleasure of working with. While developing projects at Zeeram Corporation, he's shown himself to be incredibly knowledgeable in an array of JavaScript libraries, Node.js implementation, and the WebSockets API; knowledgeable, and always willing to teach or share. Brent is an inquisitive software engineer with great determination and makes a valuable piece to any development team."
+
+Jaime McIntyre, Senior Federal Sales Manager at Silicon Mechanics:
+"It's rare that you come across standout talent like Brent. I had the pleasure of working with Brent for a little over a year at Aspen Systems, Inc., where he developed a web-based tracking system that tied into our existing ERP. The project integrated seamlessly and benefited the entire company's productivity. His ability to juggle multiple tasks as well as meticulous testing was unlike any I've seen before. He is extremely enthusiastic about his work which is infectious. He always has a creative, positive outlook and he's good at organizing and bringing people together. Brent would be an asset to any team he joins."
+
+Erin Ward, Information Technology Specialist III at Pacific Mountain Workforce Development Council:
+"I worked with Brent for approximately one year at Aspen Systems, Inc. He completed a web-based (specifically, node.js) order tracking software product for us that tied into our ERP system (Epicor) and allowed our salespeople to see the status of our clusters and systems in Real-Time. His product worked well. He was meticulous in testing and was on-time in implementing our requested changes."

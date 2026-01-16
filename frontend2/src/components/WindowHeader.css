@@ -1,0 +1,202 @@
+/**
+ * WindowHeader Styles
+ * 
+ * Mac-style window header with traffic light buttons.
+ */
+
+.window-header {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  background: var(--color-surface-200, #f0f0f0);
+  border-bottom: 1px solid var(--color-surface-300, #d0d0d0);
+  border-radius: 8px 8px 0 0;
+  padding: 0 8px;
+  user-select: none;
+  position: relative;
+  z-index: 100;
+  cursor: move;
+}
+
+.window-header .window-controls {
+  cursor: default;
+  pointer-events: auto;
+  z-index: 101;
+  position: relative;
+}
+
+.window-header .window-control {
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 102;
+  position: relative;
+}
+
+.window-header .window-title {
+  pointer-events: none;
+  cursor: move;
+  flex: 1;
+}
+
+.window-controls {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.window-control {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.window-control-icon {
+  font-size: 10px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.2s;
+  font-weight: bold;
+}
+
+.window-control:hover .window-control-icon {
+  opacity: 1;
+}
+
+.window-control-close {
+  background: #ff5f57;
+}
+
+.window-control-close:hover {
+  background: #e0443e;
+  transform: scale(1.1);
+}
+
+.window-control-minimize {
+  background: #ffbd2e;
+}
+
+.window-control-minimize:hover {
+  background: #e6a626;
+  transform: scale(1.1);
+}
+
+.window-control-maximize {
+  background: #28ca42;
+}
+
+.window-control-maximize:hover {
+  background: #24b63a;
+  transform: scale(1.1);
+}
+
+.window-title {
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-primary, #2a0a0f);
+  padding: 0 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.window-header-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.window-control-zoom {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.2s;
+  position: relative;
+  background: transparent;
+  pointer-events: auto;
+  flex-shrink: 0;
+  gap: 2px;
+}
+
+.window-control-zoom:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.window-control-zoom .window-control-icon {
+  opacity: 0.7;
+  font-size: 10px;
+  line-height: 1;
+  display: block;
+}
+
+.window-control-zoom .window-zoom-symbol {
+  opacity: 0.7;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  display: block;
+}
+
+.window-control-zoom:hover .window-control-icon,
+.window-control-zoom:hover .window-zoom-symbol {
+  opacity: 1;
+}
+
+.window-control-lock {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.2s;
+  position: relative;
+  background: transparent;
+  pointer-events: auto;
+  flex-shrink: 0;
+}
+
+.window-control-lock:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.window-control-lock .window-control-icon {
+  opacity: 0.7;
+  font-size: 12px;
+  line-height: 1;
+  display: block;
+}
+
+.window-control-lock:hover .window-control-icon {
+  opacity: 1;
+}
+
+/* Dark mode support */
+.window-header.dark {
+  background: var(--color-surface-300, #3a342d);
+  border-bottom-color: var(--color-surface-400, #4a443d);
+}
+
+.window-header.dark .window-title {
+  color: var(--color-text-primary, #f5f0e8);
+}
+
