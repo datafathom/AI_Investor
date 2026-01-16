@@ -152,6 +152,116 @@
                 }
             ],
             "handler": "scripts.runners.test_fusion:run_test_fusion"
+        },
+        "test-fear-greed": {
+            "description": "Test Phase 12 Fear & Greed Composite Index.",
+            "flags": [
+                {
+                    "name": "symbols",
+                    "type": "string",
+                    "default": "SPY,QQQ,AAPL,TSLA,NVDA",
+                    "help": "Comma-separated ticker symbols"
+                },
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run with simulated data"
+                }
+            ],
+            "handler": "scripts.runners.test_fear_greed:run_test_fear_greed"
+        },
+        "test-features": {
+            "description": "Test Phase 13 Feature Engineering Pipeline.",
+            "arguments": [
+                {
+                    "name": "symbol",
+                    "type": "string",
+                    "default": "SPY",
+                    "help": "Ticker symbol to analyze"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "benchmark",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run performance benchmark"
+                }
+            ],
+            "handler": "scripts.runners.test_feature_engineering:run_test_features"
+        },
+        "test-prediction": {
+            "description": "Test Phase 14 Predictive Modeling.",
+            "arguments": [
+                {
+                    "name": "symbol",
+                    "type": "string",
+                    "default": "SPY",
+                    "help": "Ticker symbol"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "train",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Force retraining"
+                }
+            ],
+            "handler": "scripts.runners.test_prediction:run_test_prediction"
+        },
+        "test-factors": {
+            "description": "Test Phase 15 Factor Analysis.",
+            "handler": "scripts.runners.test_factor_analysis:run_test_factors"
+        },
+        "test-defensive-shield": {
+            "description": "Test Phase 16 Defensive Shield.",
+            "handler": "scripts.runners.test_defensive_shield:run_test_shield"
+        },
+        "test-aggressive-alpha": {
+            "description": "Test Phase 17 Aggressive Alpha.",
+            "handler": "scripts.runners.test_aggressive_alpha:run_test_aggressive"
+        },
+        "test-dynamic-allocator": {
+            "description": "Test Phase 18 Dynamic Allocator.",
+            "handler": "scripts.runners.test_dynamic_allocator:run_test_allocator"
+        },
+        "test-tax-harvesting": {
+            "description": "Test Phase 19 Tax Loss Harvesting.",
+            "handler": "scripts.runners.test_tax_harvesting:run_test_harvesting"
+        },
+        "test-risk-monitor": {
+            "description": "Test Phase 20 Real-time Risk Monitor.",
+            "handler": "scripts.runners.test_risk_monitor:run_test_risk"
+        },
+        "test-circuit-breaker": {
+            "description": "Test Phase 21 Volatility Circuit Breakers.",
+            "handler": "scripts.runners.test_circuit_breaker:run_test_circuit_breaker"
+        },
+        "test-stress-test": {
+            "description": "Test Phase 22 Stress Testing Suite.",
+            "handler": "scripts.runners.test_stress_test:run_test_stress"
+        },
+        "test-paper-trading": {
+            "description": "Test Phase 23 Paper Trading Simulator.",
+            "handler": "scripts.runners.test_paper_trading:run_test_paper"
+        },
+        "test-broker-integration": {
+            "description": "Test Phase 24 Broker Integration.",
+            "handler": "scripts.runners.test_broker_integration:run_test_broker"
+        },
+        "test-sor": {
+            "description": "Test Phase 25 Smart Order Routing.",
+            "handler": "scripts.runners.test_sor:run_test_sor"
+        },
+        "test-algo-execution": {
+            "description": "Test Phase 26 Algorithmic Execution.",
+            "handler": "scripts.runners.test_algo_execution:run_test_algo"
+        },
+        "test-morning-briefing": {
+            "description": "Test Phase 29 Morning Briefing Generation.",
+            "handler": "scripts.runners.test_morning_briefing:run_test_briefing"
         }
     }
 }

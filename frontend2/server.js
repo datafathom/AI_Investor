@@ -301,9 +301,9 @@ app.post('/api/windows/layouts', authenticateToken, async (req, res) => {
 
     if (existing) {
       await db.update(windowLayouts)
-        .set({ 
-          layoutData: JSON.stringify(layoutData), 
-          updatedAt: new Date() 
+        .set({
+          layoutData: JSON.stringify(layoutData),
+          updatedAt: new Date()
         })
         .where(eq(windowLayouts.id, existing.id));
       res.json({ message: 'Layout updated', id: existing.id });
@@ -345,7 +345,7 @@ app.delete('/api/windows/layouts/:name', authenticateToken, async (req, res) => 
  */
 app.post('/api/permissions/check', authenticateToken, async (req, res) => {
   const { userId, resource, action } = req.body;
-  
+
   try {
     // Get user roles
     const userRolesList = await db.query.userRoles.findMany({
@@ -384,7 +384,7 @@ app.post('/api/permissions/check', authenticateToken, async (req, res) => {
 app.get('/api/users/:userId/permissions', authenticateToken, async (req, res) => {
   try {
     const userId = parseInt(req.params.userId);
-    
+
     // Get user roles
     const userRolesList = await db.query.userRoles.findMany({
       where: eq(userRoles.userId, userId),
@@ -417,7 +417,7 @@ app.get('/api/users/:userId/permissions', authenticateToken, async (req, res) =>
 app.get('/api/users/:userId/roles', authenticateToken, async (req, res) => {
   try {
     const userId = parseInt(req.params.userId);
-    
+
     const userRolesList = await db.query.userRoles.findMany({
       where: eq(userRoles.userId, userId),
     });
@@ -444,7 +444,7 @@ app.get('/api/users/:userId/roles', authenticateToken, async (req, res) => {
 app.get('/api/users/:userId/preferences', authenticateToken, async (req, res) => {
   try {
     const userId = parseInt(req.params.userId);
-    
+
     const prefs = await db.query.userPreferences.findFirst({
       where: eq(userPreferences.userId, userId),
     });
@@ -513,6 +513,106 @@ app.get('/api/example', (req, res) => {
     data: {
       example: 'This is example data from the backend',
       timestamp: new Date().toISOString(),
+    }
+  });
+});
+
+/**
+ * Phase 12: Fear & Greed Composite Index API
+ * GET /api/v1/market/fear-greed
+ * Returns the composite Fear & Greed Index (0-100)
+ */
+app.get('/api/v1/market/fear-greed', (req, res) => {
+  const symbolsParam = req.query.symbols || 'SPY,QQQ,AAPL,TSLA,NVDA';
+  const symbols = symbolsParam.split(',').map(s => s.trim().toUpperCase());
+
+  // Simulate component scores (in production, these would come from real services)
+  const generateScore = () => Math.random() * 100;
+  const generateSentiment = () => (Math.random() * 2) - 1; // -1 to 1
+
+  const retailScore = 30 + Math.random() * 40; // 30-70
+  const socialScore = 35 + Math.random() * 30; // 35-65
+  const smartMoneyScore = 40 + Math.random() * 35; // 40-75
+  const macroScore = 50 + Math.random() * 30; // 50-80
+
+  // Calculate weighted average
+  const compositeScore = (
+    retailScore * 0.25 +
+    socialScore * 0.25 +
+    smartMoneyScore * 0.25 +
+    macroScore * 0.25
+  );
+
+  // Determine label
+  let label, signal, recommendation;
+  if (compositeScore < 20) {
+    label = 'EXTREME_FEAR';
+    signal = 'BUY';
+    recommendation = 'High-probability buying opportunity. Consider shifting from Defensive to Aggressive portfolio allocation.';
+  } else if (compositeScore < 40) {
+    label = 'FEAR';
+    signal = 'ACCUMULATE';
+    recommendation = 'Market fear elevated. Good entry point for long-term positions.';
+  } else if (compositeScore < 60) {
+    label = 'NEUTRAL';
+    signal = 'HOLD';
+    recommendation = 'Market sentiment balanced. Maintain current allocation strategy.';
+  } else if (compositeScore < 80) {
+    label = 'GREED';
+    signal = 'REDUCE';
+    recommendation = 'Market optimism high. Consider taking some profits.';
+  } else {
+    label = 'EXTREME_GREED';
+    signal = 'SELL';
+    recommendation = 'Risk mitigation window. Shift from Aggressive to Defensive portfolio allocation.';
+  }
+
+  res.json({
+    score: Math.round(compositeScore * 100) / 100,
+    label,
+    timestamp: new Date().toISOString(),
+    components: {
+      retail_sentiment: {
+        score: Math.round(retailScore * 100) / 100,
+        weight: 0.25,
+        details: {
+          avg_z_score: (Math.random() * 2 - 1).toFixed(3),
+          symbols_analyzed: symbols.length,
+        }
+      },
+      social_sentiment: {
+        score: Math.round(socialScore * 100) / 100,
+        weight: 0.25,
+        details: {
+          avg_sentiment: (Math.random() * 2 - 1).toFixed(3),
+          total_mentions: Math.floor(Math.random() * 500) + 50,
+          tickers_analyzed: symbols.length,
+        }
+      },
+      smart_money: {
+        score: Math.round(smartMoneyScore * 100) / 100,
+        weight: 0.25,
+        details: {
+          avg_put_call_ratio: (0.5 + Math.random() * 0.8).toFixed(3),
+          symbols_analyzed: Math.min(3, symbols.length),
+          interpretation: smartMoneyScore > 60 ? 'BULLISH' : smartMoneyScore < 40 ? 'BEARISH' : 'NEUTRAL',
+        }
+      },
+      macro_risk: {
+        score: Math.round(macroScore * 100) / 100,
+        weight: 0.25,
+        details: {
+          regime: macroScore > 60 ? 'EXPANSION' : macroScore > 40 ? 'STABLE' : 'CAUTION',
+        }
+      }
+    },
+    signal,
+    recommendation,
+    thresholds: {
+      extreme_fear: 20,
+      fear: 40,
+      greed: 60,
+      extreme_greed: 80
     }
   });
 });

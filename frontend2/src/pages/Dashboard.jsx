@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 import { useColorPalette } from '../hooks/useColorPalette';
 import { useSocket } from '../contexts/SocketContext';
 import { SkeletonCard } from '../components/Skeleton';
+import FearGreedGauge from '../components/FearGreedGauge';
 import '../App.css';
 
 const CHECKLIST_STEPS = [
@@ -137,7 +138,7 @@ function Dashboard() {
   const [copiedCommand, setCopiedCommand] = useState(null);
   const [memorySeries, setMemorySeries] = useState(INITIAL_MEMORY_POINTS);
   const [inputMessage, setInputMessage] = useState('');
-  
+
   // Use Socket Context (singleton pattern - no reconnection on navigation)
   const {
     connected: socketConnected,
@@ -151,7 +152,7 @@ function Dashboard() {
     emitTyping,
     emitStopTyping,
   } = useSocket();
-  
+
   const messagesEndRef = useRef(null);
   const typingTimeoutRef = useRef(null);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -251,13 +252,13 @@ function Dashboard() {
   const handleJoinRoom = (targetRoomObj) => {
     const targetRoom = targetRoomObj.id;
     if (targetRoom === currentRoom) return;
-    
+
     let password = null;
     if (targetRoomObj.secure) {
       password = prompt(`Enter password for ${targetRoomObj.name}:`);
       if (password === null) return;
     }
-    
+
     joinRoom(targetRoom, password, (response) => {
       if (response?.status === 'ok') {
         toast.success(`Joined ${targetRoomObj.name}`);
@@ -299,10 +300,10 @@ function Dashboard() {
   }
 
   return (
-    <div 
-      className={`app-shell ${isDarkMode ? 'dark' : 'light'}`} 
-      style={{ 
-        width: '100%', 
+    <div
+      className={`app-shell ${isDarkMode ? 'dark' : 'light'}`}
+      style={{
+        width: '100%',
         height: '100%',
         minHeight: 0, // Critical for flex child
         display: 'flex',
@@ -519,6 +520,10 @@ function Dashboard() {
           </div>
         </section>
 
+        <section className="glass card fear-greed-card" data-animate="delay-6">
+          <FearGreedGauge />
+        </section>
+
         <section className="glass card socketio-card" data-animate="delay-6">
           <header>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
@@ -528,7 +533,7 @@ function Dashboard() {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <div 
+                  <div
                     style={{
                       width: '12px',
                       height: '12px',
@@ -573,7 +578,7 @@ function Dashboard() {
               </div>
             </div>
 
-            <div 
+            <div
               style={{
                 border: '1px solid rgba(0,0,0,0.1)',
                 borderRadius: 'var(--radius-chip)',
@@ -595,7 +600,7 @@ function Dashboard() {
                     {socketMessages.map((message, index) => {
                       const isSystem = message.author === 'System';
                       const isSelf = socketId && message.author.includes(socketId.substring(0, 4));
-                      
+
                       return (
                         <motion.div
                           key={index}
@@ -606,11 +611,11 @@ function Dashboard() {
                           style={{
                             padding: '0.75rem',
                             borderRadius: 'var(--radius-chip)',
-                            backgroundColor: isSystem 
-                              ? 'rgba(255, 237, 213, 0.5)' 
-                              : isSelf 
-                              ? 'rgba(59, 130, 246, 0.15)' 
-                              : 'rgba(255, 255, 255, 0.5)',
+                            backgroundColor: isSystem
+                              ? 'rgba(255, 237, 213, 0.5)'
+                              : isSelf
+                                ? 'rgba(59, 130, 246, 0.15)'
+                                : 'rgba(255, 255, 255, 0.5)',
                             borderLeft: `3px solid ${isSystem ? '#f59e0b' : isSelf ? '#3b82f6' : '#6b7280'}`,
                             textAlign: isSelf ? 'right' : 'left'
                           }}
@@ -626,12 +631,12 @@ function Dashboard() {
                   <div ref={messagesEndRef} />
                 </div>
               )}
-              
+
               {typingStatus && (
-                <div style={{ 
-                  marginTop: '0.5rem', 
-                  fontSize: '0.75rem', 
-                  fontStyle: 'italic', 
+                <div style={{
+                  marginTop: '0.5rem',
+                  fontSize: '0.75rem',
+                  fontStyle: 'italic',
                   opacity: 0.7,
                   animation: 'pulse 1.5s infinite'
                 }}>

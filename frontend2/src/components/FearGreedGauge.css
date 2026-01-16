@@ -1,0 +1,116 @@
+.fear-greed-gauge-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    background: var(--bg-secondary, #1e1e1e);
+    border-radius: 12px;
+    border: 1px solid var(--border-color, #333);
+    width: 100%;
+    max-width: 400px;
+    color: var(--text-primary, #fff);
+    font-family: 'Inter', sans-serif;
+}
+
+.gauge-header {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary, #aaa);
+}
+
+.gauge-svg-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    /* Aspect ratio trick for semi-circle if needed */
+}
+
+.gauge-value {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.gauge-score {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.gauge-label {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-top: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.gauge-needle {
+    transform-origin: 50% 50%;
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gauge-ticks text {
+    font-size: 0.7rem;
+    fill: var(--text-secondary, #888);
+    font-weight: 500;
+}
+
+.gauge-components {
+    margin-top: 1.5rem;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+.component-item {
+    display: flex;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.5rem;
+    border-radius: 6px;
+    border-left: 3px solid transparent;
+}
+
+.component-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary, #aaa);
+}
+
+.component-score {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Color classes for dynamic styling */
+.color-extreme-fear {
+    color: #ff4d4d;
+    border-color: #ff4d4d;
+}
+
+.color-fear {
+    color: #ff9f43;
+    border-color: #ff9f43;
+}
+
+.color-neutral {
+    color: #feca57;
+    border-color: #feca57;
+}
+
+.color-greed {
+    color: #1dd1a1;
+    border-color: #1dd1a1;
+}
+
+.color-extreme-greed {
+    color: #5f27cd;
+    border-color: #5f27cd;
+}
