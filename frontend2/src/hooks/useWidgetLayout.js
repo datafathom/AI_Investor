@@ -7,58 +7,91 @@
 
 import { useState, useEffect } from 'react';
 
-const STORAGE_KEY = 'react_node_template_widget_layout';
+const STORAGE_KEY = 'react_node_template_workspaces';
+const ACTIVE_WORKSPACE_KEY = 'react_node_template_active_workspace';
+
+// Default layout for the AI Investor Dashboard widgets
 const DEFAULT_LAYOUT = [
-  { i: 'api', x: 0, y: 0, w: 6, h: 5, minW: 4, minH: 3, maxW: 12 },
-  { i: 'palette', x: 6, y: 0, w: 6, h: 5, minW: 4, minH: 3, maxW: 12 },
-  { i: 'checklist', x: 0, y: 5, w: 6, h: 6, minW: 4, minH: 4, maxW: 12 },
-  { i: 'telemetry', x: 6, y: 5, w: 6, h: 6, minW: 4, minH: 4, maxW: 12 },
-  { i: 'ux', x: 0, y: 11, w: 6, h: 5, minW: 4, minH: 3, maxW: 12 },
-  { i: 'socketio', x: 6, y: 11, w: 6, h: 7, minW: 4, minH: 4, maxW: 12 },
-  { i: 'ping-api', x: 0, y: 18, w: 4, h: 3, minW: 3, minH: 2, maxW: 12 },
-  { i: 'server-status', x: 4, y: 18, w: 8, h: 3, minW: 4, minH: 2, maxW: 12 },
+  { i: 'monitor-view', x: 0, y: 0, w: 24, h: 20, minW: 16, minH: 10, maxW: 48 },
+  { i: 'command-view', x: 24, y: 0, w: 24, h: 10, minW: 16, minH: 8, maxW: 48 },
+  { i: 'options-chain-view', x: 0, y: 20, w: 24, h: 12, minW: 12, minH: 8, maxW: 48 },
+  { i: 'market-depth-view', x: 24, y: 10, w: 12, h: 15, minW: 8, minH: 10, maxW: 24 },
+  { i: 'trade-tape-view', x: 36, y: 10, w: 12, h: 15, minW: 8, minH: 10, maxW: 24 },
+  { i: 'socketio', x: 0, y: 32, w: 24, h: 7, minW: 16, minH: 4, maxW: 48 },
 ];
 
 export function useWidgetLayout() {
-  const [layout, setLayout] = useState(() => {
-    // Load from localStorage or use default
+  const [workspaces, setWorkspaces] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        const parsed = JSON.parse(saved);
-        // Validate layout structure
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
-        }
+        return JSON.parse(saved);
       }
-    } catch (error) {
-      console.warn('[useWidgetLayout] Failed to load layout from localStorage:', error);
+    } catch (e) {
+      console.warn('Failed to load workspaces:', e);
     }
-    return DEFAULT_LAYOUT;
+    return { 'Default': DEFAULT_LAYOUT };
   });
 
-  // Save to localStorage whenever layout changes
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(layout));
-    } catch (error) {
-      console.warn('[useWidgetLayout] Failed to save layout to localStorage:', error);
-    }
-  }, [layout]);
+  const [activeWorkspace, setActiveWorkspace] = useState(() => {
+    return localStorage.getItem(ACTIVE_WORKSPACE_KEY) || 'Default';
+  });
 
-  const handleLayoutChange = (newLayout) => {
-    setLayout(newLayout);
+  const layout = workspaces[activeWorkspace] || DEFAULT_LAYOUT;
+
+  const setLayout = (newLayout) => {
+    setWorkspaces(prev => {
+      const updated = { ...prev, [activeWorkspace]: newLayout };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const saveWorkspace = (name) => {
+    setWorkspaces(prev => {
+      const updated = { ...prev, [name]: layout };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
+    setActiveWorkspace(name);
+    localStorage.setItem(ACTIVE_WORKSPACE_KEY, name);
+  };
+
+  const loadWorkspace = (name) => {
+    if (workspaces[name]) {
+      setActiveWorkspace(name);
+      localStorage.setItem(ACTIVE_WORKSPACE_KEY, name);
+    }
   };
 
   const resetLayout = () => {
-    setLayout(DEFAULT_LAYOUT);
+    setWorkspaces({ 'Default': DEFAULT_LAYOUT });
+    setActiveWorkspace('Default');
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(ACTIVE_WORKSPACE_KEY);
+  };
+
+  const deleteWorkspace = (name) => {
+    if (name === 'Default') return;
+    setWorkspaces(prev => {
+      const { [name]: removed, ...rest } = prev;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(rest));
+      return rest;
+    });
+    if (activeWorkspace === name) {
+      setActiveWorkspace('Default');
+    }
   };
 
   return {
     layout,
-    setLayout: handleLayoutChange,
+    setLayout,
     resetLayout,
+    activeWorkspace,
+    workspaces: Object.keys(workspaces),
+    saveWorkspace,
+    loadWorkspace,
+    deleteWorkspace
   };
 }
 

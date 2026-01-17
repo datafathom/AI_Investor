@@ -39,7 +39,7 @@ export default function OfflineIndicator() {
     <div className={`offline-indicator ${isOnline ? 'online' : 'offline'}`}>
       <div className="offline-indicator-content">
         <span className="offline-indicator-icon">
-          {isOnline ? '✓' : '⚠'}
+          {isOnline ? '' : ''}
         </span>
         <span className="offline-indicator-text">
           {isOnline 

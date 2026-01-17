@@ -12,6 +12,18 @@ const MENU_ITEMS = [
   {
     label: 'File',
     items: [
+      { label: 'Market Dashboard', action: 'show-dashboard' },
+      { label: 'Mission Control', action: 'show-mission-control' },
+      { label: 'Political Alpha', action: 'show-political-alpha' },
+      { label: 'Strategy Distillery', action: 'show-strategy-distillery' },
+      { label: 'Debate Chamber', action: 'show-debate-chamber' },
+      { label: 'Auto-Coder', action: 'show-auto-coder' },
+      { label: 'VR Cockpit', action: 'show-vr-cockpit' },
+      { type: 'divider' },
+      { label: 'Options Analytics', action: 'show-options' },
+      { label: 'Backtest Portfolio', action: 'show-backtest' },
+      { label: 'Global Scanner', action: 'show-scanner' },
+      { type: 'divider' },
       { label: 'New Dashboard', action: 'new-dashboard', shortcut: 'Ctrl+N' },
       { label: 'Open Dashboard', action: 'open-dashboard', shortcut: 'Ctrl+O' },
       { label: 'Save Layout', action: 'save-layout', shortcut: 'Ctrl+S' },
@@ -81,22 +93,55 @@ const MENU_ITEMS = [
     ],
   },
   {
+    label: 'Workspaces',
+    items: [
+      { label: 'Save As...', action: 'workspace-save-prompt', shortcut: 'Ctrl+Shift+S' },
+      { label: 'Import Layout', action: 'import-layout' },
+      { label: 'Export Layout', action: 'export-layout' },
+      { type: 'divider' },
+      // Dynamic workspaces will be injected here
+    ],
+  },
+  {
     label: 'Help',
     items: [
       { label: 'Documentation', action: 'docs' },
-      { label: 'Keyboard Shortcuts', action: 'shortcuts' },
+      { label: 'Keyboard Shortcuts', action: 'shortcuts', shortcut: '?' },
       { type: 'divider' },
       { label: 'About', action: 'about' },
     ],
   },
 ];
 
-export default function MenuBar({ onMenuAction, isDarkMode, widgetVisibility, onToggleWidget, onTriggerModal, onResetLayout, toggleTheme, onAutoSort, onSaveLayout, onLoadLayout, onToggleLogCenter, showLogCenter, debugStates, widgetTitles = {}, currentUser, onSignin, onLogout }) {
+export default function MenuBar({
+  onMenuAction,
+  isDarkMode,
+  widgetVisibility,
+  onToggleWidget,
+  onTriggerModal,
+  onResetLayout,
+  toggleTheme,
+  onAutoSort,
+  onSaveLayout,
+  onLoadLayout,
+  onToggleLogCenter,
+  showLogCenter,
+  debugStates,
+  widgetTitles = {},
+  currentUser,
+  onLogout,
+  onSignin,
+  // New props for workspaces
+  activeWorkspace,
+  workspaces = [],
+  onLoadWorkspace,
+  onSaveWorkspacePrompt
+}) {
   const [activeMenu, setActiveMenu] = useState(null);
   const menuRefs = useRef({});
   const menuBarRef = useRef(null);
 
-  const AI_INVESTOR_IDS = ['monitor-view', 'command-view', 'research-view', 'portfolio-view'];
+  const AI_INVESTOR_IDS = ['monitor-view', 'command-view', 'research-view', 'portfolio-view', 'homeostasis-view', 'options-chain-view', 'market-depth-view', 'trade-tape-view'];
 
   // Build widgets menu dynamically
   const menuItemsWithWidgets = MENU_ITEMS.map(menu => {
@@ -156,6 +201,19 @@ export default function MenuBar({ onMenuAction, isDarkMode, widgetVisibility, on
         }),
       };
     }
+    if (menu.label === 'Workspaces') {
+      return {
+        ...menu,
+        items: [
+          ...menu.items,
+          ...workspaces.map(name => ({
+            label: name,
+            action: `load-workspace-${name}`,
+            checked: name === activeWorkspace
+          }))
+        ]
+      };
+    }
     return menu;
   });
 
@@ -209,12 +267,13 @@ export default function MenuBar({ onMenuAction, isDarkMode, widgetVisibility, on
     event.stopPropagation();
     setActiveMenu(null);
 
-    if (action === 'logout') {
-      onLogout();
+    if (action === 'workspace-save-prompt') {
+      onSaveWorkspacePrompt();
       return;
     }
-    if (action === 'signin') {
-      onSignin();
+    if (action?.startsWith('load-workspace-')) {
+      const name = action.replace('load-workspace-', '');
+      onLoadWorkspace(name);
       return;
     }
 
@@ -288,7 +347,7 @@ export default function MenuBar({ onMenuAction, isDarkMode, widgetVisibility, on
                       aria-checked={isChecked}
                     >
                       {item.checked !== undefined && (
-                        <span className="menu-checkmark">{isChecked ? '✓' : ''}</span>
+                        <span className="menu-checkmark">{isChecked ? '' : ''}</span>
                       )}
                       <span className="menu-item-label">{item.label}</span>
                       {item.shortcut && (
@@ -310,8 +369,8 @@ export default function MenuBar({ onMenuAction, isDarkMode, widgetVisibility, on
           aria-label="Zoom out all widgets"
           disabled
         >
-          <span className="zoom-icon">🔍</span>
-          <span className="zoom-symbol">−</span>
+          <span className="zoom-icon"></span>
+          <span className="zoom-symbol"></span>
         </button>
         <button
           className="menu-bar-button menu-bar-zoom-button"
@@ -320,7 +379,7 @@ export default function MenuBar({ onMenuAction, isDarkMode, widgetVisibility, on
           aria-label="Zoom in all widgets"
           disabled
         >
-          <span className="zoom-icon">🔍</span>
+          <span className="zoom-icon"></span>
           <span className="zoom-symbol">+</span>
         </button>
         <button

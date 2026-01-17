@@ -13,17 +13,23 @@ INPUT/OUTPUT:
 import sys
 from pathlib import Path
 
+
 # Add project root to path
 _project_root = Path(__file__).parent
 sys.path.insert(0, str(_project_root))
 
-from utils.registry.command_registry import CommandRegistry
-from utils.logging import setup_logging
+# Delay heavy imports
+# from utils.registry.command_registry import CommandRegistry
+# from utils.logging import setup_logging
 import logging
 
-# Setup logging
-setup_logging()
-logger = logging.getLogger(__name__)
+def setup_logger_lazy():
+    from utils.logging import setup_logging
+    setup_logging()
+    return logging.getLogger(__name__)
+
+logger = None # Will init in main
+
 
 
 def parse_args(command_path: list, cmd_def: dict, raw_args: list) -> tuple[dict, dict]:
@@ -101,7 +107,7 @@ def parse_args(command_path: list, cmd_def: dict, raw_args: list) -> tuple[dict,
     return args, flags
 
 
-def print_help(registry: CommandRegistry):
+def print_help(registry):
     print("AI Investor CLI")
     print("\nAvailable commands:")
     commands = registry.list_commands()
@@ -111,6 +117,10 @@ def print_help(registry: CommandRegistry):
 
 
 def main():
+    global logger
+    logger = setup_logger_lazy()
+    
+    from utils.registry.command_registry import CommandRegistry
     registry = CommandRegistry()
     if not registry.load_config():
         print("Error: Failed to load CLI configuration", file=sys.stderr)

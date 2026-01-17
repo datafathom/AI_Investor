@@ -1,0 +1,122 @@
+.options-chain-widget {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.options-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ticker-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--burgundy-primary, #5a1520);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.expiration-selector select {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    padding: 2px 4px;
+    font-size: 0.8rem;
+}
+
+.view-switcher {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+}
+
+.view-switcher button {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: all 0.2s;
+}
+
+.view-switcher button.active {
+    background: var(--burgundy-primary, #5a1520);
+    color: white;
+    border-color: var(--burgundy-light, #7a2230);
+}
+
+.chain-table-container {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.options-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.75rem;
+}
+
+.options-table th {
+    position: sticky;
+    top: 0;
+    background: #1e293b;
+    padding: 8px;
+    text-align: left;
+    color: #64748b;
+    text-transform: uppercase;
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    z-index: 1;
+}
+
+.options-table td {
+    padding: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.strike-col,
+.strike-val {
+    background: rgba(90, 21, 32, 0.1);
+    text-align: center;
+    font-weight: bold;
+    color: var(--burgundy-light, #7a2230);
+}
+
+.at-the-money {
+    background: rgba(245, 158, 11, 0.05);
+}
+
+.bid-val {
+    color: #22c55e;
+}
+
+.ask-val {
+    color: #ef4444;
+}
+
+.greek-val {
+    color: #94a3b8;
+}
+
+.iv-val {
+    color: #a855f7;
+}
+
+.options-table tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}

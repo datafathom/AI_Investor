@@ -20,7 +20,7 @@ function Telemetry() {
           <p>Real-time server metrics and performance data</p>
         </header>
         <div style={{ padding: '2rem', textAlign: 'center', color: palette?.text?.secondary || '#5a4a3a' }}>
-          <p>📈 Telemetry visualization coming soon...</p>
+          <p> Telemetry visualization coming soon...</p>
           <p style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>
             This will include real-time charts using Recharts with Socket.io heartbeat effects.
           </p>

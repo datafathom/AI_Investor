@@ -27,7 +27,7 @@ const MissionControl = () => {
     return (
         <div className="mission-control-container p-6 bg-slate-900 text-white min-h-screen font-mono">
             <h1 className="text-4xl mb-8 text-cyan-400 font-bold border-b border-cyan-800 pb-4">
-                MISSION CONTROL V2 🚀
+                MISSION CONTROL V2 
             </h1>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -69,12 +69,12 @@ const MissionControl = () => {
                             <div className="flex justify-between mb-2">
                                 <span>Circuit Breaker:</span>
                                 <span className={`font-bold ${risk.portfolio_frozen ? 'text-red-500 blink' : 'text-green-500'}`}>
-                                    {risk.portfolio_frozen ? 'FROZEN 🛑' : 'ACTIVE ✅'}
+                                    {risk.portfolio_frozen ? 'FROZEN ' : 'ACTIVE '}
                                 </span>
                             </div>
                             {risk.freeze_reason && (
                                 <div className="bg-red-900/50 p-2 rounded text-xs text-red-200 mt-2 border border-red-500">
-                                    ⚠️ {risk.freeze_reason}
+                                     {risk.freeze_reason}
                                 </div>
                             )}
                         </div>

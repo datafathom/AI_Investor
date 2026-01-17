@@ -1,0 +1,132 @@
+.political-alpha-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    color: #e0e0e0;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    color: #888;
+    margin-bottom: 2rem;
+}
+
+.disclosures-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.disclosure-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.disclosure-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 215, 0, 0.3);
+}
+
+.disclosure-card.BUY {
+    border-left: 4px solid #4caf50;
+}
+
+.disclosure-card.SELL {
+    border-left: 4px solid #f44336;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.member-name {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.transaction-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.transaction-badge.BUY {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+}
+
+.transaction-badge.SELL {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+}
+
+.ticker-info {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.ticker-symbol {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.sector {
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.amount {
+    font-size: 1rem;
+    color: #ffd700;
+    margin-bottom: 0.5rem;
+}
+
+.date {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.analyze-btn {
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.analyze-btn:hover {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: #ffd700;
+}
+
+.loading,
+.error {
+    text-align: center;
+    padding: 4rem;
+    font-size: 1.2rem;
+}

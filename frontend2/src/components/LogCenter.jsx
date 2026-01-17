@@ -50,7 +50,7 @@ export default function LogCenter({ isOpen, onClose, logHistory }) {
         <div className="log-center-header">
           <h2>Log Center</h2>
           <button className="log-center-close" onClick={onClose} aria-label="Close log center">
-            ×
+            
           </button>
         </div>
         <div className="log-center-tabs">

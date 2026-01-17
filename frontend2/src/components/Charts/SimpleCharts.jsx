@@ -5,13 +5,13 @@ import { BarChart, PieChart, LineChart, AreaChart, ScatterChart, XAxis, YAxis, C
 export const SimpleBarChart = React.memo(({ data, width = 600, height = 400, colorScale = null }) => {
     // Data format expected: [{ label: 'Series A', values: [{x: 'A', y: 10}, {x: 'B', y: 5}] }]
     // Convert to recharts format: [{ name: 'A', 'Series A': 10, 'Series B': 5 }]
-    
+
     const defaultColors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8dd1e1', '#d084d0'];
-    
+
     // Transform data to recharts format
     const transformedData = React.useMemo(() => {
         if (!data || data.length === 0) return [];
-        
+
         // Get all unique x values
         const allXValues = new Set();
         data.forEach(series => {
@@ -19,7 +19,7 @@ export const SimpleBarChart = React.memo(({ data, width = 600, height = 400, col
                 allXValues.add(point.x);
             });
         });
-        
+
         // Create data points for each x value
         const result = Array.from(allXValues).map(x => {
             const point = { name: x };
@@ -29,10 +29,10 @@ export const SimpleBarChart = React.memo(({ data, width = 600, height = 400, col
             });
             return point;
         });
-        
+
         return result;
     }, [data]);
-    
+
     const colors = colorScale || defaultColors;
 
     return (
@@ -44,11 +44,11 @@ export const SimpleBarChart = React.memo(({ data, width = 600, height = 400, col
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    {data.map((series, index) => (
-                        <Bar 
-                            key={series.label} 
-                            dataKey={series.label} 
-                            fill={colors[index % colors.length]} 
+                    {(data || []).map((series, index) => (
+                        <Bar
+                            key={series.label}
+                            dataKey={series.label}
+                            fill={colors[index % colors.length]}
                         />
                     ))}
                 </BarChart>
@@ -57,10 +57,10 @@ export const SimpleBarChart = React.memo(({ data, width = 600, height = 400, col
     );
 }, (prevProps, nextProps) => {
     // Only re-render if data or dimensions change
-    return prevProps.data === nextProps.data && 
-           prevProps.width === nextProps.width && 
-           prevProps.height === nextProps.height &&
-           prevProps.colorScale === nextProps.colorScale;
+    return prevProps.data === nextProps.data &&
+        prevProps.width === nextProps.width &&
+        prevProps.height === nextProps.height &&
+        prevProps.colorScale === nextProps.colorScale;
 });
 
 SimpleBarChart.displayName = 'SimpleBarChart';
@@ -68,9 +68,9 @@ SimpleBarChart.displayName = 'SimpleBarChart';
 // --- 2. Reusable Pie Chart ---
 export const SimplePieChart = React.memo(({ data, width = 600, height = 400 }) => {
     // Data format expected: { label: 'Series A', values: [{x: 'Item 1', y: 10}, {x: 'Item 2', y: 5}] }
-    
+
     const defaultColors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8dd1e1', '#d084d0'];
-    
+
     // Transform to recharts format
     const transformedData = React.useMemo(() => {
         if (!data?.values) return [];
@@ -79,7 +79,7 @@ export const SimplePieChart = React.memo(({ data, width = 600, height = 400 }) =
             value: item.y
         }));
     }, [data]);
-    
+
     const colors = defaultColors;
 
     return (
@@ -106,9 +106,9 @@ export const SimplePieChart = React.memo(({ data, width = 600, height = 400 }) =
         </div>
     );
 }, (prevProps, nextProps) => {
-    return prevProps.data === nextProps.data && 
-           prevProps.width === nextProps.width && 
-           prevProps.height === nextProps.height;
+    return prevProps.data === nextProps.data &&
+        prevProps.width === nextProps.width &&
+        prevProps.height === nextProps.height;
 });
 
 SimplePieChart.displayName = 'SimplePieChart';
@@ -116,20 +116,20 @@ SimplePieChart.displayName = 'SimplePieChart';
 // --- 3. Reusable Line Chart ---
 export const SimpleLineChart = React.memo(({ data, width = 600, height = 400 }) => {
     // Data format expected: [{ label: 'Series A', values: [{x: new Date(2020, 1, 1), y: 10}, ...] }]
-    
+
     const defaultColors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8dd1e1', '#d084d0'];
-    
+
     // Transform data to recharts format
     const transformedData = React.useMemo(() => {
         if (!data || data.length === 0) return [];
-        
+
         const allXValues = new Set();
         data.forEach(series => {
             series.values?.forEach(point => {
                 allXValues.add(point.x);
             });
         });
-        
+
         const result = Array.from(allXValues).map(x => {
             const point = { name: x instanceof Date ? x.toLocaleDateString() : x };
             data.forEach(series => {
@@ -138,10 +138,10 @@ export const SimpleLineChart = React.memo(({ data, width = 600, height = 400 }) 
             });
             return point;
         });
-        
+
         return result;
     }, [data]);
-    
+
     const colors = defaultColors;
 
     return (
@@ -153,12 +153,12 @@ export const SimpleLineChart = React.memo(({ data, width = 600, height = 400 }) 
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    {data.map((series, index) => (
-                        <Line 
-                            key={series.label} 
-                            type="monotone" 
-                            dataKey={series.label} 
-                            stroke={colors[index % colors.length]} 
+                    {(data || []).map((series, index) => (
+                        <Line
+                            key={series.label}
+                            type="monotone"
+                            dataKey={series.label}
+                            stroke={colors[index % colors.length]}
                         />
                     ))}
                 </LineChart>
@@ -166,9 +166,9 @@ export const SimpleLineChart = React.memo(({ data, width = 600, height = 400 }) 
         </div>
     );
 }, (prevProps, nextProps) => {
-    return prevProps.data === nextProps.data && 
-           prevProps.width === nextProps.width && 
-           prevProps.height === nextProps.height;
+    return prevProps.data === nextProps.data &&
+        prevProps.width === nextProps.width &&
+        prevProps.height === nextProps.height;
 });
 
 SimpleLineChart.displayName = 'SimpleLineChart';
@@ -176,18 +176,18 @@ SimpleLineChart.displayName = 'SimpleLineChart';
 // --- 4. Reusable Area Chart ---
 export const SimpleAreaChart = React.memo(({ data, width = 600, height = 400 }) => {
     const defaultColors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8dd1e1', '#d084d0'];
-    
+
     // Transform data to recharts format
     const transformedData = React.useMemo(() => {
         if (!data || data.length === 0) return [];
-        
+
         const allXValues = new Set();
         data.forEach(series => {
             series.values?.forEach(point => {
                 allXValues.add(point.x);
             });
         });
-        
+
         const result = Array.from(allXValues).map(x => {
             const point = { name: x instanceof Date ? x.toLocaleDateString() : x };
             data.forEach(series => {
@@ -196,10 +196,10 @@ export const SimpleAreaChart = React.memo(({ data, width = 600, height = 400 }) 
             });
             return point;
         });
-        
+
         return result;
     }, [data]);
-    
+
     const colors = defaultColors;
 
     return (
@@ -211,14 +211,14 @@ export const SimpleAreaChart = React.memo(({ data, width = 600, height = 400 }) 
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    {data.map((series, index) => (
-                        <Area 
-                            key={series.label} 
-                            type="monotone" 
-                            dataKey={series.label} 
+                    {(data || []).map((series, index) => (
+                        <Area
+                            key={series.label}
+                            type="monotone"
+                            dataKey={series.label}
                             stackId="1"
-                            stroke={colors[index % colors.length]} 
-                            fill={colors[index % colors.length]} 
+                            stroke={colors[index % colors.length]}
+                            fill={colors[index % colors.length]}
                         />
                     ))}
                 </AreaChart>
@@ -226,9 +226,9 @@ export const SimpleAreaChart = React.memo(({ data, width = 600, height = 400 }) 
         </div>
     );
 }, (prevProps, nextProps) => {
-    return prevProps.data === nextProps.data && 
-           prevProps.width === nextProps.width && 
-           prevProps.height === nextProps.height;
+    return prevProps.data === nextProps.data &&
+        prevProps.width === nextProps.width &&
+        prevProps.height === nextProps.height;
 });
 
 SimpleAreaChart.displayName = 'SimpleAreaChart';
@@ -236,17 +236,17 @@ SimpleAreaChart.displayName = 'SimpleAreaChart';
 // --- 5. Reusable Scatter Plot ---
 export const SimpleScatterPlot = React.memo(({ data, width = 600, height = 400 }) => {
     const defaultColors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8dd1e1', '#d084d0'];
-    
+
     // Transform data to recharts format
     const transformedData = React.useMemo(() => {
         if (!data || data.length === 0) return [];
-        
+
         return data.map(series => ({
             name: series.label,
             data: series.values?.map(point => ({ x: point.x, y: point.y })) || []
         }));
     }, [data]);
-    
+
     const colors = defaultColors;
 
     return (
@@ -259,11 +259,11 @@ export const SimpleScatterPlot = React.memo(({ data, width = 600, height = 400 }
                     <Tooltip cursor={{ strokeDasharray: '3 3' }} />
                     <Legend />
                     {transformedData.map((series, index) => (
-                        <Scatter 
-                            key={series.name} 
-                            name={series.name} 
-                            data={series.data} 
-                            fill={colors[index % colors.length]} 
+                        <Scatter
+                            key={series.name}
+                            name={series.name}
+                            data={series.data}
+                            fill={colors[index % colors.length]}
                         />
                     ))}
                 </ScatterChart>
@@ -271,9 +271,9 @@ export const SimpleScatterPlot = React.memo(({ data, width = 600, height = 400 }
         </div>
     );
 }, (prevProps, nextProps) => {
-    return prevProps.data === nextProps.data && 
-           prevProps.width === nextProps.width && 
-           prevProps.height === nextProps.height;
+    return prevProps.data === nextProps.data &&
+        prevProps.width === nextProps.width &&
+        prevProps.height === nextProps.height;
 });
 
 SimpleScatterPlot.displayName = 'SimpleScatterPlot';
@@ -281,13 +281,13 @@ SimpleScatterPlot.displayName = 'SimpleScatterPlot';
 // --- 6. Moving Average Chart (Derived Component) ---
 export const MovingAverageChart = React.memo(({ rawData, windowSize = 5, width = 600, height = 400 }) => {
     // This component calculates the moving average from raw data and renders a LineChart
-    
+
     // 1. Helper to calculate SMA
     const calculateSMA = (data, window) => {
         let smaData = [];
         for (let i = 0; i < data.length; i++) {
             if (i < window - 1) continue; // Need enough data points for the window
-            
+
             let sum = 0;
             for (let j = 0; j < window; j++) {
                 sum += data[i - j].y;
@@ -306,7 +306,7 @@ export const MovingAverageChart = React.memo(({ rawData, windowSize = 5, width =
         rawData.forEach(point => allXValues.add(point.x));
         const smaData = calculateSMA(rawData, windowSize);
         smaData.forEach(point => allXValues.add(point.x));
-        
+
         return Array.from(allXValues).map(x => {
             const rawPoint = rawData.find(p => p.x === x);
             const smaPoint = smaData.find(p => p.x === x);
@@ -334,10 +334,10 @@ export const MovingAverageChart = React.memo(({ rawData, windowSize = 5, width =
         </div>
     );
 }, (prevProps, nextProps) => {
-    return prevProps.rawData === nextProps.rawData && 
-           prevProps.windowSize === nextProps.windowSize &&
-           prevProps.width === nextProps.width && 
-           prevProps.height === nextProps.height;
+    return prevProps.rawData === nextProps.rawData &&
+        prevProps.windowSize === nextProps.windowSize &&
+        prevProps.width === nextProps.width &&
+        prevProps.height === nextProps.height;
 });
 
 MovingAverageChart.displayName = 'MovingAverageChart';
@@ -393,7 +393,7 @@ export const AudioWaveform = React.memo(({ data, width = 1000, height = 200 }) =
         // Draw area
         ctx.beginPath();
         ctx.moveTo(0, centerY);
-        
+
         for (let i = 0; i < data.length; i++) {
             const x = i * stepX;
             const value = Math.max(0, Math.min(1, data[i])); // Clamp between 0 and 1
@@ -428,9 +428,9 @@ export const AudioWaveform = React.memo(({ data, width = 1000, height = 200 }) =
     }, [data, width, height]);
 
     return (
-        <div 
+        <div
             ref={containerRef}
-            className="chart-container waveform" 
+            className="chart-container waveform"
             style={{ width: '100%', height: '100%', padding: 0, margin: 0, position: 'relative' }}
         >
             <canvas
@@ -442,9 +442,9 @@ export const AudioWaveform = React.memo(({ data, width = 1000, height = 200 }) =
 }, (prevProps, nextProps) => {
     // Only re-render if data reference changes (data array itself)
     // The canvas will redraw on data changes via useEffect
-    return prevProps.data === nextProps.data && 
-           prevProps.width === nextProps.width && 
-           prevProps.height === nextProps.height;
+    return prevProps.data === nextProps.data &&
+        prevProps.width === nextProps.width &&
+        prevProps.height === nextProps.height;
 });
 
 AudioWaveform.displayName = 'AudioWaveform';

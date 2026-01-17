@@ -41,7 +41,7 @@ export default function PresenceIndicator() {
         className="presence-indicator-button"
         title={`${users.length} user${users.length !== 1 ? 's' : ''} online`}
       >
-        <span className="presence-indicator-icon">👥</span>
+        <span className="presence-indicator-icon"></span>
         <span className="presence-indicator-count">{users.length}</span>
       </button>
 
@@ -53,7 +53,7 @@ export default function PresenceIndicator() {
               onClick={() => setShowList(false)}
               className="presence-indicator-close"
             >
-              ×
+              
             </button>
           </div>
           <div className="presence-indicator-list-content">

@@ -132,14 +132,14 @@ export default function WindowManagerWidget() {
                         className="window-manager-btn-small"
                         title="Load layout"
                       >
-                        📂
+                        
                       </button>
                       <button
                         onClick={() => handleDeleteLayout(name)}
                         className="window-manager-btn-small window-manager-btn-danger"
                         title="Delete layout"
                       >
-                        🗑️
+                        
                       </button>
                     </div>
                   </div>

@@ -13,11 +13,27 @@ ARCHITECTURE:
 ==============================================================================
 """
 import os
+import sys
+from pathlib import Path
+
+# Add project root to Python path
+_project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(_project_root))
+
 from flask import Flask, jsonify, request
+from flask_cors import CORS
+
 
 from services.analysis import get_fear_greed_service
 from web.api.dashboard_api import dashboard_bp
 from web.api.communication_api import communication_bp
+from web.api.politics_api import politics_bp
+from web.api.evolution_api import evolution_bp
+from web.api.debate_api import debate_bp
+from web.api.autocoder_api import autocoder_bp
+from web.api.spatial_api import spatial_bp
+from web.api.risk_api import risk_bp
+from web.middleware.tenant_middleware import init_tenant_middleware
 
 
 def create_app() -> Flask:
@@ -125,10 +141,34 @@ def create_app() -> Flask:
     # Register Blueprints
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(communication_bp)
+    app.register_blueprint(politics_bp)
+    app.register_blueprint(evolution_bp)
+    app.register_blueprint(debate_bp)
+    app.register_blueprint(autocoder_bp)
+    app.register_blueprint(spatial_bp)
     
-    return app
+    # Initialize middleware
+    init_tenant_middleware(app)
+    
+    from web.api.homeostasis_api import homeostasis_api
+    app.register_blueprint(homeostasis_api, url_prefix='/api/v1/homeostasis')
+    app.register_blueprint(risk_bp, url_prefix='/api/v1/risk')
+    
+
+    from web.api.auth_api import auth_bp
+    app.register_blueprint(auth_bp)
+
+    # Initialize SocketIO
+    from flask_socketio import SocketIO
+    socketio = SocketIO(app, cors_allowed_origins="*")
+
+    # Initialize CORS
+    CORS(app, resources={r"/*": {"origins": "*"}})
+
+    return app, socketio
 
 
 if __name__ == '__main__':
-    application = create_app()
-    application.run(host='0.0.0.0', port=5000, debug=True)
+    app, socketio = create_app()
+    print("🚀 Starting Backend with SocketIO on port 5000...")
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True, allow_unsafe_werkzeug=True)

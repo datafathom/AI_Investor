@@ -1,5 +1,5 @@
 
-import { api } from './api'; // Assuming a base Axios instance or similar exists
+import { apiClient as api } from '../utils/apiClient';
 
 export const dashboardService = {
     /**

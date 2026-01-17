@@ -18,7 +18,7 @@ export default function ViewSource({ source, onClose }) {
         <div className="view-source-header">
           <h3>Source Code</h3>
           <button className="view-source-close" onClick={onClose} aria-label="Close">
-            ×
+            
           </button>
         </div>
         <div className="view-source-content">

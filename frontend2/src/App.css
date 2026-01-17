@@ -15,7 +15,8 @@ footer {
 
 /* Account for fixed menu bar */
 .app-shell .hero {
-  margin-top: 30px; /* Menu bar height */
+  margin-top: 30px;
+  /* Menu bar height */
   padding-top: 0;
 }
 
@@ -139,11 +140,11 @@ footer {
   transition: transform 0.2s ease;
 }
 
-.switch input:checked + .slider {
+.switch input:checked+.slider {
   background: rgba(90, 21, 32, 0.25);
 }
 
-.switch input:checked + .slider::before {
+.switch input:checked+.slider::before {
   transform: translateX(22px);
 }
 
@@ -267,12 +268,65 @@ footer {
   transform: translateY(-2px);
 }
 
-/* Widget Grid Layout */
+/* Institutional Component Standardizations */
+.ticker-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--burgundy-primary, #5a1520);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ticker-badge:hover {
+  background: var(--burgundy-accent, #7a2230);
+  transform: translateY(-1px);
+}
+
+.ticker-badge.group-red {
+  background: #ef4444;
+  border-color: #f87171;
+}
+
+.ticker-badge.group-blue {
+  background: #3b82f6;
+  border-color: #60a5fa;
+}
+
+.ticker-badge.group-green {
+  background: #22c55e;
+  border-color: #4ade80;
+}
+
+.ticker-badge.group-none {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.institutional-os-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 30px);
+  /* 100vh minus MenuBar height */
+  overflow: hidden;
+  background: var(--color-surface-100, #fefae8);
+}
+
+body.theme-dark .institutional-os-container {
+  background: var(--color-surface-200, #2a2520);
+}
+
 .widget-grid-container {
   width: 100%;
   padding: 0.5rem 0.5rem 1rem;
   margin: 0;
-  margin-top: 0; /* No top margin since menu bar is fixed */
+  margin-top: 0;
 }
 
 .widget-wrapper {
@@ -286,7 +340,7 @@ footer {
   background-image: radial-gradient(circle at 20% 20%, rgba(122, 34, 48, 0.15), transparent),
     radial-gradient(circle at 80% 0%, rgba(255, 254, 240, 0.4), transparent);
   border-radius: 8px;
-  box-shadow: 
+  box-shadow:
     0 8px 32px 4px rgba(90, 21, 32, 0.25),
     0 4px 16px 2px rgba(90, 21, 32, 0.15),
     0 0 0 1px rgba(90, 21, 32, 0.05);
@@ -294,7 +348,7 @@ footer {
 
 /* Dark mode shadows - dark/almost black */
 body.theme-dark .widget-wrapper {
-  box-shadow: 
+  box-shadow:
     0 8px 32px 4px rgba(0, 0, 0, 0.5),
     0 4px 16px 2px rgba(0, 0, 0, 0.4),
     0 0 0 1px rgba(0, 0, 0, 0.2);
@@ -343,7 +397,7 @@ body.theme-dark .widget-wrapper {
   border-radius: 0;
 }
 
-.widget-wrapper > section {
+.widget-wrapper>section {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -355,7 +409,7 @@ body.theme-dark .widget-wrapper {
 }
 
 /* Ensure glass card styles don't override widget gradient */
-.widget-wrapper > section.glass.card {
+.widget-wrapper>section.glass.card {
   background: transparent !important;
   backdrop-filter: blur(8px) !important;
   border: none !important;
@@ -367,7 +421,7 @@ body.theme-dark .widget-wrapper {
   background: var(--color-surface-200, #2a2520);
   background-image: radial-gradient(circle at 20% 20%, rgba(122, 34, 48, 0.3), transparent),
     radial-gradient(circle at 80% 0%, rgba(255, 254, 240, 0.1), transparent);
-  box-shadow: 
+  box-shadow:
     0 8px 32px 4px rgba(0, 0, 0, 0.5),
     0 4px 16px 2px rgba(0, 0, 0, 0.4),
     0 0 0 1px rgba(0, 0, 0, 0.2);
@@ -375,7 +429,8 @@ body.theme-dark .widget-wrapper {
 
 .widget-drag-handle {
   position: absolute;
-  top: 32px; /* Below window header */
+  top: 32px;
+  /* Below window header */
   right: 0.5rem;
   z-index: 10;
   cursor: grab;
@@ -602,7 +657,8 @@ body.theme-dark .widget-wrapper {
   }
 
   .widget-drag-handle {
-    opacity: 0.7; /* Always visible on mobile for better UX */
+    opacity: 0.7;
+    /* Always visible on mobile for better UX */
   }
 }
 
@@ -992,15 +1048,34 @@ body.theme-dark .widget-wrapper {
   animation: fadeInUp 0.9s forwards;
 }
 
-[data-animate='delay-1'] { animation-delay: 0.1s; }
-[data-animate='delay-2'] { animation-delay: 0.2s; }
-[data-animate='delay-3'] { animation-delay: 0.3s; }
-[data-animate='delay-4'] { animation-delay: 0.4s; }
-[data-animate='delay-5'] { animation-delay: 0.5s; }
+[data-animate='delay-1'] {
+  animation-delay: 0.1s;
+}
+
+[data-animate='delay-2'] {
+  animation-delay: 0.2s;
+}
+
+[data-animate='delay-3'] {
+  animation-delay: 0.3s;
+}
+
+[data-animate='delay-4'] {
+  animation-delay: 0.4s;
+}
+
+[data-animate='delay-5'] {
+  animation-delay: 0.5s;
+}
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @keyframes fadeInUp {
@@ -1022,10 +1097,12 @@ body.theme-dark .widget-wrapper {
     transform: scale(0.9);
     opacity: 0.8;
   }
+
   70% {
     transform: scale(1.4);
     opacity: 0;
   }
+
   100% {
     opacity: 0;
   }
@@ -1077,9 +1154,12 @@ body.theme-dark .widget-wrapper {
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.5;
   }
@@ -1088,30 +1168,37 @@ body.theme-dark .widget-wrapper {
 /* Shell Layout Styles */
 .shell-container {
   display: flex;
-  width: 100vw; /* Use viewport width, not percentage */
+  width: 100vw;
+  /* Use viewport width, not percentage */
   height: 100vh;
   overflow: hidden;
   position: relative;
 }
 
 .shell-main {
-  flex: 1; /* CRITICAL: This makes it grow to fill available space */
+  flex: 1;
+  /* CRITICAL: This makes it grow to fill available space */
   display: flex;
   flex-direction: column;
   overflow: hidden;
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  min-width: 0; /* Prevents flex item from overflowing */
-  width: 100%; /* Ensure it takes available space */
+  min-width: 0;
+  /* Prevents flex item from overflowing */
+  width: 100%;
+  /* Ensure it takes available space */
 }
 
 .shell-content {
-  flex: 1; /* CRITICAL: This makes it grow to fill available space */
+  flex: 1;
+  /* CRITICAL: This makes it grow to fill available space */
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
-  min-height: 0; /* Critical: allows flex child to shrink below content size */
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  min-height: 0;
+  /* Critical: allows flex child to shrink below content size */
+  -webkit-overflow-scrolling: touch;
+  /* Smooth scrolling on iOS */
   width: 100%;
 }
 
@@ -1219,9 +1306,8 @@ body.theme-dark .widget-wrapper {
   .widget-wrapper {
     border: 2px solid var(--color-borders-primary, #5a1520);
   }
-  
+
   .theme-dark .widget-wrapper {
     border-color: var(--color-cream-primary, #fefae8);
   }
 }
-

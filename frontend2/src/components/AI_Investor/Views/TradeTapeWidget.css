@@ -1,0 +1,105 @@
+.trade-tape-widget {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.tape-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tape-controls {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tape-container {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.tape-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.7rem;
+}
+
+.tape-table th {
+    position: sticky;
+    top: 0;
+    background: #1e1b19;
+    padding: 6px 12px;
+    text-align: left;
+    color: #64748b;
+    text-transform: uppercase;
+    font-size: 0.6rem;
+    z-index: 10;
+}
+
+.tape-table td {
+    padding: 4px 12px;
+}
+
+.time-col {
+    color: #475569;
+}
+
+.price-col {
+    font-weight: bold;
+}
+
+.tape-table tr.buy .price-col {
+    color: #22c55e;
+}
+
+.tape-table tr.sell .price-col {
+    color: #ef4444;
+}
+
+.tape-table tr.buy {
+    background: rgba(34, 197, 94, 0.02);
+}
+
+.tape-table tr.sell {
+    background: rgba(239, 68, 68, 0.02);
+}
+
+.block-trade {
+    background: rgba(245, 158, 11, 0.1) !important;
+    border-left: 2px solid #f59e0b;
+}
+
+.block-tag {
+    margin-left: 8px;
+    font-size: 0.55rem;
+    background: #f59e0b;
+    color: black;
+    padding: 1px 4px;
+    border-radius: 2px;
+    font-weight: 900;
+}
+
+.tape-table tr:first-child {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-5px);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}

@@ -11,11 +11,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useColorPalette } from '../../hooks/useColorPalette';
 
 const navigationItems = [
-  { path: '/dashboard', icon: '📊', label: 'Dashboard', description: 'Overview & status' },
-  { path: '/chat', icon: '💬', label: 'Chat', description: 'Socket.io realtime' },
-  { path: '/telemetry', icon: '📈', label: 'Telemetry', description: 'Server metrics' },
-  { path: '/design-system', icon: '🎨', label: 'Design System', description: 'Component playground' },
-  { path: '/settings', icon: '⚙️', label: 'Settings', description: 'Configuration' },
+  { path: '/dashboard', icon: '', label: 'Dashboard', description: 'Overview & status' },
+  { path: '/chat', icon: '', label: 'Chat', description: 'Socket.io realtime' },
+  { path: '/telemetry', icon: '', label: 'Telemetry', description: 'Server metrics' },
+  { path: '/design-system', icon: '', label: 'Design System', description: 'Component playground' },
+  { path: '/settings', icon: '', label: 'Settings', description: 'Configuration' },
 ];
 
 function Sidebar({ collapsed, onToggle }) {
@@ -104,7 +104,7 @@ function Sidebar({ collapsed, onToggle }) {
           }}
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
-          {collapsed ? '→' : '←'}
+          {collapsed ? '' : ''}
         </button>
       </div>
 

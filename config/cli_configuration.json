@@ -4,19 +4,81 @@
             "description": "Start all AI Investor services and agents.",
             "handler": "scripts.runners.system_control:start_all"
         },
+        "seed-db": {
+            "description": "Seed the database with initial user and test data.",
+            "handler": "scripts.runners.seed_db:run_seed_db"
+        },
+        "check-backend": {
+            "description": "Quickly check backend health status via HTTP.",
+            "handler": "scripts.runners.system_control:check_backend"
+        },
+        "start-backend": {
+            "description": "Start the Flask backend on the host (Windows).",
+            "handler": "scripts.runners.system_control:start_backend"
+        },
+        "start-frontend": {
+            "description": "Start the React frontend on the host (Windows).",
+            "handler": "scripts.runners.system_control:start_frontend"
+        },
+        "check-port": {
+            "description": "Check if a specific port is listening on the host.",
+            "arguments": [
+                {
+                    "name": "port",
+                    "type": "integer",
+                    "default": 5000,
+                    "help": "Port to check"
+                }
+            ],
+            "handler": "scripts.runners.system_control:check_port"
+        },
         "stop-all": {
             "description": "Gracefully stop all services.",
             "handler": "scripts.runners.system_control:stop_all"
         },
+        "reset-dev": {
+            "description": "Unified Reset: Stop/Prune, Start, and Seed.",
+            "flags": [
+                {
+                    "name": "lite",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Reset in Lite mode"
+                }
+            ],
+            "handler": "scripts.runners.system_control:reset_dev"
+        },
         "verify-pipeline": {
             "description": "Run End-to-End verification of the Data->Signal->Trade pipeline.",
             "handler": "scripts.runners.system_control:verify_pipeline"
+        },
+        "build-frontend": {
+            "description": "Build the frontend2 production bundle.",
+            "handler": "scripts.runners.frontend_control:run_frontend_build"
+        },
+        "clean-build": {
+            "description": "Sanitize JSX files and build the frontend.",
+            "handler": "scripts.runners.frontend_control:run_clean_build"
         },
         "docker": {
             "description": "Docker infrastructure management",
             "subcommands": {
                 "up": {
                     "description": "Start Docker containers (localhost only)",
+                    "flags": [
+                        {
+                            "name": "lite",
+                            "type": "boolean",
+                            "default": false,
+                            "help": "Run in Lite mode (No Kafka/Neo4j)"
+                        },
+                        {
+                            "name": "build",
+                            "type": "boolean",
+                            "default": false,
+                            "help": "Rebuild images before starting"
+                        }
+                    ],
                     "handler": "scripts.runners.docker_control:docker_up"
                 },
                 "down": {
@@ -26,8 +88,34 @@
                 "status": {
                     "description": "Show Docker container status",
                     "handler": "scripts.runners.docker_control:docker_status"
+                },
+                "logs": {
+                    "description": "View/Follow Docker container logs",
+                    "flags": [
+                        {
+                            "name": "service",
+                            "type": "string",
+                            "default": "",
+                            "help": "Specific service to log (e.g. backend, frontend)"
+                        },
+                        {
+                            "name": "follow",
+                            "type": "boolean",
+                            "default": true,
+                            "help": "Follow log output"
+                        }
+                    ],
+                    "handler": "scripts.runners.docker_control:docker_logs"
+                },
+                "ps": {
+                    "description": "Show Docker container status (formatted table)",
+                    "handler": "scripts.runners.docker_control:docker_ps"
                 }
             }
+        },
+        "docker-ps": {
+            "description": "Quickly show Docker container status (shorthand for docker ps)",
+            "handler": "scripts.runners.docker_control:docker_ps"
         },
         "test-ingestion": {
             "description": "Test Phase 6 data ingestion pipeline.",
@@ -262,6 +350,30 @@
         "test-morning-briefing": {
             "description": "Test Phase 29 Morning Briefing Generation.",
             "handler": "scripts.runners.test_morning_briefing:run_test_briefing"
+        },
+        "test-health-check": {
+            "description": "Test Phase 31 System Health Monitor.",
+            "handler": "scripts.runners.test_health_check:run_health_check"
+        },
+        "test-security": {
+            "description": "Test Phase 32 Encryption Service.",
+            "handler": "scripts.runners.test_security_service:run_test_security"
+        },
+        "test-rebalance": {
+            "description": "Test Phase 33 Autonomous Rebalancing.",
+            "handler": "scripts.runners.test_rebalancing:run_test_rebalance"
+        },
+        "test-backtest-v2": {
+            "description": "Test Phase 34 Event-Driven Backtesting Engine.",
+            "handler": "scripts.runners.test_backtesting_v2:run_backtest_v2"
+        },
+        "test-hype": {
+            "description": "Test Phase 35 Visual Hype Tracking.",
+            "handler": "scripts.runners.test_hype_tracking:run_test_hype"
+        },
+        "test-politics": {
+            "description": "Test Phase 36 Political Alpha Tracker.",
+            "handler": "scripts.runners.test_politics:run_test_politics"
         }
     }
 }

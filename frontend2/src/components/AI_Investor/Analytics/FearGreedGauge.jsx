@@ -119,7 +119,7 @@ export default function FearGreedGauge({
     if (error && !data) {
         return (
             <div className="fear-greed-gauge fear-greed-error">
-                <span className="error-icon">⚠️</span>
+                <span className="error-icon"></span>
                 <span>Error: {error}</span>
                 <button onClick={fetchFearGreedIndex}>Retry</button>
             </div>
@@ -262,7 +262,7 @@ export default function FearGreedGauge({
                     onClick={fetchFearGreedIndex}
                     disabled={loading}
                 >
-                    {loading ? '↻' : '⟳'}
+                    {loading ? '' : ''}
                 </button>
             </div>
         </div>

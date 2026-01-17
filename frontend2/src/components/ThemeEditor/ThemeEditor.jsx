@@ -108,7 +108,7 @@ export default function ThemeEditor({ onClose }) {
     <div className="theme-editor">
       <div className="theme-editor-header">
         <h2>Theme Editor</h2>
-        <button onClick={onClose} className="theme-editor-close">×</button>
+        <button onClick={onClose} className="theme-editor-close"></button>
       </div>
 
       <div className="theme-editor-content">

@@ -31,8 +31,24 @@ class CircuitBreaker:
         
         # State
         self.portfolio_frozen = False
+        self.global_kill_switch = False
         self.frozen_assets = set()
         self.freeze_reason = None
+
+    def trigger_global_kill_switch(self, reason: str = "Manual Emergency Halt"):
+        """
+        Engage the safety pin. Stop ALL trading immediately.
+        """
+        self.global_kill_switch = True
+        self.portfolio_frozen = True
+        self.freeze_reason = reason
+        logger.critical(f"GLOBAL KILL SWITCH ENGAGED: {reason}")
+
+    def is_halted(self) -> bool:
+        """
+        Combined check for any halt condition.
+        """
+        return self.portfolio_frozen or self.global_kill_switch
 
     def check_portfolio_freeze(self, current_daily_pnl_pct: float) -> bool:
         """
@@ -78,6 +94,7 @@ class CircuitBreaker:
         Manual override to unfreeze.
         """
         self.portfolio_frozen = False
+        self.global_kill_switch = False
         self.frozen_assets.clear()
         self.freeze_reason = None
 

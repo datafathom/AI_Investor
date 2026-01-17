@@ -35,11 +35,11 @@ export default function NotificationCenter({ onClose }) {
 
   const getNotificationIcon = (type) => {
     switch (type) {
-      case 'success': return '✓';
-      case 'error': return '✕';
-      case 'warning': return '⚠';
-      case 'info': return 'ℹ';
-      default: return '•';
+      case 'success': return '';
+      case 'error': return '';
+      case 'warning': return '';
+      case 'info': return '';
+      default: return '';
     }
   };
 
@@ -50,7 +50,7 @@ export default function NotificationCenter({ onClose }) {
         {unreadCount > 0 && (
           <span className="notification-center-badge">{unreadCount}</span>
         )}
-        <button onClick={onClose} className="notification-center-close">×</button>
+        <button onClick={onClose} className="notification-center-close"></button>
       </div>
 
       <div className="notification-center-filters">
@@ -131,7 +131,7 @@ export default function NotificationCenter({ onClose }) {
                 className="notification-center-item-close"
                 title="Dismiss"
               >
-                ×
+                
               </button>
             </div>
           ))

@@ -33,7 +33,7 @@ import { resolve } from 'path';
  */
 function colorPalettePlugin() {
   const virtualModuleId = 'virtual:color-palette';
-  const resolvedVirtualModuleId = '\0' + virtualModuleId;
+  const resolvedVirtualModuleId = virtualModuleId;
 
   // Calculate the palette path once
   const palettePath = resolve(__dirname, 'config/color_palette.json');
@@ -62,18 +62,10 @@ export default palette;`;
           const paletteData = JSON.parse(readFileSync(palettePath, 'utf-8'));
           const palette = paletteData.palette || {};
 
-          // Log successful load (only in dev mode to avoid spam)
-          if (process.env.NODE_ENV !== 'production') {
-            console.log(`[Color Palette] Loaded from: ${palettePath}`);
-            console.log(`[Color Palette] Categories: ${Object.keys(palette).join(', ')}`);
-          }
-
           // Export the palette as a module
-          return `export const palette = ${JSON.stringify(palette, null, 2)};
+          return `export const palette = ${JSON.stringify(palette)};
 export default palette;`;
         } catch (error) {
-          console.error(`[Color Palette] Error loading palette from ${palettePath}:`, error.message);
-          console.warn(`[Color Palette] Using fallback empty palette.`);
           return `export const palette = {};
 export default palette;`;
         }
@@ -156,10 +148,10 @@ export default defineConfig({
     sourcemap: true, // Generate source maps for debugging
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Split vendor chunks for better caching
-          'react-vendor': ['react', 'react-dom'],
-        },
+        // manualChunks: {
+        //   // Split vendor chunks for better caching
+        //   'react-vendor': ['react', 'react-dom'],
+        // },
       },
     },
   },

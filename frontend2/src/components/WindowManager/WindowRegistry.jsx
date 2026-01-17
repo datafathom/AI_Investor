@@ -77,13 +77,13 @@ export default function WindowRegistry({ onSelectWindow, onClose }) {
   const getStateIcon = (state) => {
     switch (state) {
       case 'minimized':
-        return '📦';
+        return '';
       case 'maximized':
-        return '⬜';
+        return '';
       case 'fullscreen':
-        return '⛶';
+        return '';
       default:
-        return '📄';
+        return '';
     }
   };
 
@@ -149,8 +149,8 @@ export default function WindowRegistry({ onSelectWindow, onClose }) {
                       <div className="window-registry-item-title">{window.title}</div>
                       <div className="window-registry-item-meta">
                         {getStateLabel(window.state)}
-                        {window.isLocked && ' • Locked'}
-                        {window.isGrouped && ` • Group: ${window.groupId}`}
+                        {window.isLocked && '  Locked'}
+                        {window.isGrouped && `  Group: ${window.groupId}`}
                       </div>
                     </div>
                   </div>
@@ -166,7 +166,7 @@ export default function WindowRegistry({ onSelectWindow, onClose }) {
                     title={window.state === 'minimized' ? 'Restore' : 'Minimize'}
                     className="window-registry-action-btn"
                   >
-                    {window.state === 'minimized' ? '📤' : '📦'}
+                    {window.state === 'minimized' ? '' : ''}
                   </button>
                   <button
                     onClick={(e) => {
@@ -176,7 +176,7 @@ export default function WindowRegistry({ onSelectWindow, onClose }) {
                     title={window.state === 'maximized' ? 'Restore' : 'Maximize'}
                     className="window-registry-action-btn"
                   >
-                    {window.state === 'maximized' ? '⤓' : '⬜'}
+                    {window.state === 'maximized' ? '' : ''}
                   </button>
                   <button
                     onClick={(e) => {
@@ -186,7 +186,7 @@ export default function WindowRegistry({ onSelectWindow, onClose }) {
                     title={window.isLocked ? 'Unlock' : 'Lock'}
                     className="window-registry-action-btn"
                   >
-                    {window.isLocked ? '🔒' : '🔓'}
+                    {window.isLocked ? '' : ''}
                   </button>
                   <button
                     onClick={(e) => {
@@ -196,7 +196,7 @@ export default function WindowRegistry({ onSelectWindow, onClose }) {
                     title="Close"
                     className="window-registry-action-btn window-registry-action-btn-danger"
                   >
-                    ✕
+                    
                   </button>
                 </div>
               </div>

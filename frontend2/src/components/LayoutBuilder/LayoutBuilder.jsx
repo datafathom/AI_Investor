@@ -10,10 +10,10 @@ import { useWidgetLayout } from '../../hooks/useWidgetLayout';
 import './LayoutBuilder.css';
 
 const LAYOUT_TYPES = [
-  { id: 'grid', name: 'Grid Layout', icon: '⊞' },
-  { id: 'split', name: 'Split Panes', icon: '║' },
-  { id: 'tabs', name: 'Tabbed', icon: '📑' },
-  { id: 'accordion', name: 'Accordion', icon: '📋' },
+  { id: 'grid', name: 'Grid Layout', icon: '' },
+  { id: 'split', name: 'Split Panes', icon: '' },
+  { id: 'tabs', name: 'Tabbed', icon: '' },
+  { id: 'accordion', name: 'Accordion', icon: '' },
 ];
 
 export default function LayoutBuilder({ onSave, onClose }) {
@@ -53,7 +53,7 @@ export default function LayoutBuilder({ onSave, onClose }) {
     <div className="layout-builder">
       <div className="layout-builder-header">
         <h2>Layout Builder</h2>
-        <button onClick={onClose} className="layout-builder-close">×</button>
+        <button onClick={onClose} className="layout-builder-close"></button>
       </div>
 
       <div className="layout-builder-content">

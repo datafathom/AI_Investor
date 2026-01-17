@@ -72,7 +72,7 @@ const DockerWidget = ({ onToast }) => {
         return (
             <div className="docker-widget-content">
                 <div className="docker-error">
-                    <span className="error-icon">⚠️</span>
+                    <span className="error-icon"></span>
                     <span>{error}</span>
                     <button onClick={fetchContainers} className="retry-btn">Retry</button>
                 </div>
@@ -84,7 +84,7 @@ const DockerWidget = ({ onToast }) => {
         <div className="docker-widget-content">
             <div className="docker-header">
                 <span className="container-count">{containers.length} container{containers.length !== 1 ? 's' : ''}</span>
-                <button onClick={fetchContainers} className="refresh-btn" title="Refresh">🔄</button>
+                <button onClick={fetchContainers} className="refresh-btn" title="Refresh"></button>
             </div>
 
             {containers.length === 0 ? (
@@ -115,7 +115,7 @@ const DockerWidget = ({ onToast }) => {
                                             className="action-btn stop"
                                             title="Stop"
                                         >
-                                            {actionLoading[container.id] === 'stop' ? '...' : '⏹'}
+                                            {actionLoading[container.id] === 'stop' ? '...' : ''}
                                         </button>
                                         <button
                                             onClick={() => handleAction(container.id, 'restart')}
@@ -123,7 +123,7 @@ const DockerWidget = ({ onToast }) => {
                                             className="action-btn restart"
                                             title="Restart"
                                         >
-                                            {actionLoading[container.id] === 'restart' ? '...' : '🔄'}
+                                            {actionLoading[container.id] === 'restart' ? '...' : ''}
                                         </button>
                                     </>
                                 ) : (
@@ -133,7 +133,7 @@ const DockerWidget = ({ onToast }) => {
                                         className="action-btn start"
                                         title="Start"
                                     >
-                                        {actionLoading[container.id] === 'start' ? '...' : '▶️'}
+                                        {actionLoading[container.id] === 'start' ? '...' : ''}
                                     </button>
                                 )}
                                 <button
@@ -142,7 +142,7 @@ const DockerWidget = ({ onToast }) => {
                                     className="action-btn remove"
                                     title="Remove"
                                 >
-                                    {actionLoading[container.id] === 'remove' ? '...' : '🗑️'}
+                                    {actionLoading[container.id] === 'remove' ? '...' : ''}
                                 </button>
                             </div>
                         </div>

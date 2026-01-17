@@ -5,7 +5,7 @@
  * Handles authentication, error handling, and response formatting.
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 class APIClient {
   constructor(baseURL = API_BASE_URL) {
@@ -28,12 +28,13 @@ class APIClient {
   getHeaders() {
     const headers = {
       'Content-Type': 'application/json',
+      'X-Tenant-ID': localStorage.getItem('widget_os_tenant_id') || 'default',
     };
-    
+
     if (this.token) {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
-    
+
     return headers;
   }
 
@@ -55,7 +56,7 @@ class APIClient {
 
     try {
       const response = await fetch(url, config);
-      
+
       if (!response.ok) {
         const error = await response.json().catch(() => ({
           message: `HTTP ${response.status}: ${response.statusText}`,
@@ -67,7 +68,7 @@ class APIClient {
       if (contentType && contentType.includes('application/json')) {
         return await response.json();
       }
-      
+
       return await response.text();
     } catch (error) {
       console.error('API Request Error:', error);

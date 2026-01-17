@@ -1,15 +1,24 @@
 name: ai_investor
 version: '3.8'
 
+# =============================================================================
+# INFRASTRUCTURE ONLY - Backend/Frontend run on host machine
+# =============================================================================
+
 services:
-  # -------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   # Event Stream Orchestration (Kafka + Zookeeper)
-  # -------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+      KAFKA_HEAP_OPTS: "-Xmx256m -Xms256m"
+    deploy:
+      resources:
+        limits:
+          memory: 300M
     networks:
       - investor-network
 
@@ -26,12 +35,17 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_HEAP_OPTS: "-Xmx300m -Xms300m"
+    deploy:
+      resources:
+        limits:
+          memory: 400M
     networks:
       - investor-network
 
-  # -------------------------------------------------------------------------
-  # Time-Series Storage (Postgres / TimescaleDB)
-  # -------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
+  # Time-Series Storage (Postgres)
+  # ---------------------------------------------------------------------------
   postgres:
     image: postgres:15-alpine
     restart: always
@@ -43,64 +57,36 @@ services:
       - "127.0.0.1:5432:5432"
     volumes:
       - ../data/postgres:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 200M
     networks:
       - investor-network
 
-  # -------------------------------------------------------------------------
-  # Graph Database (Neo4j Community)
-  # -------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
+  # Graph Database (Neo4j)
+  # ---------------------------------------------------------------------------
   neo4j:
     image: neo4j:5.12.0
     restart: always
     ports:
-      - "127.0.0.1:7474:7474" # HTTP
-      - "127.0.0.1:7687:7687" # Bolt
+      - "127.0.0.1:7474:7474"  # HTTP Browser
+      - "127.0.0.1:7687:7687"  # Bolt
     environment:
       NEO4J_AUTH: ${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-investor_password}
+      NEO4J_dbms_memory_heap_initial__size: 256m
+      NEO4J_dbms_memory_heap_max__size: 256m
+      NEO4J_dbms_memory_pagecache_size: 128m
+    deploy:
+      resources:
+        limits:
+          memory: 512M
     volumes:
       - ../data/neo4j:/data
-    networks:
-      - investor-network
-
-  # -------------------------------------------------------------------------
-  # Execution Engine (Node.js)
-  # -------------------------------------------------------------------------
-  hedging_engine:
-    image: node:18-alpine
-    working_dir: /app
-    volumes:
-      - ../hedging_engine:/app
-    command: sh -c "npm install && npm start"
-    depends_on:
-      - kafka
-    networks:
-      - investor-network
-
-  # -------------------------------------------------------------------------
-  # Core Backend & Agents (Python)
-  # -------------------------------------------------------------------------
-  backend:
-    build:
-      context: ..
-      dockerfile: infra/Dockerfile
-    restart: always
-    volumes:
-      - ..:/app
-    environment:
-      - FLASK_ENV=development
-      - DATABASE_URL=postgresql://investor_user:investor_password@postgres:5432/investor_db
-      - NEO4J_URI=bolt://neo4j:7687
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
-    depends_on:
-      - postgres
-      - neo4j
-      - kafka
-    ports:
-      - "127.0.0.1:5000:5000"
     networks:
       - investor-network
 
 networks:
   investor-network:
     driver: bridge
-

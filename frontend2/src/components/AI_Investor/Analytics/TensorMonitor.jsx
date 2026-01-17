@@ -62,7 +62,7 @@ const TensorMonitor = ({ tensor, collapsible = false }) => {
             </div>
 
             <div className="mt-6 text-[10px] text-center text-white/20 uppercase tracking-widest">
-                Data Fusion Layer • {new Date().toLocaleTimeString()}
+                Data Fusion Layer  {new Date().toLocaleTimeString()}
             </div>
         </GlassCard>
     );

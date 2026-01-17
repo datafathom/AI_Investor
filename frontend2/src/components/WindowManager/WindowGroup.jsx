@@ -59,8 +59,8 @@ export default function WindowGroup({ groupId, onClose }) {
             onClick={() => handleTabClick(window.id)}
           >
             <span className="window-group-tab-icon">
-              {window.state === 'minimized' ? '📦' : 
-               window.state === 'maximized' ? '⬜' : '📄'}
+              {window.state === 'minimized' ? '' : 
+               window.state === 'maximized' ? '' : ''}
             </span>
             <span className="window-group-tab-title">{window.title}</span>
             <button
@@ -68,7 +68,7 @@ export default function WindowGroup({ groupId, onClose }) {
               onClick={(e) => handleTabClose(e, window.id)}
               title="Close tab"
             >
-              ×
+              
             </button>
           </div>
         ))}

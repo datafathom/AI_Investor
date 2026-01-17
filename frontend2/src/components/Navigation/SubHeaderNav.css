@@ -1,0 +1,66 @@
+.sub-header-nav {
+    background: rgba(13, 17, 23, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 8px 20px;
+    z-index: 1001;
+    display: flex;
+    justify-content: center;
+    position: sticky;
+    top: 48px;
+    /* Assuming MenuBar is 48px */
+}
+
+.nav-container {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    max-width: 1400px;
+    width: 100%;
+}
+
+.nav-item {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--dim-text, #8b949e);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--main-text, #c9d1d9);
+}
+
+.nav-item.active {
+    background: rgba(210, 4, 45, 0.1);
+    /* Burgundy accent */
+    border-color: rgba(210, 4, 45, 0.2);
+    color: #ff4d4d;
+}
+
+.nav-item svg {
+    opacity: 0.7;
+}
+
+.nav-item.active svg {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .nav-container {
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .nav-item span {
+        display: none;
+    }
+}

@@ -65,7 +65,7 @@ export default function TabbedLayout({
                 onClick={(e) => handleTabClose(e, tab.id)}
                 title="Close tab"
               >
-                ×
+                
               </button>
             )}
           </div>

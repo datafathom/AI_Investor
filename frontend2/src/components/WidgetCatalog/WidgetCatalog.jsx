@@ -99,7 +99,7 @@ export default function WidgetCatalog({ onInstall, onClose }) {
     <div className="widget-catalog">
       <div className="widget-catalog-header">
         <h2>Widget Catalog</h2>
-        <button onClick={onClose} className="widget-catalog-close">×</button>
+        <button onClick={onClose} className="widget-catalog-close"></button>
       </div>
 
       <div className="widget-catalog-search">
@@ -141,7 +141,7 @@ export default function WidgetCatalog({ onInstall, onClose }) {
                 <div className="widget-catalog-item-info">
                   <div className="widget-catalog-item-name">{widget.name}</div>
                   <div className="widget-catalog-item-meta">
-                    {widget.author} • v{widget.version} • {widget.category}
+                    {widget.author}  v{widget.version}  {widget.category}
                   </div>
                 </div>
                 {isInstalled(widget.id) && (
@@ -159,7 +159,7 @@ export default function WidgetCatalog({ onInstall, onClose }) {
               <div>
                 <h3>{selectedWidget.name}</h3>
                 <p className="widget-catalog-details-meta">
-                  by {selectedWidget.author} • v{selectedWidget.version}
+                  by {selectedWidget.author}  v{selectedWidget.version}
                 </p>
               </div>
             </div>

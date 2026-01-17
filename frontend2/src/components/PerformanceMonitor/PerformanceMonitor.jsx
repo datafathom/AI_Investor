@@ -47,7 +47,7 @@ export default function PerformanceMonitor() {
   };
 
   const formatMetric = (value, unit = 'ms') => {
-    if (value === null) return '—';
+    if (value === null) return '';
     if (unit === 'ms') return `${Math.round(value)}ms`;
     return `${value.toFixed(2)}${unit}`;
   };

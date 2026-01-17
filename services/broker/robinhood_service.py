@@ -11,7 +11,10 @@ INPUT/OUTPUT:
 """
 
 import logging
-import robin_stocks.robinhood as r
+try:
+    import robin_stocks.robinhood as r
+except ImportError:
+    r = None
 from typing import Dict, Any, List, Optional
 from utils.core.config import get_env
 

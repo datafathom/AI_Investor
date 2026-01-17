@@ -1,0 +1,116 @@
+.market-depth-widget {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.depth-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ticker-label {
+    margin-left: auto;
+    font-weight: bold;
+    color: var(--burgundy-light, #7a2230);
+}
+
+.depth-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 8px 0;
+}
+
+.depth-side {
+    display: flex;
+    flex-direction: column;
+}
+
+.depth-row {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 16px;
+    font-size: 0.75rem;
+    height: 24px;
+    align-items: center;
+}
+
+.depth-bar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 0;
+    opacity: 0.15;
+    transition: width 0.3s ease;
+}
+
+.bid-bar {
+    right: 0;
+    background: #22c55e;
+}
+
+.ask-bar {
+    right: 0;
+    background: #ef4444;
+}
+
+.depth-price,
+.depth-size,
+.depth-cum {
+    position: relative;
+    z-index: 1;
+}
+
+.depth-price {
+    font-weight: bold;
+    width: 60px;
+}
+
+.depth-price.buy {
+    color: #22c55e;
+}
+
+.depth-price.sell {
+    color: #ef4444;
+}
+
+.depth-size {
+    color: #f8fafc;
+}
+
+.depth-cum {
+    color: #94a3b8;
+    width: 50px;
+    text-align: right;
+}
+
+.price-spread {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 0;
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.last-price {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #f8fafc;
+}
+
+.spread-label {
+    font-size: 0.65rem;
+    color: #475569;
+}

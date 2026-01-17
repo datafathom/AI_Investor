@@ -1,0 +1,107 @@
+.distillery-container {
+    padding: 2rem;
+    color: var(--text-on-burgundy, #fff);
+    background: var(--burgundy-dark, #1a0505);
+    min-height: 100vh;
+}
+
+.distillery-header {
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--burgundy-accent, #800020);
+    padding-bottom: 1rem;
+}
+
+.distillery-header h1 {
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+.ignite-btn {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    background: var(--burgundy-accent, #800020);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.ignite-btn:hover {
+    transform: scale(1.05);
+}
+
+.distillery-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.stats-card,
+.alpha-genome,
+.fitness-chart {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.fitness-chart {
+    grid-column: span 2;
+}
+
+.vitals-row {
+    display: flex;
+    gap: 2rem;
+    margin: 1.5rem 0;
+}
+
+.vital {
+    display: flex;
+    flex-direction: column;
+}
+
+.vital .label {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.vital .value {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.gene-pool {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+}
+
+.gene-tag {
+    background: rgba(128, 0, 32, 0.3);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 1px solid var(--burgundy-accent, #800020);
+    display: flex;
+    gap: 0.5rem;
+}
+
+.gene-name {
+    font-weight: bold;
+    color: var(--cream-medium, #f5f5dc);
+}
+
+.evolve-more-btn {
+    width: 100%;
+    padding: 0.8rem;
+    background: transparent;
+    border: 1px solid var(--cream-primary, #fff);
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.evolve-more-btn:hover {
+    background: var(--cream-primary, #fff);
+    color: var(--burgundy-primary, #3d0a0a);
+}

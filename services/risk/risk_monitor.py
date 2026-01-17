@@ -21,6 +21,7 @@ import logging
 from typing import List, Dict, Any
 import pandas as pd
 import numpy as np
+from services.analysis.fear_greed_service import get_fear_greed_service
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +33,72 @@ class RiskMonitor:
         # Risk Limits
         self.MAX_SECTOR_EXPOSURE = 0.30 # 30% Max per sector
         self.MAX_SINGLE_ASSET_EXPOSURE = 0.20 # 20% Max per asset
+        self.MAX_POSITION_SIZE_USD = 10000.0 # $10,000 Max per position
+        self.MAX_DAILY_LOSS_USD = 500.0 # $500 Max daily loss
+
+    def calculate_sentiment_multiplier(self) -> float:
+        """
+        Calculate a risk multiplier based on Fear & Greed Index.
+        """
+        try:
+            fg_service = get_fear_greed_service(mock=True)
+            fg_data = fg_service.get_fear_greed_index()
+            score = fg_data.get('score', 50)
+            
+            if score >= 80: return 0.5 # Extreme Greed
+            if score >= 60: return 0.8 # Greed
+            if score <= 20: return 1.1 # Extreme Fear (conviction bonus)
+            return 1.0
+        except Exception as e:
+            logger.error(f"Failed sentiment scaling: {e}")
+            return 1.0
+
+    def analyze_trade_risk(self, 
+                          symbol: str, 
+                          side: str, 
+                          quantity: float, 
+                          price: float, 
+                          current_exposure: float = 0.0) -> Dict[str, Any]:
+        """
+        Analyze a proposed trade and return a risk rating.
+        """
+        multiplier = self.calculate_sentiment_multiplier()
+        scaled_max_pos = self.MAX_POSITION_SIZE_USD * multiplier
+        
+        notional_value = quantity * price
+        total_after_trade = current_exposure + notional_value
+        
+        reasons = []
+        rating = "SAFE"
+        
+        if notional_value > scaled_max_pos:
+            rating = "DANGER"
+            if multiplier < 1.0:
+                reasons.append(f"Trade value ${notional_value:,.2f} exceeds dynamic limit ${scaled_max_pos:,.2f} (Sentiment: {multiplier}x)")
+            else:
+                reasons.append(f"Trade value ${notional_value:,.2f} exceeds limit ${self.MAX_POSITION_SIZE_USD:,.2f}")
+            
+        elif total_after_trade > scaled_max_pos * 1.5:
+            rating = "CAUTION"
+            reasons.append(f"Cumulative exposure ${total_after_trade:,.2f} nearing limits")
+
+        fg_data = get_fear_greed_service(mock=True).get_fear_greed_index()
+
+        return {
+            "rating": rating,
+            "notional": notional_value,
+            "reasons": reasons,
+            "sentiment": {
+                "score": fg_data['score'],
+                "label": fg_data['label'],
+                "multiplier": multiplier
+            },
+            "limits": {
+                "max_pos": self.MAX_POSITION_SIZE_USD,
+                "scaled_max_pos": scaled_max_pos,
+                "max_loss": self.MAX_DAILY_LOSS_USD
+            }
+        }
 
     def calculate_parametric_var(self, 
                                portfolio_value: float, 

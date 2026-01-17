@@ -15,8 +15,8 @@ import '../App.css';
 const ROOM_LIST = [
   { id: 'general', name: '#general', secure: false },
   { id: 'tech', name: '#tech', secure: false },
-  { id: 'secure', name: '#secure 🔒', secure: true },
-  { id: 'top-secret', name: '#top-secret 🔐', secure: true }
+  { id: 'secure', name: '#secure ', secure: true },
+  { id: 'top-secret', name: '#top-secret ', secure: true }
 ];
 
 function Chat() {

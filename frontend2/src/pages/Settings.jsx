@@ -20,7 +20,7 @@ function Settings() {
           <p>Application configuration and preferences</p>
         </header>
         <div style={{ padding: '2rem', textAlign: 'center', color: palette?.text?.secondary || '#5a4a3a' }}>
-          <p>⚙️ Settings panel coming soon...</p>
+          <p> Settings panel coming soon...</p>
           <p style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>
             This will include an interactive Theme Builder for customizing the color palette.
           </p>

@@ -20,7 +20,7 @@ function DesignSystem() {
           <p>Interactive component library with live code editing</p>
         </header>
         <div style={{ padding: '2rem', textAlign: 'center', color: palette?.text?.secondary || '#5a4a3a' }}>
-          <p>🎨 Design system playground coming soon...</p>
+          <p> Design system playground coming soon...</p>
           <p style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>
             This will include live component previews with editable code using react-live.
           </p>

@@ -7,10 +7,10 @@
 import React from 'react';
 import './WindowHeader.css';
 
-export default function WindowHeader({ 
-  title, 
-  onMinimize, 
-  onMaximize, 
+export default function WindowHeader({
+  title,
+  onMinimize,
+  onMaximize,
   onClose,
   onLock,
   onZoomIn,
@@ -18,7 +18,9 @@ export default function WindowHeader({
   onMinimumFullView,
   onViewSource,
   isMaximized = false,
-  isLocked = false
+  isLocked = false,
+  linkingGroup = 'none', // none, red, blue, green
+  onLinkingGroupChange
 }) {
   const handleHeaderMouseDown = (e) => {
     // Make header draggable (except when clicking on buttons)
@@ -72,34 +74,48 @@ export default function WindowHeader({
 
   return (
     <div className="window-header" onMouseDown={handleHeaderMouseDown} onDoubleClick={handleHeaderDoubleClick}>
-      <div className="window-controls">
-        <button
-          className="window-control window-control-close"
-          onClick={(e) => handleButtonClick(e, onClose)}
-          onDoubleClick={handleButtonDoubleClick}
-          aria-label="Close window"
-          title="Close"
-        >
-          <span className="window-control-icon">×</span>
-        </button>
-        <button
-          className="window-control window-control-minimize"
-          onClick={(e) => handleButtonClick(e, onMinimize)}
-          onDoubleClick={handleButtonDoubleClick}
-          aria-label="Minimize window"
-          title="Minimize"
-        >
-          <span className="window-control-icon">−</span>
-        </button>
-        <button
-          className="window-control window-control-maximize"
-          onClick={(e) => handleButtonClick(e, onMaximize)}
-          onDoubleClick={handleButtonDoubleClick}
-          aria-label={isMaximized ? "Restore window" : "Maximize window"}
-          title={isMaximized ? "Restore" : "Maximize"}
-        >
-          <span className="window-control-icon">{isMaximized ? '⧉' : '□'}</span>
-        </button>
+      <div className="window-header-left-group">
+        <div className="window-controls">
+          <button
+            className="window-control window-control-close"
+            onClick={(e) => handleButtonClick(e, onClose)}
+            onDoubleClick={handleButtonDoubleClick}
+            aria-label="Close window"
+            title="Close"
+          >
+            <span className="window-control-icon"></span>
+          </button>
+          <button
+            className="window-control window-control-minimize"
+            onClick={(e) => handleButtonClick(e, onMinimize)}
+            onDoubleClick={handleButtonDoubleClick}
+            aria-label="Minimize window"
+            title="Minimize"
+          >
+            <span className="window-control-icon"></span>
+          </button>
+          <button
+            className="window-control window-control-maximize"
+            onClick={(e) => handleButtonClick(e, onMaximize)}
+            onDoubleClick={handleButtonDoubleClick}
+            aria-label={isMaximized ? "Restore window" : "Maximize window"}
+            title={isMaximized ? "Restore" : "Maximize"}
+          >
+            <span className="window-control-icon">{isMaximized ? '' : ''}</span>
+          </button>
+        </div>
+
+        <div className="linking-selector-container">
+          <button
+            className={`linking-dot ${linkingGroup}`}
+            onClick={(e) => handleButtonClick(e, () => {
+              const groups = ['none', 'red', 'blue', 'green'];
+              const next = groups[(groups.indexOf(linkingGroup) + 1) % groups.length];
+              onLinkingGroupChange(next);
+            })}
+            title="Link this window to a color group"
+          />
+        </div>
       </div>
       <div className="window-title">{title}</div>
       <div className="window-header-right">
@@ -111,8 +127,8 @@ export default function WindowHeader({
             aria-label="Zoom out widget"
             title="Zoom out"
           >
-            <span className="window-control-icon">🔍</span>
-            <span className="window-zoom-symbol">−</span>
+            <span className="window-control-icon"></span>
+            <span className="window-zoom-symbol"></span>
           </button>
         )}
         {onZoomIn && (
@@ -123,7 +139,7 @@ export default function WindowHeader({
             aria-label="Zoom in widget"
             title="Zoom in"
           >
-            <span className="window-control-icon">🔍</span>
+            <span className="window-control-icon"></span>
             <span className="window-zoom-symbol">+</span>
           </button>
         )}
@@ -135,7 +151,7 @@ export default function WindowHeader({
             aria-label={isLocked ? "Unlock widget" : "Lock widget"}
             title={isLocked ? "Unlock" : "Lock"}
           >
-            <span className="window-control-icon">{isLocked ? '🔒' : '🔓'}</span>
+            <span className="window-control-icon">{isLocked ? '' : ''}</span>
           </button>
         )}
         {onViewSource && (

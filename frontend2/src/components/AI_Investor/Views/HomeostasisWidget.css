@@ -1,0 +1,156 @@
+.homeostasis-widget {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.widget-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.icon-target {
+    color: var(--burgundy-primary, #5a1520);
+}
+
+.gauge-container {
+    padding: 10px 0;
+}
+
+.gauge-background {
+    height: 12px;
+    background: rgba(90, 21, 32, 0.1);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+}
+
+.gauge-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #5a1520, #7a2230);
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px rgba(90, 21, 32, 0.3);
+}
+
+.gauge-fill.enough {
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+    box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+}
+
+.gauge-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 0.75rem;
+    color: var(--text-secondary, #5a4a3a);
+}
+
+.current-score {
+    font-weight: bold;
+    color: var(--burgundy-primary, #5a1520);
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.metric-card {
+    background: rgba(255, 255, 255, 0.5);
+    padding: 12px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.metric-icon {
+    width: 20px;
+    height: 20px;
+    color: #94a3b8;
+}
+
+.metric-icon.active {
+    color: #f59e0b;
+    animation: pulse 2s infinite;
+}
+
+.metric-info label {
+    display: block;
+    font-size: 0.7rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.metric-info span {
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: var(--text-primary, #2a0a0f);
+}
+
+.status-banner {
+    padding: 12px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.status-banner.preservation {
+    background: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.status-banner.growth {
+    background: rgba(90, 21, 32, 0.05);
+    color: var(--burgundy-primary, #5a1520);
+    border: 1px solid rgba(90, 21, 32, 0.1);
+}
+
+.philanthropy-btn {
+    margin-top: auto;
+    background: var(--burgundy-primary, #5a1520);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.philanthropy-btn:hover {
+    transform: translateY(-2px);
+    background: var(--burgundy-light, #6b1d2a);
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
