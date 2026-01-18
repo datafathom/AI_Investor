@@ -14,6 +14,7 @@ ARCHITECTURE:
 """
 import os
 import sys
+print("DEBUG: app.py TOP LEVEL START")
 from pathlib import Path
 
 # Add project root to Python path
@@ -24,16 +25,27 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 
+print("Importing fear_greed...")
 from services.analysis import get_fear_greed_service
+print("Importing dashboard_api...")
 from web.api.dashboard_api import dashboard_bp
+print("Importing communication_api...")
 from web.api.communication_api import communication_bp
+print("Importing politics_api...")
 from web.api.politics_api import politics_bp
+print("Importing evolution_api...")
 from web.api.evolution_api import evolution_bp
+print("Importing debate_api...")
 from web.api.debate_api import debate_bp
+print("Importing autocoder_api...")
 from web.api.autocoder_api import autocoder_bp
+print("Importing spatial_api...")
 from web.api.spatial_api import spatial_bp
+print("Importing risk_api...")
 from web.api.risk_api import risk_bp
+print("Importing tenant_middleware...")
 from web.middleware.tenant_middleware import init_tenant_middleware
+print("DONE importing everything")
 
 
 def create_app() -> Flask:
@@ -43,12 +55,15 @@ def create_app() -> Flask:
     Returns:
         Flask: Configured Flask application instance.
     """
+    print("DEBUG: create_app() started")
     app = Flask(__name__)
+    print("DEBUG: Flask instance created")
     
     # Load configuration from environment
     app.config['DEBUG'] = os.getenv('FLASK_ENV', 'development') == 'development'
     
     @app.route('/health', methods=['GET'])
+    @app.route('/api/health', methods=['GET'])
     def health_check():
         """Health check endpoint for container orchestration."""
         return jsonify({
@@ -170,5 +185,5 @@ def create_app() -> Flask:
 
 if __name__ == '__main__':
     app, socketio = create_app()
-    print("🚀 Starting Backend with SocketIO on port 5000...")
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True, allow_unsafe_werkzeug=True)
+    print("🚀 Starting Backend with SocketIO on port 5050...")
+    socketio.run(app, host='127.0.0.1', port=5050, debug=True, allow_unsafe_werkzeug=True)

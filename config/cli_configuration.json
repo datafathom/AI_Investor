@@ -26,7 +26,7 @@
                 {
                     "name": "port",
                     "type": "integer",
-                    "default": 5000,
+                    "default": 5050,
                     "help": "Port to check"
                 }
             ],
@@ -38,15 +38,11 @@
         },
         "reset-dev": {
             "description": "Unified Reset: Stop/Prune, Start, and Seed.",
-            "flags": [
-                {
-                    "name": "lite",
-                    "type": "boolean",
-                    "default": false,
-                    "help": "Reset in Lite mode"
-                }
-            ],
             "handler": "scripts.runners.system_control:reset_dev"
+        },
+        "demo-start": {
+            "description": "Stop prev runtimes and start Backend/Frontend in new windows.",
+            "handler": "scripts.runners.system_control:run_demo_mode"
         },
         "verify-pipeline": {
             "description": "Run End-to-End verification of the Data->Signal->Trade pipeline.",
@@ -66,12 +62,6 @@
                 "up": {
                     "description": "Start Docker containers (localhost only)",
                     "flags": [
-                        {
-                            "name": "lite",
-                            "type": "boolean",
-                            "default": false,
-                            "help": "Run in Lite mode (No Kafka/Neo4j)"
-                        },
                         {
                             "name": "build",
                             "type": "boolean",

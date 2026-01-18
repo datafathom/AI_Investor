@@ -1,0 +1,27 @@
+/* AutoCoderSandbox.css */
+
+.auto-coder-container {
+    background-color: #050505;
+    background-image:
+        linear-gradient(rgba(0, 255, 70, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 70, 0.03) 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+/* Scrollbar for 'Hacker' look */
+.auto-coder-container ::-webkit-scrollbar {
+    width: 8px;
+}
+
+.auto-coder-container ::-webkit-scrollbar-track {
+    background: #001100;
+}
+
+.auto-coder-container ::-webkit-scrollbar-thumb {
+    background: #004400;
+    border: 1px solid #00ff00;
+}
+
+.auto-coder-container ::-webkit-scrollbar-thumb:hover {
+    background: #006600;
+}

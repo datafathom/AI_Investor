@@ -1,7 +1,7 @@
 
 import { apiClient } from '../utils/apiClient';
 
-const API_PATH = '/v1/homeostasis';
+const API_PATH = '/api/v1/homeostasis';
 
 export const homeostasisService = {
     /**

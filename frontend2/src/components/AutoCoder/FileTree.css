@@ -1,0 +1,38 @@
+.file-tree-container {
+    user-select: none;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.file-tree-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    transition: all 0.1s ease;
+}
+
+.file-tree-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #f1f5f9;
+}
+
+.file-tree-item.active {
+    background: rgba(59, 130, 246, 0.1);
+    color: #60a5fa;
+    border-right: 2px solid #3b82f6;
+}
+
+.file-icon {
+    width: 14px;
+    height: 14px;
+    opacity: 0.7;
+}
+
+.folder-icon {
+    width: 14px;
+    height: 14px;
+    color: #f59e0b;
+}

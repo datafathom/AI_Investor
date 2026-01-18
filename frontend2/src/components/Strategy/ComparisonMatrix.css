@@ -1,0 +1,7 @@
+.optimization-matrix-cell {
+    transition: opacity 0.2s ease;
+}
+
+.optimization-matrix-cell:hover {
+    opacity: 0.8;
+}

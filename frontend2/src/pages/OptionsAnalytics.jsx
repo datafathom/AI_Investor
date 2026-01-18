@@ -1,28 +1,78 @@
-
 import React from 'react';
-import { Target, BarChart3 } from 'lucide-react';
+import { Target, BarChart3, TrendingUp, Search } from 'lucide-react';
+import VolatilitySurface from '../components/Options/VolatilitySurface';
+import StrategyBuilder from '../components/Options/StrategyBuilder';
+import GreeksDashboard from '../components/Options/GreeksDashboard';
+
+import './OptionsAnalytics.css';
 
 const OptionsAnalytics = () => {
     return (
-        <div className="options-analytics-page glass p-8">
-            <div className="header flex items-center gap-4 mb-8">
-                <Target size={32} className="text-burgundy" />
-                <h1 className="text-3xl font-bold">Options Strategy Analytics</h1>
+        <div className="options-analytics-page bg-slate-950 min-h-screen text-slate-300 p-8 flex flex-col gap-6">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-2">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
+                        <Target size={32} className="text-indigo-400" />
+                    </div>
+                    <div>
+                        <h1 className="text-3xl font-bold font-display text-white">Options Analytics</h1>
+                        <p className="text-slate-400 text-sm font-mono">Derivatives Pricing & Risk Engine</p>
+                    </div>
+                </div>
+
+                <div className="flex gap-4">
+                    <div className="bg-slate-900 border border-slate-700 px-4 py-2 rounded-lg text-right interact-hover transition-all">
+                        <span className="block text-[10px] text-slate-500 uppercase">Implied Vol (30D)</span>
+                        <span className="text-lg font-mono text-white text-glow-cyan">18.4%</span>
+                    </div>
+                    <div className="bg-slate-900 border border-slate-700 px-4 py-2 rounded-lg text-right">
+                        <span className="block text-[10px] text-slate-500 uppercase">Put/Call Ratio</span>
+                        <span className="text-lg font-mono text-emerald-400">0.85</span>
+                    </div>
+                </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="card glass p-6 min-h-[400px] flex items-center justify-center border-dashed border-2 border-gray-400">
-                    <div className="text-center opacity-50">
-                        <BarChart3 size={48} className="mx-auto mb-4" />
-                        <p>Greeks Visualizer (Phase 46)</p>
+            {/* Top Row: Greeks & Exposure */}
+            <div className="glass-panel p-4 bg-slate-900/50 border border-slate-800 rounded-xl glass-premium shadow-indigo-900/20">
+                <h3 className="text-xs font-bold text-slate-500 uppercase px-2 mb-4 flex items-center gap-2">
+                    <TrendingUp size={14} /> Portfolio Exposure (Greeks)
+                </h3>
+                <GreeksDashboard />
+            </div>
+
+            {/* Main Content Info Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+
+                {/* Left: Volatility Surface */}
+                <div className="lg:col-span-7 glass-panel p-6 bg-slate-900/40 border border-slate-800 rounded-xl flex flex-col glass-premium shadow-sky-900/20">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                            <BarChart3 size={20} className="text-sky-400" /> Volatility Surface
+                        </h3>
+                        <div className="flex gap-2">
+                            {['SPY', 'QQQ', 'IWM'].map(t => (
+                                <button key={t} className="px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded text-xs font-bold transition-all interact-hover">{t}</button>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="flex-1 overflow-hidden">
+                        <VolatilitySurface />
                     </div>
                 </div>
-                <div className="card glass p-6 min-h-[400px] flex items-center justify-center border-dashed border-2 border-gray-400">
-                    <div className="text-center opacity-50">
-                        <Target size={48} className="mx-auto mb-4" />
-                        <p>Strategy Modeler (Phase 46)</p>
+
+                {/* Right: Strategy Builder */}
+                <div className="lg:col-span-5 glass-panel p-6 bg-slate-900/40 border border-slate-800 rounded-xl flex flex-col glass-premium shadow-amber-900/20">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                            <Search size={20} className="text-amber-400" /> Strategy Builder
+                        </h3>
+                    </div>
+                    <div className="flex-1 overflow-hidden">
+                        <StrategyBuilder />
                     </div>
                 </div>
+
             </div>
         </div>
     );

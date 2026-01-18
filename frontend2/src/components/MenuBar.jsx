@@ -22,6 +22,7 @@ const MENU_ITEMS = [
       { type: 'divider' },
       { label: 'Options Analytics', action: 'show-options' },
       { label: 'Backtest Portfolio', action: 'show-backtest' },
+      { label: 'Virtual Brokerage', action: 'show-brokerage' },
       { label: 'Global Scanner', action: 'show-scanner' },
       { type: 'divider' },
       { label: 'New Dashboard', action: 'new-dashboard', shortcut: 'Ctrl+N' },

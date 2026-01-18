@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Target } from 'lucide-react';
 import { useSymbolLinking } from '../../../hooks/useSymbolLinking';
-import useTradingStore from '../../../stores/tradingStore';
+import { useTradingStore } from '../../../store/tradingStore';
 
 const OptionsChainWidget = ({ linkingGroup = 'none' }) => {
     const { optionsChain, setOptionsExpiration, updateOptionsStrikes } = useTradingStore();

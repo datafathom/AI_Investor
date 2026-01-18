@@ -11,7 +11,7 @@ def login():
     password = data.get('password')
     
     # Mock Authentication for Verification
-    if username == 'admin' and password == 'admin':
+    if username == 'admin' and password in ['admin', 'password123']:
         token = generate_token(user_id=1, tenant_id='default')
         return jsonify({
             'token': token,

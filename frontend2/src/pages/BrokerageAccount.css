@@ -1,0 +1,45 @@
+/* BrokerageAccount.css */
+
+.brokerage-container {
+    background: #0f172a;
+    /* Slate 900 base */
+}
+
+/* Neo-Bank Panel */
+.glass-panel-neo {
+    background: rgba(30, 41, 59, 0.7);
+    /* Slate 800 */
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.text-secondary {
+    color: #94a3b8;
+    /* Slate 400 */
+}
+
+.animate-spin-slow {
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Custom Scrollbar for Ledger */
+.glass-panel-neo ::-webkit-scrollbar {
+    width: 6px;
+}
+
+.glass-panel-neo ::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 3px;
+}

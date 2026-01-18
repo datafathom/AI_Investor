@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useState, useRef, useCallback, Suspense, lazy } from 'react';
 import GridLayout from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
@@ -9,6 +8,7 @@ import WindowHeader from '../components/WindowHeader';
 import { SimpleBarChart, SimplePieChart, SimpleLineChart, SimpleAreaChart } from '../components/Charts/SimpleCharts';
 import { authService } from '../utils/authService';
 import io from 'socket.io-client';
+import { Activity, Zap, TrendingUp, Globe, Clock, ShieldAlert } from 'lucide-react';
 
 // AI Investor Widgets
 import MonitorWidget from '../components/AI_Investor/Views/MonitorWidget';
@@ -28,253 +28,334 @@ const MovingAverageChart = lazy(() => import('../components/Charts/SimpleCharts'
 const AudioWaveform = lazy(() => import('../components/Charts/SimpleCharts').then(module => ({ default: module.AudioWaveform })));
 
 const WIDGET_TITLES = {
-  'monitor-view': 'Market Monitor',
-  'command-view': 'Command Center',
-  'research-view': 'Data Research',
-  'portfolio-view': 'Live Portfolio',
-  'window-manager': 'Window Manager',
-  api: 'API Integration',
-  palette: 'Color System',
-  docker: 'Docker Containers',
-  checklist: 'Launch Checklist',
-  telemetry: 'Server Telemetry',
-  ux: 'Experience Controls',
-  socketio: 'Socket.io Realtime',
-  'ping-api': 'Ping API',
-  'server-status': 'Server Status',
-  'bar-chart': 'Bar Chart',
-  'pie-chart': 'Pie Chart',
-  'line-chart': 'Line Chart',
-  'area-chart': 'Area Chart',
-  'scatter-plot': 'Scatter Plot',
-  'moving-average': 'Moving Average',
-  'audio-waveform': 'Audio Waveform',
-  'homeostasis-view': 'Total Homeostasis',
-  'options-chain-view': 'Options Chain / Greeks',
-  'market-depth-view': 'Level 2 Market Depth (DOM)',
-  'trade-tape-view': 'Live Trade Tape (Time & Sales)'
+    'monitor-view': 'Market Monitor',
+    'command-view': 'Command Center',
+    'research-view': 'Data Research',
+    'portfolio-view': 'Live Portfolio',
+    'window-manager': 'Window Manager',
+    api: 'API Integration',
+    palette: 'Color System',
+    docker: 'Docker Containers',
+    checklist: 'Launch Checklist',
+    telemetry: 'Server Telemetry',
+    ux: 'Experience Controls',
+    socketio: 'Socket.io Realtime',
+    'ping-api': 'Ping API',
+    'server-status': 'Server Status',
+    'bar-chart': 'Bar Chart',
+    'pie-chart': 'Pie Chart',
+    'line-chart': 'Line Chart',
+    'area-chart': 'Area Chart',
+    'scatter-plot': 'Scatter Plot',
+    'moving-average': 'Moving Average',
+    'audio-waveform': 'Audio Waveform',
+    'homeostasis-view': 'Total Homeostasis',
+    'options-chain-view': 'Options Chain / Greeks',
+    'market-depth-view': 'Level 2 Market Depth (DOM)',
+    'trade-tape-view': 'Live Trade Tape (Time & Sales)'
 };
 
 const DEFAULT_LAYOUT = [
-  { i: 'monitor-view', x: 0, y: 0, w: 24, h: 20, minW: 16, minH: 10, maxW: 48 },
-  { i: 'command-view', x: 24, y: 0, w: 24, h: 10, minW: 16, minH: 8, maxW: 48 },
-  { i: 'portfolio-view', x: 24, y: 10, w: 24, h: 10, minW: 16, minH: 8, maxW: 48 },
-  { i: 'research-view', x: 0, y: 20, w: 24, h: 12, minW: 16, minH: 8, maxW: 48 },
-  { i: 'homeostasis-view', x: 24, y: 20, w: 24, h: 12, minW: 16, minH: 8, maxW: 48 },
-  { i: 'options-chain-view', x: 0, y: 32, w: 24, h: 15, minW: 16, minH: 10, maxW: 48 },
-  { i: 'market-depth-view', x: 24, y: 32, w: 12, h: 15, minW: 8, minH: 10, maxW: 24 },
-  { i: 'trade-tape-view', x: 36, y: 32, w: 12, h: 15, minW: 8, minH: 10, maxW: 24 },
-  { i: 'socketio', x: 0, y: 47, w: 24, h: 7, minW: 16, minH: 4, maxW: 48 },
+    { i: 'monitor-view', x: 0, y: 0, w: 24, h: 20, minW: 16, minH: 14, maxW: 48 },
+    { i: 'command-view', x: 24, y: 0, w: 24, h: 10, minW: 16, minH: 10, maxW: 48 },
+    { i: 'portfolio-view', x: 24, y: 10, w: 24, h: 10, minW: 16, minH: 10, maxW: 48 },
+    { i: 'research-view', x: 0, y: 20, w: 24, h: 12, minW: 16, minH: 10, maxW: 48 },
+    { i: 'homeostasis-view', x: 24, y: 20, w: 24, h: 12, minW: 16, minH: 10, maxW: 48 },
+    { i: 'options-chain-view', x: 0, y: 32, w: 24, h: 15, minW: 16, minH: 12, maxW: 48 },
+    { i: 'market-depth-view', x: 24, y: 32, w: 12, h: 15, minW: 8, minH: 12, maxW: 24 },
+    { i: 'trade-tape-view', x: 36, y: 32, w: 12, h: 15, minW: 8, minH: 12, maxW: 24 },
+    { i: 'socketio', x: 0, y: 47, w: 24, h: 7, minW: 16, minH: 6, maxW: 48 },
 ];
 
 const Dashboard = ({
-  setToast,
-  handleViewSource,
-  globalLock,
-  isDarkMode,
-  widgetStates,
-  setWidgetStates,
-  widgetVisibility,
-  setWidgetVisibility
+    setToast,
+    handleViewSource,
+    globalLock,
+    isDarkMode,
+    widgetStates,
+    setWidgetStates,
+    widgetVisibility,
+    setWidgetVisibility
 }) => {
-  const { layout, setLayout, resetLayout } = useWidgetLayout();
-  const [gridWidth, setGridWidth] = useState(1200);
+    const { layout, setLayout, resetLayout } = useWidgetLayout();
+    const [gridWidth, setGridWidth] = useState(1200);
+    const [marketPulse, setMarketPulse] = useState({
+        sentiment: 'BULLISH',
+        volatility: 'LOW',
+        nextEvent: 'FOMC (2h)',
+        activeAgents: 12
+    });
 
-  // Throttle layout changes
-  const layoutChangeTimerRef = useRef(null);
-  const pendingLayoutRef = useRef(null);
+    // Throttle layout changes
+    const layoutChangeTimerRef = useRef(null);
+    const pendingLayoutRef = useRef(null);
 
-  const throttledSetLayout = useCallback((newLayout) => {
-    pendingLayoutRef.current = newLayout;
-    if (!layoutChangeTimerRef.current) {
-      layoutChangeTimerRef.current = setTimeout(() => {
-        if (pendingLayoutRef.current) {
-          setLayout(pendingLayoutRef.current);
-          pendingLayoutRef.current = null;
+    // Mobile Logic
+    const isMobile = gridWidth < 768;
+
+    // Force single column stack on mobile, preserve desktop layout otherwise
+    const displayLayout = useMemo(() => {
+        if (!isMobile) return layout.filter(item => widgetVisibility[item.i] !== false);
+
+        // Sort by Y position to maintain natural reading order
+        const sorted = [...layout].filter(item => widgetVisibility[item.i] !== false).sort((a, b) => a.y - b.y || a.x - b.x);
+
+        let yOffset = 0;
+        return sorted.map(item => {
+            const newItem = {
+                ...item,
+                x: 0,
+                w: 48, // Full width (cols={48})
+                y: yOffset,
+                isDraggable: false, // Disable drag on mobile to prevent chaos
+                isResizable: false
+            };
+            yOffset += (newItem.h || 4); // Stack them
+            return newItem;
+        });
+    }, [layout, isMobile, widgetVisibility]);
+
+    const throttledSetLayout = useCallback((newLayout) => {
+        // DO NOT save layout changes when in mobile mode to prevent destroying desktop arrangement
+        if (window.innerWidth < 768) return;
+
+        pendingLayoutRef.current = newLayout;
+        if (!layoutChangeTimerRef.current) {
+            layoutChangeTimerRef.current = setTimeout(() => {
+                if (pendingLayoutRef.current) {
+                    setLayout(pendingLayoutRef.current);
+                    pendingLayoutRef.current = null;
+                }
+                layoutChangeTimerRef.current = null;
+            }, 50);
         }
-        layoutChangeTimerRef.current = null;
-      }, 50);
-    }
-  }, [setLayout]);
+    }, [setLayout]);
 
-  // Handle window resize
-  useEffect(() => {
-    const updateGridWidth = () => {
-      const container = document.querySelector('.widget-grid-container');
-      if (container) {
-        setGridWidth(container.offsetWidth - 32);
-      }
-    };
-    updateGridWidth();
-    window.addEventListener('resize', updateGridWidth);
-    return () => window.removeEventListener('resize', updateGridWidth);
-  }, []);
-
-  const handleWidgetMinimize = (widgetId) => {
-    const isCurrentlyMinimized = widgetStates[widgetId]?.minimized;
-    const currentLayoutItem = layout.find(item => item.i === widgetId);
-    if (!isCurrentlyMinimized) {
-      if (currentLayoutItem) {
-        setWidgetStates(prev => ({
-          ...prev,
-          [widgetId]: { ...prev[widgetId], minimized: true, maximized: false, savedHeight: currentLayoutItem.h },
-        }));
-        setLayout(prev => prev.map(item => item.i === widgetId ? { ...item, h: 1, minH: 1 } : item));
-      }
-    } else {
-      const savedHeight = widgetStates[widgetId]?.savedHeight;
-      const defaultLayout = DEFAULT_LAYOUT.find(item => item.i === widgetId);
-      const heightToRestore = savedHeight || defaultLayout?.h || 3;
-      setWidgetStates(prev => ({ ...prev, [widgetId]: { ...prev[widgetId], minimized: false, maximized: false } }));
-      setLayout(prev => prev.map(item => item.i === widgetId ? { ...item, h: heightToRestore, minH: defaultLayout?.minH || 2 } : item));
-    }
-  };
-
-  const handleWidgetMaximize = (widgetId) => {
-    const isCurrentlyMaximized = widgetStates[widgetId]?.maximized;
-    const currentLayoutItem = layout.find(item => item.i === widgetId);
-    if (!isCurrentlyMaximized) {
-      setTimeout(() => {
-        const widgetElement = document.querySelector(`[data-widget-id="${widgetId}"]`);
-        if (widgetElement) {
-          const contentSection = widgetElement.querySelector('section');
-          if (contentSection) {
-            const contentHeight = contentSection.scrollHeight;
-            const requiredRows = Math.ceil((contentHeight + 28) / 60);
-            if (currentLayoutItem) {
-              setWidgetStates(prev => ({
-                ...prev,
-                [widgetId]: { ...prev[widgetId], maximized: true, minimized: false, savedBeforeMaximize: { ...currentLayoutItem } },
-              }));
-              setLayout(prev => prev.map(item => item.i === widgetId ? { ...item, x: 0, y: 0, h: Math.max(requiredRows, item.minH || 2), w: Math.min(Math.max(item.w, 6), item.maxW || 48) } : item));
+    // Handle window resize
+    useEffect(() => {
+        const updateGridWidth = () => {
+            // Try explicit container first, else fallback to window width minus padding
+            const container = document.querySelector('.dashboard-container') || document.querySelector('.terminal-workspace');
+            if (container) {
+                // Subtract padding (approx 32px for margins)
+                setGridWidth(container.offsetWidth - 32);
+            } else {
+                setGridWidth(window.innerWidth - 32);
             }
-          }
+        };
+
+        // Initial calc
+        updateGridWidth();
+
+        // Add listener
+        window.addEventListener('resize', updateGridWidth);
+
+        // Cleanup
+        return () => window.removeEventListener('resize', updateGridWidth);
+    }, []);
+
+    const handleWidgetMinimize = (widgetId) => {
+        const isCurrentlyMinimized = widgetStates[widgetId]?.minimized;
+        const currentLayoutItem = layout.find(item => item.i === widgetId);
+        if (!isCurrentlyMinimized) {
+            if (currentLayoutItem) {
+                setWidgetStates(prev => ({
+                    ...prev,
+                    [widgetId]: { ...prev[widgetId], minimized: true, maximized: false, savedHeight: currentLayoutItem.h },
+                }));
+                setLayout(prev => prev.map(item => item.i === widgetId ? { ...item, h: 1, minH: 1 } : item));
+            }
+        } else {
+            const savedHeight = widgetStates[widgetId]?.savedHeight;
+            const defaultLayout = DEFAULT_LAYOUT.find(item => item.i === widgetId);
+            const heightToRestore = savedHeight || defaultLayout?.h || 3;
+            setWidgetStates(prev => ({ ...prev, [widgetId]: { ...prev[widgetId], minimized: false, maximized: false } }));
+            setLayout(prev => prev.map(item => item.i === widgetId ? { ...item, h: heightToRestore, minH: defaultLayout?.minH || 2 } : item));
         }
-      }, 0);
-    } else {
-      const saved = widgetStates[widgetId]?.savedBeforeMaximize;
-      if (saved) {
-        setWidgetStates(prev => ({ ...prev, [widgetId]: { ...prev[widgetId], maximized: false } }));
-        setLayout(prev => prev.map(item => item.i === widgetId ? { ...item, x: saved.x, y: saved.y, w: saved.w, h: saved.h } : item));
-      }
-    }
-  };
+    };
 
-  const handleWidgetClose = (widgetId) => {
-    const currentLayoutItem = layout.find(item => item.i === widgetId);
-    if (currentLayoutItem) {
-      setWidgetStates(prev => ({ ...prev, [widgetId]: { ...prev[widgetId], lastLayout: { ...currentLayoutItem } } }));
-    }
-    setWidgetVisibility(prev => ({ ...prev, [widgetId]: false }));
-  };
+    const handleWidgetMaximize = (widgetId) => {
+        const isCurrentlyMaximized = widgetStates[widgetId]?.maximized;
+        const currentLayoutItem = layout.find(item => item.i === widgetId);
+        if (!isCurrentlyMaximized) {
+            setTimeout(() => {
+                const widgetElement = document.querySelector(`[data-widget-id="${widgetId}"]`);
+                if (widgetElement) {
+                    const contentSection = widgetElement.querySelector('section');
+                    if (contentSection) {
+                        const contentHeight = contentSection.scrollHeight;
+                        const requiredRows = Math.ceil((contentHeight + 28) / 60);
+                        if (currentLayoutItem) {
+                            setWidgetStates(prev => ({
+                                ...prev,
+                                [widgetId]: { ...prev[widgetId], maximized: true, minimized: false, savedBeforeMaximize: { ...currentLayoutItem } },
+                            }));
+                            setLayout(prev => prev.map(item => item.i === widgetId ? { ...item, x: 0, y: 0, h: Math.max(requiredRows, item.minH || 2), w: Math.min(Math.max(item.w, 6), item.maxW || 48) } : item));
+                        }
+                    }
+                }
+            }, 0);
+        } else {
+            const saved = widgetStates[widgetId]?.savedBeforeMaximize;
+            if (saved) {
+                setWidgetStates(prev => ({ ...prev, [widgetId]: { ...prev[widgetId], maximized: false } }));
+                setLayout(prev => prev.map(item => item.i === widgetId ? { ...item, x: saved.x, y: saved.y, w: saved.w, h: saved.h } : item));
+            }
+        }
+    };
 
-  const handleWidgetLock = (widgetId) => {
-    setWidgetStates(prev => ({ ...prev, [widgetId]: { ...prev[widgetId], locked: !prev[widgetId]?.locked } }));
-  };
+    const handleWidgetClose = (widgetId) => {
+        const currentLayoutItem = layout.find(item => item.i === widgetId);
+        if (currentLayoutItem) {
+            setWidgetStates(prev => ({ ...prev, [widgetId]: { ...prev[widgetId], lastLayout: { ...currentLayoutItem } } }));
+        }
+        setWidgetVisibility(prev => ({ ...prev, [widgetId]: false }));
+    };
 
-  const handleLinkingGroupChange = (widgetId, group) => {
-    setWidgetStates(prev => ({ ...prev, [widgetId]: { ...prev[widgetId], linkingGroup: group } }));
-  };
+    const handleWidgetLock = (widgetId) => {
+        setWidgetStates(prev => ({ ...prev, [widgetId]: { ...prev[widgetId], locked: !prev[widgetId]?.locked } }));
+    };
 
-  const handleMinimumFullView = (widgetId) => {
-    const currentLayoutItem = layout.find(item => item.i === widgetId);
-    if (!currentLayoutItem) return;
-    setTimeout(() => {
-      const widgetElement = document.querySelector(`[data-widget-id="${widgetId}"]`);
-      if (!widgetElement) return;
-      const contentSection = widgetElement.querySelector('section');
-      if (!contentSection) return;
-      const requiredHeight = contentSection.scrollHeight + 28;
-      const requiredRows = Math.ceil(requiredHeight / 60);
-      setLayout(prev => prev.map(item => item.i === widgetId ? { ...item, h: Math.max(item.minH || 2, requiredRows) } : item));
-    }, 0);
-  };
+    const handleLinkingGroupChange = (widgetId, group) => {
+        setWidgetStates(prev => ({ ...prev, [widgetId]: { ...prev[widgetId], linkingGroup: group } }));
+    };
 
-  return (
-    <GridLayout
-      className="layout"
-      layout={layout.filter(item => widgetVisibility[item.i] !== false)}
-      onLayoutChange={throttledSetLayout}
-      cols={48}
-      rowHeight={60}
-      width={gridWidth}
-      isDraggable={!globalLock}
-      isResizable={!globalLock}
-      draggableHandle=".widget-drag-handle"
-      resizeHandles={['se', 'sw', 'ne', 'nw', 's', 'n', 'e', 'w']}
-      margin={[8, 8]}
-      containerPadding={[0, 0]}
-      useCSSTransforms={true}
-      compactType="vertical"
-      preventCollision={false}
-    >
-      {widgetVisibility['monitor-view'] !== false && (
-        <div key="monitor-view" data-widget-id="monitor-view" className={`widget-wrapper ${widgetStates['monitor-view']?.minimized ? 'minimized' : ''} ${widgetStates['monitor-view']?.maximized ? 'maximized' : ''}`}>
-          <WindowHeader title={WIDGET_TITLES['monitor-view']} onMinimize={() => handleWidgetMinimize('monitor-view')} onMaximize={() => handleWidgetMaximize('monitor-view')} onClose={() => handleWidgetClose('monitor-view')} onLock={() => handleWidgetLock('monitor-view')} onMinimumFullView={() => handleMinimumFullView('monitor-view')} onViewSource={() => handleViewSource('monitor-view')} isMaximized={widgetStates['monitor-view']?.maximized} isLocked={widgetStates['monitor-view']?.locked} linkingGroup={widgetStates['monitor-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('monitor-view', g)} />
-          <div className="widget-drag-handle"><span></span></div>
-          {!widgetStates['monitor-view']?.minimized && <section className="glass card"><MonitorWidget /></section>}
+    const handleMinimumFullView = (widgetId) => {
+        const currentLayoutItem = layout.find(item => item.i === widgetId);
+        if (!currentLayoutItem) return;
+        setTimeout(() => {
+            const widgetElement = document.querySelector(`[data-widget-id="${widgetId}"]`);
+            if (!widgetElement) return;
+            const contentSection = widgetElement.querySelector('section');
+            if (!contentSection) return;
+            const requiredHeight = contentSection.scrollHeight + 28;
+            const requiredRows = Math.ceil(requiredHeight / 60);
+            setLayout(prev => prev.map(item => item.i === widgetId ? { ...item, h: Math.max(item.minH || 2, requiredRows) } : item));
+        }, 0);
+    };
+
+    return (
+        <div className="dashboard-container relative">
+            {/* MARKET PULSE HERO */}
+            <div className="bg-slate-900/50 border-b border-indigo-500/20 px-8 py-6 mb-4 backdrop-blur-md">
+                <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-6">
+                        <div className="flex flex-col">
+                            <span className="text-xs text-indigo-400 font-bold tracking-widest uppercase mb-1">Market Sentiment</span>
+                            <div className="flex items-center gap-2">
+                                <TrendingUp className="text-green-400" size={24} />
+                                <span className="text-2xl font-bold text-white tracking-tight">{marketPulse.sentiment}</span>
+                            </div>
+                        </div>
+                        <div className="h-10 w-px bg-indigo-500/30"></div>
+                        <div className="flex flex-col">
+                            <span className="text-xs text-indigo-400 font-bold tracking-widest uppercase mb-1">Volatility VIX</span>
+                            <span className="text-lg font-mono text-white">13.42 <span className="text-xs text-green-400">(-2.1%)</span></span>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-8">
+                        <div className="flex items-center gap-3 bg-indigo-900/20 px-4 py-2 rounded-full border border-indigo-500/30">
+                            <Activity size={18} className="text-indigo-400 animate-pulse" />
+                            <span className="text-sm text-indigo-200">System Homeostasis: <span className="text-white font-bold">OPTIMAL</span></span>
+                        </div>
+                        <div className="flex items-center gap-3 bg-fuchsia-900/20 px-4 py-2 rounded-full border border-fuchsia-500/30">
+                            <Zap size={18} className="text-fuchsia-400" />
+                            <span className="text-sm text-fuchsia-200">Active Agents: <span className="text-white font-bold">{marketPulse.activeAgents}</span></span>
+                        </div>
+                        <div className="flex items-center gap-3 bg-orange-900/20 px-4 py-2 rounded-full border border-orange-500/30">
+                            <Clock size={18} className="text-orange-400" />
+                            <span className="text-sm text-orange-200">Next Event: <span className="text-white font-bold">{marketPulse.nextEvent}</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <GridLayout
+                className="layout"
+                layout={displayLayout}
+                onLayoutChange={throttledSetLayout}
+                cols={48}
+                rowHeight={60}
+                width={gridWidth}
+                isDraggable={!globalLock}
+                isResizable={!globalLock}
+                draggableHandle=".widget-drag-handle"
+                resizeHandles={['se', 'sw', 'ne', 'nw', 's', 'n', 'e', 'w']}
+                margin={[8, 8]}
+                containerPadding={[0, 0]}
+                useCSSTransforms={true}
+                compactType="vertical"
+                preventCollision={false}
+            >
+                {widgetVisibility['monitor-view'] !== false && (
+                    <div key="monitor-view" data-widget-id="monitor-view" className={`widget-wrapper ${widgetStates['monitor-view']?.minimized ? 'minimized' : ''} ${widgetStates['monitor-view']?.maximized ? 'maximized' : ''}`}>
+                        <WindowHeader title={WIDGET_TITLES['monitor-view']} onMinimize={() => handleWidgetMinimize('monitor-view')} onMaximize={() => handleWidgetMaximize('monitor-view')} onClose={() => handleWidgetClose('monitor-view')} onLock={() => handleWidgetLock('monitor-view')} onMinimumFullView={() => handleMinimumFullView('monitor-view')} onViewSource={() => handleViewSource('monitor-view')} isMaximized={widgetStates['monitor-view']?.maximized} isLocked={widgetStates['monitor-view']?.locked} linkingGroup={widgetStates['monitor-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('monitor-view', g)} />
+                        <div className="widget-drag-handle"><span></span></div>
+                        {!widgetStates['monitor-view']?.minimized && <section className="glass card"><MonitorWidget /></section>}
+                    </div>
+                )}
+                {widgetVisibility['command-view'] !== false && (
+                    <div key="command-view" data-widget-id="command-view" className={`widget-wrapper ${widgetStates['command-view']?.minimized ? 'minimized' : ''} ${widgetStates['command-view']?.maximized ? 'maximized' : ''}`}>
+                        <WindowHeader title={WIDGET_TITLES['command-view']} onMinimize={() => handleWidgetMinimize('command-view')} onMaximize={() => handleWidgetMaximize('command-view')} onClose={() => handleWidgetClose('command-view')} onLock={() => handleWidgetLock('command-view')} onMinimumFullView={() => handleMinimumFullView('command-view')} onViewSource={() => handleViewSource('command-view')} isMaximized={widgetStates['command-view']?.maximized} isLocked={widgetStates['command-view']?.locked} linkingGroup={widgetStates['command-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('command-view', g)} />
+                        <div className="widget-drag-handle"><span></span></div>
+                        {!widgetStates['command-view']?.minimized && <section className="glass card"><CommandWidget /></section>}
+                    </div>
+                )}
+                {widgetVisibility['portfolio-view'] !== false && (
+                    <div key="portfolio-view" data-widget-id="portfolio-view" className={`widget-wrapper ${widgetStates['portfolio-view']?.minimized ? 'minimized' : ''} ${widgetStates['portfolio-view']?.maximized ? 'maximized' : ''}`}>
+                        <WindowHeader title={WIDGET_TITLES['portfolio-view']} onMinimize={() => handleWidgetMinimize('portfolio-view')} onMaximize={() => handleWidgetMaximize('portfolio-view')} onClose={() => handleWidgetClose('portfolio-view')} onLock={() => handleWidgetLock('portfolio-view')} onMinimumFullView={() => handleMinimumFullView('portfolio-view')} onViewSource={() => handleViewSource('portfolio-view')} isMaximized={widgetStates['portfolio-view']?.maximized} isLocked={widgetStates['portfolio-view']?.locked} linkingGroup={widgetStates['portfolio-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('portfolio-view', g)} />
+                        <div className="widget-drag-handle"><span></span></div>
+                        {!widgetStates['portfolio-view']?.minimized && <section className="glass card"><PortfolioWidget /></section>}
+                    </div>
+                )}
+                {widgetVisibility['research-view'] !== false && (
+                    <div key="research-view" data-widget-id="research-view" className={`widget-wrapper ${widgetStates['research-view']?.minimized ? 'minimized' : ''} ${widgetStates['research-view']?.maximized ? 'maximized' : ''}`}>
+                        <WindowHeader title={WIDGET_TITLES['research-view']} onMinimize={() => handleWidgetMinimize('research-view')} onMaximize={() => handleWidgetMaximize('research-view')} onClose={() => handleWidgetClose('research-view')} onLock={() => handleWidgetLock('research-view')} onMinimumFullView={() => handleMinimumFullView('research-view')} onViewSource={() => handleViewSource('research-view')} isMaximized={widgetStates['research-view']?.maximized} isLocked={widgetStates['research-view']?.locked} linkingGroup={widgetStates['research-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('research-view', g)} />
+                        <div className="widget-drag-handle"><span></span></div>
+                        {!widgetStates['research-view']?.minimized && <section className="glass card"><ResearchWidget /></section>}
+                    </div>
+                )}
+                {/* Charts */}
+                {widgetVisibility['bar-chart'] !== false && (
+                    <div key="bar-chart" data-widget-id="bar-chart" className={`widget-wrapper ${widgetStates['bar-chart']?.minimized ? 'minimized' : ''} ${widgetStates['bar-chart']?.maximized ? 'maximized' : ''}`}>
+                        <WindowHeader title={WIDGET_TITLES['bar-chart']} onMinimize={() => handleWidgetMinimize('bar-chart')} onMaximize={() => handleWidgetMaximize('bar-chart')} onClose={() => handleWidgetClose('bar-chart')} onLock={() => handleWidgetLock('bar-chart')} onMinimumFullView={() => handleMinimumFullView('bar-chart')} onViewSource={() => handleViewSource('bar-chart')} isMaximized={widgetStates['bar-chart']?.maximized} isLocked={widgetStates['bar-chart']?.locked} />
+                        <div className="widget-drag-handle"><span></span></div>
+                        {!widgetStates['bar-chart']?.minimized && <section className="glass card chart-card"><div style={{ flex: 1 }}><SimpleBarChart /></div></section>}
+                    </div>
+                )}
+                {widgetVisibility['homeostasis-view'] !== false && (
+                    <div key="homeostasis-view" data-widget-id="homeostasis-view" className={`widget-wrapper ${widgetStates['homeostasis-view']?.minimized ? 'minimized' : ''} ${widgetStates['homeostasis-view']?.maximized ? 'maximized' : ''}`}>
+                        <WindowHeader title={WIDGET_TITLES['homeostasis-view']} onMinimize={() => handleWidgetMinimize('homeostasis-view')} onMaximize={() => handleWidgetMaximize('homeostasis-view')} onClose={() => handleWidgetClose('homeostasis-view')} onLock={() => handleWidgetLock('homeostasis-view')} onMinimumFullView={() => handleMinimumFullView('homeostasis-view')} onViewSource={() => handleViewSource('homeostasis-view')} isMaximized={widgetStates['homeostasis-view']?.maximized} isLocked={widgetStates['homeostasis-view']?.locked} linkingGroup={widgetStates['homeostasis-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('homeostasis-view', g)} />
+                        <div className="widget-drag-handle"><span></span></div>
+                        {!widgetStates['homeostasis-view']?.minimized && <section className="glass card"><HomeostasisWidget /></section>}
+                    </div>
+                )}
+                {widgetVisibility['options-chain-view'] !== false && (
+                    <div key="options-chain-view" data-widget-id="options-chain-view" className={`widget-wrapper ${widgetStates['options-chain-view']?.minimized ? 'minimized' : ''} ${widgetStates['options-chain-view']?.maximized ? 'maximized' : ''}`}>
+                        <WindowHeader title={WIDGET_TITLES['options-chain-view']} onMinimize={() => handleWidgetMinimize('options-chain-view')} onMaximize={() => handleWidgetMaximize('options-chain-view')} onClose={() => handleWidgetClose('options-chain-view')} onLock={() => handleWidgetLock('options-chain-view')} onMinimumFullView={() => handleMinimumFullView('options-chain-view')} onViewSource={() => handleViewSource('options-chain-view')} isMaximized={widgetStates['options-chain-view']?.maximized} isLocked={widgetStates['options-chain-view']?.locked} linkingGroup={widgetStates['options-chain-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('options-chain-view', g)} />
+                        <div className="widget-drag-handle"><span></span></div>
+                        {!widgetStates['options-chain-view']?.minimized && <Suspense fallback={<div>Loading...</div>}><section className="glass card"><OptionsChainWidget linkingGroup={widgetStates['options-chain-view']?.linkingGroup || 'none'} /></section></Suspense>}
+                    </div>
+                )}
+                {widgetVisibility['market-depth-view'] !== false && (
+                    <div key="market-depth-view" data-widget-id="market-depth-view" className={`widget-wrapper ${widgetStates['market-depth-view']?.minimized ? 'minimized' : ''} ${widgetStates['market-depth-view']?.maximized ? 'maximized' : ''}`}>
+                        <WindowHeader title={WIDGET_TITLES['market-depth-view']} onMinimize={() => handleWidgetMinimize('market-depth-view')} onMaximize={() => handleWidgetMaximize('market-depth-view')} onClose={() => handleWidgetClose('market-depth-view')} onLock={() => handleWidgetLock('market-depth-view')} onMinimumFullView={() => handleMinimumFullView('market-depth-view')} onViewSource={() => handleViewSource('market-depth-view')} isMaximized={widgetStates['market-depth-view']?.maximized} isLocked={widgetStates['market-depth-view']?.locked} linkingGroup={widgetStates['market-depth-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('market-depth-view', g)} />
+                        <div className="widget-drag-handle"><span></span></div>
+                        {!widgetStates['market-depth-view']?.minimized && <Suspense fallback={<div>Loading...</div>}><section className="glass card"><MarketDepthWidget linkingGroup={widgetStates['market-depth-view']?.linkingGroup || 'none'} /></section></Suspense>}
+                    </div>
+                )}
+                {widgetVisibility['trade-tape-view'] !== false && (
+                    <div key="trade-tape-view" data-widget-id="trade-tape-view" className={`widget-wrapper ${widgetStates['trade-tape-view']?.minimized ? 'minimized' : ''} ${widgetStates['trade-tape-view']?.maximized ? 'maximized' : ''}`}>
+                        <WindowHeader title={WIDGET_TITLES['trade-tape-view']} onMinimize={() => handleWidgetMinimize('trade-tape-view')} onMaximize={() => handleWidgetMaximize('trade-tape-view')} onClose={() => handleWidgetClose('trade-tape-view')} onLock={() => handleWidgetLock('trade-tape-view')} onMinimumFullView={() => handleMinimumFullView('trade-tape-view')} onViewSource={() => handleViewSource('trade-tape-view')} isMaximized={widgetStates['trade-tape-view']?.maximized} isLocked={widgetStates['trade-tape-view']?.locked} linkingGroup={widgetStates['trade-tape-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('trade-tape-view', g)} />
+                        <div className="widget-drag-handle"><span></span></div>
+                        {!widgetStates['trade-tape-view']?.minimized && <Suspense fallback={<div>Loading...</div>}><section className="glass card"><TradeTapeWidget linkingGroup={widgetStates['trade-tape-view']?.linkingGroup || 'none'} /></section></Suspense>}
+                    </div>
+                )}
+                {/* Add more widgets as needed */}
+            </GridLayout>
         </div>
-      )}
-      {widgetVisibility['command-view'] !== false && (
-        <div key="command-view" data-widget-id="command-view" className={`widget-wrapper ${widgetStates['command-view']?.minimized ? 'minimized' : ''} ${widgetStates['command-view']?.maximized ? 'maximized' : ''}`}>
-          <WindowHeader title={WIDGET_TITLES['command-view']} onMinimize={() => handleWidgetMinimize('command-view')} onMaximize={() => handleWidgetMaximize('command-view')} onClose={() => handleWidgetClose('command-view')} onLock={() => handleWidgetLock('command-view')} onMinimumFullView={() => handleMinimumFullView('command-view')} onViewSource={() => handleViewSource('command-view')} isMaximized={widgetStates['command-view']?.maximized} isLocked={widgetStates['command-view']?.locked} linkingGroup={widgetStates['command-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('command-view', g)} />
-          <div className="widget-drag-handle"><span></span></div>
-          {!widgetStates['command-view']?.minimized && <section className="glass card"><CommandWidget /></section>}
-        </div>
-      )}
-      {widgetVisibility['portfolio-view'] !== false && (
-        <div key="portfolio-view" data-widget-id="portfolio-view" className={`widget-wrapper ${widgetStates['portfolio-view']?.minimized ? 'minimized' : ''} ${widgetStates['portfolio-view']?.maximized ? 'maximized' : ''}`}>
-          <WindowHeader title={WIDGET_TITLES['portfolio-view']} onMinimize={() => handleWidgetMinimize('portfolio-view')} onMaximize={() => handleWidgetMaximize('portfolio-view')} onClose={() => handleWidgetClose('portfolio-view')} onLock={() => handleWidgetLock('portfolio-view')} onMinimumFullView={() => handleMinimumFullView('portfolio-view')} onViewSource={() => handleViewSource('portfolio-view')} isMaximized={widgetStates['portfolio-view']?.maximized} isLocked={widgetStates['portfolio-view']?.locked} linkingGroup={widgetStates['portfolio-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('portfolio-view', g)} />
-          <div className="widget-drag-handle"><span></span></div>
-          {!widgetStates['portfolio-view']?.minimized && <section className="glass card"><PortfolioWidget /></section>}
-        </div>
-      )}
-      {widgetVisibility['research-view'] !== false && (
-        <div key="research-view" data-widget-id="research-view" className={`widget-wrapper ${widgetStates['research-view']?.minimized ? 'minimized' : ''} ${widgetStates['research-view']?.maximized ? 'maximized' : ''}`}>
-          <WindowHeader title={WIDGET_TITLES['research-view']} onMinimize={() => handleWidgetMinimize('research-view')} onMaximize={() => handleWidgetMaximize('research-view')} onClose={() => handleWidgetClose('research-view')} onLock={() => handleWidgetLock('research-view')} onMinimumFullView={() => handleMinimumFullView('research-view')} onViewSource={() => handleViewSource('research-view')} isMaximized={widgetStates['research-view']?.maximized} isLocked={widgetStates['research-view']?.locked} linkingGroup={widgetStates['research-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('research-view', g)} />
-          <div className="widget-drag-handle"><span></span></div>
-          {!widgetStates['research-view']?.minimized && <section className="glass card"><ResearchWidget /></section>}
-        </div>
-      )}
-      {/* Charts */}
-      {widgetVisibility['bar-chart'] !== false && (
-        <div key="bar-chart" data-widget-id="bar-chart" className={`widget-wrapper ${widgetStates['bar-chart']?.minimized ? 'minimized' : ''} ${widgetStates['bar-chart']?.maximized ? 'maximized' : ''}`}>
-          <WindowHeader title={WIDGET_TITLES['bar-chart']} onMinimize={() => handleWidgetMinimize('bar-chart')} onMaximize={() => handleWidgetMaximize('bar-chart')} onClose={() => handleWidgetClose('bar-chart')} onLock={() => handleWidgetLock('bar-chart')} onMinimumFullView={() => handleMinimumFullView('bar-chart')} onViewSource={() => handleViewSource('bar-chart')} isMaximized={widgetStates['bar-chart']?.maximized} isLocked={widgetStates['bar-chart']?.locked} />
-          <div className="widget-drag-handle"><span></span></div>
-          {!widgetStates['bar-chart']?.minimized && <section className="glass card chart-card"><div style={{ flex: 1 }}><SimpleBarChart /></div></section>}
-        </div>
-      )}
-      {widgetVisibility['homeostasis-view'] !== false && (
-        <div key="homeostasis-view" data-widget-id="homeostasis-view" className={`widget-wrapper ${widgetStates['homeostasis-view']?.minimized ? 'minimized' : ''} ${widgetStates['homeostasis-view']?.maximized ? 'maximized' : ''}`}>
-          <WindowHeader title={WIDGET_TITLES['homeostasis-view']} onMinimize={() => handleWidgetMinimize('homeostasis-view')} onMaximize={() => handleWidgetMaximize('homeostasis-view')} onClose={() => handleWidgetClose('homeostasis-view')} onLock={() => handleWidgetLock('homeostasis-view')} onMinimumFullView={() => handleMinimumFullView('homeostasis-view')} onViewSource={() => handleViewSource('homeostasis-view')} isMaximized={widgetStates['homeostasis-view']?.maximized} isLocked={widgetStates['homeostasis-view']?.locked} linkingGroup={widgetStates['homeostasis-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('homeostasis-view', g)} />
-          <div className="widget-drag-handle"><span></span></div>
-          {!widgetStates['homeostasis-view']?.minimized && <section className="glass card"><HomeostasisWidget /></section>}
-        </div>
-      )}
-      {widgetVisibility['options-chain-view'] !== false && (
-        <div key="options-chain-view" data-widget-id="options-chain-view" className={`widget-wrapper ${widgetStates['options-chain-view']?.minimized ? 'minimized' : ''} ${widgetStates['options-chain-view']?.maximized ? 'maximized' : ''}`}>
-          <WindowHeader title={WIDGET_TITLES['options-chain-view']} onMinimize={() => handleWidgetMinimize('options-chain-view')} onMaximize={() => handleWidgetMaximize('options-chain-view')} onClose={() => handleWidgetClose('options-chain-view')} onLock={() => handleWidgetLock('options-chain-view')} onMinimumFullView={() => handleMinimumFullView('options-chain-view')} onViewSource={() => handleViewSource('options-chain-view')} isMaximized={widgetStates['options-chain-view']?.maximized} isLocked={widgetStates['options-chain-view']?.locked} linkingGroup={widgetStates['options-chain-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('options-chain-view', g)} />
-          <div className="widget-drag-handle"><span></span></div>
-          {!widgetStates['options-chain-view']?.minimized && <Suspense fallback={<div>Loading...</div>}><section className="glass card"><OptionsChainWidget linkingGroup={widgetStates['options-chain-view']?.linkingGroup || 'none'} /></section></Suspense>}
-        </div>
-      )}
-      {widgetVisibility['market-depth-view'] !== false && (
-        <div key="market-depth-view" data-widget-id="market-depth-view" className={`widget-wrapper ${widgetStates['market-depth-view']?.minimized ? 'minimized' : ''} ${widgetStates['market-depth-view']?.maximized ? 'maximized' : ''}`}>
-          <WindowHeader title={WIDGET_TITLES['market-depth-view']} onMinimize={() => handleWidgetMinimize('market-depth-view')} onMaximize={() => handleWidgetMaximize('market-depth-view')} onClose={() => handleWidgetClose('market-depth-view')} onLock={() => handleWidgetLock('market-depth-view')} onMinimumFullView={() => handleMinimumFullView('market-depth-view')} onViewSource={() => handleViewSource('market-depth-view')} isMaximized={widgetStates['market-depth-view']?.maximized} isLocked={widgetStates['market-depth-view']?.locked} linkingGroup={widgetStates['market-depth-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('market-depth-view', g)} />
-          <div className="widget-drag-handle"><span></span></div>
-          {!widgetStates['market-depth-view']?.minimized && <Suspense fallback={<div>Loading...</div>}><section className="glass card"><MarketDepthWidget linkingGroup={widgetStates['market-depth-view']?.linkingGroup || 'none'} /></section></Suspense>}
-        </div>
-      )}
-      {widgetVisibility['trade-tape-view'] !== false && (
-        <div key="trade-tape-view" data-widget-id="trade-tape-view" className={`widget-wrapper ${widgetStates['trade-tape-view']?.minimized ? 'minimized' : ''} ${widgetStates['trade-tape-view']?.maximized ? 'maximized' : ''}`}>
-          <WindowHeader title={WIDGET_TITLES['trade-tape-view']} onMinimize={() => handleWidgetMinimize('trade-tape-view')} onMaximize={() => handleWidgetMaximize('trade-tape-view')} onClose={() => handleWidgetClose('trade-tape-view')} onLock={() => handleWidgetLock('trade-tape-view')} onMinimumFullView={() => handleMinimumFullView('trade-tape-view')} onViewSource={() => handleViewSource('trade-tape-view')} isMaximized={widgetStates['trade-tape-view']?.maximized} isLocked={widgetStates['trade-tape-view']?.locked} linkingGroup={widgetStates['trade-tape-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('trade-tape-view', g)} />
-          <div className="widget-drag-handle"><span></span></div>
-          {!widgetStates['trade-tape-view']?.minimized && <Suspense fallback={<div>Loading...</div>}><section className="glass card"><TradeTapeWidget linkingGroup={widgetStates['trade-tape-view']?.linkingGroup || 'none'} /></section></Suspense>}
-        </div>
-      )}
-      {/* Add more widgets as needed */}
-    </GridLayout>
-  );
+    );
 };
 
 export default Dashboard;

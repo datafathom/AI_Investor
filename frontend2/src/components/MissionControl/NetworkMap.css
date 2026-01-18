@@ -1,0 +1,40 @@
+.network-map-container {
+    background: radial-gradient(circle at center, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.8) 100%);
+    border-radius: 12px;
+}
+
+.node-pulse {
+    animation: node-pulse 2s infinite;
+}
+
+@keyframes node-pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.connection-line {
+    stroke-dasharray: 5;
+    animation: dash 20s linear infinite;
+}
+
+@keyframes dash {
+    from {
+        stroke-dashoffset: 1000;
+    }
+
+    to {
+        stroke-dashoffset: 0;
+    }
+}

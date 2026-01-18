@@ -1,0 +1,18 @@
+@keyframes news-marquee {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.animate-news-marquee {
+    animation: news-marquee 40s linear infinite;
+}
+
+.news-ticker-bar {
+    background: rgba(69, 10, 10, 0.9);
+    border-top: 1px solid rgba(245, 158, 11, 0.3);
+}

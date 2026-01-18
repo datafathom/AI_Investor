@@ -118,7 +118,7 @@ export default defineConfig({
   // Development server configuration
   server: {
     // Port for the Vite dev server (can be overridden via VITE_PORT env var)
-    port: parseInt(process.env.VITE_PORT || process.env.PORT || '5176'),
+    port: parseInt(process.env.VITE_PORT || process.env.PORT || '5173'),
 
     // Ensure the server is only accessible locally (not on WAN)
     host: '127.0.0.1',
@@ -129,13 +129,13 @@ export default defineConfig({
       '/api': {
         // Target the Express backend server
         // BACKEND_PORT is set by run_nodeApps.py when starting the server
-        target: `http://localhost:${process.env.BACKEND_PORT || '5000'}`,
+        target: `http://localhost:${process.env.BACKEND_PORT || '5050'}`,
         changeOrigin: true,
         secure: false,
       },
       // Socket.io WebSocket proxy
       '/socket.io': {
-        target: `http://localhost:${process.env.BACKEND_PORT || '5000'}`,
+        target: `http://localhost:${process.env.BACKEND_PORT || '5050'}`,
         ws: true, // Enable WebSocket proxying
         changeOrigin: true,
       },

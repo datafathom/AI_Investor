@@ -10,6 +10,7 @@ import {
     MessageSquare,
     Code,
     Zap,
+    DollarSign,
     PieChart,
     Search,
     Layout
@@ -29,6 +30,7 @@ const SubHeaderNav = () => {
         { path: '/workspace/debate', label: 'Debate', icon: <MessageSquare size={14} /> },
         { path: '/workspace/autocoder', label: 'AutoCoder', icon: <Code size={14} /> },
         { path: '/scanner/global', label: 'Scanner', icon: <Search size={14} /> },
+        { path: '/portfolio/brokerage', label: 'Brokerage', icon: <DollarSign size={14} /> },
         { path: '/workspace/vr', label: 'VR Cockpit', icon: <Layout size={14} /> },
     ];
 

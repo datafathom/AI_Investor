@@ -36,8 +36,10 @@ const OptionsChainWidget = lazy(() => import('./components/AI_Investor/Views/Opt
 const MarketDepthWidget = lazy(() => import('./components/AI_Investor/Views/MarketDepthWidget'));
 const TradeTapeWidget = lazy(() => import('./components/AI_Investor/Views/TradeTapeWidget'));
 const GlobalScanner = lazy(() => import('./pages/GlobalScanner'));
+const BrokerageAccount = lazy(() => import('./pages/BrokerageAccount'));
+const AutoCoderSandbox = lazy(() => import('./pages/AutoCoderSandbox'));
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5000';
+const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
 const SOCKET_SERVER_URL = `http://localhost:${BACKEND_PORT}`;
 
 const INITIAL_MEMORY_POINTS = Array.from({ length: 100 }, (_, i) => 48 + Math.random() * 42);
@@ -140,6 +142,7 @@ function App() {
       case 'show-vr-cockpit': navigate('/workspace/vr'); break;
       case 'show-options': navigate('/analytics/options'); break;
       case 'show-backtest': navigate('/portfolio/backtest'); break;
+      case 'show-brokerage': navigate('/portfolio/brokerage'); break;
       case 'show-scanner': navigate('/scanner/global'); break;
       case 'toggle-theme': setIsDarkMode(!isDarkMode); break;
       case 'reset-layout': resetLayout(); break;
@@ -212,6 +215,8 @@ function App() {
                 <Route path="/workspace/vr" element={<VRCockpit />} />
                 <Route path="/analytics/options" element={<OptionsAnalytics />} />
                 <Route path="/portfolio/backtest" element={<BacktestPortfolio />} />
+                <Route path="/portfolio/brokerage" element={<BrokerageAccount />} />
+                <Route path="/workspace/auto-coder" element={<AutoCoderSandbox />} />
                 <Route path="/scanner/global" element={<GlobalScanner />} />
               </Routes>
             </Suspense>

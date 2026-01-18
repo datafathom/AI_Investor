@@ -12,8 +12,11 @@ class GlobalErrorBoundary extends React.Component {
     }
 
     componentDidCatch(error, errorInfo) {
-        console.error("Global Error Boundary caught an error:", error, errorInfo);
-        this.setState({ error, errorInfo });
+        console.error("Global Error Boundary caught an error", error, errorInfo);
+        this.setState({
+            error,
+            errorInfo: errorInfo || { componentStack: 'Not available' }
+        });
     }
 
     render() {
@@ -24,7 +27,7 @@ class GlobalErrorBoundary extends React.Component {
                     <details style={{ whiteSpace: 'pre-wrap' }}>
                         {this.state.error && this.state.error.toString()}
                         <br />
-                        {this.state.errorInfo.componentStack}
+                        {this.state.errorInfo ? this.state.errorInfo.componentStack : 'No stack trace available'}
                     </details>
                     <button
                         onClick={() => window.location.reload()}

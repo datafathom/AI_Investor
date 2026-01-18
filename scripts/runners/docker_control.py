@@ -16,14 +16,12 @@ def _get_compose_file():
         sys.exit(1)
     return compose_file
 
-def docker_up(lite: bool = False, build: bool = False):
+def docker_up(build: bool = False):
     """Start Docker containers using docker-compose."""
-    base_dir = os.path.dirname(_get_compose_file())
-    compose_file = os.path.join(base_dir, 'docker-compose.lite.yml') if lite else _get_compose_file()
+    compose_file = _get_compose_file()
     
-    mode_msg = " (Lite Mode: No potentially heavy services)" if lite else ""
     build_msg = " and rebuilding images" if build else ""
-    print(f"🚀 Starting Docker containers{mode_msg}{build_msg}...")
+    print(f"🚀 Starting Docker Infrastructure Containers{build_msg}...")
     
     # Force stop first to ensure clean state
     print("🧹 Pre-flight cleanup: Stopping any running containers...")
@@ -42,15 +40,14 @@ def docker_up(lite: bool = False, build: bool = False):
             cmd,
             check=True
         )
-        print("✅ Docker containers started successfully!")
+        print("✅ Docker Infrastructure started successfully!")
         print("\n📊 Services running on localhost:")
         print("   - Kafka: 127.0.0.1:9092")
         print("   - PostgreSQL: 127.0.0.1:5432")
         print("   - Neo4j HTTP: 127.0.0.1:7474")
         print("   - Neo4j Bolt: 127.0.0.1:7687")
-        print("   - Backend API: 127.0.0.1:5000")
-        print("   - Frontend GUI: 127.0.0.1:5178")
-    except subprocess.CalledProcessError as e:
+        print("\n👉 Remember to start Backend and Frontend on host separately.")
+    except subprocess.CalledProcessError:
         print(f"❌ Error starting containers.")
         sys.exit(1)
 

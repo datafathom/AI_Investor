@@ -1,0 +1,4 @@
+/* InfiniteGrid styles are currently inline or handled globally */
+.infinite-grid-container {
+    perspective: 1000px;
+}

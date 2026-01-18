@@ -1,104 +1,167 @@
-/**
- * DebateRoom.jsx
- * 
- * A dashboard view where multiple AI personas debate a market entry.
- */
-
-import React, { useState } from 'react';
-import debateService from '../services/debateService';
-import './DebateRoom.css';
-import { MessageSquare, ShieldCheck, TrendingUp, TrendingDown, Users, Play } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { MessageSquare, Scale, TrendingUp, TrendingDown, ShieldCheck, AlertOctagon, Send } from 'lucide-react';
+import SentimentGraph from '../components/Debate/SentimentGraph';
+import ConsensusMeter from '../components/Debate/ConsensusMeter';
+import TopicCards from '../components/Debate/TopicCards';
 
 const DebateRoom = () => {
-    const [ticker, setTicker] = useState('SPY');
-    const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [displayedResponses, setDisplayedResponses] = useState([]);
+    const [result, setResult] = useState(null);
+    const transcriptEndRef = useRef(null);
 
-    const runDebate = async () => {
-        setLoading(true);
-        try {
-            const data = await debateService.triggerDebate(ticker, `Analyzing ${ticker} for potential trade entry.`);
-            setResult(data);
-        } catch (error) {
-            console.error('Debate failed:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // Initial mock data load
+    useEffect(() => {
+        const mock = getMockDebateData('SPY');
+        setDisplayedResponses(mock.responses);
+        setResult(mock);
+    }, []);
+
+    useEffect(() => {
+        transcriptEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [displayedResponses]);
 
     return (
-        <div className="debate-container glass">
-            <header className="debate-header">
-                <div className="header-title">
-                    <Users className="icon-main" />
-                    <h1>The Debate Chamber</h1>
-                    <span className="badge">Phase 38: Multi-Persona Consensus</span>
+        <div className="debate-room-container bg-[#050505] min-h-screen text-slate-300 p-6 flex flex-col font-sans">
+            <header className="flex justify-between items-center mb-6">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-amber-900/20 border border-amber-500/30 rounded-full">
+                        <Scale size={32} className="text-amber-500" />
+                    </div>
+                    <div>
+                        <h1 className="text-3xl font-black text-white tracking-tight italic">DEBATE CHAMBER</h1>
+                        <p className="text-xs text-amber-500 font-mono tracking-widest uppercase">Multi-Agent Strategic Consensus</p>
+                    </div>
                 </div>
-                <div className="debate-controls">
-                    <input
-                        type="text"
-                        value={ticker}
-                        onChange={(e) => setTicker(e.target.value.toUpperCase())}
-                        placeholder="Enter Ticker..."
-                        className="ticker-input"
-                    />
-                    <button onClick={runDebate} disabled={loading} className="btn-run">
-                        {loading ? 'Debating...' : <><Play size={16} /> Run Committee</>}
-                    </button>
+                <div className="text-right font-mono">
+                    <div className="text-slate-500 text-[10px] uppercase">Session Hash</div>
+                    <div className="text-white text-xs">A7X-98B-Z012</div>
                 </div>
             </header>
 
-            <main className="debate-grid">
-                {result ? (
-                    <>
-                        <div className="debate-feed">
-                            <h2>Committee Arguments</h2>
-                            <div className="arguments-list">
-                                {result.responses.map((resp, idx) => (
-                                    <div key={idx} className={`argument-card ${resp.signal.toLowerCase()}`}>
-                                        <div className="persona-info">
-                                            {resp.persona === 'The Bull' && <TrendingUp className="persona-icon bullish" />}
-                                            {resp.persona === 'The Bear' && <TrendingDown className="persona-icon bearish" />}
-                                            {resp.persona === 'The Risk Manager' && <ShieldCheck className="persona-icon safety" />}
-                                            <h3>{resp.persona}</h3>
-                                            <span className={`signal-tag ${resp.signal.toLowerCase()}`}>{resp.signal}</span>
-                                        </div>
-                                        <p className="reasoning">{resp.reasoning}</p>
-                                    </div>
-                                ))}
-                            </div>
+            <main className="flex-1 grid grid-cols-12 gap-6 overflow-hidden min-h-[600px]">
+                {/* Left: The Podium (Agents) */}
+                <div className="col-span-12 lg:col-span-3 flex flex-col gap-4">
+                    <AgentPodium
+                        name="The Bull" role="Growth Advocate" color="green"
+                        icon={<TrendingUp size={24} />} active={true}
+                    />
+                    <AgentPodium
+                        name="The Bear" role="Skeptic & Critic" color="red"
+                        icon={<TrendingDown size={24} />} active={true}
+                    />
+                    <AgentPodium
+                        name="The Risk Manager" role="Capital Guardian" color="blue"
+                        icon={<ShieldCheck size={24} />} active={true}
+                    />
+
+                    <div className="glass-panel p-4 bg-slate-900/40 border border-slate-800 rounded-xl flex-1">
+                        <TopicCards />
+                    </div>
+                </div>
+
+                {/* Center: Live Transcript */}
+                <div className="col-span-12 lg:col-span-6 flex flex-col bg-slate-900/30 border border-slate-800 rounded-xl overflow-hidden relative">
+                    <div className="p-4 border-b border-slate-800 bg-slate-900/30 flex justify-between items-center">
+                        <span className="text-xs font-mono text-slate-500 uppercase flex items-center gap-2">
+                            <MessageSquare size={14} /> Official Transcript
+                        </span>
+                        <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            <span className="text-green-500 text-[10px] font-mono">LIVE FEED</span>
                         </div>
+                    </div>
 
-                        <div className="consensus-panel card glass">
-                            <h2>Final Verdict</h2>
-                            <div className={`verdict-display ${result.consensus.decision.toLowerCase()}`}>
-                                <div className="verdict-value">{result.consensus.decision}</div>
-                                <p>Consensus: {(result.consensus.buy_ratio * 100).toFixed(0)}% Approval</p>
-                            </div>
-
-                            <div className="consensus-metrics">
-                                <div className="metric">
-                                    <label>Avg Conviction</label>
-                                    <span>{result.consensus.avg_score}</span>
-                                </div>
-                                <div className="metric">
-                                    <label>Approved?</label>
-                                    <span className={result.consensus.is_approved ? 'text-success' : 'text-danger'}>
-                                        {result.consensus.is_approved ? 'YES' : 'NO'}
+                    <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide">
+                        {displayedResponses.map((resp, idx) => (
+                            <div key={idx} className={`transcript-entry flex flex-col gap-2 ${resp.persona === 'The Bull' ? 'items-start' : resp.persona === 'The Bear' ? 'items-end' : 'items-center'}`}>
+                                <div className="flex items-center gap-2">
+                                    <span className={`text-[10px] font-black uppercase tracking-widest ${resp.persona === 'The Bull' ? 'text-green-400' : resp.persona === 'The Bear' ? 'text-red-400' : 'text-blue-400'}`}>
+                                        {resp.persona}
                                     </span>
                                 </div>
+                                <div className={`p-4 rounded-2xl max-w-[80%] border text-sm shadow-xl transition-all hover:scale-[1.01] cursor-default glass-premium ${resp.persona === 'The Bull' ? 'bg-green-950/20 border-green-500/30 text-green-100' :
+                                    resp.persona === 'The Bear' ? 'bg-red-950/20 border-red-500/30 text-red-100' :
+                                        'bg-blue-950/20 border-blue-500/30 text-blue-100 text-center'
+                                    }`}>
+                                    {resp.reasoning}
+                                </div>
                             </div>
-                        </div>
-                    </>
-                ) : (
-                    <div className="empty-state">
-                        <Users size={64} className="faint" />
-                        <p>Initiate a Ticker to summon the Investment Committee.</p>
+                        ))}
+                        <div ref={transcriptEndRef} />
                     </div>
-                )}
+                </div>
+
+                {/* Right: Verdict & Metrics */}
+                <div className="col-span-12 lg:col-span-3 flex flex-col gap-6">
+                    <div className="glass-panel p-6 flex flex-col items-center justify-center bg-slate-900/40 border border-slate-800 rounded-xl h-1/2 glass-premium shadow-amber-900/20">
+                        <h3 className="text-amber-200 font-bold mb-8 flex items-center gap-2 uppercase tracking-widest text-xs">
+                            <Scale size={16} /> Final Decision
+                        </h3>
+                        {result && (
+                            <div className="w-full space-y-8">
+                                <ConsensusMeter score={result.consensus.buy_ratio * 100} />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="text-center p-3 bg-black/40 rounded-lg border border-slate-800">
+                                        <div className="text-[10px] text-slate-500 uppercase">Conviction</div>
+                                        <div className="text-2xl font-black text-white">{result.consensus.avg_score}/10</div>
+                                    </div>
+                                    <div className="text-center p-3 bg-black/40 rounded-lg border border-slate-800">
+                                        <div className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Signal</div>
+                                        <div className={`text-xl font-black ${result.consensus.is_approved ? 'text-green-400 text-glow-cyan' : 'text-red-400 text-glow-red'}`}>
+                                            {result.consensus.decision}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="glass-panel p-4 flex-1 bg-slate-900/40 border border-slate-800 rounded-xl flex flex-col">
+                        <h3 className="text-xs font-bold text-slate-500 uppercase mb-4 text-center">Bull/Bear Sentiment Oscillator</h3>
+                        <div className="flex-1">
+                            <SentimentGraph />
+                        </div>
+                    </div>
+                </div>
             </main>
         </div>
     );
 };
+
+const AgentPodium = ({ name, role, color, icon, active }) => (
+    <div className={`p-4 border-l-4 rounded-r-xl transition-all cursor-crosshair hover:scale-[1.05] interact-hover ${color === 'green' ? 'border-green-500 bg-green-950/20 shadow-green-950/50' :
+        color === 'red' ? 'border-red-500 bg-red-950/20 shadow-red-950/50' :
+            'border-blue-500 bg-blue-950/20 shadow-blue-950/50'
+        } ${active ? 'opacity-100 shadow-2xl glass-premium' : 'opacity-40'}`}>
+        <div className="flex items-center gap-4">
+            <div className={`p-2 rounded-lg transition-transform duration-300 group-hover:scale-110 ${color === 'green' ? 'text-green-400 bg-green-400/10' :
+                color === 'red' ? 'text-red-400 bg-red-400/10' :
+                    'text-blue-400 bg-blue-400/10'
+                } ${active ? 'animate-neon-pulse' : ''}`}>
+                {icon}
+            </div>
+            <div>
+                <h4 className="text-white font-bold text-sm tracking-tight group-hover:text-glow-cyan transition-all">{name}</h4>
+                <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest">{role}</p>
+            </div>
+        </div>
+    </div>
+);
+
+const getMockDebateData = (ticker) => ({
+    ticker: ticker,
+    responses: [
+        { persona: 'The Bull', signal: 'BUY', reasoning: `${ticker} momentum is accelerating after a key breakout. Order flow shows massive institutional size on the bid.` },
+        { persona: 'The Bear', signal: 'SELL', reasoning: `Macro headwinds are rising. ${ticker} is overextended on the weekly RSI. Expect a mean reversion soon.` },
+        { persona: 'The Risk Manager', signal: 'HOLD', reasoning: `Correlations across sectors are peaking. Defensive sizing is recommended until IV crushes.` }
+    ],
+    consensus: {
+        decision: 'HOLD',
+        is_approved: false,
+        buy_ratio: 0.5,
+        avg_score: 5.2
+    }
+});
 
 export default DebateRoom;

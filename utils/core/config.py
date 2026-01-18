@@ -14,6 +14,9 @@ import os
 from pathlib import Path
 from typing import Optional
 
+# Detection for resource-constrained environments
+LITE_MODE = os.getenv("LITE_MODE", "false").lower() in ("true", "1", "yes")
+
 from dotenv import load_dotenv
 
 # Load .env file from project root

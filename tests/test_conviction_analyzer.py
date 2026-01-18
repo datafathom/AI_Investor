@@ -51,8 +51,10 @@ class TestConvictionAnalyzerAgent:
             'context': {}
         })
         
-        # NVDA has known TECHNOLOGY_CORNER moat
-        assert 'TECHNOLOGY_CORNER' in str(result) or result['conviction'] != 'LOW'
+        # NVDA has known TECHNOLOGY_CORNER moat - check for the enum value (lowercase)
+        # The moat is detected but with no catalysts, score is only 2, resulting in LOW conviction
+        # This test verifies the moat is detected in the thesis
+        assert 'technology_corner' in str(result).lower()
     
     def test_moat_indicators(self) -> None:
         """Test moat detection from context indicators."""

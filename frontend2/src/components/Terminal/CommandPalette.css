@@ -1,0 +1,17 @@
+.command-palette-modal {
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(12px);
+}
+
+.command-item-active {
+    background: rgba(79, 70, 229, 0.1);
+    border-left: 3px solid #6366f1;
+}
+
+.command-category-label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
