@@ -2,17 +2,20 @@ import React, { useEffect, useMemo, useState, useRef, useCallback, Suspense, laz
 import GridLayout from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+import './Dashboard.css';
 import { useColorPalette } from '../hooks/useColorPalette';
 import { useWidgetLayout } from '../hooks/useWidgetLayout';
 import WindowHeader from '../components/WindowHeader';
 import { SimpleBarChart, SimplePieChart, SimpleLineChart, SimpleAreaChart } from '../components/Charts/SimpleCharts';
 import { authService } from '../utils/authService';
 import io from 'socket.io-client';
-import { Activity, Zap, TrendingUp, Globe, Clock, ShieldAlert } from 'lucide-react';
+import { Activity, Zap, TrendingUp, Globe, Clock, ShieldAlert, Cpu as CpuIcon, Trash2 } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 // AI Investor Widgets
 import MonitorWidget from '../components/AI_Investor/Views/MonitorWidget';
 import CommandWidget from '../components/AI_Investor/Views/CommandWidget';
+import TerminalWidget from '../components/Terminal/TerminalWidget';
 import ResearchWidget from '../components/AI_Investor/Views/ResearchWidget';
 import PortfolioWidget from '../components/AI_Investor/Views/PortfolioWidget';
 import DockerWidget from '../components/DockerWidget';
@@ -52,19 +55,22 @@ const WIDGET_TITLES = {
     'homeostasis-view': 'Total Homeostasis',
     'options-chain-view': 'Options Chain / Greeks',
     'market-depth-view': 'Level 2 Market Depth (DOM)',
-    'trade-tape-view': 'Live Trade Tape (Time & Sales)'
+    'trade-tape-view': 'Live Trade Tape (Time & Sales)',
+    'terminal-view': 'System Log'
 };
 
 const DEFAULT_LAYOUT = [
     { i: 'monitor-view', x: 0, y: 0, w: 24, h: 20, minW: 16, minH: 14, maxW: 48 },
     { i: 'command-view', x: 24, y: 0, w: 24, h: 10, minW: 16, minH: 10, maxW: 48 },
-    { i: 'portfolio-view', x: 24, y: 10, w: 24, h: 10, minW: 16, minH: 10, maxW: 48 },
-    { i: 'research-view', x: 0, y: 20, w: 24, h: 12, minW: 16, minH: 10, maxW: 48 },
-    { i: 'homeostasis-view', x: 24, y: 20, w: 24, h: 12, minW: 16, minH: 10, maxW: 48 },
-    { i: 'options-chain-view', x: 0, y: 32, w: 24, h: 15, minW: 16, minH: 12, maxW: 48 },
-    { i: 'market-depth-view', x: 24, y: 32, w: 12, h: 15, minW: 8, minH: 12, maxW: 24 },
-    { i: 'trade-tape-view', x: 36, y: 32, w: 12, h: 15, minW: 8, minH: 12, maxW: 24 },
-    { i: 'socketio', x: 0, y: 47, w: 24, h: 7, minW: 16, minH: 6, maxW: 48 },
+    { i: 'portfolio-view', x: 24, y: 10, w: 24, h: 16, minW: 16, minH: 12, maxW: 48 },
+    { i: 'research-view', x: 0, y: 20, w: 24, h: 18, minW: 16, minH: 12, maxW: 48 },
+    { i: 'homeostasis-view', x: 24, y: 26, w: 24, h: 16, minW: 16, minH: 12, maxW: 48 },
+    { i: 'options-chain-view', x:0, y: 38, w: 24, h: 15, minW: 16, minH: 12, maxW: 48 },
+    { i: 'market-depth-view', x: 24, y: 42, w: 12, h: 15, minW: 8, minH: 12, maxW: 24 },
+    { i: 'trade-tape-view', x: 36, y: 42, w: 12, h: 15, minW: 8, minH: 12, maxW: 24 },
+    { i: 'terminal-view', x: 0, y: 53, w: 24, h: 10, minW: 16, minH: 8, maxW: 48 },
+    { i: 'bar-chart', x: 24, y: 57, w: 24, h: 12, minW: 16, minH: 10, maxW: 48 },
+    { i: 'socketio', x: 0, y: 63, w: 48, h: 8, minW: 16, minH: 6, maxW: 48 },
 ];
 
 const Dashboard = ({
@@ -78,13 +84,63 @@ const Dashboard = ({
     setWidgetVisibility
 }) => {
     const { layout, setLayout, resetLayout } = useWidgetLayout();
+    const { showToast } = useToast();
     const [gridWidth, setGridWidth] = useState(1200);
+    // Removed showLockModal state in favor of toasts
     const [marketPulse, setMarketPulse] = useState({
         sentiment: 'BULLISH',
         volatility: 'LOW',
         nextEvent: 'FOMC (2h)',
         activeAgents: 12
     });
+
+    // Handler for drag attempts when locked
+    const handleDragAttempt = useCallback(() => {
+        if (globalLock) {
+            showToast('LAYOUT LOCKED: Enable editing via the Selection menu.', 'warning');
+        }
+    }, [globalLock, showToast]);
+
+    const handleClearLogs = useCallback(() => {
+        setLogs([]);
+        showToast('System logs cleared.', 'info');
+    }, [showToast]);
+
+    // Mock data for Bar Chart
+    const barChartData = useMemo(() => [
+        {
+            label: 'Market Volume',
+            values: [
+                { x: 'NVDA', y: 4500 },
+                { x: 'TSLA', y: 3200 },
+                { x: 'AAPL', y: 2800 },
+                { x: 'MSFT', y: 2100 },
+                { x: 'AMD', y: 1900 },
+                { x: 'SPY', y: 5200 },
+            ]
+        }
+    ], []);
+
+    // Mock logs for the terminal
+    const [logs, setLogs] = useState([
+        { timestamp: Date.now() - 5000, message: 'System initialized. All agents online.', type: 'info' },
+        { timestamp: Date.now() - 4000, message: 'Market data feed connected: NASDAQ/WSS', type: 'success' },
+        { timestamp: Date.now() - 3000, message: 'Running momentum scans on SPY, NVDA, TSLA...', type: 'info' },
+        { timestamp: Date.now() - 2000, message: 'Alert: Unusual options activity detected in NVDA.', type: 'warning' },
+        { timestamp: Date.now() - 1000, message: 'Trade executed: BUY 100 TSLA @ 218.42', type: 'success' },
+    ]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const newLog = {
+                timestamp: Date.now(),
+                message: `Kernel heartbeat: Process ${Math.floor(Math.random() * 9999)} ok. Memory: 42.1GB/128GB`,
+                type: 'info'
+            };
+            setLogs(prev => [...prev.slice(-49), newLog]);
+        }, 3000);
+        return () => clearInterval(interval);
+    }, []);
 
     // Throttle layout changes
     const layoutChangeTimerRef = useRef(null);
@@ -236,37 +292,49 @@ const Dashboard = ({
 
     return (
         <div className="dashboard-container relative">
-            {/* MARKET PULSE HERO */}
-            <div className="bg-slate-900/50 border-b border-indigo-500/20 px-8 py-6 mb-4 backdrop-blur-md">
-                <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-6">
-                        <div className="flex flex-col">
-                            <span className="text-xs text-indigo-400 font-bold tracking-widest uppercase mb-1">Market Sentiment</span>
-                            <div className="flex items-center gap-2">
-                                <TrendingUp className="text-green-400" size={24} />
-                                <span className="text-2xl font-bold text-white tracking-tight">{marketPulse.sentiment}</span>
-                            </div>
-                        </div>
-                        <div className="h-10 w-px bg-indigo-500/30"></div>
-                        <div className="flex flex-col">
-                            <span className="text-xs text-indigo-400 font-bold tracking-widest uppercase mb-1">Volatility VIX</span>
-                            <span className="text-lg font-mono text-white">13.42 <span className="text-xs text-green-400">(-2.1%)</span></span>
-                        </div>
+            {/* METRICS TICKER BAR - Full Width Fluidity */}
+            <div className="metrics-ticker-bar">
+                <div 
+                    className="metric-item glass-panel cursor-help"
+                    data-tooltip="Aggregate market sentiment from 50+ data sources."
+                >
+                    <div className="metric-label">SENTIMENT</div>
+                    <div className="metric-value">
+                        <TrendingUp className="text-green-400" size={16} />
+                        <span className="value-text">{marketPulse.sentiment}</span>
                     </div>
+                </div>
 
-                    <div className="flex items-center gap-8">
-                        <div className="flex items-center gap-3 bg-indigo-900/20 px-4 py-2 rounded-full border border-indigo-500/30">
-                            <Activity size={18} className="text-indigo-400 animate-pulse" />
-                            <span className="text-sm text-indigo-200">System Homeostasis: <span className="text-white font-bold">OPTIMAL</span></span>
-                        </div>
-                        <div className="flex items-center gap-3 bg-fuchsia-900/20 px-4 py-2 rounded-full border border-fuchsia-500/30">
-                            <Zap size={18} className="text-fuchsia-400" />
-                            <span className="text-sm text-fuchsia-200">Active Agents: <span className="text-white font-bold">{marketPulse.activeAgents}</span></span>
-                        </div>
-                        <div className="flex items-center gap-3 bg-orange-900/20 px-4 py-2 rounded-full border border-orange-500/30">
-                            <Clock size={18} className="text-orange-400" />
-                            <span className="text-sm text-orange-200">Next Event: <span className="text-white font-bold">{marketPulse.nextEvent}</span></span>
-                        </div>
+                <div 
+                    className="metric-item glass-panel cursor-help"
+                    data-tooltip="CBOE Volatility Index. High values indicate market fear."
+                >
+                    <div className="metric-label">VOLATILITY VIX</div>
+                    <div className="metric-value">
+                        <Activity className="text-amber-400" size={16} />
+                        <span className="value-text font-mono">13.42 <span className="text-[10px] text-green-400">(-2.1%)</span></span>
+                    </div>
+                </div>
+
+                <div 
+                    className="metric-item glass-panel cursor-help"
+                    data-tooltip="System health indicator. Optimal state = peak performance."
+                >
+                    <div className="metric-label">HOMEOSTASIS</div>
+                    <div className="metric-value">
+                        <Zap className="text-fuchsia-400 animate-pulse" size={16} />
+                        <span className="value-text">OPTIMAL</span>
+                    </div>
+                </div>
+
+                <div 
+                    className="metric-item glass-panel cursor-help"
+                    data-tooltip="Number of AI agents currently scanning and analyzing data."
+                >
+                    <div className="metric-label">ACTIVE AGENTS</div>
+                    <div className="metric-value">
+                        <CpuIcon className="text-cyan-400" size={16} />
+                        <span className="value-text">{marketPulse.activeAgents}</span>
                     </div>
                 </div>
             </div>
@@ -275,6 +343,12 @@ const Dashboard = ({
                 className="layout"
                 layout={displayLayout}
                 onLayoutChange={throttledSetLayout}
+                onDragStart={(layout, oldItem, newItem, placeholder, e, element) => {
+                    if (globalLock) {
+                        showToast('LAYOUT LOCKED: Enable editing via the Selection menu.', 'warning');
+                        return false;
+                    }
+                }}
                 cols={48}
                 rowHeight={60}
                 width={gridWidth}
@@ -291,69 +365,89 @@ const Dashboard = ({
                 {widgetVisibility['monitor-view'] !== false && (
                     <div key="monitor-view" data-widget-id="monitor-view" className={`widget-wrapper ${widgetStates['monitor-view']?.minimized ? 'minimized' : ''} ${widgetStates['monitor-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['monitor-view']} onMinimize={() => handleWidgetMinimize('monitor-view')} onMaximize={() => handleWidgetMaximize('monitor-view')} onClose={() => handleWidgetClose('monitor-view')} onLock={() => handleWidgetLock('monitor-view')} onMinimumFullView={() => handleMinimumFullView('monitor-view')} onViewSource={() => handleViewSource('monitor-view')} isMaximized={widgetStates['monitor-view']?.maximized} isLocked={widgetStates['monitor-view']?.locked} linkingGroup={widgetStates['monitor-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('monitor-view', g)} />
-                        <div className="widget-drag-handle"><span></span></div>
+                        <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
                         {!widgetStates['monitor-view']?.minimized && <section className="glass card"><MonitorWidget /></section>}
                     </div>
                 )}
                 {widgetVisibility['command-view'] !== false && (
                     <div key="command-view" data-widget-id="command-view" className={`widget-wrapper ${widgetStates['command-view']?.minimized ? 'minimized' : ''} ${widgetStates['command-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['command-view']} onMinimize={() => handleWidgetMinimize('command-view')} onMaximize={() => handleWidgetMaximize('command-view')} onClose={() => handleWidgetClose('command-view')} onLock={() => handleWidgetLock('command-view')} onMinimumFullView={() => handleMinimumFullView('command-view')} onViewSource={() => handleViewSource('command-view')} isMaximized={widgetStates['command-view']?.maximized} isLocked={widgetStates['command-view']?.locked} linkingGroup={widgetStates['command-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('command-view', g)} />
-                        <div className="widget-drag-handle"><span></span></div>
+                        <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
                         {!widgetStates['command-view']?.minimized && <section className="glass card"><CommandWidget /></section>}
                     </div>
                 )}
                 {widgetVisibility['portfolio-view'] !== false && (
                     <div key="portfolio-view" data-widget-id="portfolio-view" className={`widget-wrapper ${widgetStates['portfolio-view']?.minimized ? 'minimized' : ''} ${widgetStates['portfolio-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['portfolio-view']} onMinimize={() => handleWidgetMinimize('portfolio-view')} onMaximize={() => handleWidgetMaximize('portfolio-view')} onClose={() => handleWidgetClose('portfolio-view')} onLock={() => handleWidgetLock('portfolio-view')} onMinimumFullView={() => handleMinimumFullView('portfolio-view')} onViewSource={() => handleViewSource('portfolio-view')} isMaximized={widgetStates['portfolio-view']?.maximized} isLocked={widgetStates['portfolio-view']?.locked} linkingGroup={widgetStates['portfolio-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('portfolio-view', g)} />
-                        <div className="widget-drag-handle"><span></span></div>
+                        <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
                         {!widgetStates['portfolio-view']?.minimized && <section className="glass card"><PortfolioWidget /></section>}
                     </div>
                 )}
                 {widgetVisibility['research-view'] !== false && (
                     <div key="research-view" data-widget-id="research-view" className={`widget-wrapper ${widgetStates['research-view']?.minimized ? 'minimized' : ''} ${widgetStates['research-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['research-view']} onMinimize={() => handleWidgetMinimize('research-view')} onMaximize={() => handleWidgetMaximize('research-view')} onClose={() => handleWidgetClose('research-view')} onLock={() => handleWidgetLock('research-view')} onMinimumFullView={() => handleMinimumFullView('research-view')} onViewSource={() => handleViewSource('research-view')} isMaximized={widgetStates['research-view']?.maximized} isLocked={widgetStates['research-view']?.locked} linkingGroup={widgetStates['research-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('research-view', g)} />
-                        <div className="widget-drag-handle"><span></span></div>
+                        <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
                         {!widgetStates['research-view']?.minimized && <section className="glass card"><ResearchWidget /></section>}
+                    </div>
+                )}
+                {widgetVisibility['terminal-view'] !== false && (
+                    <div key="terminal-view" data-widget-id="terminal-view" className={`widget-wrapper ${widgetStates['terminal-view']?.minimized ? 'minimized' : ''} ${widgetStates['terminal-view']?.maximized ? 'maximized' : ''}`}>
+                        <WindowHeader title={WIDGET_TITLES['terminal-view']} onMinimize={() => handleWidgetMinimize('terminal-view')} onMaximize={() => handleWidgetMaximize('terminal-view')} onClose={() => handleWidgetClose('terminal-view')} onLock={() => handleWidgetLock('terminal-view')} onMinimumFullView={() => handleMinimumFullView('terminal-view')} onViewSource={() => handleViewSource('terminal-view')} isMaximized={widgetStates['terminal-view']?.maximized} isLocked={widgetStates['terminal-view']?.locked} linkingGroup={widgetStates['terminal-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('terminal-view', g)} />
+                        <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
+                        {!widgetStates['terminal-view']?.minimized && <section className="glass card"><TerminalWidget logs={logs} onClearHistory={handleClearLogs} /></section>}
                     </div>
                 )}
                 {/* Charts */}
                 {widgetVisibility['bar-chart'] !== false && (
                     <div key="bar-chart" data-widget-id="bar-chart" className={`widget-wrapper ${widgetStates['bar-chart']?.minimized ? 'minimized' : ''} ${widgetStates['bar-chart']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['bar-chart']} onMinimize={() => handleWidgetMinimize('bar-chart')} onMaximize={() => handleWidgetMaximize('bar-chart')} onClose={() => handleWidgetClose('bar-chart')} onLock={() => handleWidgetLock('bar-chart')} onMinimumFullView={() => handleMinimumFullView('bar-chart')} onViewSource={() => handleViewSource('bar-chart')} isMaximized={widgetStates['bar-chart']?.maximized} isLocked={widgetStates['bar-chart']?.locked} />
-                        <div className="widget-drag-handle"><span></span></div>
-                        {!widgetStates['bar-chart']?.minimized && <section className="glass card chart-card"><div style={{ flex: 1 }}><SimpleBarChart /></div></section>}
+                        <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
+                        {!widgetStates['bar-chart']?.minimized && <section className="glass card chart-card"><div style={{ flex: 1, minHeight: '300px' }}><SimpleBarChart data={barChartData} /></div></section>}
                     </div>
                 )}
                 {widgetVisibility['homeostasis-view'] !== false && (
                     <div key="homeostasis-view" data-widget-id="homeostasis-view" className={`widget-wrapper ${widgetStates['homeostasis-view']?.minimized ? 'minimized' : ''} ${widgetStates['homeostasis-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['homeostasis-view']} onMinimize={() => handleWidgetMinimize('homeostasis-view')} onMaximize={() => handleWidgetMaximize('homeostasis-view')} onClose={() => handleWidgetClose('homeostasis-view')} onLock={() => handleWidgetLock('homeostasis-view')} onMinimumFullView={() => handleMinimumFullView('homeostasis-view')} onViewSource={() => handleViewSource('homeostasis-view')} isMaximized={widgetStates['homeostasis-view']?.maximized} isLocked={widgetStates['homeostasis-view']?.locked} linkingGroup={widgetStates['homeostasis-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('homeostasis-view', g)} />
-                        <div className="widget-drag-handle"><span></span></div>
+                        <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
                         {!widgetStates['homeostasis-view']?.minimized && <section className="glass card"><HomeostasisWidget /></section>}
                     </div>
                 )}
                 {widgetVisibility['options-chain-view'] !== false && (
                     <div key="options-chain-view" data-widget-id="options-chain-view" className={`widget-wrapper ${widgetStates['options-chain-view']?.minimized ? 'minimized' : ''} ${widgetStates['options-chain-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['options-chain-view']} onMinimize={() => handleWidgetMinimize('options-chain-view')} onMaximize={() => handleWidgetMaximize('options-chain-view')} onClose={() => handleWidgetClose('options-chain-view')} onLock={() => handleWidgetLock('options-chain-view')} onMinimumFullView={() => handleMinimumFullView('options-chain-view')} onViewSource={() => handleViewSource('options-chain-view')} isMaximized={widgetStates['options-chain-view']?.maximized} isLocked={widgetStates['options-chain-view']?.locked} linkingGroup={widgetStates['options-chain-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('options-chain-view', g)} />
-                        <div className="widget-drag-handle"><span></span></div>
+                        <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
                         {!widgetStates['options-chain-view']?.minimized && <Suspense fallback={<div>Loading...</div>}><section className="glass card"><OptionsChainWidget linkingGroup={widgetStates['options-chain-view']?.linkingGroup || 'none'} /></section></Suspense>}
                     </div>
                 )}
                 {widgetVisibility['market-depth-view'] !== false && (
                     <div key="market-depth-view" data-widget-id="market-depth-view" className={`widget-wrapper ${widgetStates['market-depth-view']?.minimized ? 'minimized' : ''} ${widgetStates['market-depth-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['market-depth-view']} onMinimize={() => handleWidgetMinimize('market-depth-view')} onMaximize={() => handleWidgetMaximize('market-depth-view')} onClose={() => handleWidgetClose('market-depth-view')} onLock={() => handleWidgetLock('market-depth-view')} onMinimumFullView={() => handleMinimumFullView('market-depth-view')} onViewSource={() => handleViewSource('market-depth-view')} isMaximized={widgetStates['market-depth-view']?.maximized} isLocked={widgetStates['market-depth-view']?.locked} linkingGroup={widgetStates['market-depth-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('market-depth-view', g)} />
-                        <div className="widget-drag-handle"><span></span></div>
+                        <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
                         {!widgetStates['market-depth-view']?.minimized && <Suspense fallback={<div>Loading...</div>}><section className="glass card"><MarketDepthWidget linkingGroup={widgetStates['market-depth-view']?.linkingGroup || 'none'} /></section></Suspense>}
                     </div>
                 )}
                 {widgetVisibility['trade-tape-view'] !== false && (
                     <div key="trade-tape-view" data-widget-id="trade-tape-view" className={`widget-wrapper ${widgetStates['trade-tape-view']?.minimized ? 'minimized' : ''} ${widgetStates['trade-tape-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['trade-tape-view']} onMinimize={() => handleWidgetMinimize('trade-tape-view')} onMaximize={() => handleWidgetMaximize('trade-tape-view')} onClose={() => handleWidgetClose('trade-tape-view')} onLock={() => handleWidgetLock('trade-tape-view')} onMinimumFullView={() => handleMinimumFullView('trade-tape-view')} onViewSource={() => handleViewSource('trade-tape-view')} isMaximized={widgetStates['trade-tape-view']?.maximized} isLocked={widgetStates['trade-tape-view']?.locked} linkingGroup={widgetStates['trade-tape-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('trade-tape-view', g)} />
-                        <div className="widget-drag-handle"><span></span></div>
+                        <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
                         {!widgetStates['trade-tape-view']?.minimized && <Suspense fallback={<div>Loading...</div>}><section className="glass card"><TradeTapeWidget linkingGroup={widgetStates['trade-tape-view']?.linkingGroup || 'none'} /></section></Suspense>}
                     </div>
                 )}
                 {/* Add more widgets as needed */}
             </GridLayout>
+
+            {/* Lock Overlay - Shows when locked and intercepts clicks */}
+            {globalLock && (
+                <div 
+                    className="absolute inset-0 z-[100] cursor-not-allowed"
+                    onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        showToast('LAYOUT LOCKED: Enable editing via the Selection menu.', 'warning');
+                    }}
+                    style={{ pointerEvents: 'auto' }}
+                />
+            )}
         </div>
     );
 };

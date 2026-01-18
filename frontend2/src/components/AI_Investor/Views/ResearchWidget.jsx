@@ -1,73 +1,83 @@
 import React, { useState } from 'react';
-import { Search, Info, TrendingUp, TrendingDown, Clock } from 'lucide-react';
+import { Search, Info, TrendingUp, TrendingDown, Clock, ChevronDown, ChevronUp, Bell, Zap, Cpu as CpuIcon } from 'lucide-react';
 import GlassCard from '../Controls/GlassCard';
 import Badge from '../Controls/Badge';
 import Button from '../Controls/Button';
 import OptionsFlowTable from '../Analytics/OptionsFlowTable';
 
+const CollapsibleSection = ({ title, children, icon: Icon, defaultOpen = true }) => {
+    const [isOpen, setIsOpen] = useState(defaultOpen);
+    return (
+        <div className="border border-[#222] rounded bg-[#0a0a0a] overflow-hidden mb-2">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full flex items-center justify-between p-2 hover:bg-[#111] transition-colors"
+            >
+                <div className="flex items-center gap-2">
+                    {Icon && <Icon size={14} className="text-cyan-400" />}
+                    <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">{title}</span>
+                </div>
+                {isOpen ? <ChevronUp size={14} className="text-slate-500" /> : <ChevronDown size={14} className="text-slate-500" />}
+            </button>
+            {isOpen && <div className="p-3 border-t border-[#222]">{children}</div>}
+        </div>
+    );
+};
+
 const ResearchWidget = () => {
-    const [query, setQuery] = useState('');
-    const [mockAlerts, setMockAlerts] = useState([
+    const [mockAlerts] = useState([
         { symbol: 'TSLA', type: 'call', strike: '220', expiration: '2026-01-23', volume: '12400', open_interest: '5000', alert_type: 'WHALE_FLOW' },
-        { symbol: 'NVDA', type: 'call', strike: '500', expiration: '2026-02-20', volume: '8500', open_interest: '3200', alert_type: 'UNUSUAL_VOLUME' },
-        { symbol: 'SPY', type: 'put', strike: '470', expiration: '2026-01-19', volume: '45000', open_interest: '12000', alert_type: 'WHALE_FLOW' }
+        { symbol: 'NVDA', type: 'put', strike: '540', expiration: '2026-02-20', volume: '8200', open_interest: '3100', alert_type: 'DARK_POOL' },
     ]);
 
-    const results = [
-        { symbol: 'TSLA', name: 'Tesla, Inc.', sentiment: 0.82, trending: 'up', source: 'Reddit (r/wsb)' },
-        { symbol: 'NVDA', name: 'NVIDIA Corporation', sentiment: 0.94, trending: 'up', source: 'Google Trends' },
-        { symbol: 'AMZN', name: 'Amazon.com, Inc.', sentiment: -0.12, trending: 'down', source: 'Combined' },
-    ];
-
     return (
-        <div className="space-y-4 p-4 h-full overflow-auto">
-            <div className="relative max-w-2xl mx-auto mb-6">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400/50" size={20} />
-                <input
-                    type="text"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="DISCOVER ASSET DATA... (e.g. BTC, AI, TECH)"
-                    className="w-full bg-white/5 border border-cyan-500/30 rounded-xl p-3 pl-12 text-lg text-main focus:border-cyan-500 shadow-[0_0_20px_rgba(0,242,255,0.1)] outline-none transition-all font-display"
-                />
+        <div className="flex flex-col h-full bg-[#050505] text-white">
+            {/* Search Header */}
+            <div className="p-3 bg-[#111] border-b border-[#222]">
+                <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={14} />
+                    <input
+                        type="text"
+                        placeholder="SEARCH MARKET INTELLIGENCE..."
+                        className="w-full bg-black/40 border border-[#222] rounded py-1.5 pl-9 pr-4 text-[10px] text-white focus:border-cyan-500 outline-none font-mono uppercase tracking-widest"
+                    />
+                </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {results.map((res) => (
-                    <GlassCard key={res.symbol} className="hover:border-white/20 cursor-pointer transition-all hover:scale-[1.02]">
-                        <div className="flex justify-between items-start mb-2">
-                            <div>
-                                <h2 className="text-xl font-bold text-main">{res.symbol}</h2>
-                                <p className="text-dim text-xs">{res.name}</p>
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-3">
+                <CollapsibleSection title="AI Alpha Alerts" icon={Bell}>
+                    <div className="space-y-2">
+                        {mockAlerts.map((alert, idx) => (
+                            <div key={idx} className="flex flex-col bg-[#0f0f0f] border border-[#222] p-2 rounded hover:border-cyan-500/50 transition-colors">
+                                <div className="flex justify-between items-center mb-1">
+                                    <span className="font-mono font-bold text-cyan-400 text-xs">{alert.symbol} {alert.type.toUpperCase()}</span>
+                                    <span className="text-[8px] bg-amber-500/20 text-amber-500 px-1 rounded font-bold">{alert.alert_type}</span>
+                                </div>
+                                <div className="text-[10px] text-slate-400 font-mono">
+                                    STRIKE: {alert.strike} | EXP: {alert.expiration} | VOL: {alert.volume}
+                                </div>
                             </div>
-                            <Badge status={res.sentiment > 0.5 ? 'success' : res.sentiment < 0 ? 'error' : 'info'}>
-                                {Math.abs(res.sentiment * 100).toFixed(0)}% ENERGY
-                            </Badge>
+                        ))}
+                    </div>
+                </CollapsibleSection>
+
+                <CollapsibleSection title="Asset Intelligence" icon={CpuIcon}>
+                    <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-[#0f0f0f] border border-[#222] p-2 rounded">
+                            <span className="block text-[8px] text-slate-500 uppercase mb-1">Correlation Index</span>
+                            <span className="font-mono text-white text-xs">0.84</span>
                         </div>
-
-                        <div className="space-y-2 mt-4">
-                            <div className="flex items-center justify-between text-xs p-2 bg-white/5 rounded">
-                                <span className="text-dim flex items-center gap-2"><Clock size={12} /> SCAN SOURCE</span>
-                                <span className="text-cyan-400">{res.source}</span>
-                            </div>
-                            <div className="flex items-center justify-between text-xs p-2 bg-white/5 rounded">
-                                <span className="text-dim flex items-center gap-2">
-                                    {res.trending === 'up' ? <TrendingUp size={12} className="text-green-400" /> : <TrendingDown size={12} className="text-red-400" />}
-                                    VELOCITY
-                                </span>
-                                <span className={res.trending === 'up' ? 'text-green-400' : 'text-red-400'}>HIGH</span>
-                            </div>
+                        <div className="bg-[#0f0f0f] border border-[#222] p-2 rounded">
+                            <span className="block text-[8px] text-slate-500 uppercase mb-1">Momentum Score</span>
+                            <span className="font-mono text-emerald-400 text-xs">VERY HIGH</span>
                         </div>
+                    </div>
+                </CollapsibleSection>
 
-                        <Button variant="ghost" className="w-full mt-4 flex items-center gap-2 justify-center text-xs">
-                            <Info size={14} /> ANALYZE WHALE FLOW
-                        </Button>
-                    </GlassCard>
-                ))}
-            </div>
-
-            <div className="mt-6">
-                <OptionsFlowTable alerts={mockAlerts} />
+                <div className="mt-4">
+                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-2 block">Live Options Flow</span>
+                    <OptionsFlowTable alerts={mockAlerts} />
+                </div>
             </div>
         </div>
     );

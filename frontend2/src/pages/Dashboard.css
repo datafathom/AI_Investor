@@ -1,0 +1,107 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  padding: 0 1rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--bg-primary);
+}
+
+/* METRICS TICKER BAR */
+.metrics-ticker-bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.75rem 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.metric-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.75rem 1.25rem;
+  min-width: 0; /* Allow shrinking */
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-card);
+  transition: var(--transition-premium);
+}
+
+.metric-item:hover {
+  border-color: var(--border-accent);
+  box-shadow: var(--hover-glow);
+  transform: translateY(-1px);
+}
+
+.metric-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+}
+
+.metric-value {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.value-text {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* WIDGET WRAPPER OVERRIDES */
+.widget-wrapper {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border-primary) !important;
+  border-radius: var(--radius-card) !important;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.widget-wrapper.maximized {
+  z-index: 1000 !important;
+}
+
+.widget-wrapper section {
+  flex: 1;
+  overflow: auto;
+  padding: 0.5rem;
+}
+
+/* CUSTOM SCROLLBARS FOR TERMINAL FEEL */
+.dashboard-container::-webkit-scrollbar,
+.widget-wrapper section::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.dashboard-container::-webkit-scrollbar-track,
+.widget-wrapper section::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dashboard-container::-webkit-scrollbar-thumb,
+.widget-wrapper section::-webkit-scrollbar-thumb {
+  background: var(--border-secondary);
+  border-radius: 10px;
+}
+
+.dashboard-container::-webkit-scrollbar-thumb:hover,
+.widget-wrapper section::-webkit-scrollbar-thumb:hover {
+  background: var(--text-dim);
+}

@@ -4,6 +4,8 @@ import { useColorPalette } from './hooks/useColorPalette';
 import { useWidgetLayout } from './hooks/useWidgetLayout';
 import { authService } from './utils/authService';
 import io from 'socket.io-client';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { ToastProvider, useToast } from './context/ToastContext';
 
 // Layout & Components
 import MenuBar from './components/MenuBar';
@@ -21,6 +23,8 @@ import { useHotkeys } from './hooks/useHotkeys';
 import { useNotifications } from './hooks/useNotifications';
 import TradeConfirmationModal from './components/Modals/TradeConfirmationModal';
 import presenceService from './services/presenceService';
+import GlobalTooltip from './components/GlobalTooltip';
+import GlobalStatusBar from './components/GlobalStatusBar';
 
 // Lazy load other pages
 const MissionControl = lazy(() => import('./pages/MissionControl'));
@@ -44,7 +48,7 @@ const SOCKET_SERVER_URL = `http://localhost:${BACKEND_PORT}`;
 
 const INITIAL_MEMORY_POINTS = Array.from({ length: 100 }, (_, i) => 48 + Math.random() * 42);
 
-function App() {
+function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
   const { palette } = useColorPalette();
@@ -57,9 +61,9 @@ function App() {
     saveWorkspace,
     loadWorkspace
   } = useWidgetLayout();
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const { theme, isDark, toggleTheme } = useTheme();
+  const { showToast } = useToast();
   const [showModal, setShowModal] = useState(false);
-  const [toast, setToast] = useState(null);
   const [globalLock, setGlobalLock] = useState(false);
   const [currentUser, setCurrentUser] = useState(authService.getCurrentUser());
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(!authService.isAuthenticated());
@@ -100,9 +104,7 @@ function App() {
     if (name) saveWorkspace(name);
   };
 
-  useEffect(() => {
-    document.body.classList.toggle('theme-dark', isDarkMode);
-  }, [isDarkMode]);
+  // Theme is now managed by ThemeContext - no need for local useEffect
 
   // Socket.io initialization
   useEffect(() => {
@@ -132,7 +134,15 @@ function App() {
   }, [currentUser, notify]);
 
   const handleMenuAction = (action) => {
+    // Handle widget toggle actions
+    if (action?.startsWith('toggle-widget-')) {
+      const widgetId = action.replace('toggle-widget-', '');
+      setWidgetVisibility(prev => ({ ...prev, [widgetId]: prev[widgetId] === false ? true : false }));
+      return;
+    }
+
     switch (action) {
+      // Navigation
       case 'show-dashboard': navigate('/workspace/terminal'); break;
       case 'show-mission-control': navigate('/workspace/mission-control'); break;
       case 'show-political-alpha': navigate('/analytics/political'); break;
@@ -144,8 +154,48 @@ function App() {
       case 'show-backtest': navigate('/portfolio/backtest'); break;
       case 'show-brokerage': navigate('/portfolio/brokerage'); break;
       case 'show-scanner': navigate('/scanner/global'); break;
-      case 'toggle-theme': setIsDarkMode(!isDarkMode); break;
+      
+      // View & Theme
+      case 'toggle-theme': toggleTheme(); break;
+      case 'toggle-fullscreen':
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          document.documentElement.requestFullscreen();
+        }
+        break;
+      
+      // Layout & Widgets
       case 'reset-layout': resetLayout(); break;
+      case 'lock-widgets': setGlobalLock(true); break;
+      case 'unlock-widgets': setGlobalLock(false); break;
+      case 'toggle-lock': setGlobalLock(prev => !prev); break;
+      case 'open-all-widgets':
+        // Set all widgets to visible and clear corrupted layout
+        const allVisible = {};
+        const widgetKeys = ['monitor-view', 'command-view', 'research-view', 'portfolio-view', 
+                           'homeostasis-view', 'options-chain-view', 'market-depth-view', 
+                           'trade-tape-view', 'terminal-view', 'bar-chart'];
+        widgetKeys.forEach(k => allVisible[k] = true);
+        setWidgetVisibility(allVisible);
+        // Clear corrupted layout coordinates
+        localStorage.removeItem('react_node_template_widget_layout');
+        // Force reset to DEFAULT_LAYOUT
+        resetLayout();
+        break;
+      case 'close-all-widgets':
+        const allHidden = {};
+        const allWidgetKeys = ['monitor-view', 'command-view', 'research-view', 'portfolio-view', 
+                              'homeostasis-view', 'options-chain-view', 'market-depth-view', 
+                              'trade-tape-view', 'terminal-view', 'bar-chart'];
+        allWidgetKeys.forEach(k => allHidden[k] = false);
+        setWidgetVisibility(allHidden);
+        break;
+      
+      // Auth
+      case 'logout': handleLogout(); break;
+      case 'signin': setIsAuthModalOpen(true); break;
+      
       default: console.log('Menu action:', action);
     }
   };
@@ -158,49 +208,51 @@ function App() {
 
   return (
     <GlobalErrorBoundary>
-      <div className={`app-shell ${isDarkMode ? 'dark' : 'light'}`}>
-        <MenuBar
-          onMenuAction={handleMenuAction}
-          isDarkMode={isDarkMode}
-          widgetVisibility={widgetVisibility}
-          onToggleWidget={() => { }}
-          onTriggerModal={() => setShowModal(true)}
-          onResetLayout={resetLayout}
-          toggleTheme={() => setIsDarkMode(!isDarkMode)}
-          onSaveLayout={() => { }}
-          onLoadLayout={() => { }}
-          onToggleLogCenter={() => setShowLogCenter(!showLogCenter)}
-          showLogCenter={showLogCenter}
-          debugStates={debugStates}
-          currentUser={currentUser}
-          onLogout={handleLogout}
-          onSignin={() => setIsAuthModalOpen(true)}
-          activeWorkspace={activeWorkspace}
-          workspaces={workspaces}
-          onLoadWorkspace={loadWorkspace}
-          onSaveWorkspacePrompt={handleSaveWorkspacePrompt}
-        />
-
+      <div className={`app-shell ${isDark ? 'dark' : 'light'}`}>
         <AuthGuard onShowLogin={() => setIsAuthModalOpen(true)}>
+          {/* Navigation Header */}
+          <MenuBar
+            onMenuAction={handleMenuAction}
+            isDarkMode={isDark}
+            toggleTheme={toggleTheme}
+            widgetVisibility={widgetVisibility}
+            onToggleWidget={(widgetId) => setWidgetVisibility(prev => ({ ...prev, [widgetId]: prev[widgetId] === false ? true : false }))}
+            onResetLayout={resetLayout}
+            widgetTitles={{
+              'monitor-view': 'Market Monitor',
+              'command-view': 'Command Center',
+              'research-view': 'Data Research',
+              'portfolio-view': 'Live Portfolio',
+              'homeostasis-view': 'Total Homeostasis',
+              'options-chain-view': 'Options Chain',
+              'market-depth-view': 'Market Depth',
+              'trade-tape-view': 'Trade Tape',
+              'terminal-view': 'System Log',
+              'bar-chart': 'Bar Chart',
+            }}
+            currentUser={currentUser}
+            onLogout={handleLogout}
+            onSignin={() => setIsAuthModalOpen(true)}
+            activeWorkspace={activeWorkspace}
+            workspaces={workspaces}
+            onLoadWorkspace={loadWorkspace}
+            onSaveWorkspacePrompt={handleSaveWorkspacePrompt}
+            debugStates={debugStates}
+            globalLock={globalLock}
+          />
           <SubHeaderNav />
-          <header className="hero">
-            <div className="hero-glow" />
-            <div className="hero-body">
-              <h1>Welcome to DataFathom</h1>
-            </div>
-          </header>
+          <Breadcrumbs />
 
           <main className="institutional-os-container">
-            <Breadcrumbs />
             <Suspense fallback={<div className="loading-state">Loading View...</div>}>
+              <GlobalTooltip />
               <Routes>
                 <Route path="/" element={<Navigate to="/workspace/terminal" replace />} />
                 <Route path="/workspace/terminal" element={
                   <TerminalWorkspace
-                    setToast={setToast}
                     handleViewSource={() => { }}
                     globalLock={globalLock}
-                    isDarkMode={isDarkMode}
+                    isDarkMode={isDark}
                     widgetStates={widgetStates}
                     setWidgetStates={setWidgetStates}
                     widgetVisibility={widgetVisibility}
@@ -221,17 +273,7 @@ function App() {
               </Routes>
             </Suspense>
           </main>
-
-          <footer className="app-footer">
-            <p>AI Investor Platform | DataFathom DeepMind | Multi-Tenant Isolated</p>
-          </footer>
         </AuthGuard>
-
-        {toast && (
-          <div className={`toast ${toast.type}`}>
-            {toast.message}
-          </div>
-        )}
 
         <LoginModal
           isOpen={isAuthModalOpen}
@@ -248,12 +290,30 @@ function App() {
           tradeDetails={tradeModal.details}
           onConfirm={(details) => {
             setTradeModal({ ...tradeModal, open: false });
-            setToast({ message: `ORDER EXECUTED: ${details.symbol} ${details.side} ${details.quantity} @ ${details.price}`, type: 'success' });
+            showToast(`ORDER EXECUTED: ${details.symbol} ${details.side} ${details.quantity} @ ${details.price}`, 'success');
             // In real app, dispatch to execution service
           }}
         />
+        
+        {/* Global Status Bar */}
+        <GlobalStatusBar 
+          globalLock={globalLock}
+          socketConnected={socketConnected}
+          currentUser={currentUser}
+        />
       </div>
     </GlobalErrorBoundary>
+  );
+}
+
+// Wrap AppContent with ThemeProvider and ToastProvider
+function App() {
+  return (
+    <ThemeProvider>
+      <ToastProvider>
+        <AppContent />
+      </ToastProvider>
+    </ThemeProvider>
   );
 }
 

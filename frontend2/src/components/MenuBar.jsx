@@ -77,8 +77,7 @@ const MENU_ITEMS = [
       { label: 'Select All Widgets', action: 'select-all-widgets', shortcut: 'Ctrl+Shift+A' },
       { label: 'Deselect All', action: 'deselect-all' },
       { type: 'divider' },
-      { label: 'Lock Widgets', action: 'lock-widgets' },
-      { label: 'Unlock Widgets', action: 'unlock-widgets' },
+      // Lock toggle will be dynamically injected
       { type: 'divider' },
       { label: 'Reset Layout', action: 'reset-layout' },
     ],
@@ -132,7 +131,9 @@ export default function MenuBar({
   currentUser,
   onLogout,
   onSignin,
-  // New props for workspaces
+  // Widget lock
+  globalLock = false,
+  // Workspaces
   activeWorkspace,
   workspaces = [],
   onLoadWorkspace,
@@ -213,6 +214,24 @@ export default function MenuBar({
             checked: name === activeWorkspace
           }))
         ]
+      };
+    }
+    if (menu.label === 'Selection') {
+      // Inject dynamic lock toggle
+      return {
+        ...menu,
+        items: [
+          { label: 'Select All Widgets', action: 'select-all-widgets', shortcut: 'Ctrl+Shift+A' },
+          { label: 'Deselect All', action: 'deselect-all' },
+          { type: 'divider' },
+          { 
+            label: globalLock ? '🔒 Unlock Widgets' : '🔓 Lock Widgets', 
+            action: 'toggle-lock',
+            icon: globalLock ? 'lock' : 'unlock'
+          },
+          { type: 'divider' },
+          { label: 'Reset Layout', action: 'reset-layout' },
+        ],
       };
     }
     return menu;

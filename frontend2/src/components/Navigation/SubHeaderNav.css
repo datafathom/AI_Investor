@@ -1,14 +1,13 @@
 .sub-header-nav {
-    background: rgba(13, 17, 23, 0.8);
+    background: rgba(13, 17, 23, 0.95);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     padding: 8px 20px;
-    z-index: 1001;
+    z-index: 900; /* Below MenuBar dropdown (1001) */
     display: flex;
     justify-content: center;
     position: sticky;
-    top: 48px;
-    /* Assuming MenuBar is 48px */
+    top: 30px; /* MenuBar is 30px */
 }
 
 .nav-container {

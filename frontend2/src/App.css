@@ -6,93 +6,16 @@ footer {
 }
 
 .app-shell {
-  min-height: 100vh;
-  padding: 0;
-  padding-top: 0;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Account for fixed menu bar */
-.app-shell .hero {
-  margin-top: 30px;
-  /* Menu bar height */
-  padding-top: 0;
-}
-
-.hero {
-  position: relative;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto 0.25rem;
-  border-radius: calc(var(--radius-card) + 10px);
-  padding: 0.25rem 1rem;
-  overflow: hidden;
-  color: var(--color-text-on_cream, #2a0a0f);
-  min-height: auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-}
-
-.hero::before,
-.hero-glow {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 20% 20%, rgba(122, 34, 48, 0.15), transparent),
-    radial-gradient(circle at 80% 0%, rgba(255, 254, 240, 0.4), transparent);
-  z-index: 0;
-}
-
-.hero-body,
-.status-card {
+  width: 100vw;
+  height: 100vh;
   position: relative;
-  z-index: 1;
+  overflow: hidden;
+  background: #0A0A0B;
 }
 
-.hero-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-.hero-body h1 {
-  font-family: 'Dancing Script', cursive;
-  font-size: clamp(1.5rem, 2.5vw, 2rem);
-  font-weight: 600;
-  margin: 0;
-  padding: 0;
-  color: var(--color-burgundy-primary, #5a1520);
-  line-height: 1.2;
-  text-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  width: 100%;
-}
-
-.hero .eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.25em;
-  font-size: 0.7rem;
-  color: var(--color-text-secondary, #5a4a3a);
-  margin-bottom: 0.25rem;
-}
-
-.hero .lede {
-  max-width: 720px;
-  color: var(--color-text-secondary, #5a4a3a);
-  font-size: 0.9rem;
-  line-height: 1.3;
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
-  align-items: center;
-}
+/* Legacy Hero and Menu styles removed */
 
 .theme-toggle {
   display: flex;
@@ -273,7 +196,7 @@ footer {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: var(--burgundy-primary, #5a1520);
+  background: #111112;
   color: white;
   padding: 4px 10px;
   border-radius: 4px;
@@ -281,11 +204,12 @@ footer {
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid #222224;
 }
 
 .ticker-badge:hover {
-  background: var(--burgundy-accent, #7a2230);
+  background: #1a1a1c;
+  border-color: var(--neon-cyan);
   transform: translateY(-1px);
 }
 
@@ -312,14 +236,15 @@ footer {
 .institutional-os-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 30px);
-  /* 100vh minus MenuBar height */
+  flex: 1;
+  width: 100%;
   overflow: hidden;
-  background: var(--color-surface-100, #fefae8);
+  background: #0A0A0B;
+  /* Content area below MenuBar (30px) + SubHeaderNav (~52px) + Breadcrumbs (~45px) = ~127px */
 }
 
 body.theme-dark .institutional-os-container {
-  background: var(--color-surface-200, #2a2520);
+  background: #0A0A0B;
 }
 
 .widget-grid-container {
@@ -346,14 +271,12 @@ body.theme-dark .institutional-os-container {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: var(--color-surface-100, #fefae8);
-  background-image: radial-gradient(circle at 20% 20%, rgba(122, 34, 48, 0.15), transparent),
-    radial-gradient(circle at 80% 0%, rgba(255, 254, 240, 0.4), transparent);
+  background: #050505;
+  border: 1px solid #222224;
   border-radius: 8px;
   box-shadow:
-    0 8px 32px 4px rgba(90, 21, 32, 0.25),
-    0 4px 16px 2px rgba(90, 21, 32, 0.15),
-    0 0 0 1px rgba(90, 21, 32, 0.05);
+    0 8px 32px 0 rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
 
   /* ENABLE CONTAINER QUERIES */
   container-type: inline-size;
@@ -365,9 +288,11 @@ body.theme-dark .institutional-os-container {
   .widget-wrapper h2 {
     font-size: 1rem !important;
   }
+
   .window-header .window-title {
     font-size: 0.8rem;
   }
+
   .ticker-badge {
     padding: 2px 6px;
     font-size: 0.7rem;
@@ -378,6 +303,7 @@ body.theme-dark .institutional-os-container {
   .window-controls {
     gap: 2px;
   }
+
   .btn-icon {
     width: 24px;
     height: 24px;
@@ -454,15 +380,13 @@ body.theme-dark .widget-wrapper {
   box-shadow: none !important;
 }
 
-/* Dark mode support for widget gradient */
+/* Dark mode support for widget gradient - fully neutral */
 body.theme-dark .widget-wrapper {
-  background: var(--color-surface-200, #2a2520);
-  background-image: radial-gradient(circle at 20% 20%, rgba(122, 34, 48, 0.3), transparent),
-    radial-gradient(circle at 80% 0%, rgba(255, 254, 240, 0.1), transparent);
+  background: #050505;
+  border: 1px solid #222224;
   box-shadow:
-    0 8px 32px 4px rgba(0, 0, 0, 0.5),
-    0 4px 16px 2px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(0, 0, 0, 0.2);
+    0 20px 50px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 .widget-drag-handle {

@@ -13,7 +13,10 @@ const OptionsChainWidget = ({ linkingGroup = 'none' }) => {
 
     useEffect(() => {
         const generateMockStrikes = () => {
-            const centerStrike = 480;
+            // Seed base price from ticker name for variety
+            const charSum = currentTicker.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            const centerStrike = 100 + (charSum % 800);
+            
             const newStrikes = Array.from({ length: 15 }, (_, i) => {
                 const strike = centerStrike - 15 + i * 2;
                 const distance = Math.abs(strike - centerStrike);
@@ -34,7 +37,7 @@ const OptionsChainWidget = ({ linkingGroup = 'none' }) => {
         generateMockStrikes();
         const interval = setInterval(generateMockStrikes, 2000);
         return () => clearInterval(interval);
-    }, [updateOptionsStrikes, currentTicker]); // Regenerate when ticker changes
+    }, [updateOptionsStrikes, currentTicker]);
 
     return (
         <div className="options-chain-widget glass">

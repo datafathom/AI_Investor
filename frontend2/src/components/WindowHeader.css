@@ -8,10 +8,10 @@
   display: flex;
   align-items: center;
   height: 28px;
-  background: var(--color-surface-200, #f0f0f0);
-  border-bottom: 1px solid var(--color-surface-300, #d0d0d0);
-  border-radius: 8px 8px 0 0;
-  padding: 0 8px;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-primary);
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  padding: 0 10px;
   user-select: none;
   position: relative;
   z-index: 100;
@@ -54,7 +54,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
   transition: all 0.2s;
   background: transparent;
@@ -63,25 +63,22 @@
 
 .linking-dot.none {
   background: transparent;
-  border: 1px dashed rgba(255, 255, 255, 0.3);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
 }
 
 .linking-dot.red {
   background: #ef4444;
   border-color: #f87171;
-  box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
 }
 
 .linking-dot.blue {
   background: #3b82f6;
   border-color: #60a5fa;
-  box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
 }
 
 .linking-dot.green {
   background: #22c55e;
   border-color: #4ade80;
-  box-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
 }
 
 .linking-dot:hover {
@@ -90,7 +87,7 @@
 
 .window-controls {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
 }
 
@@ -109,64 +106,45 @@
 }
 
 .window-control-icon {
-  font-size: 10px;
+  font-size: 8px;
   line-height: 1;
   opacity: 0;
   transition: opacity 0.2s;
-  font-weight: bold;
+  font-weight: 900;
 }
 
 .window-control:hover .window-control-icon {
-  opacity: 1;
+  opacity: 0.6;
 }
 
-.window-control-close {
-  background: #ff5f57;
-}
-
-.window-control-close:hover {
-  background: #e0443e;
-  transform: scale(1.1);
-}
-
-.window-control-minimize {
-  background: #ffbd2e;
-}
-
-.window-control-minimize:hover {
-  background: #e6a626;
-  transform: scale(1.1);
-}
-
-.window-control-maximize {
-  background: #28ca42;
-}
-
-.window-control-maximize:hover {
-  background: #24b63a;
-  transform: scale(1.1);
-}
+.window-control-close { background: #ff5f57; }
+.window-control-minimize { background: #ffbd2e; }
+.window-control-maximize { background: #28ca42; }
 
 .window-title {
   flex: 1;
   text-align: center;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--color-text-primary, #2a0a0f);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  opacity: 0.8;
   padding: 0 8px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-family: var(--font-data);
 }
 
 .window-header-right {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   margin-left: auto;
 }
 
-.window-control-zoom {
+.window-control-zoom, .window-control-lock {
   width: 20px;
   height: 20px;
   border-radius: 4px;
@@ -176,76 +154,21 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  transition: all 0.2s;
-  position: relative;
+  transition: var(--transition-fast);
   background: transparent;
-  pointer-events: auto;
-  flex-shrink: 0;
-  gap: 2px;
+  color: var(--text-dim);
 }
 
-.window-control-zoom:hover {
-  background: rgba(0, 0, 0, 0.1);
+.window-control-zoom:hover, .window-control-lock:hover {
+  background: var(--hover-bg);
+  color: var(--text-primary);
 }
 
-.window-control-zoom .window-control-icon {
-  opacity: 0.7;
-  font-size: 10px;
-  line-height: 1;
-  display: block;
+/* Dark mode overrides (Unified via Design Tokens) */
+.window-header.theme-dark {
+  background: var(--bg-tertiary);
 }
 
-.window-control-zoom .window-zoom-symbol {
-  opacity: 0.7;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1;
-  display: block;
-}
-
-.window-control-zoom:hover .window-control-icon,
-.window-control-zoom:hover .window-zoom-symbol {
-  opacity: 1;
-}
-
-.window-control-lock {
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  transition: all 0.2s;
-  position: relative;
-  background: transparent;
-  pointer-events: auto;
-  flex-shrink: 0;
-}
-
-.window-control-lock:hover {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.window-control-lock .window-control-icon {
-  opacity: 0.7;
-  font-size: 12px;
-  line-height: 1;
-  display: block;
-}
-
-.window-control-lock:hover .window-control-icon {
-  opacity: 1;
-}
-
-/* Dark mode support */
-.window-header.dark {
-  background: var(--color-surface-300, #3a342d);
-  border-bottom-color: var(--color-surface-400, #4a443d);
-}
-
-.window-header.dark .window-title {
-  color: var(--color-text-primary, #f5f0e8);
+.window-header.theme-light {
+  background: var(--bg-secondary);
 }

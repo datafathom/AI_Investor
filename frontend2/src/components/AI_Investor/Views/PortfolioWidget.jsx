@@ -63,12 +63,10 @@ const GlobalHeader = ({ equity, dailyPL, buyingPower }) => (
 );
 
 /**
- * Positions Table Row with Accordion
+ * Positions Table Row with High-Density Design
  */
 const PositionRow = ({ pos }) => {
     const [isExpanded, setIsExpanded] = useState(false);
-
-    // Mock sparkline data
     const sparkData = Array.from({ length: 10 }, (_, i) => ({ value: pos.currentPrice * (1 + (Math.random() * 0.05 - 0.025)) }));
     const isProfit = pos.pl >= 0;
 
@@ -76,46 +74,33 @@ const PositionRow = ({ pos }) => {
         <>
             <tr
                 onClick={() => setIsExpanded(!isExpanded)}
-                className={`border-b border-white/5 cursor-pointer transition-all duration-200 border-l-4 ${isExpanded ? 'bg-white/5 border-l-cyan-500 shadow-[inset_0_0_20px_rgba(6,182,212,0.1)]' : 'hover:bg-white/5 border-l-transparent hover:border-l-cyan-500/50'}`}
+                className={`border-b border-white/5 cursor-pointer transition-all duration-100 hover:bg-white/5 active:bg-white/10 ${isExpanded ? 'bg-white/5' : ''}`}
             >
-                <td className="py-3 pl-4">
-                    <div className="flex items-center gap-2">
-                        {isExpanded ? <ChevronUp size={14} className="text-cyan-400" /> : <ChevronDown size={14} className="text-slate-500" />}
-                        <span className="font-bold text-white font-mono group-hover:text-cyan-400 transition-colors">{pos.symbol}</span>
+                <td className="py-2 pl-3">
+                    <div className="flex items-center gap-1">
+                        <span className="font-bold text-white font-mono text-sm">{pos.symbol}</span>
                     </div>
                 </td>
-                <td className="py-3 font-mono text-slate-300">{pos.qty}</td>
-                <td className="py-3 font-mono text-slate-300 py-3">${pos.currentPrice.toFixed(2)}</td>
-                <td className="py-3 hidden sm:table-cell">
+                <td className="py-2 font-mono text-slate-300 text-xs text-right pr-4">{pos.qty}</td>
+                <td className="py-2 font-mono text-slate-300 text-xs text-right pr-4">${pos.currentPrice.toFixed(2)}</td>
+                <td className="py-2 hidden sm:table-cell px-4">
                     <Sparkline data={sparkData} color={isProfit ? '#34d399' : '#fb7185'} />
                 </td>
-                <td className="py-3 text-right pr-4">
-                    <div className={`inline-flex flex-col items-end ${isProfit ? 'text-emerald-400' : 'text-rose-400'}`}>
-                        <span className="font-bold font-mono">{isProfit ? '+' : ''}{pos.pl.toFixed(2)}</span>
-                        <span className="text-[10px] opacity-70">{(pos.pl / (pos.qty * pos.avgPrice) * 100).toFixed(2)}%</span>
+                <td className="py-2 text-right pr-3">
+                    <div className={`font-mono text-xs font-bold ${isProfit ? 'text-emerald-400' : 'text-rose-400'}`}>
+                        {isProfit ? '+' : ''}{pos.pl.toFixed(2)}
+                        <span className="ml-2 opacity-70 text-[10px]">({(pos.pl / (pos.qty * pos.avgPrice) * 100).toFixed(2)}%)</span>
                     </div>
                 </td>
             </tr>
             {isExpanded && (
-                <tr className="bg-black/20">
-                    <td colSpan={5} className="p-4">
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
-                            <div className="flex flex-col gap-1">
-                                <span className="text-slate-500 uppercase text-[10px]">Delta</span>
-                                <span className="text-slate-300">0.85</span>
-                            </div>
-                            <div className="flex flex-col gap-1">
-                                <span className="text-slate-500 uppercase text-[10px]">Gamma</span>
-                                <span className="text-slate-300">0.12</span>
-                            </div>
-                            <div className="flex flex-col gap-1">
-                                <span className="text-slate-500 uppercase text-[10px]">Entry Reason</span>
-                                <span className="text-cyan-400">MACD Crossover (15m)</span>
-                            </div>
-                            <div className="flex flex-col gap-1">
-                                <span className="text-slate-500 uppercase text-[10px]">Conviction</span>
-                                <span className="text-emerald-400 font-bold">HIGH</span>
-                            </div>
+                <tr className="bg-black/40">
+                    <td colSpan={5} className="p-3">
+                        <div className="grid grid-cols-4 gap-4 text-[10px] font-mono">
+                            <div className="flex flex-col"><span className="text-slate-500 uppercase">Avg Cost</span><span className="text-slate-300">${pos.avgPrice.toFixed(2)}</span></div>
+                            <div className="flex flex-col"><span className="text-slate-500 uppercase">Market Value</span><span className="text-slate-300">${(pos.qty * pos.currentPrice).toFixed(2)}</span></div>
+                            <div className="flex flex-col"><span className="text-slate-500 uppercase">Sentiment</span><span className="text-cyan-400">NEUTRAL</span></div>
+                            <div className="flex flex-col"><span className="text-slate-500 uppercase">Risk Score</span><span className="text-amber-400">LOW</span></div>
                         </div>
                     </td>
                 </tr>
@@ -124,50 +109,14 @@ const PositionRow = ({ pos }) => {
     );
 };
 
-/**
- * Activity Log Item
- */
-const ActivityItem = ({ trade }) => (
-    <div className="relative pl-6 pb-6 border-l border-white/10 last:pb-0">
-        <div className={`absolute top-0 left-[-5px] w-2.5 h-2.5 rounded-full ${trade.side === 'BUY' ? 'bg-emerald-500' : 'bg-rose-500'} ring-4 ring-black`} />
-        <div className="flex flex-col gap-1 bg-white/5 p-3 rounded-lg border border-white/5 hover:border-cyan-500/30 transition-all hover:scale-[1.02] hover:shadow-lg">
-            <div className="flex justify-between items-start">
-                <div className="flex items-center gap-2">
-                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase ${trade.side === 'BUY' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
-                        {trade.side}
-                    </span>
-                    <span className="font-bold text-white font-mono">{trade.symbol}</span>
-                </div>
-                <span className="text-[10px] text-slate-500 font-mono">{trade.time}</span>
-            </div>
-
-            <div className="flex justify-between items-center text-xs mt-1">
-                <span className="text-slate-300 font-mono">{trade.qty} @ ${trade.price}</span>
-                <span className="text-slate-500 font-mono font-bold">${trade.total}</span>
-            </div>
-
-            <p className="text-[10px] text-slate-400 mt-2 border-t border-white/5 pt-2 flex items-center gap-1">
-                <Zap size={10} className="text-yellow-500" />
-                {trade.reason}
-            </p>
-        </div>
-    </div>
-);
-
-/**
- * Main Widget Component
- */
 const PortfolioWidget = () => {
     const [accountData, setAccountData] = useState(null);
     const [tradeHistory, setTradeHistory] = useState([]);
-    const [activeTab, setActiveTab] = useState('positions'); // 'overview', 'positions', 'activity'
+    const [activeTab, setActiveTab] = useState('positions');
 
     useEffect(() => {
-        // Initial data
         setAccountData(brokerageService.getAccountSummary());
         setTradeHistory(brokerageService.getTradeHistory());
-
-        // Subscribe to updates
         const unsubscribe = brokerageService.subscribe((event) => {
             if (event.type === 'MARKET_UPDATE' || event.type === 'INIT') {
                 setAccountData(event.data);
@@ -176,107 +125,76 @@ const PortfolioWidget = () => {
                 setTradeHistory([...brokerageService.getTradeHistory()]);
             }
         });
-
         return () => unsubscribe();
     }, []);
 
-    if (!accountData) return <div className="p-8 text-center text-slate-500 animate-pulse uppercase tracking-widest text-xs">Initializing Portfolio Feed...</div>;
+    if (!accountData) return <div className="p-8 text-center text-slate-500 animate-pulse text-[10px] uppercase font-mono">Loading Portfolio...</div>;
 
     const tabs = [
-        { id: 'overview', label: 'Overview', icon: AlertCircle },
-        { id: 'positions', label: 'Positions', icon: Briefcase },
-        { id: 'activity', label: 'Activity Log', icon: Clock },
+        { id: 'positions', label: 'POSITIONS', icon: Briefcase },
+        { id: 'activity', label: 'TAPE', icon: Clock },
+        { id: 'overview', label: 'RISK', icon: AlertCircle },
     ];
 
     return (
-        <div className="flex flex-col h-full bg-[#0a0a0a]/80 backdrop-blur-xl rounded-xl border border-white/10 overflow-hidden shadow-2xl">
-            <GlobalHeader
-                equity={accountData.equity}
-                dailyPL={accountData.dailyPL}
-                buyingPower={accountData.buyingPower}
-            />
-
-            {/* Tab Navigation */}
-            <div className="flex border-b border-white/5 bg-black/20">
-                {tabs.map(tab => {
-                    const Icon = tab.icon;
-                    return (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`flex items-center gap-2 px-6 py-3 text-xs font-bold uppercase tracking-wider transition-all relative ${activeTab === tab.id
-                                ? 'text-white'
-                                : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
-                                }`}
-                        >
-                            <Icon size={14} />
-                            {tab.label}
-                            {activeTab === tab.id && (
-                                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]"></div>
-                            )}
-                        </button>
-                    );
-                })}
+        <div className="flex flex-col h-full bg-[#050505] text-white overflow-hidden">
+            {/* High Density Header */}
+            <div className="bg-[#111] border-b border-[#222] p-2 flex justify-between items-center text-[10px] font-mono">
+                <div className="flex gap-4">
+                    <div><span className="text-slate-500 mr-2">EQUITY:</span><span className="text-cyan-400 font-bold">${accountData.equity.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
+                    <div><span className="text-slate-500 mr-2">DAY P/L:</span><span className={`font-bold ${accountData.dailyPL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>${accountData.dailyPL >= 0 ? '+' : ''}{accountData.dailyPL.toFixed(2)}</span></div>
+                </div>
+                <div className="flex gap-4">
+                    <div><span className="text-slate-500 mr-2">CASH:</span><span className="text-white">${accountData.liquidity.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
+                </div>
             </div>
 
-            {/* Main Content Area */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-0 bg-transparent relative">
+            {/* Micro Tabs */}
+            <div className="flex bg-[#0a0a0a] border-b border-[#222]">
+                {tabs.map(tab => (
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`px-4 py-1.5 text-[10px] font-bold tracking-tighter border-r border-[#222] transition-colors ${activeTab === tab.id ? 'bg-[#222] text-cyan-400' : 'text-slate-500 hover:bg-[#111]'}`}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
 
-                {/* POSITIONS TAB */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
                 {activeTab === 'positions' && (
-                    <div className="w-full">
-                        <table className="w-full text-left border-collapse">
-                            <thead className="sticky top-0 bg-[#0a0a0a] z-10 border-b border-white/10 shadow-lg">
-                                <tr>
-                                    <th className="py-3 pl-4 text-[10px] text-slate-500 uppercase tracking-wider font-bold">Asset</th>
-                                    <th className="py-3 text-[10px] text-slate-500 uppercase tracking-wider font-bold">Qty</th>
-                                    <th className="py-3 text-[10px] text-slate-500 uppercase tracking-wider font-bold">Price</th>
-                                    <th className="py-3 hidden sm:table-cell text-[10px] text-slate-500 uppercase tracking-wider font-bold">24h Trend</th>
-                                    <th className="py-3 pr-4 text-right text-[10px] text-slate-500 uppercase tracking-wider font-bold">P&L</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {accountData.positions.length > 0 ? (
-                                    accountData.positions.map(pos => (
-                                        <PositionRow key={pos.symbol} pos={pos} />
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan={5} className="py-12 text-center text-slate-600 italic">
-                                            No open positions. Scanning market...
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-
-                {/* ACTIVITY LOG TAB */}
-                {activeTab === 'activity' && (
-                    <div className="p-6">
-                        <div className="max-w-xl mx-auto">
-                            {tradeHistory.length > 0 ? (
-                                tradeHistory.map(trade => (
-                                    <ActivityItem key={trade.id} trade={trade} />
-                                ))
-                            ) : (
-                                <div className="text-center text-slate-600 italic py-10">
-                                    No recent activity recorded.
-                                </div>
+                    <table className="w-full text-left border-collapse">
+                        <thead className="sticky top-0 bg-[#050505] z-10 border-b border-[#222]">
+                            <tr className="text-[9px] text-slate-500 uppercase font-mono">
+                                <th className="py-1.5 pl-3">Asset</th>
+                                <th className="py-1.5 text-right pr-4">Qty</th>
+                                <th className="py-1.5 text-right pr-4">Price</th>
+                                <th className="py-1.5 hidden sm:table-cell px-4">Trend</th>
+                                <th className="py-1.5 text-right pr-3">P&L</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {accountData.positions.map(pos => <PositionRow key={pos.symbol} pos={pos} />)}
+                            {accountData.positions.length === 0 && (
+                                <tr><td colSpan={5} className="py-8 text-center text-slate-600 font-mono text-[10px] uppercase">No Active Exposure</td></tr>
                             )}
-                        </div>
-                    </div>
+                        </tbody>
+                    </table>
                 )}
 
-                {/* OVERVIEW TAB (Placeholder for now, could act as charts) */}
-                {activeTab === 'overview' && (
-                    <div className="p-6 flex flex-col items-center justify-center h-full text-center">
-                        <Wallet size={48} className="text-slate-700 mb-4" />
-                        <h3 className="text-slate-400 font-bold uppercase tracking-widest text-sm mb-2">Portfolio Analytics</h3>
-                        <p className="text-slate-600 text-xs max-w-md">
-                            Detailed performance metrics, Sharpe ratio, and sector allocation breakdown will appear here.
-                        </p>
+                {activeTab === 'activity' && (
+                    <div className="p-2 space-y-1">
+                        {tradeHistory.map(trade => (
+                            <div key={trade.id} className="flex justify-between items-center bg-[#0a0a0a] p-2 border-l-2 border-[#222] text-[10px] font-mono hover:bg-[#111]">
+                                <div className="flex gap-2 items-center">
+                                    <span className={trade.side === 'BUY' ? 'text-emerald-400' : 'text-rose-400'}>{trade.side}</span>
+                                    <span className="font-bold">{trade.symbol}</span>
+                                    <span className="text-slate-500">{trade.qty} @ ${trade.price}</span>
+                                </div>
+                                <span className="text-slate-600">{trade.time}</span>
+                            </div>
+                        ))}
                     </div>
                 )}
             </div>

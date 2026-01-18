@@ -14,13 +14,13 @@
   align-items: center;
   justify-content: space-between;
   height: 30px;
-  background: var(--color-burgundy-primary, #5a1520);
-  border-bottom: 1px solid var(--color-burgundy-dark, #3d0e15);
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-primary);
   font-size: 13px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-display);
   user-select: none;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  transform: scale(1) !important; /* Ensure menu bar never scales */
+  box-shadow: var(--shadow-sm);
+  transform: scale(1) !important;
 }
 
 .menu-bar-left {
@@ -45,18 +45,20 @@
   position: relative;
   padding: 4px 12px;
   cursor: pointer;
-  color: var(--color-text-on_burgundy, #fffef0);
-  transition: background-color 0.15s;
+  color: var(--text-secondary);
+  transition: var(--transition-fast);
   outline: none;
 }
 
 .menu-item:hover,
 .menu-item:focus {
-  background: var(--color-burgundy-light, #6b1d2a);
+  background: var(--hover-bg);
+  color: var(--text-primary);
 }
 
 .menu-item.active {
-  background: var(--color-burgundy-light, #6b1d2a);
+  background: var(--active-bg);
+  color: var(--text-primary);
 }
 
 .menu-dropdown {
@@ -64,10 +66,10 @@
   top: 100%;
   left: 0;
   min-width: 200px;
-  background: var(--color-surface-100, #ffffff);
-  border: 1px solid var(--color-surface-300, #d0c5b4);
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-lg);
   padding: 4px 0;
   margin-top: 1px;
   z-index: 1001;
@@ -97,8 +99,8 @@
   justify-content: space-between;
   padding: 6px 24px 6px 12px;
   cursor: pointer;
-  color: var(--color-text-on_cream, #2a0a0f);
-  transition: background-color 0.1s, color 0.1s;
+  color: var(--text-secondary);
+  transition: var(--transition-fast);
   outline: none;
   position: relative;
 }
@@ -113,21 +115,18 @@
   text-align: center;
   margin-right: 8px;
   font-size: 12px;
-  color: var(--color-burgundy-primary, #5a1520);
-}
-
-.menu-bar.dark .menu-checkmark {
-  color: var(--color-burgundy-accent, #7a2230);
+  color: var(--neon-cyan);
 }
 
 .menu-dropdown-item.checked .menu-item-label {
   font-weight: 600;
+  color: var(--text-primary);
 }
 
 .menu-dropdown-item:hover:not(.disabled),
 .menu-dropdown-item:focus:not(.disabled) {
-  background: var(--color-burgundy-primary, #5a1520);
-  color: var(--color-cream-primary, #f5f0e8);
+  background: var(--hover-bg);
+  color: var(--text-primary);
 }
 
 .menu-dropdown-item.disabled {
@@ -154,12 +153,8 @@
 
 .menu-divider {
   height: 1px;
-  background: var(--color-surface-300, #d0c5b4);
+  background: var(--border-primary);
   margin: 4px 8px;
-}
-
-.menu-bar.dark .menu-divider {
-  background: var(--color-surface-400, #3a342d);
 }
 
 /* Keyboard navigation highlight */

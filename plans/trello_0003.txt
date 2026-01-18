@@ -1,0 +1,900 @@
+{
+  "strategic_context": "The AI Investor GUI is engineered as the visual manifestation of the 'Yellowstone Wolf' principle, functioning as a warden's console for a complex adaptive ecosystem. By treating the trading environment as a biological equilibrium, the interface allows a human operator to monitor an autonomous agent swarm specialized in oscillation detection and mean-reversion. High-fidelity telemetry provides the 'eyes' into the system's homeostasis, where visual hierarchy and real-time data flow (powered by Kafka and Neo4j) enable the operator to distinguish between noise and systemic shifts. The GUI ensures that as the 'wolves' (agents) hunt for alpha, the ecosystem remains balanced through intuitive risk-visualization and sub-millisecond feedback loops.",
+  "system_architecture_constants": {
+    "runtime_environment": "Python 3.10+",
+    "frontend_core": "React 19 & Vite",
+    "state_management": "Zustand (Global) & React Context (Local)",
+    "event_streaming": "Kafka (Redpanda) with Socket.io/SignalR Broadcast",
+    "graph_database": "Neo4j (Relationship & Correlation Mapping)",
+    "time_series_database": "Postgres (TimescaleDB)",
+    "visualization_engine": "D3.js (SVG & Canvas Layers)",
+    "animation_engine": "Framer Motion",
+    "styling": "Tailwind CSS with Backdrop-Blur Utility"
+  },
+  "institutional_gui_roadmap": [
+    {
+      "phase_id": "43",
+      "title": "Institutional OS-Style Window Management",
+      "strategic_importance": "Optimizes agent swarm visibility during extreme volatility events.",
+      "description": "Transforms the dashboard from a static grid into a functional Desktop OS environment. This flexibility is critical for managing an active agent swarm; traders can prioritize specific 'senses' (e.g., Sentiment vs. Order Flow) by manipulating window real estate, thereby reducing cognitive load and accelerating intervention during black-swan oscillations.",
+      "verbose_acceptance_criteria": [
+        "Implementation of a Window Wrapper Pattern using React 19 hooks and Zustand for managing multi-window state.",
+        "Integration of 8 distinct resize handles (N, S, E, W, NE, NW, SE, SW) to provide precision control over high-density UI components.",
+        "Z-Index Stacking Engine that dynamically brings the active agent window to the foreground on click to ensure execution focus.",
+        "Persistent coordinate and dimension tracking utilizing Postgres-backed user profiles to restore workspace layouts in < 200ms.",
+        "Smooth dragging physics via Framer Motion with zero-latency visual feedback during high-frequency data updates."
+      ]
+    },
+    {
+      "phase_id": "43.1",
+      "title": "Glassmorphism UI Chrome & Visual Fidelity",
+      "strategic_importance": "Maintains peripheral awareness of ecosystem equilibrium.",
+      "description": "Applies a high-fidelity aesthetic using 20px backdrop-blur and professional shadows. This 'Glassmorphism' effect is not merely cosmetic; it allows the trader to focus on primary execution windows while maintaining 'ghost' visibility of background telemetry and agent heartbeats in the periphery.",
+      "verbose_acceptance_criteria": [
+        "CSS backdrop-filter implementation with 20px blur and 70% opacity background fill for all widget containers.",
+        "High-contrast professional shadows (0 10px 15px -3px rgba(0, 0, 0, 0.5)) to distinguish overlapping data layers.",
+        "Active window distinction via a 1px neon border (variable color based on agent risk state: Green/Yellow/Red).",
+        "Standardized Institutional Window Chrome: Close (Red), Minimize (Yellow), Maximize (Green) with 150ms hover transitions."
+      ]
+    },
+    {
+      "phase_id": "44",
+      "title": "Taskbar Logic & Agent Heartbeat Monitoring",
+      "strategic_importance": "Ensures uninterrupted oversight of the 'Nervous System' during workspace clearing.",
+      "description": "Minimized windows persist in a bottom dock, serving as a status-bar for the ecosystem. This allows the trader to focus on specific execution tasks while the taskbar provides real-time 'heartbeat' indicators for hidden agents, ensuring no autonomous process enters a 'dead capital' state without detection.",
+      "verbose_acceptance_criteria": [
+        "Dynamic bottom dock with icon-based representation of all active agents and sensor streams.",
+        "Real-time status indicators (Green/Red heartbeats) integrated into taskbar icons, driven by Kafka heartbeat topics.",
+        "Window restoration logic that returns windows to exact (X, Y, W, H) coordinates in < 100ms.",
+        "Hover-based Tooltip Previews displaying a D3.js mini-sparkline of the widget's primary metric (e.g., P&L or Hype Score)."
+      ]
+    },
+    {
+      "phase_id": "45",
+      "title": "Advanced Logical Workspace Routing",
+      "strategic_importance": "Enables logical segregation of institutional workflows for professional focus.",
+      "description": "Establishment of specialized routes: /workspace/terminal (Command Center), /analytics/options (Greeks/IV Modeling), /portfolio/backtest (Historical Simulation), and /scanner/global (Real-time Grid). This modular route architecture ensures logical segregation of high-stakes workflows, mirroring the institutional-grade navigation environments found in platforms like TD Ameritrade’s thinkorswim or Fidelity Active Trader Pro, providing a seamless transition from macro scanning to micro-execution.",
+      "verbose_acceptance_criteria": [
+        "Implementation of Breadcrumb Navigation that dynamically tracks paths like 'Workspace > Terminal > AI Agent'.",
+        "Optimized layout for /analytics/options that prioritizes Fama-French 5-Factor model decomposition and Gamma Exposure (GEX) metrics.",
+        "Full state persistence across route transitions using Zustand to prevent data loss or re-rendering lag.",
+        "Breadcrumbs must support instant backtracking and deep-linking to specific agent-ID configurations."
+      ]
+    },
+    {
+      "phase_id": "12",
+      "title": "D3.js Fear & Greed Composite Gauge",
+      "strategic_importance": "Master metric for contrarian signal detection and regime-shifting.",
+      "description": "A high-density visualization that synthesizes VIX, Put/Call ratios, and social sentiment into a 0-100 score. This acts as the system's primary 'emotional barometer,' alerting the operator to 'Extreme Fear' (<20) as a mean-reversion buying opportunity or 'Extreme Greed' (>80) as a window for aggressive risk mitigation.",
+      "verbose_acceptance_criteria": [
+        "D3.js SVG-based needle implementation with real-time updates every minute triggered by Kafka SignalEvents.",
+        "Visual color zones: Red (0-20), Yellow (21-79), Green (80-100) indicating emotion-to-action mapping.",
+        "Hover-active tooltips detailing the composite weights: VIX, Google Trends search spikes ('Margin Call'), and Social Sentiment.",
+        "Smooth needle transitions using Framer Motion to reflect subtle shifts in market sentiment without visual jarring."
+      ]
+    },
+    {
+      "phase_id": "6.2",
+      "title": "Kafka 'Nervous System' Stream Monitor",
+      "strategic_importance": "Visual verification of data-ingestion health and sub-200ms perception.",
+      "description": "A diagnostic window into the system's internal event bus. By visualizing the flow of MarketEvents and SignalEvents, the operator can confirm the system is perceiving the market with a target latency of < 200ms, ensuring the 'Yellowstone' equilibrium is maintained by fresh, not stale, data.",
+      "verbose_acceptance_criteria": [
+        "Scrolling activity log of all messages passing through the local event bus (Market Data, Sentiment, Risk).",
+        "D3.js Real-time latency graph showing API-to-Kafka ingestion speed (Target < 200ms).",
+        "Color-coded event classification: Blue (Price), Purple (Sentiment), Orange (Risk Warning), Green (Execution).",
+        "User-defined filtering by Kafka topic (e.g., 'options-flow' or 'reddit-mentions') to isolate specific data bottlenecks."
+      ]
+    },
+    {
+      "phase_id": "8.1",
+      "title": "Social NLP Pipeline & HypeMeter Tape",
+      "strategic_importance": "Quantifies retail hive-mind movements and sudden viral momentum.",
+      "description": "A high-density trade tape equivalent for social sentiment. It utilizes the 'HypeMeter Engine' (Phase 35) to track 'Meme Velocity' by monitoring Reddit (r/wallstreetbets) and Twitter for 500% spikes in ticker mentions, applying FinBERT to identify actionable hype before it hits mainstream news.",
+      "verbose_acceptance_criteria": [
+        "Real-time scrolling tape of social 'Trade ideas' with sentiment scores (-1 to +1) and mention-source metadata.",
+        "Visual 'Viral Alert' badge for tickers exceeding 5 standard deviations in mention velocity.",
+        "NLP extraction layer displaying key thematic keywords: 'Gamma Squeeze', 'Short Interest', and 'Nancy Pelosi'.",
+        "Integration with the HypeMeter Engine to provide a 'Hype Score' that weighs platform-specific engagement (views/shares)."
+      ]
+    },
+    {
+      "phase_id": "46",
+      "title": "Institutional Options Chain Widget",
+      "strategic_importance": "Enables complex neutral-regime yield generation (Iron Condors).",
+      "description": "An advanced strike price ladder including Real-time Greeks (Delta, Gamma, Theta, Vega) and Implied Volatility (IV) display. This widget facilitates precision execution of strategies like Iron Condors or Delta-hedging for synthetic option manufacturing.",
+      "verbose_acceptance_criteria": [
+        "Vertical strike ladder with Bid/Ask columns updating in < 100ms via internal pricing engine.",
+        "D3.js visualization of the volatility smile and real-time Greek values (Δ, Γ, Θ, Vega) per contract.",
+        "One-click order entry: Clicking a price cell triggers the Pre-Trade Risk Modal with all contract parameters pre-filled.",
+        "Calculation and display of IV Rank and IV Percentile to identify overpriced insurance opportunities."
+      ]
+    },
+    {
+      "phase_id": "46.2",
+      "title": "Level 2 Market Depth (DOM) & 'The Gap' Display",
+      "strategic_importance": "Mathematical heart of the dashboard for price-improvement hunting.",
+      "description": "A vertical 'Depth of Market' (DOM) ladder showing real-time bid/ask depth. This widget is designed to prevent 'fat-finger' errors and allow for price-improvement hunting by visualizing where 'Smart Money' is stacking liquidity. It features 'The Gap' metric as the mathematical center of the order book.",
+      "verbose_acceptance_criteria": [
+        "Vertical Price Ladder with histogram-based volume visualization for each bid/ask price level.",
+        "Explicit visualization of 'The Gap' (Phase 5.5) as the mathematical heart of the book, updating in < 50ms.",
+        "Institutional Activity Filter to highlight 'Whale' orders (volume/OI heuristics) above user-defined thresholds.",
+        "Drag-and-drop order placement: Ability to physically move limit orders on the ladder to hunt for better fills."
+      ]
+    },
+    {
+      "phase_id": "47",
+      "title": "Multi-Sense Symbol Linking & Global Workflow",
+      "strategic_importance": "Synchronizes analysis across multiple sensor streams for instant decision-making.",
+      "description": "Implementation of color-group linking (Red, Blue, Green) that propagates ticker changes across all linked windows. This ensures that a single click on a 'Meme Velocity' alert in the Social Sensor instantly updates the 'Options Chain', 'DOM', and 'Technical Charts' for that ticker.",
+      "verbose_acceptance_criteria": [
+        "Propagate symbol changes across all linked windows in < 50ms using a shared Zustand ticker state.",
+        "Visual color-coded group assignment badges in the top-right of every resizable window.",
+        "Global hotkeys for high-speed execution: 'Shift+B' (Buy), 'Shift+S' (Sell), and 'ESC' (Global Cancel/Kill).",
+        "Workspace persistence that remembers group assignments and linked configurations across browser sessions."
+      ]
+    },
+    {
+      "phase_id": "48",
+      "title": "Execution Shield: AI-Assisted Risk Modal",
+      "strategic_importance": "Prevents 'Black Swan' exposure through mandatory algorithmic safety checks.",
+      "description": "A high-fidelity confirmation modal that appears before trade submission. It performs a final 'Pre-Trade Risk Check' (Margin, Portfolio VaR, Sector Concentration) and displays an AI-generated risk rating to prevent catastrophic exposure to localized market crashes.",
+      "verbose_acceptance_criteria": [
+        "Mandatory display of Position Size, Margin Impact, and Sector Concentration limits before 'Confirm' button activation.",
+        "AI Risk Rating displayed as a prominent colored badge (SAFE/CAUTION/DANGER) with a one-sentence logic justification.",
+        "Contextual display of the 'Nancy Pelosi Index' (Phase 37) or other political alpha signals relevant to the ticker.",
+        "Focus-trap implementation that blurs the entire background workspace to ensure total operator concentration on the trade."
+      ]
+    },
+    {
+      "phase_id": "48.1",
+      "title": "Global 'Safety Pin' Kill Switch",
+      "strategic_importance": "Immediate freezing of activity during system malfunction or extreme volatility.",
+      "description": "A prominent 'Safety Pin' UI element that sends a priority broadcast to all agents and the broker (Alpaca/Robinhood). This failsafe is designed to freeze all trading activity and liquidate high-risk positions in < 1 second to preserve capital during systemic breakdown.",
+      "verbose_acceptance_criteria": [
+        "Global floating 'Kill Switch' button utilizing Socket.io or SignalR real-time broadcast for < 1s latency across all tabs.",
+        "Priority bypass: Kill command must supersede all other outgoing Kafka messages.",
+        "Visual 'System Frozen' overlay that remains until a manual security passcode is entered by the operator.",
+        "Automated confirmation of 'Freeze' status from Broker API reflected in the UI within 1.5 seconds."
+      ]
+    },
+    {
+      "phase_id": "48.2",
+      "title": "Notification Engine & Options Flow Alerts",
+      "strategic_importance": "Real-time communication of institutional activity and macro shifts.",
+      "description": "A toast-style notification system that categorizes alerts by severity (INFO, WARN, CRITICAL). It specifically highlights institutional movement detected by the Options Flow Service (Phase 9), such as 'Whale Flow Detected' based on volume/OI heuristics.",
+      "verbose_acceptance_criteria": [
+        "Implementation of non-blocking Toast notifications with severity-based color-coding (Blue/Orange/Red).",
+        "Deep-linking functionality: Clicking a 'Whale Flow' notification automatically opens the Options Chain for that ticker.",
+        "Heuristic-based filtering to ensure only significant institutional sweeps (based on Delta and OI) trigger a CRITICAL alert.",
+        "Configurable alert toggle menu allowing users to mute 'Social Mentions' while maintaining 'Risk' and 'Whale' alerts."
+      ]
+    }
+  ]
+}
+
+
+
+Technical Specification: AI_Investor GUI Expansion (Phases 49–68)
+
+1. Strategic Context: The Shift to Total Financial Homeostasis
+
+The expansion of the AI_Investor system from Phase 49 to Phase 68 represents the critical transition from a "Trading Terminal" (focused on micro-execution and tactical hunting) to a Total Financial Homeostasis Engine. In this final epoch, the platform evolves into a warden’s console for a complex adaptive financial ecosystem.
+
+Drawing upon the Yellowstone Wolf Principle, we recognize that a healthy ecosystem requires a regulated balance between predators (alpha-seeking agents) and prey (capital opportunities). While Phases 0–48 established the nervous system and sensory apparatus (Kafka, Neo4j, Postgres), this current expansion focuses on macro-wealth management—ensuring that the system does not "overgraze" the capital base but maintains a state of perpetual equilibrium.
+
+By integrating the "Enough" metric and specialized "Homeostasis" modes, we specifically target the reduction of the user's cognitive load. The UI shifts from high-frequency telemetry to high-conviction oversight, utilizing sophisticated visualizations to map asset correlations (Neo4j), track geopolitical alpha (the Nancy Pelosi Index), and ensure long-term capital preservation through rigorous scenario modeling.
+
+2. Technical Implementation Methodology
+
+The development of Phases 49–68 must strictly adhere to the system_architecture_constants defined in the foundational core. The interface must remain responsive, with sub-200ms perception-to-action latency.
+
+* Runtime: React 19 (using the new use API and Action hooks for streamlined state handling) via Vite.
+* State Management: Zustand-driven store slicing (e.g., usePortfolioStore, useRiskStore) to prevent unnecessary re-renders of the global tree.
+* Data Orchestration: Real-time telemetry via Kafka topics, with all manual and autonomous interventions persisted through the UnifiedActivityService.
+* Visualization: D3.js for complex SVG/Canvas rendering of multi-dimensional data (Yield curves, Monte Carlo paths, and Neo4j graph relationships).
+* Styling: Tailwind CSS with intensive use of backdrop-blur and glassmorphism to provide peripheral awareness of background system heartbeats.
+
+3. Comprehensive Phase Definition (Phases 49–68)
+
+[
+  {
+    "phase_id": "49",
+    "title": "Advanced Portfolio Performance Attribution (Brinson-Fachler UI)",
+    "strategic_importance": "Maintains ecosystem accountability by determining if returns are driven by agent skill (Alpha) or mere market exposure (Beta).",
+    "description": "A high-fidelity dashboard for decomposing portfolio returns against benchmarks using the Brinson-Fachler model.",
+    "sub_deliverables": [
+      {
+        "title": "Sector Allocation Attribution Widget",
+        "description": "Visual breakdown of selection and allocation effects per GICS sector.",
+        "verbose_acceptance_criteria": [
+          "Attribution logic must trigger a partial state re-hydration via `usePortfolioStore` to reflect benchmark changes in < 50ms.",
+          "Must utilize D3.js diverging bar charts with hex-scales interpolated for color-blind accessibility via Tailwind config.",
+          "Support for real-time comparison against at least three concurrent benchmarks (S&P 500, Nasdaq, Custom Index)."
+        ]
+      },
+      {
+        "title": "Interaction Effect Heatmap (D3.js)",
+        "description": "A matrix visualization of the combined impact of allocation and selection choices.",
+        "verbose_acceptance_criteria": [
+          "SVG grid must render at 60 FPS during zoom/pan interactions using Framer Motion.",
+          "Interpolate hex-colors based on standard deviation of attribution delta to highlight outlier performance.",
+          "Persistent tooltip display of raw basis point contributions per node."
+        ]
+      },
+      {
+        "title": "Benchmark Relative-Strength Overlay",
+        "description": "A zero-lag chart comparing the strategy's equity curve against institutional indices.",
+        "verbose_acceptance_criteria": [
+          "Chart must handle 10,000+ data points using HTML5 Canvas rendering for the line layer.",
+          "Include a 'Regime Shift' indicator that highlights periods of strategy-to-benchmark decoupling.",
+          "PDF report generation must be offloaded to a background worker to prevent UI blocking."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "50",
+    "title": "Fixed Income & Yield Curve Visualization",
+    "strategic_importance": "Monitors the baseline cost of money (the 'Climate' of the Yellowstone ecosystem) to protect capital preservation layers.",
+    "description": "Comprehensive UI for managing bond ladders and analyzing the sovereign yield curve.",
+    "sub_deliverables": [
+      {
+        "title": "Bond Ladder Construction Interface",
+        "description": "Visual drag-and-drop tool for planning staggered maturity schedules.",
+        "verbose_acceptance_criteria": [
+          "Draggable D3 bars must update the `useFixedIncomeStore` in real-time.",
+          "Automatic calculation of 'Weighted Average Life' (WAL) for the ladder.",
+          "Visual 'Liquidity Gap' indicators for years with zero maturities."
+        ]
+      },
+      {
+        "title": "Real-time Yield Curve (FRED API) Plotter",
+        "description": "Interactive plotter for US Treasury curves with inversion detection.",
+        "verbose_acceptance_criteria": [
+          "Integration with FRED API via Kafka topic `macro-fred-updates` with < 500ms lag monitoring.",
+          "Visual animation (Framer Motion) of curve shifts over a 12-month historical window.",
+          "Automatic 'Recession Signal' alert if 10Y-2Y spread falls below 0bps."
+        ]
+      },
+      {
+        "title": "Duration & Convexity Risk Gauges",
+        "description": "High-fidelity gauges showing sensitivity to interest rate oscillations.",
+        "verbose_acceptance_criteria": [
+          "Gauges must reflect portfolio sensitivity to a +/- 100bps rate shock.",
+          "Visual 'Stress Zone' highlights when convexity becomes negative.",
+          "Data source must be verified against Postgres time-series tables for accuracy."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "51",
+    "title": "Multi-Asset Cryptographic Vaulting & Web3 GUI",
+    "strategic_importance": "Integrates decentralized 'Metabolism' metrics (gas, liquidity) into the centralized homeostasis model.",
+    "description": "Interface for cold/hot wallet orchestration and DeFi position tracking.",
+    "sub_deliverables": [
+      {
+        "title": "Hardware Wallet Connectivity Dashboard",
+        "description": "Secure interface for Ledger/Trezor balance monitoring.",
+        "verbose_acceptance_criteria": [
+          "WebSocket connectivity to blockchain nodes must maintain > 99.9% uptime.",
+          "Zustand state must mask public keys by default, requiring biometric interaction to reveal.",
+          "Real-time USD valuation using Kafka-driven price feeds from Phase 6."
+        ]
+      },
+      {
+        "title": "On-chain Liquidity Provider (LP) Position Tracker",
+        "description": "Visualizes impermanent loss and yield generation for DEX positions.",
+        "verbose_acceptance_criteria": [
+          "D3.js visualization of 'HODL Value' vs 'LP Value' over time.",
+          "Automatic detection of pool-drain events via abnormal slippage telemetry.",
+          "LP nodes must be mapped in Neo4j with `LIQUIDITY_SOURCE` relationships to relevant tokens."
+        ]
+      },
+      {
+        "title": "Gas Fee Optimization & Speed Controller",
+        "description": "Monitoring network congestion as a 'System Metabolism' check.",
+        "verbose_acceptance_criteria": [
+          "Real-time 'Gwei Pulse' widget with historical average overlay.",
+          "Zustand-based 'Meta-Transaction' builder for queuing low-priority trades during gas troughs.",
+          "Alerts for gas price spikes exceeding 3 standard deviations."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "52",
+    "title": "Tax-Advantaged Strategy & Harvesting UI",
+    "strategic_importance": "Ensures the recycling of 'Dead Capital' through loss harvesting to fuel new growth.",
+    "description": "Automated tools for identification and execution of tax-alpha opportunities.",
+    "sub_deliverables": [
+      {
+        "title": "Unrealized Loss Identification Grid (Wash-Sale Protected)",
+        "description": "Filterable grid of loss positions eligible for harvesting.",
+        "verbose_acceptance_criteria": [
+          "Grid must query Postgres for 30-day buy-side history to prevent Wash-Sale violations.",
+          "Real-time calculation of 'Tax Savings Alpha' per position.",
+          "One-click 'Harvest & Replace' logic that suggests correlated (but not identical) assets."
+        ]
+      },
+      {
+        "title": "Automated Tax-Loss Harvesting Toggle with Risk Warning",
+        "description": "Global switch to allow autonomous agents to execute harvesting trades.",
+        "verbose_acceptance_criteria": [
+          "Requires secondary OAuth 2.0 biometric confirmation for activation.",
+          "Visual feedback showing the 'Shield' icon in the Taskbar during active harvesting.",
+          "Integration with `ProtectorAgent` to ensure sector exposure limits are not breached."
+        ]
+      },
+      {
+        "title": "Long-term vs. Short-term Capital Gains Forecaster",
+        "description": "A timeline visualizer showing when positions transition to long-term status.",
+        "verbose_acceptance_criteria": [
+          "Framer Motion 'Countdown' indicators for assets within 30 days of long-term status.",
+          "Visual projection of tax liability under three scenarios (Hold, Sell All, Partial Harvest).",
+          "Exportable CSV formatted for immediate CPA ingestion."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "53",
+    "title": "Global Macro & Commodities Heatmaps",
+    "strategic_importance": "Monitors the 'Environmental Conditions' (Supply Chains, Politics) that precede price oscillations.",
+    "description": "Mapping of global trade, political alpha, and commodity term structures.",
+    "sub_deliverables": [
+      {
+        "title": "Interactive D3 World Map (Shipping & Politics)",
+        "description": "Choropleth map integrating shipping delays and the Nancy Pelosi Index.",
+        "verbose_acceptance_criteria": [
+          "Map must display `POLITICAL_INSIDER` nodes from Neo4j, showing 13F filing locations.",
+          "Real-time shipping congestion icons derived from Marine Traffic API topics.",
+          "Clickable regions must trigger a state update in the `useMacroStore` to show localized CPI/PPI."
+        ]
+      },
+      {
+        "title": "Futures Curve Contango/Backwardation Visualizer",
+        "description": "D3.js plotter for the term structure of energy and agricultural futures.",
+        "verbose_acceptance_criteria": [
+          "Visual 'Roll Yield' opportunity markers on the curve.",
+          "Support for cross-commodity spread charts (e.g., Crack Spread).",
+          "Latency for futures price updates must be < 200ms via Kafka."
+        ]
+      },
+      {
+        "title": "Inflation-Sensitive Asset Correlation Matrix (Neo4j)",
+        "description": "Graph-based visualization of how assets respond to inflationary regimes.",
+        "verbose_acceptance_criteria": [
+          "Node relationships must map `INFLATION_HEDGE` and `DEFLATION_VICTIM` edges.",
+          "Dynamic clustering based on sensitivity to 10-year break-even inflation rates.",
+          "Cypher query execution for graph updates must complete in < 150ms."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "54",
+    "title": "Institutional KYC & Secure Document Vault",
+    "strategic_importance": "Establishes the 'Fort Knox' legal boundary required for institutional-scale operation.",
+    "description": "Secure identity management and encrypted document orchestration.",
+    "sub_deliverables": [
+      {
+        "title": "Encrypted Identity Verification Portal",
+        "description": "Secure portal for PII management and institutional verification.",
+        "verbose_acceptance_criteria": [
+          "End-to-end encryption for all document uploads with AES-256 vaulting.",
+          "Real-time verification status tracker using Zustand-based progress bars.",
+          "Integration with third-party KYC APIs (Plat, Jumio) via secure webhooks."
+        ]
+      },
+      {
+        "title": "Audit-Trail Document Management System",
+        "description": "Version-controlled vault for trust deeds and corporate resolutions.",
+        "verbose_acceptance_criteria": [
+          "Immutable log of every document access event persisted to `UnifiedActivityService`.",
+          "Search functionality utilizing Postgres full-text search indexing.",
+          "Role-based access control (RBAC) enforced at the UI component level."
+        ]
+      },
+      {
+        "title": "Regulatory Filing Progress Tracker (13F, etc.)",
+        "description": "Monitoring tool for mandatory institutional disclosures.",
+        "verbose_acceptance_criteria": [
+          "Automated alerts for 13F filing windows based on the SEC calendar.",
+          "Visual indicator of 'Data Readiness' for the current quarter's filings.",
+          "One-click export of holdings in SEC-compliant XML format."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "55",
+    "title": "The Debate Chamber 2.0 (Interactive Persona GUI)",
+    "strategic_importance": "Exposes the internal 'Swarm Logic' to the user to reduce groupthink and validate intent.",
+    "description": "A visual interface for the multi-persona LLM committee debate process.",
+    "sub_deliverables": [
+      {
+        "title": "Multi-Agent Chat Interface (Bull vs. Bear)",
+        "description": "Real-time debate stream between adversarial agent personas.",
+        "verbose_acceptance_criteria": [
+          "Persona-specific avatar rendering with Tailwind color-coded 'Sentiment Glow'.",
+          "Ability to 'Branch' the debate by injecting user-defined counter-arguments.",
+          "Messages must be tagged with `PERSONA_ID` and persisted in the `useDebateStore`."
+        ]
+      },
+      {
+        "title": "Voting/Consensus Progress Bar",
+        "description": "Visual representation of agreement levels for proposed trades.",
+        "verbose_acceptance_criteria": [
+          "Consensus must exceed 70% to enable the 'Approve Execution' button.",
+          "Dissenting agents must be highlighted with 'Reason for Dissent' hover-tooltips.",
+          "Zustand-managed state must update instantly as agents change votes during the debate."
+        ]
+      },
+      {
+        "title": "Argument Mapping Tree (Neo4j)",
+        "description": "Graph-based visualization of the AI's logical deductions.",
+        "verbose_acceptance_criteria": [
+          "Node relationships must map `PRO_ARGUMENT` and `CON_ARGUMENT` edges.",
+          "Edge weights must be derived from the LLM's confidence scores.",
+          "Clickable fact-nodes that link back to source news or SEC filings."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "56",
+    "title": "Multi-Currency Cash Management & FX Conversion",
+    "strategic_importance": "Manages the 'Pulse' of global liquidity and jurisdictional arbitrage.",
+    "description": "Real-time dashboard for managing multi-currency balances and FX hedging.",
+    "sub_deliverables": [
+      {
+        "title": "Global Cash Balance 'Pulse' Widget",
+        "description": "Aggregated real-time view of cash holdings across all currencies.",
+        "verbose_acceptance_criteria": [
+          "Real-time FX rate updates from Kafka topic `fx-stream-global` every 10 seconds.",
+          "Visual 'Heat' indicators for currencies with high overnight interest rates.",
+          "One-click 'Base Currency' toggle using Zustand state mapping."
+        ]
+      },
+      {
+        "title": "Limit-Order FX Conversion Interface",
+        "description": "Execution tool for institutional-scale currency swaps.",
+        "verbose_acceptance_criteria": [
+          "Supports 'Iceberg' orders to minimize FX market impact.",
+          "Visual Bid/Ask spread gauge with 10bps precision.",
+          "Integration with `RiskGuardrailService` to prevent unauthorized currency exposure."
+        ]
+      },
+      {
+        "title": "Interest-Bearing Cash Optimization Dashboard",
+        "description": "Identifies idle cash and suggests high-yield deployment (MMFs, T-Bills).",
+        "verbose_acceptance_criteria": [
+          "Automated 'Sweep' suggestions when idle cash exceeds $50,000.",
+          "Comparison table of overnight repo rates across three major jurisdictions (US, EU, UK).",
+          "Historical yield tracking with D3.js area charts."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "57",
+    "title": "Advanced Backtest Result Explorer (V2)",
+    "strategic_importance": "Uses 10,000 parallel realities to ensure the current strategy is not an outlier and avoids extinction.",
+    "description": "Deep-dive statistical explorer for historical simulation results.",
+    "sub_deliverables": [
+      {
+        "title": "Monte Carlo Simulation Path Visualizer",
+        "description": "Canvas-based rendering of 10,000 potential future equity paths.",
+        "verbose_acceptance_criteria": [
+          "Must render 10k paths at 60 FPS using HTML5 Canvas with quantile shading (5/50/95%).",
+          "Calculate 'Probability of Ruin' (Extinction Event) based on user-defined drawdown limits.",
+          "Interactive slider to adjust volatility assumptions and see real-time path shifts."
+        ]
+      },
+      {
+        "title": "Maximum Drawdown 'Stress Point' Timeline",
+        "description": "Annotated timeline showing performance during historical black swans.",
+        "verbose_acceptance_criteria": [
+          "Annotations must link to `MACRO_EVENT` nodes in Neo4j (e.g., '2020 C19 Crash').",
+          "Visual 'Underwater' chart showing time-to-recovery for each historical dip.",
+          "Calculates 'Ulcer Index' and 'Pain Index' for the strategy."
+        ]
+      },
+      {
+        "title": "Out-of-Sample Performance Variance Matrix",
+        "description": "Compares training vs. validation performance to detect overfitting.",
+        "verbose_acceptance_criteria": [
+          "Visual 'Overfit Warning' if variance between In-Sample and Out-of-Sample exceeds 20%.",
+          "Sharpe and Sortino ratio comparison per yearly bucket.",
+          "Zustand-based persistence of backtest parameters for easy sharing and replication."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "58",
+    "title": "Estate Planning & Inheritance Protocol Wizard",
+    "strategic_importance": "Extends the 'Life' of the financial ecosystem beyond the primary warden.",
+    "description": "Configurator for succession logic and the 'Dead Man's Switch'.",
+    "sub_deliverables": [
+      {
+        "title": "Dead Man's Switch Configuration Interface",
+        "description": "Safety mechanism to trigger asset transfer after period of inactivity.",
+        "verbose_acceptance_criteria": [
+          "Visual countdown timer showing 'Time to Trigger'.",
+          "Multi-channel verification (SMS/Email/App) logic with configurable heartbeat interval.",
+          "Encryption of beneficiary keys until the trigger is successfully fired."
+        ]
+      },
+      {
+        "title": "Beneficiary Asset Allocation Mapping",
+        "description": "Visual tree for splitting the portfolio among sub-accounts.",
+        "verbose_acceptance_criteria": [
+          "Drag-and-drop allocation nodes with real-time percentage balance checking.",
+          "Integration with the Document Vault to link specific assets to Trust deeds.",
+          "Visual simulation of estate tax impact per beneficiary."
+        ]
+      },
+      {
+        "title": "Trust/Entity Legal Structure Visualizer (Neo4j)",
+        "description": "Graph view of LLCs, Trusts, and their jurisdictional relationships.",
+        "verbose_acceptance_criteria": [
+          "Node types: `ENTITY`, `TRUST`, `INDIVIDUAL`. Edge types: `OWNS`, `BENEFICIARY_OF`.",
+          "Hover-state shows Tax ID and Jurisdiction data (e.g., Delaware LLC, Wyoming Trust).",
+          "One-click 'Corporate Resolution' generator for structural changes."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "59",
+    "title": "Regulatory Compliance & Audit Log Explorer",
+    "strategic_importance": "Ensures the system remains a 'Lawful Predator' within the market ecosystem.",
+    "description": "Forensic explorer for all trading activity and automated reporting.",
+    "sub_deliverables": [
+      {
+        "title": "Real-time 'Anti-Market Abuse' Monitoring Feed",
+        "description": "Detection and flagging of spoofing, layering, or wash-trading patterns.",
+        "verbose_acceptance_criteria": [
+          "Heuristic-based flagging of order cancellations within 10ms of placement.",
+          "Visual 'Red-Flag' notifications for suspicious liquidity patterns.",
+          "Automated 'Pause' command for agents detected in repetitive outlier behavior."
+        ]
+      },
+      {
+        "title": "Immutable Activity Audit Log",
+        "description": "Unified interface for the `UnifiedActivityService` forensic record.",
+        "verbose_acceptance_criteria": [
+          "Supports cryptographic verification of log integrity (SHA-256 chain).",
+          "Advanced filtering by `AGENT_ID`, `ASSET_CLASS`, and `TIMESTAMP`.",
+          "Exportable 'Audit Pack' in encrypted ZIP format for regulatory inquiries."
+        ]
+      },
+      {
+        "title": "SAR (Suspicious Activity Report) Automated Flagging UI",
+        "description": "Workflow for reviewing and filing reports on unusual fund movements.",
+        "verbose_acceptance_criteria": [
+          "Interface for manual override and documentation of 'False Positives'.",
+          "Automated draft generation for FinCEN Form 111 (SAR).",
+          "Visual status tracker for 'Cases Under Review'."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "60",
+    "title": "Scenario Modeling & 'What-If' Impact Simulator",
+    "strategic_importance": "Anticipates 'Black Swan' shocks by stress-testing the Yellowstone equilibrium.",
+    "description": "Interactive 'Torture Chamber' for simulating extreme macro shifts.",
+    "sub_deliverables": [
+      {
+        "title": "Drag-and-Drop Macro Event Trigger",
+        "description": "Allows user to simulate events like 'Oil spikes to $150' or 'Fed hikes +200bps'.",
+        "verbose_acceptance_criteria": [
+          "Macro-shock events must propagate through the Neo4j correlation graph to affect related sectors.",
+          "Instant re-valuation of total Net Worth under shock conditions.",
+          "Visual 'Shield' icon indicates if current hedges are sufficient to absorb the shock."
+        ]
+      },
+      {
+        "title": "Portfolio Revaluation Forecast Chart (Framer Motion)",
+        "description": "Animated area chart showing the expected shock trajectory and recovery path.",
+        "verbose_acceptance_criteria": [
+          "Simulation must consider correlation breakdown (when all assets fall together).",
+          "Calculates 'Time to Break-even' for each hypothetical scenario.",
+          "Zustand state must allow 'Saving' scenarios for comparison side-by-side."
+        ]
+      },
+      {
+        "title": "Liquidity Stress Test 'Bank Run' Simulator",
+        "description": "Calculates slippage and execution time to liquidate the entire portfolio in a low-volume market.",
+        "verbose_acceptance_criteria": [
+          "Visualizes 'Depth of Market' drying up during the liquidation process.",
+          "Identifies 'Toxic' illiquid positions that could trap capital during a crash.",
+          "Generates an 'Emergency Exit Playbook' based on current liquidity telemetry."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "61",
+    "title": "Philanthropy & Impact Investing Dashboard",
+    "strategic_importance": "Completes the homeostasis loop by routing 'Excess Alpha' back to the external environment.",
+    "description": "Manages automated charitable routing and ESG impact tracking.",
+    "sub_deliverables": [
+      {
+        "title": "Excess Alpha Donation Routing Interface",
+        "description": "Automated logic to donate profits above a user-defined 'Enough' threshold.",
+        "verbose_acceptance_criteria": [
+          "Integration with GivingBlock/CharityNavigator APIs for secure fund routing.",
+          "Real-time tracking of tax-deduction alpha generated through donations.",
+          "Visual 'Impact Pulse' showing real-world projects funded by the portfolio."
+        ]
+      },
+      {
+        "title": "ESG (Environmental, Social, Governance) Score Aggregator",
+        "description": "Aggregates ethical scores per asset from third-party data providers.",
+        "verbose_acceptance_criteria": [
+          "Circular gauges for E, S, and G components updating via Kafka macro feeds.",
+          "User-defined 'Sin Stock' filter to automatically alert on tobacco/arms exposure.",
+          "Aggregated 'Portfolio Karma' score displayed in the main header."
+        ]
+      },
+      {
+        "title": "Carbon Footprint vs. Portfolio Return Scatterplot",
+        "description": "D3.js chart showing the efficiency of returns versus carbon intensity.",
+        "verbose_acceptance_criteria": [
+          "Regression line showing the correlation between ethical scores and alpha.",
+          "One-click 'Offset' button to buy carbon credits proportional to portfolio emissions.",
+          "Hover-state showing specific company's Scope 1/2/3 emissions data."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "62",
+    "title": "System Health & Hardware Telemetry Monitoring",
+    "strategic_importance": "Prevents 'Internal Sepsis' by monitoring the physical nervous system of the AI brain.",
+    "description": "Diagnostic hub for the infrastructure supporting the autonomous swarm.",
+    "sub_deliverables": [
+      {
+        "title": "Kafka Cluster Health & Topic Latency Dashboard",
+        "description": "Visualizes message flow and consumer lag across the Redpanda cluster.",
+        "verbose_acceptance_criteria": [
+          "Real-time scrolling bar chart of 'Messages Per Second' per topic.",
+          "Red-alert trigger for any consumer group with lag > 2,000 messages.",
+          "Zustand-based 'Restart Consumer' toggle for troubleshooting."
+        ]
+      },
+      {
+        "title": "Database I/O & Memory Pressure Gauges (Postgres/Neo4j)",
+        "description": "Monitoring query performance and storage health for long-term memory.",
+        "verbose_acceptance_criteria": [
+          "Visual 'Pressure Gauge' for Postgres Write-Ahead Log (WAL) and Neo4j Page Cache.",
+          "Slow-query log explorer with 'Explain' plan visualization.",
+          "Alerts for disk space utilization exceeding 85%."
+        ]
+      },
+      {
+        "title": "Agent 'Brain' Load Balancer UI",
+        "description": "Shows CPU/RAM usage of individual LLM personas and worker agents.",
+        "verbose_acceptance_criteria": [
+          "Visualizes the 'Swarm' as a dynamic tree of active PIDs.",
+          "One-click 'Scale Up/Down' to allocate more compute to the 'StackerAgent' during volatility.",
+          "Integration with Prometheus/Grafana metrics via secure proxy."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "63",
+    "title": "Corporate Actions & Earnings Integrated GUI",
+    "strategic_importance": "Tracks the fundamental 'Life Cycles' of constituents within the Yellowstone ecosystem.",
+    "description": "Interactive management of dividends, splits, and earnings cycles.",
+    "sub_deliverables": [
+      {
+        "title": "Interactive Earnings Calendar with 'Whisper Number' Integration",
+        "description": "High-density calendar showing expected vs. actual company performance.",
+        "verbose_acceptance_criteria": [
+          "Visual indicator of 'implied move' derived from options pricing.",
+          "One-click link to the 'Debate Chamber' to discuss upcoming earnings trades.",
+          "Filter by 'Portfolio Significance' (Beta-weighted exposure)."
+        ]
+      },
+      {
+        "title": "Dividend Reinvestment (DRIP) Management Console",
+        "description": "Central toggle for opting in/out of reinvestment on a per-asset basis.",
+        "verbose_acceptance_criteria": [
+          "Calculates 'Yield on Cost' for dividend payers and displays as a sparkline.",
+          "Visualizes the 'Dividend Snowball' projection over 5 years.",
+          "Real-time projection of annual dividend income total."
+        ]
+      },
+      {
+        "title": "Stock Split & Spin-off Adjustment Visualizer",
+        "description": "Shows historical chart adjustments and 'Free Share' arrivals in the account.",
+        "verbose_acceptance_criteria": [
+          "Automatic cost-basis adjustment display within the portfolio grid.",
+          "Notification stream for upcoming spin-off events and ticker changes.",
+          "Visualizes the 'Parent/Child' relationship of spin-offs in Neo4j."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "64",
+    "title": "Advanced Margin & Collateral Management",
+    "strategic_importance": "Prevents the 'Starvation' event of a margin call which leads to ecosystem collapse.",
+    "description": "Precision monitoring of buying power and liquidation risk.",
+    "sub_deliverables": [
+      {
+        "title": "Maintenance Margin 'Danger Zone' Visualizer",
+        "description": "D3.js linear gauge showing proximity to a margin call.",
+        "verbose_acceptance_criteria": [
+          "Calculates 'Distance to Liquidate' (%) for the top 5 largest leveraged positions.",
+          "Visual 'Red Pulse' when margin buffer drops below 15%.",
+          "Integration with `useRiskStore` for real-time collateral re-valuation."
+        ]
+      },
+      {
+        "title": "Cross-Collateralization Asset Priority Toggle",
+        "description": "Allows user to define which assets are sold first in an emergency.",
+        "verbose_acceptance_criteria": [
+          "Drag-and-drop 'Liquidation Hierarchy' list.",
+          "Calculates the impact of selling specific assets on the remaining margin requirements.",
+          "Visual indicator of 'Protected Assets' (e.g., core long-term holdings)."
+        ]
+      },
+      {
+        "title": "Automated Margin Call Liquidation Order Editor",
+        "description": "A 'Ghost Order' interface showing what the broker will do if limits are breached.",
+        "verbose_acceptance_criteria": [
+          "Visualizes 'Worst Case' order book sweep and expected slippage.",
+          "Allows for 'One-Click De-leveraging' to restore a 20% margin safety buffer.",
+          "Audit log entry for every margin-check event."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "65",
+    "title": "Mobile Portfolio Quick-Actions (V2)",
+    "strategic_importance": "Empowers the 'Warden' with remote intervention capabilities from anywhere on Earth.",
+    "description": "Advanced mobile features for system oversight and emergency control.",
+    "sub_deliverables": [
+      {
+        "title": "Biometric 'Kill Switch' for Android/iOS",
+        "description": "A high-security button to liquidate or freeze the portfolio via FaceID/Fingerprint.",
+        "verbose_acceptance_criteria": [
+          "Requires 3-second 'Long Press' with haptic feedback to prevent accidental trigger.",
+          "Immediate broadcast to Kafka topic `emergency-kill` with < 100ms latency.",
+          "Push notification confirmation sent to all linked desktop instances."
+        ]
+      },
+      {
+        "title": "Push-Notification Trade Authorization (OAuth 2.0)",
+        "description": "Secure flow for approving high-value agent-proposed trades from the lock screen.",
+        "verbose_acceptance_criteria": [
+          "Deep-link to 'Logic Summary' (LLM Debate) before approval is enabled.",
+          "Biometric signature required for all trades exceeding $10,000.",
+          "Time-limited approval window (60s) before auto-cancellation."
+        ]
+      },
+      {
+        "title": "Haptic-Feedback Real-time Alert Vibrations",
+        "description": "Differentiates alert severity via 'Oscillation Intensity' patterns using the Haptics API.",
+        "verbose_acceptance_criteria": [
+          "Single sharp pulse for 'Info'; long heavy vibration for 'Critical Risk'.",
+          "Vibration frequency increases as the 'Fear Index' or 'Margin Danger' increases.",
+          "User-configurable 'Quiet Hours' with override for 'Black Swan' alerts."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "66",
+    "title": "API Marketplace & Integration Manager",
+    "strategic_importance": "Allows the ecosystem to ingest 'New Senses' and adapt to changing market landscapes.",
+    "description": "Hub for connecting third-party data providers and external webhooks.",
+    "sub_deliverables": [
+      {
+        "title": "Third-party Data Connector (Alpha Vantage, Polygon, FRED)",
+        "description": "UI for managing credentials and monitoring API health.",
+        "verbose_acceptance_criteria": [
+          "Real-time 'Ping' status for all active data providers.",
+          "Visual gauges for API rate-limit utilization.",
+          "Automatic failover toggle to switch between providers if one goes dark."
+        ]
+      },
+      {
+        "title": "API Key Encryption/Vaulting UI",
+        "description": "Interface for secure management of sensitive access tokens.",
+        "verbose_acceptance_criteria": [
+          "Masked display of keys; requires session re-auth to reveal.",
+          "Audit log of who (or which agent) accessed the vault.",
+          "Integration with HashiCorp Vault or similar backend."
+        ]
+      },
+      {
+        "title": "Custom Webhook Trigger Configuration for External Alerts",
+        "description": "Allows routing system events to Slack, Discord, or PagerDuty.",
+        "verbose_acceptance_criteria": [
+          "Visual 'Payload Builder' with liquid-template support for dynamic messages.",
+          "Test 'Send' button with real-time response log.",
+          "Filter by alert severity or specific agent persona."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "67",
+    "title": "Real-Estate & Illiquid Asset Tracking",
+    "strategic_importance": "Incorporates 'Slow Capital' into the high-frequency Net Worth model for total wealth homeostasis.",
+    "description": "Tracking of physical assets, private equity, and manual entries.",
+    "sub_deliverables": [
+      {
+        "title": "Manual Asset Entry (Physical Property, Art, Private Equity)",
+        "description": "Forms for entering non-custodial asset data.",
+        "verbose_acceptance_criteria": [
+          "Ability to link assets to `ENTITY` nodes in Neo4j for tax mapping.",
+          "Upload field for appraisals and insurance documents (links to Vault).",
+          "Zustand state must merge liquid and illiquid assets into a single `TotalWealth` slice."
+        ]
+      },
+      {
+        "title": "Estimated Valuation Depreciation/Appreciation Slider",
+        "description": "Manual or semi-automated adjustment of illiquid asset value.",
+        "verbose_acceptance_criteria": [
+          "Real-time calculation of 'Net Worth' impact as sliders move.",
+          "Integration with Zillow/Redfin APIs for property estimate feeds.",
+          "Historical value timeline for manual assets."
+        ]
+      },
+      {
+        "title": "Unified Wealth 'Net Worth' Circular Gauges",
+        "description": "High-fidelity D3.js visualization of the entire financial state.",
+        "verbose_acceptance_criteria": [
+          "Inner ring: Liquid assets (Stock/Crypto); Outer ring: Illiquid assets (RE/PE).",
+          "Center display of '24h Net Worth Change' (Total Homeostasis).",
+          "Framer Motion animation of the 'Wealth Pie' upon dashboard load."
+        ]
+      }
+    ]
+  },
+  {
+    "phase_id": "68",
+    "title": "The Homeostasis 'Zen' Mode",
+    "strategic_importance": "The ultimate goal: the absence of unnecessary oscillation and the focus on 'Enough'.",
+    "description": "A minimalist interface focused on long-term peace of mind and goal achievement.",
+    "sub_deliverables": [
+      {
+        "title": "Minimalist Goal Tracking UI (The 'Enough' Metric)",
+        "description": "Displays progress toward a specific financial 'Freedom Number' without noise.",
+        "verbose_acceptance_criteria": [
+          "Hides all high-frequency price charts and red/green flashes.",
+          "Simple progress bar that 'Glows' when the user reaches the 'Enough' state.",
+          "Focus on 'Projected Annual Income' versus 'Annual Expenses'."
+        ]
+      },
+      {
+        "title": "Time-to-Retirement Countdown & Probability Gauge",
+        "description": "Animated D3.js gauge showing years remaining based on current alpha trends.",
+        "verbose_acceptance_criteria": [
+          "Monte Carlo simulation of retirement survival probability (Target > 99%).",
+          "Visualizes the 'Safety Buffer' in terms of years of expenses covered.",
+          "Zustand-based 'Lifestyle' toggle (Frugal vs. Lux) to adjust the gauge."
+        ]
+      },
+      {
+        "title": "System Autopilot Master Override (The 'Peace of Mind' Toggle)",
+        "description": "A global command to shift the swarm into 'Passive Wealth Preservation' mode.",
+        "verbose_acceptance_criteria": [
+          "Disables all high-frequency Kafka consumers; shifts agents to dividend-seeking logic.",
+          "Locks out manual trading buttons to prevent emotional intervention.",
+          "Displays a 'System Homeostatic' message with a backdrop-blur of slow-moving particles."
+        ]
+      }
+    ]
+  }
+]
