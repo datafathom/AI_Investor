@@ -1,0 +1,169 @@
+.dead-mans-switch {
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    padding: 16px;
+}
+
+.dead-mans-switch .widget-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.dead-mans-switch .widget-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    flex: 1;
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.status-badge.armed {
+    background: rgba(46, 213, 115, 0.15);
+    color: var(--color-success);
+}
+
+.status-badge.disarmed {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--color-danger);
+}
+
+.check-in-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: var(--bg-surface-2);
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.check-in-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+}
+
+.check-in-info .label {
+    display: block;
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.check-in-info .value {
+    display: block;
+    font-size: 12px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.check-in-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--color-success);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.interval-setting {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.interval-setting select {
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border-primary);
+    color: var(--text-primary);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+}
+
+.beneficiaries-section h4 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 8px 0;
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.beneficiary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.beneficiary-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    background: var(--bg-surface-2);
+    border-radius: 6px;
+    font-size: 11px;
+}
+
+.beneficiary-name {
+    flex: 1;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.beneficiary-type {
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 9px;
+}
+
+.beneficiary-type.trust {
+    background: rgba(96, 165, 250, 0.15);
+    color: var(--color-info);
+}
+
+.beneficiary-type.individual {
+    background: rgba(46, 213, 115, 0.15);
+    color: var(--color-success);
+}
+
+.beneficiary-type.charity {
+    background: rgba(167, 139, 250, 0.15);
+    color: #a78bfa;
+}
+
+.beneficiary-allocation {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.warning-note {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px;
+    background: rgba(251, 191, 36, 0.1);
+    border-radius: 6px;
+    font-size: 10px;
+    color: var(--color-warning);
+}

@@ -31,9 +31,9 @@ def run_test_stress(args=None):
     
     res_tech = tester.simulate_black_swan(portfolio, "TECH_BUBBLE_POP")
     if res_tech['pnl_pct'] < -0.2:
-        print("✅ Black Swan Logic Verified: Portfolio drops properly in Tech Crash.")
+        print("OK Black Swan Logic Verified: Portfolio drops properly in Tech Crash.")
     else:
-        print("❌ Black Swan Logic Failed.")
+        print("ERROR Black Swan Logic Failed.")
         
     # 2. Monte Carlo
     print("\n--- Monte Carlo Simulation (1 Year) ---")
@@ -44,6 +44,6 @@ def run_test_stress(args=None):
     print(f"Probability of Loss: {stats['prob_loss']*100:.1f}%")
     
     if stats['mean_return'] > -0.5 and stats['mean_return'] < 0.5:
-        print("✅ Monte Carlo Simulation Verified: Results within expected bounds.")
+        print("OK Monte Carlo Simulation Verified: Results within expected bounds.")
     else:
-        print("❌ Monte Carlo Failed: Results erratic.")
+        print("ERROR Monte Carlo Failed: Results erratic.")

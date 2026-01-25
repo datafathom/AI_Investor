@@ -1,0 +1,192 @@
+/**
+ * CryptoWallet.css
+ */
+
+.crypto-wallet-widget {
+    background: #0b3558; /* Coinbase Blue-ish Dark */
+    color: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    font-family: 'DM Sans', sans-serif;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    max-width: 380px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Background Shine Effect */
+.crypto-wallet-widget::before {
+    content: '';
+    position: absolute;
+    top: -50px; right: -50px;
+    width: 150px; height: 150px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+    border-radius: 50%;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.status-pill {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
+    background: rgba(0,0,0,0.2);
+    color: #aaa;
+}
+
+.status-pill.active {
+    background: #0052ff; /* Coinbase Blue */
+    color: #fff;
+}
+
+.connect-screen {
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.connect-screen p {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    color: #d0e1f7;
+    line-height: 1.4;
+}
+
+.cb-connect-btn {
+    background: #0052ff;
+    color: #fff;
+    border: none;
+    width: 100%;
+    padding: 0.9rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.2s;
+}
+
+.cb-connect-btn:hover {
+    background: #0045d8;
+    transform: translateY(-1px);
+}
+
+.secure-note {
+    font-size: 0.75rem !important;
+    opacity: 0.7;
+    margin-top: 1rem;
+}
+
+/* Wallet Content */
+.total-balance {
+    margin-bottom: 1.5rem;
+}
+
+.total-balance .label {
+    display: block;
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin-bottom: 0.25rem;
+}
+
+.total-balance .value {
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.assets-list h4, .txns-list h4 {
+    font-size: 0.9rem;
+    color: #8da2b5;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.asset-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.asset-row:last-child { border-bottom: none; }
+
+.asset-name {
+    display: flex;
+    flex-direction: column;
+}
+
+.asset-name .ticker {
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.asset-name .name {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+.asset-val {
+    text-align: right;
+}
+
+.asset-val .usd {
+    font-weight: 600;
+}
+
+.asset-val .amt {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+/* Transactions */
+.txns-list {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.txn-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    padding: 0.4rem 0;
+}
+
+.txn-row .type { font-weight: 700; }
+.txn-row .type.buy { color: #0ecc83; }
+.txn-row .type.sell { color: #f2a900; }
+
+.txn-row .date {
+    opacity: 0.6;
+    font-size: 0.75rem;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.7rem;
+    opacity: 0.5;
+}
+
+.error-banner {
+    background: #e53e3e;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}

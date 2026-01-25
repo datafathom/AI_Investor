@@ -1,0 +1,160 @@
+.api-marketplace {
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    padding: 16px;
+}
+
+.api-marketplace .widget-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.api-marketplace .widget-header h3 {
+    margin: 0;
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.add-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--color-info);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.section {
+    margin-bottom: 16px;
+}
+
+.section h4 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 8px 0;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.connectors-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+
+.connector-card {
+    padding: 8px;
+    background: var(--bg-surface-2);
+    border-radius: 6px;
+    text-align: center;
+}
+
+.connector-name {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.connector-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 9px;
+    text-transform: uppercase;
+}
+
+.connector-status.connected { color: var(--color-success); }
+.connector-status.pending { color: var(--color-warning); }
+.connector-status.disconnected { color: var(--text-muted); }
+
+.keys-list, .webhooks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.key-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: var(--bg-surface-2);
+    border-radius: 6px;
+}
+
+.key-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+}
+
+.key-name {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.key-masked {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: monospace;
+}
+
+.key-used {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.webhook-row {
+    padding: 10px;
+    background: var(--bg-surface-2);
+    border-radius: 6px;
+}
+
+.webhook-url {
+    display: block;
+    font-size: 10px;
+    color: var(--text-secondary);
+    font-family: monospace;
+    margin-bottom: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.webhook-events {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 6px;
+}
+
+.event-tag {
+    background: var(--border-primary);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 9px;
+    color: var(--text-muted);
+}
+
+.webhook-status {
+    font-size: 9px;
+    color: var(--text-muted);
+}
+
+.webhook-status.active {
+    color: var(--color-success);
+}

@@ -1,0 +1,184 @@
+/**
+ * ==============================================================================
+ * FILE: frontend2/src/widgets/Admin/SquareStats.css
+ * ROLE: Square Stats Widget Styles
+ * ==============================================================================
+ */
+
+.square-stats {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--card-bg, rgba(20, 25, 35, 0.9));
+    border-radius: 12px;
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+.square-stats__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.square-stats__header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary, #fff);
+}
+
+.time-range-select {
+    background: var(--input-bg, rgba(30, 40, 50, 0.8));
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    color: var(--text-primary, #fff);
+    font-size: 0.9rem;
+    cursor: pointer;
+    outline: none;
+}
+
+.time-range-select:focus {
+    border-color: var(--accent-color, #00d4ff);
+}
+
+.square-stats__loading {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary, #888);
+}
+
+.square-stats__metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.metric-card {
+    background: var(--item-bg, rgba(30, 40, 50, 0.5));
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.1));
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+}
+
+.metric-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #888);
+    margin-bottom: 0.5rem;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--accent-color, #00d4ff);
+}
+
+.square-stats__status {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--item-bg, rgba(30, 40, 50, 0.5));
+    border-radius: 8px;
+}
+
+.status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-label {
+    color: var(--text-secondary, #888);
+    font-size: 0.9rem;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-badge--online {
+    background: rgba(52, 168, 83, 0.2);
+    color: #34a853;
+    border: 1px solid rgba(52, 168, 83, 0.3);
+}
+
+.status-badge--offline {
+    background: rgba(234, 67, 53, 0.2);
+    color: #ea4335;
+    border: 1px solid rgba(234, 67, 53, 0.3);
+}
+
+.status-badge--completed {
+    background: rgba(52, 168, 83, 0.2);
+    color: #34a853;
+}
+
+.status-badge--unknown {
+    background: rgba(154, 160, 166, 0.2);
+    color: #9aa0a6;
+}
+
+.square-stats__transactions {
+    margin-top: 1.5rem;
+}
+
+.square-stats__transactions h4 {
+    margin: 0 0 1rem 0;
+    color: var(--text-primary, #fff);
+    font-size: 1rem;
+}
+
+.transactions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.transaction-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: var(--item-bg, rgba(30, 40, 50, 0.5));
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.1));
+    border-radius: 6px;
+    align-items: center;
+}
+
+.transaction-id {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: var(--text-secondary, #888);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.transaction-amount {
+    font-weight: 600;
+    color: var(--text-primary, #fff);
+}
+
+.transaction-date {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #888);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .square-stats__metrics {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .transaction-item {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+}

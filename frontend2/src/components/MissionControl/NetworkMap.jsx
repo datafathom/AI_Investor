@@ -119,8 +119,8 @@ const NetworkMap = () => {
 
                     {selectedNode.type === 'agent' && (
                         <div className="mt-3 p-2 bg-black/40 rounded border border-slate-700 text-[10px] font-mono text-green-400 overflow-hidden">
-                            > Thinking: Analyzing market depth for SPY...<br />
-                            > Action: Adjusting risk parameters...
+                            &gt; Thinking: Analyzing market depth for SPY...<br />
+                            &gt; Action: Adjusting risk parameters...
                         </div>
                     )}
                 </div>

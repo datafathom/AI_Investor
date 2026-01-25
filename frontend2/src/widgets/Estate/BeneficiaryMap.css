@@ -1,0 +1,140 @@
+.beneficiary-map-widget {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 16px;
+    height: 100%;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.allocation-status {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.allocation-status.valid {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.allocation-status.invalid {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.beneficiary-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.beneficiary-node {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.node-icon {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+.node-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.node-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.node-type {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+.node-allocation {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 4px;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.node-allocation input {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    width: 30px;
+    text-align: right;
+    font-size: 0.9rem;
+    font-family: monospace;
+}
+
+.node-allocation .percent {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-left: 2px;
+}
+
+.tax-impact-simulation {
+    margin-top: 16px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.tax-impact-simulation h4 {
+    margin: 0 0 10px 0;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.impact-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+}
+
+.impact-row.total {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 700;
+}

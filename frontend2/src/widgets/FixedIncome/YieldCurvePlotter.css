@@ -1,0 +1,102 @@
+.yield-curve-widget {
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    padding: 16px;
+    height: 100%;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.inversion-badge {
+    background: var(--color-bearish);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.yield-curve-widget svg {
+    width: 100%;
+    height: auto;
+}
+
+.yield-curve-widget .axis text {
+    fill: var(--text-secondary);
+    font-size: 10px;
+}
+
+.yield-curve-widget .axis line,
+.yield-curve-widget .axis path {
+    stroke: var(--border-secondary);
+}
+
+.yield-curve-widget .grid line {
+    stroke: var(--border-primary);
+    stroke-opacity: 0.3;
+}
+
+.yield-curve-widget .grid path {
+    stroke-width: 0;
+}
+
+.yield-point {
+    transition: r 0.2s;
+    cursor: pointer;
+}
+
+.yield-point:hover {
+    r: 6;
+}
+
+.yield-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-primary);
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-label {
+    display: block;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.stat-value.positive {
+    color: var(--color-bullish);
+}
+
+.stat-value.negative {
+    color: var(--color-bearish);
+}

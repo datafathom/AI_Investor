@@ -1,0 +1,95 @@
+.harvesting-toggle-widget {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.harvesting-toggle-widget.active {
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(30, 30, 35, 1));
+    border-color: #2196f3;
+    box-shadow: 0 0 15px rgba(33, 150, 243, 0.2);
+}
+
+.shield-status {
+    flex-shrink: 0;
+}
+
+.shield-icon {
+    transition: all 0.5s ease;
+}
+
+.shield-icon.active {
+    color: #2196f3;
+    filter: drop-shadow(0 0 8px #2196f3);
+}
+
+.shield-icon.inactive {
+    color: #555;
+}
+
+.toggle-controls h3 {
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.toggle-controls p {
+    margin: 0 0 16px 0;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    font-weight: 700;
+}
+
+.toggle-btn {
+    width: 100%;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.toggle-btn.start {
+    background: #2196f3;
+    color: white;
+}
+
+.toggle-btn.start:hover {
+    background: #1976d2;
+}
+
+.toggle-btn.stop {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ff5252;
+    border: 1px solid #ff5252;
+}
+
+.toggle-btn.stop:hover {
+    background: rgba(255, 82, 82, 0.1);
+}
+
+.auth-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    animation: pulse-auth 1s infinite;
+}
+
+@keyframes pulse-auth {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}

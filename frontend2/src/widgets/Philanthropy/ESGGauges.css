@@ -1,0 +1,153 @@
+.esg-gauges-widget {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 16px;
+    height: 100%;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.total-score {
+    text-align: right;
+}
+
+.total-score .lbl {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.total-score .val {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.total-score .val.good { color: #84cc16; }
+
+.gauges-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.gauge-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.gauge-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gauge-icon.environmental { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+.gauge-icon.social { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.gauge-icon.governance { background: rgba(168, 85, 247, 0.1); color: #a855f7; }
+
+.gauge-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.gauge-info .title {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.progress-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.progress-bar .fill {
+    height: 100%;
+    border-radius: 3px;
+}
+
+.fill.env { background: #22c55e; }
+.fill.soc { background: #3b82f6; }
+.fill.gov { background: #a855f7; }
+
+.gauge-info .score {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: right;
+    color: var(--text-secondary);
+}
+
+.sin-stock-alert {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 6px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.alert-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #ef4444;
+}
+
+.text-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.alert-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.alert-msg {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    line-height: 1.2;
+}
+
+.sell-action-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}

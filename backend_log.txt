@@ -1,0 +1,268 @@
+﻿.\venv\Scripts\python : No production secret manager configured. Using environment 
+variables only.
+At line:1 char:1
++ .\venv\Scripts\python web/app.py 2>&1 | Out-File -FilePath backend_lo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (No production s...variables only.:String 
+   ) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Sentry SDK not installed. Install with: pip install sentry-sdk
+Sentry not available - error tracking disabled
+flask-compress not installed. Install with: pip install flask-compress
+Redis not available, using in-memory rate limiting: Error 10061 connecting to 
+localhost:6379. No connection could be made because the target machine actively 
+refused it.
+{"timestamp": "2026-01-24T01:55:13.313337Z", "level": "INFO", "name": "root", 
+"message": "LoggingService initialized with JSON formatting and trace correlation."}
+{"timestamp": "2026-01-24T01:55:14.245701Z", "level": "INFO", "name": 
+"services.system.socket_manager", "message": "SocketManager initialized."}
+DEBUG: app.py TOP LEVEL START
+Importing dashboard_api...
+Importing Phase 54-68 APIs...
+Importing tenant_middleware...
+DONE importing everything
+DEBUG: create_app() started
+DEBUG: Flask instance created
+[OK] Performance middleware initialized
+[OK] Security middleware initialized
+[WARN] Flasgger not installed. Install with: pip install flasgger
+Backend with SocketIO on port 5050...
+ * Serving Flask app 'app'
+ * Debug mode: on
+No production secret manager configured. Using environment variables only.
+Sentry SDK not installed. Install with: pip install sentry-sdk
+Sentry not available - error tracking disabled
+flask-compress not installed. Install with: pip install flask-compress
+Redis not available, using in-memory rate limiting: Error 10061 connecting to 
+localhost:6379. No connection could be made because the target machine actively 
+refused it.
+{"timestamp": "2026-01-24T01:55:45.808860Z", "level": "INFO", "name": "root", 
+"message": "LoggingService initialized with JSON formatting and trace correlation."}
+{"timestamp": "2026-01-24T01:55:45.960076Z", "level": "INFO", "name": 
+"services.system.socket_manager", "message": "SocketManager initialized."}
+{"timestamp": "2026-01-24T01:55:45.968368Z", "level": "WARNING", "name": "werkzeug", 
+"message": " * Debugger is active!"}
+{"timestamp": "2026-01-24T01:55:53.133017Z", "level": "WARNING", "name": 
+"opentelemetry.exporter.otlp.proto.grpc.exporter", "message": "Transient error 
+StatusCode.UNAVAILABLE encountered while exporting traces to localhost:4317, retrying 
+in 0.84s."}
+{"timestamp": "2026-01-24T01:56:00.444207Z", "level": "ERROR", "name": 
+"opentelemetry.exporter.otlp.proto.grpc.exporter", "message": "Failed to export 
+traces to localhost:4317, error code: StatusCode.UNAVAILABLE"}
+{"timestamp": "2026-01-24T01:56:05.447465Z", "level": "WARNING", "name": 
+"opentelemetry.exporter.otlp.proto.grpc.exporter", "message": "Transient error 
+StatusCode.UNAVAILABLE encountered while exporting traces to localhost:4317, retrying 
+in 0.90s."}
+{"timestamp": "2026-01-24T01:56:12.876741Z", "level": "ERROR", "name": 
+"opentelemetry.exporter.otlp.proto.grpc.exporter", "message": "Failed to export 
+traces to localhost:4317, error code: StatusCode.UNAVAILABLE"}
+{"timestamp": "2026-01-24T01:56:22.896884Z", "level": "WARNING", "name": 
+"opentelemetry.exporter.otlp.proto.grpc.exporter", "message": "Transient error 
+StatusCode.UNAVAILABLE encountered while exporting traces to localhost:4317, retrying 
+in 1.17s."}
+{"timestamp": "2026-01-24T01:56:30.165850Z", "level": "ERROR", "name": 
+"opentelemetry.exporter.otlp.proto.grpc.exporter", "message": "Failed to export 
+traces to localhost:4317, error code: StatusCode.UNAVAILABLE"}
+{"timestamp": "2026-01-24T01:56:51.704536Z", "level": "INFO", "name": 
+"services.data.alpha_vantage", "message": "Returning MOCK quote for AAPL", 
+"trace_id": "60b933df1a2f4cac79faeb410420b132", "span_id": "7b92aba71511750f"}
+{"timestamp": "2026-01-24T01:56:55.204752Z", "level": "WARNING", "name": 
+"opentelemetry.exporter.otlp.proto.grpc.exporter", "message": "Transient error 
+StatusCode.UNAVAILABLE encountered while exporting traces to localhost:4317, retrying 
+in 0.88s."}
+{"timestamp": "2026-01-24T01:57:02.235624Z", "level": "ERROR", "name": 
+"opentelemetry.exporter.otlp.proto.grpc.exporter", "message": "Failed to export 
+traces to localhost:4317, error code: StatusCode.UNAVAILABLE"}
+DEBUG: app.py TOP LEVEL START
+Importing dashboard_api...
+Importing Phase 54-68 APIs...
+Importing tenant_middleware...
+DONE importing everything
+DEBUG: create_app() started
+DEBUG: Flask instance created
+[OK] Performance middleware initialized
+[OK] Security middleware initialized
+[WARN] Flasgger not installed. Install with: pip install flasgger
+Backend with SocketIO on port 5050...
+Exception in thread Thread-2 (serve_forever):
+No production secret manager configured. Using environment variables only.
+Sentry SDK not installed. Install with: pip install sentry-sdk
+Sentry not available - error tracking disabled
+flask-compress not installed. Install with: pip install flask-compress
+Redis not available, using in-memory rate limiting: Error 10061 connecting to 
+localhost:6379. No connection could be made because the target machine actively 
+refused it.
+{"timestamp": "2026-01-24T02:00:48.134357Z", "level": "INFO", "name": "root", 
+"message": "LoggingService initialized with JSON formatting and trace correlation."}
+{"timestamp": "2026-01-24T02:00:48.852160Z", "level": "INFO", "name": 
+"services.system.socket_manager", "message": "SocketManager initialized."}
+{"timestamp": "2026-01-24T02:00:48.883857Z", "level": "WARNING", "name": "werkzeug", 
+"message": " * Debugger is active!"}
+DEBUG: app.py TOP LEVEL START
+Importing dashboard_api...
+Importing Phase 54-68 APIs...
+Importing tenant_middleware...
+DONE importing everything
+DEBUG: create_app() started
+DEBUG: Flask instance created
+[OK] Performance middleware initialized
+[OK] Security middleware initialized
+[WARN] Flasgger not installed. Install with: pip install flasgger
+Backend with SocketIO on port 5050...
+No production secret manager configured. Using environment variables only.
+Sentry SDK not installed. Install with: pip install sentry-sdk
+Sentry not available - error tracking disabled
+flask-compress not installed. Install with: pip install flask-compress
+Redis not available, using in-memory rate limiting: Error 10061 connecting to 
+localhost:6379. No connection could be made because the target machine actively 
+refused it.
+{"timestamp": "2026-01-24T02:02:36.776363Z", "level": "INFO", "name": "root", 
+"message": "LoggingService initialized with JSON formatting and trace correlation."}
+{"timestamp": "2026-01-24T02:02:37.518305Z", "level": "INFO", "name": 
+"services.system.socket_manager", "message": "SocketManager initialized."}
+{"timestamp": "2026-01-24T02:02:37.538015Z", "level": "WARNING", "name": "werkzeug", 
+"message": " * Debugger is active!"}
+DEBUG: app.py TOP LEVEL START
+Importing dashboard_api...
+Importing Phase 54-68 APIs...
+Importing tenant_middleware...
+DONE importing everything
+DEBUG: create_app() started
+DEBUG: Flask instance created
+[OK] Performance middleware initialized
+[OK] Security middleware initialized
+[WARN] Flasgger not installed. Install with: pip install flasgger
+Backend with SocketIO on port 5050...
+Exception in thread Thread-2 (serve_forever):
+No production secret manager configured. Using environment variables only.
+Sentry SDK not installed. Install with: pip install sentry-sdk
+Sentry not available - error tracking disabled
+flask-compress not installed. Install with: pip install flask-compress
+Redis not available, using in-memory rate limiting: Error 10061 connecting to 
+localhost:6379. No connection could be made because the target machine actively 
+refused it.
+{"timestamp": "2026-01-24T02:06:17.670812Z", "level": "INFO", "name": "root", 
+"message": "LoggingService initialized with JSON formatting and trace correlation."}
+{"timestamp": "2026-01-24T02:06:18.343591Z", "level": "INFO", "name": 
+"services.system.socket_manager", "message": "SocketManager initialized."}
+{"timestamp": "2026-01-24T02:06:18.408127Z", "level": "WARNING", "name": "werkzeug", 
+"message": " * Debugger is active!"}
+DEBUG: app.py TOP LEVEL START
+Exception in thread Thread-2 (serve_forever):
+Importing dashboard_api...
+Importing Phase 54-68 APIs...
+Importing tenant_middleware...
+DONE importing everything
+DEBUG: create_app() started
+DEBUG: Flask instance created
+[OK] Performance middleware initialized
+[OK] Security middleware initialized
+[WARN] Flasgger not installed. Install with: pip install flasgger
+Backend with SocketIO on port 5050...
+Traceback (most recent call last):
+  File "C:\Python313\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+    ~~~~~~~~^^
+  File "C:\Python313\Lib\threading.py", line 992, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\astir\Desktop\AI_Company\AI_Investor\venv\Lib\site-packages\werkzeug\
+serving.py", line 819, in serve_forever
+    super().serve_forever(poll_interval=poll_interval)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\socketserver.py", line 235, in serve_forever
+    ready = selector.select(poll_interval)
+  File "C:\Python313\Lib\selectors.py", line 314, in select
+    r, w, _ = self._select(self._readers, self._writers, [], timeout)
+              ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\selectors.py", line 305, in _select
+    r, w, x = select.select(r, w, w, timeout)
+              ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+OSError: [WinError 10038] An operation was attempted on something that is not a socket
+No production secret manager configured. Using environment variables only.
+Sentry SDK not installed. Install with: pip install sentry-sdk
+Sentry not available - error tracking disabled
+flask-compress not installed. Install with: pip install flask-compress
+Redis not available, using in-memory rate limiting: Error 10061 connecting to 
+localhost:6379. No connection could be made because the target machine actively 
+refused it.
+{"timestamp": "2026-01-24T02:12:52.402964Z", "level": "INFO", "name": "root", 
+"message": "LoggingService initialized with JSON formatting and trace correlation."}
+{"timestamp": "2026-01-24T02:12:54.903791Z", "level": "INFO", "name": 
+"services.system.socket_manager", "message": "SocketManager initialized."}
+{"timestamp": "2026-01-24T02:12:54.985104Z", "level": "WARNING", "name": "werkzeug", 
+"message": " * Debugger is active!"}
+DEBUG: app.py TOP LEVEL START
+Importing dashboard_api...
+Importing Phase 54-68 APIs...
+Importing tenant_middleware...
+DONE importing everything
+DEBUG: create_app() started
+DEBUG: Flask instance created
+[OK] Performance middleware initialized
+[OK] Security middleware initialized
+[WARN] Flasgger not installed. Install with: pip install flasgger
+Backend with SocketIO on port 5050...
+Exception in thread Thread-2 (serve_forever):
+No production secret manager configured. Using environment variables only.
+Sentry SDK not installed. Install with: pip install sentry-sdk
+Sentry not available - error tracking disabled
+flask-compress not installed. Install with: pip install flask-compress
+Redis not available, using in-memory rate limiting: Error 10061 connecting to 
+localhost:6379. No connection could be made because the target machine actively 
+refused it.
+{"timestamp": "2026-01-24T02:15:50.150276Z", "level": "INFO", "name": "root", 
+"message": "LoggingService initialized with JSON formatting and trace correlation."}
+{"timestamp": "2026-01-24T02:15:50.809170Z", "level": "INFO", "name": 
+"services.system.socket_manager", "message": "SocketManager initialized."}
+{"timestamp": "2026-01-24T02:15:50.848608Z", "level": "WARNING", "name": "werkzeug", 
+"message": " * Debugger is active!"}
+DEBUG: app.py TOP LEVEL START
+Importing dashboard_api...
+Importing Phase 54-68 APIs...
+Importing tenant_middleware...
+DONE importing everything
+DEBUG: create_app() started
+DEBUG: Flask instance created
+[OK] Performance middleware initialized
+[OK] Security middleware initialized
+[WARN] Flasgger not installed. Install with: pip install flasgger
+Backend with SocketIO on port 5050...
+No production secret manager configured. Using environment variables only.
+Sentry SDK not installed. Install with: pip install sentry-sdk
+Sentry not available - error tracking disabled
+flask-compress not installed. Install with: pip install flask-compress
+Redis not available, using in-memory rate limiting: Error 10061 connecting to 
+localhost:6379. No connection could be made because the target machine actively 
+refused it.
+{"timestamp": "2026-01-24T02:17:13.409614Z", "level": "INFO", "name": "root", 
+"message": "LoggingService initialized with JSON formatting and trace correlation."}
+{"timestamp": "2026-01-24T02:17:15.005606Z", "level": "INFO", "name": 
+"services.system.socket_manager", "message": "SocketManager initialized."}
+{"timestamp": "2026-01-24T02:17:15.347330Z", "level": "WARNING", "name": "werkzeug", 
+"message": " * Debugger is active!"}
+{"timestamp": "2026-01-24T02:40:13.326883Z", "level": "WARNING", "name": 
+"opentelemetry.exporter.otlp.proto.grpc.exporter", "message": "Transient error 
+StatusCode.UNAVAILABLE encountered while exporting traces to localhost:4317, retrying 
+in 0.96s."}
+{"timestamp": "2026-01-24T02:40:16.244561Z", "level": "ERROR", "name": 
+"opentelemetry.exporter.otlp.proto.grpc.exporter", "message": "Failed to export 
+traces to localhost:4317, error code: StatusCode.UNAVAILABLE"}
+{"timestamp": "2026-01-24T02:48:37.063281Z", "level": "WARNING", "name": 
+"opentelemetry.exporter.otlp.proto.grpc.exporter", "message": "Transient error 
+StatusCode.UNAVAILABLE encountered while exporting traces to localhost:4317, retrying 
+in 1.07s."}
+{"timestamp": "2026-01-24T02:48:40.147342Z", "level": "WARNING", "name": 
+"opentelemetry.exporter.otlp.proto.grpc.exporter", "message": "Transient error 
+StatusCode.UNAVAILABLE encountered while exporting traces to localhost:4317, retrying 
+in 4.18s."}
+{"timestamp": "2026-01-24T02:48:44.345729Z", "level": "ERROR", "name": 
+"opentelemetry.exporter.otlp.proto.grpc.exporter", "message": "Failed to export 
+traces to localhost:4317, error code: StatusCode.UNAVAILABLE"}
+forrtl: error (200): program aborting due to window-CLOSE event
+Image              PC                Routine            Line        Source            
+ 
+KERNELBASE.dll     00007FFBE53CD64D  Unknown               Unknown  Unknown
+KERNEL32.DLL       00007FFBE6CEE8D7  Unknown               Unknown  Unknown
+ntdll.dll          00007FFBE80EC53C  Unknown               Unknown  Unknown

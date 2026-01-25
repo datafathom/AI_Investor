@@ -1,0 +1,92 @@
+.hypemeter-widget {
+    height: 100%;
+    padding: 10px;
+    color: #e2e8f0;
+    overflow: hidden;
+}
+
+.hm-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.live-tag {
+    background: #ff4757;
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-weight: bold;
+    animation: pulse 2s infinite;
+}
+
+.tape-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tape-card {
+    background: rgba(255,255,255,0.05);
+    padding: 10px;
+    border-radius: 4px;
+    border-left: 3px solid #666;
+}
+
+.tc-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.tc-symbol {
+    font-weight: bold;
+    color: #fff;
+}
+
+.tc-sent.pos { color: #00ff88; }
+.tc-sent.neg { color: #ff4757; }
+
+.tc-text {
+    font-size: 0.8rem;
+    color: #ccc;
+    margin: 0 0 4px 0;
+    line-height: 1.2;
+}
+
+.tc-source {
+    font-size: 0.7rem;
+    color: #666;
+    text-transform: uppercase;
+}
+
+/* Update: Support Keywords and Viral Styles */
+.tape-card.is-viral {
+    border-left: 4px solid #ff453a;
+    background: linear-gradient(90deg, rgba(255, 69, 58, 0.1) 0%, rgba(255,255,255,0.05) 100%);
+}
+
+.tc-identity {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tc-keywords {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+}
+
+.keyword-chip {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: 'JetBrains Mono', monospace;
+}

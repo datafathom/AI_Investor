@@ -1,18 +1,18 @@
 const API_URL = '/api/auth';
 
 export const authService = {
-    async register(username, password) {
+    async register(email, password) {
         const response = await fetch(`${API_URL}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ email, password }),
         });
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || 'Registration failed');
         return data;
     },
 
-    async login(username, password) {
+    async login(email, password) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
 
@@ -20,7 +20,7 @@ export const authService = {
             const response = await fetch(`${API_URL}/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ email, password }),
                 signal: controller.signal
             });
             clearTimeout(timeoutId);

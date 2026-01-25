@@ -1,0 +1,113 @@
+.kafka-monitor-widget {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: #e2e8f0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    padding: 10px;
+}
+
+.monitor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.monitor-header h3 {
+    margin: 0;
+    font-family: inherit;
+    color: #00ff88;
+}
+
+.topic-filters button {
+    background: transparent;
+    border: 1px solid #333;
+    color: #666;
+    margin-left: 5px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.7rem;
+}
+
+.topic-filters button.active {
+    border-color: #00ff88;
+    color: #00ff88;
+    background: rgba(0, 255, 136, 0.1);
+}
+
+.throughput-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.stat-card {
+    background: rgba(255,255,255,0.05);
+    padding: 8px;
+    border-radius: 4px;
+    border-left: 2px solid #333;
+}
+
+.stat-card:hover {
+    border-left-color: #00ff88;
+}
+
+.sc-topic {
+    display: block;
+    color: #cbd5e1;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.sc-metrics {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.sc-val { color: #00ff88; }
+.sc-lag { color: #ffba0a; }
+
+.sparkline {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 20px;
+    margin-top: 5px;
+}
+
+.sl-bar {
+    width: 4px;
+    background: rgba(0,255,136,0.3);
+}
+
+.stream-log {
+    flex-grow: 1;
+    overflow-y: auto;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.log-row {
+    display: grid;
+    grid-template-columns: 80px 100px 50px auto;
+    gap: 10px;
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.02);
+}
+
+.log-time { color: #666; }
+.log-topic { color: #888; }
+.log-type { font-weight: bold; }
+.log-payload { color: #aaa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.log-row.warn .log-type { color: #ffba0a; }
+.log-row.error .log-type { color: #ff4757; }
+.log-row.info .log-type { color: #3b82f6; }

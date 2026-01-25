@@ -1,0 +1,199 @@
+.donation-router-widget {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 16px;
+    height: 100%;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-status {
+    text-align: right;
+}
+
+.header-status .label {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+.header-status .val {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f472b6;
+}
+
+.threshold-config {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 20px;
+}
+
+.config-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.config-row label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+.input-group input {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    width: 40px;
+    text-align: right;
+    font-weight: 700;
+}
+
+.input-group .percent {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-left: 2px;
+}
+
+.config-desc {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.3;
+}
+
+.config-desc strong {
+    color: var(--text-primary);
+}
+
+.charity-selection {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+    overflow-y: auto;
+}
+
+.charity-selection h4 {
+    margin: 0 0 10px 0;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.charity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.charity-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+.charity-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.charity-info .name {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.charity-info .cat {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+.allocation-share {
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.add-charity-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    color: var(--text-secondary);
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.add-charity-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.impact-pulse {
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(244, 114, 182, 0.05) 100%);
+    border: 1px solid rgba(236, 72, 153, 0.2);
+    border-radius: 6px;
+    padding: 12px;
+}
+
+.pulse-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #f472b6;
+    margin-bottom: 8px;
+}
+
+.pulse-metrics {
+    display: flex;
+    gap: 16px;
+}
+
+.metric {
+    display: flex;
+    flex-direction: column;
+}
+
+.metric .val {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.metric .lbl {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+}

@@ -78,6 +78,7 @@ POLYGON_API_KEY = get_env("POLYGON_API_KEY")
 REDDIT_CLIENT_ID = get_env("REDDIT_CLIENT_ID")
 REDDIT_CLIENT_SECRET = get_env("REDDIT_CLIENT_SECRET")
 REDDIT_USER_AGENT = get_env("REDDIT_USER_AGENT", "ai_investor_v1")
+REDDIT_REDIRECT_URI = get_env("REDDIT_REDIRECT_URI", "http://localhost:5173/auth/callback/reddit")
 
 # Robinhood Integration (Phase 24)
 ROBINHOOD_USERNAME = get_env("ROBINHOOD_USERNAME")

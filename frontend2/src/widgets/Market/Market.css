@@ -1,0 +1,444 @@
+/**
+ * ==============================================================================
+ * FILE: frontend2/src/widgets/Market/Market.css
+ * ROLE: Market Widget Styles
+ * PURPOSE: CSS styles for QuoteCard, PriceChart, and EarningsCalendar widgets.
+ *          
+ * AUTHOR: AI Investor Team
+ * CREATED: 2026-01-21
+ * ==============================================================================
+ */
+
+/* =============================================================================
+   CSS Variables
+   ============================================================================= */
+:root {
+    --market-card-bg: rgba(20, 25, 35, 0.9);
+    --market-card-border: rgba(100, 150, 200, 0.2);
+    --market-positive: #00d4aa;
+    --market-negative: #ff4757;
+    --market-neutral: #888;
+    --market-accent: #00d4ff;
+}
+
+/* =============================================================================
+   QuoteCard Styles
+   ============================================================================= */
+.quote-card {
+    background: var(--market-card-bg);
+    border: 1px solid var(--market-card-border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    min-width: 200px;
+    transition: all 0.3s ease;
+}
+
+.quote-card:hover {
+    border-color: var(--market-accent);
+    box-shadow: 0 4px 20px rgba(0, 212, 255, 0.15);
+}
+
+.quote-card--compact {
+    padding: 0.75rem;
+    min-width: 150px;
+}
+
+.quote-card--loading,
+.quote-card--error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 150px;
+}
+
+.quote-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.quote-card__symbol {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.5px;
+}
+
+.quote-card__market-status {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.quote-card__market-status--open {
+    background: rgba(0, 212, 170, 0.2);
+    color: var(--market-positive);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.quote-card__price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.quote-card--compact .quote-card__price {
+    font-size: 1.5rem;
+}
+
+.quote-card__change {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.quote-card__change.positive {
+    color: var(--market-positive);
+}
+
+.quote-card__change.negative {
+    color: var(--market-negative);
+}
+
+.quote-card__change-pct {
+    margin-left: 0.5rem;
+    opacity: 0.8;
+}
+
+.quote-card__details {
+    border-top: 1px solid var(--market-card-border);
+    padding-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.quote-card__detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.25rem 0;
+    font-size: 0.85rem;
+}
+
+.quote-card__label {
+    color: var(--market-neutral);
+}
+
+.quote-card__value {
+    color: #fff;
+    font-weight: 500;
+}
+
+.quote-card__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--market-neutral);
+    border-top: 1px solid var(--market-card-border);
+    padding-top: 0.75rem;
+}
+
+.quote-card__refresh-btn {
+    background: transparent;
+    border: 1px solid var(--market-card-border);
+    color: var(--market-accent);
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quote-card__refresh-btn:hover {
+    background: rgba(0, 212, 255, 0.1);
+}
+
+.quote-card__refresh-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.quote-card__error-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.quote-card__error-message {
+    color: var(--market-negative);
+    margin-bottom: 0.75rem;
+    text-align: center;
+}
+
+.quote-card__retry-btn {
+    background: var(--market-negative);
+    border: none;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Skeleton animations */
+.quote-card__skeleton-header,
+.quote-card__skeleton-price,
+.quote-card__skeleton-change {
+    background: linear-gradient(90deg, #1a1f2e 25%, #2a2f3e 50%, #1a1f2e 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+}
+
+.quote-card__skeleton-header {
+    height: 20px;
+    width: 60%;
+    margin-bottom: 12px;
+}
+
+.quote-card__skeleton-price {
+    height: 36px;
+    width: 80%;
+    margin-bottom: 8px;
+}
+
+.quote-card__skeleton-change {
+    height: 16px;
+    width: 40%;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* =============================================================================
+   PriceChart Styles
+   ============================================================================= */
+.price-chart {
+    background: var(--market-card-bg);
+    border: 1px solid var(--market-card-border);
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.price-chart--loading,
+.price-chart--error,
+.price-chart--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--market-neutral);
+}
+
+.price-chart__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.price-chart__title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+}
+
+.price-chart__controls {
+    display: flex;
+    gap: 4px;
+}
+
+.price-chart__btn {
+    background: transparent;
+    border: 1px solid var(--market-card-border);
+    color: var(--market-neutral);
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.price-chart__btn:hover {
+    border-color: var(--market-accent);
+    color: var(--market-accent);
+}
+
+.price-chart__btn.active {
+    background: var(--market-accent);
+    border-color: var(--market-accent);
+    color: #000;
+}
+
+.price-chart__tooltip {
+    background: rgba(10, 15, 25, 0.95);
+    border: 1px solid var(--market-card-border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.75rem;
+}
+
+.price-chart__tooltip p {
+    margin: 2px 0;
+    color: #ccc;
+}
+
+.price-chart__tooltip-date {
+    color: #fff !important;
+    font-weight: 600;
+    border-bottom: 1px solid var(--market-card-border);
+    padding-bottom: 4px;
+    margin-bottom: 4px !important;
+}
+
+.price-chart__skeleton {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #1a1f2e 25%, #2a2f3e 50%, #1a1f2e 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+}
+
+/* =============================================================================
+   EarningsCalendar Styles
+   ============================================================================= */
+.earnings-calendar {
+    background: var(--market-card-bg);
+    border: 1px solid var(--market-card-border);
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.earnings-calendar--loading,
+.earnings-calendar--error,
+.earnings-calendar--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 150px;
+    color: var(--market-neutral);
+}
+
+.earnings-calendar__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--market-card-border);
+}
+
+.earnings-calendar__title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+}
+
+.earnings-calendar__count {
+    font-size: 0.75rem;
+    color: var(--market-neutral);
+}
+
+.earnings-calendar__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.earnings-calendar__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border-left: 3px solid var(--market-accent);
+    transition: all 0.2s ease;
+}
+
+.earnings-calendar__item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.earnings-calendar__item.urgent {
+    border-left-color: var(--market-negative);
+    background: rgba(255, 71, 87, 0.1);
+}
+
+.earnings-calendar__item.soon {
+    border-left-color: #ffa502;
+    background: rgba(255, 165, 2, 0.05);
+}
+
+.earnings-calendar__item-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.earnings-calendar__symbol {
+    font-weight: 700;
+    color: #fff;
+}
+
+.earnings-calendar__name {
+    font-size: 0.7rem;
+    color: var(--market-neutral);
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.earnings-calendar__item-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.earnings-calendar__date {
+    font-size: 0.85rem;
+    color: #fff;
+}
+
+.earnings-calendar__days {
+    font-size: 0.7rem;
+    color: var(--market-accent);
+}
+
+.earnings-calendar__item-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.earnings-calendar__estimate {
+    font-size: 0.8rem;
+    color: var(--market-positive);
+}
+
+.earnings-calendar__fiscal {
+    font-size: 0.65rem;
+    color: var(--market-neutral);
+}
+
+.earnings-calendar__skeleton {
+    width: 100%;
+    height: 150px;
+    background: linear-gradient(90deg, #1a1f2e 25%, #2a2f3e 50%, #1a1f2e 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+}

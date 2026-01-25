@@ -20,7 +20,7 @@ def start_all(**kwargs):
     # Since we can't easily run multiple blocking commands in one thread without backgrounding,
     # we'll tell the user how to run them or implement a background runner.
     # For now, let's keep it simple and provide individual commands in the summary.
-    print("\n✅ Infrastructure started.")
+    print("\nOK Infrastructure started.")
     print("👉 To start the full system, run these in separate terminals:")
     print("   1. python cli.py start-backend")
     print("   2. python cli.py start-frontend")
@@ -69,7 +69,7 @@ def check_port(port: int = 5050, **kwargs):
     import subprocess
     import platform
     
-    print(f"🔍 Checking if port {port} is listening...")
+    print(f" Checking if port {port} is listening...")
     
     try:
         if platform.system() == "Windows":
@@ -81,15 +81,41 @@ def check_port(port: int = 5050, **kwargs):
             result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
             
         if result.stdout:
-            print(f"✅ Port {port} is ACTIVE:")
+            print(f"OK Port {port} is ACTIVE:")
             print(result.stdout)
             return True
         else:
-            print(f"❌ Port {port} is NOT LISTENING.")
+            print(f"ERROR Port {port} is NOT LISTENING.")
             return False
     except Exception as e:
         print(f"Error checking port: {e}")
         return False
+
+def check_runtimes(**kwargs):
+    """Check if both backend (5050) and frontend (5173) are listening."""
+    import subprocess
+    import platform
+    
+    print(" Checking Dev Runtimes (5050 & 5173)...")
+    
+    if platform.system() == "Windows":
+        # Check both in one go as requested
+        cmd = 'netstat -ano | findstr ":5050 :5173"'
+        try:
+            result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+            if result.stdout:
+                print("OK Found listening ports:")
+                print(result.stdout)
+                return True
+            else:
+                print("ERROR No processes found on 5050 or 5173.")
+                return False
+        except Exception as e:
+            print(f"Error: {e}")
+            return False
+    else:
+        # Fallback for unix
+        return check_port(5050) and check_port(5173)
 
 def reset_dev(**kwargs):
     """Nuke and Pave: Stop/Prune, Start, and Seed."""
@@ -121,7 +147,7 @@ def start_backend(**kwargs):
     import sys
     from pathlib import Path
 
-    logger.info("🚀 Starting Backend on Host...")
+    logger.info(" Starting Backend on Host...")
     
     # Get project root
     project_root = str(Path(__file__).parent.parent.parent.absolute())
@@ -139,7 +165,7 @@ def start_backend(**kwargs):
         python_exe = os.path.join(project_root, "venv", "bin", "python")
     
     if not os.path.exists(python_exe):
-        logger.error(f"❌ Virtual environment not found at {python_exe}")
+        logger.error(f"ERROR Virtual environment not found at {python_exe}")
         return False
 
     cmd = [python_exe, "web/app.py"]
@@ -151,13 +177,13 @@ def start_backend(**kwargs):
         subprocess.run(cmd, env=env, check=True)
         return True
     except subprocess.CalledProcessError as e:
-        logger.error(f"❌ Backend failed to start: {e}")
+        logger.error(f"ERROR Backend failed to start: {e}")
         return False
     except KeyboardInterrupt:
         logger.info("🛑 Backend stopped by user.")
         return True
     except Exception as e:
-        logger.exception(f"❌ Unexpected error starting backend: {e}")
+        logger.exception(f"ERROR Unexpected error starting backend: {e}")
         return False
 def start_frontend(**kwargs):
     """Start the frontend React app on the host."""
@@ -165,18 +191,18 @@ def start_frontend(**kwargs):
     import os
     from pathlib import Path
 
-    logger.info("🚀 Starting Frontend on Host...")
+    logger.info(" Starting Frontend on Host...")
     
     project_root = str(Path(__file__).parent.parent.parent.absolute())
     frontend_path = os.path.join(project_root, "frontend2")
     
     if not os.path.exists(frontend_path):
-        logger.error(f"❌ Frontend directory not found at {frontend_path}")
+        logger.error(f"ERROR Frontend directory not found at {frontend_path}")
         return False
 
     # Check if node_modules exists
     if not os.path.exists(os.path.join(frontend_path, "node_modules")):
-        logger.info("📦 node_modules missing. Running npm install...")
+        logger.info(" node_modules missing. Running npm install...")
         subprocess.run("npm install", cwd=frontend_path, shell=True, check=True)
 
     cmd = ["npm", "run", "dev"]
@@ -187,13 +213,13 @@ def start_frontend(**kwargs):
         subprocess.run(cmd, cwd=frontend_path, shell=True, check=True)
         return True
     except subprocess.CalledProcessError as e:
-        logger.error(f"❌ Frontend failed to start: {e}")
+        logger.error(f"ERROR Frontend failed to start: {e}")
         return False
     except KeyboardInterrupt:
         logger.info("🛑 Frontend stopped by user.")
         return True
     except Exception as e:
-        logger.exception(f"❌ Unexpected error starting frontend: {e}")
+        logger.exception(f"ERROR Unexpected error starting frontend: {e}")
         return False
 
 def run_demo_mode(**kwargs):
@@ -249,7 +275,7 @@ def run_demo_mode(**kwargs):
         kill_listeners_on_ports([5050]) # Backend
         kill_listeners_on_ports(range(5170, 5181)) # Frontend range (Vite hops)
 
-        print("✅ Cleanup complete.", flush=True)
+        print("OK Cleanup complete.", flush=True)
 
         # 2. Start Infrastructure
         print("🏗️  Ensuring Docker Infrastructure is UP...", flush=True)
@@ -260,11 +286,11 @@ def run_demo_mode(**kwargs):
             docker_up()
         except SystemExit as se:
             if se.code != 0:
-                print(f"❌ Docker start failed with code {se.code}. Continuing anyway to attempt app launch...", flush=True)
+                print(f"ERROR Docker start failed with code {se.code}. Continuing anyway to attempt app launch...", flush=True)
             else:
-                print("✅ Docker start returned success.", flush=True)
+                print("OK Docker start returned success.", flush=True)
         except Exception as e:
-            print(f"❌ Docker start failed: {e}", flush=True)
+            print(f"ERROR Docker start failed: {e}", flush=True)
         
         # Wait a moment for ports to clear/start
         time.sleep(3)
@@ -272,7 +298,7 @@ def run_demo_mode(**kwargs):
         project_root = str(Path(__file__).parent.parent.parent.absolute())
         
         # 3. Start Backend in New Window
-        print("🚀 Launching Backend (New Window)...", flush=True)
+        print(" Launching Backend (New Window)...", flush=True)
         python_exe = os.path.join(project_root, "venv", "Scripts", "python.exe")
         if not os.path.exists(python_exe):
              python_exe = sys.executable # Fallback
@@ -296,7 +322,7 @@ def run_demo_mode(**kwargs):
             logger.error(f"Failed to launch backend: {e}")
 
         # 4. Start Frontend in New Window
-        print("🚀 Launching Frontend (New Window)...", flush=True)
+        print(" Launching Frontend (New Window)...", flush=True)
         frontend_path = os.path.join(project_root, "frontend2")
         
         try:
@@ -319,7 +345,7 @@ def run_demo_mode(**kwargs):
             try:
                 with urllib.request.urlopen("http://127.0.0.1:5050/health", timeout=1) as response:
                     if response.status == 200:
-                        print("✅ Backend is HEALTHY and listening!", flush=True)
+                        print("OK Backend is HEALTHY and listening!", flush=True)
                         backend_ready = True
                         break
             except Exception:
@@ -327,12 +353,12 @@ def run_demo_mode(**kwargs):
                 print(".", end="", flush=True)
         
         if not backend_ready:
-            print("\n⚠️ Backend verify timed out. It might still be starting.", flush=True)
+            print("\nWARN Backend verify timed out. It might still be starting.", flush=True)
         else:
-            print("\n✅ Backend confirmed.", flush=True)
+            print("\nOK Backend confirmed.", flush=True)
 
         # 5. Find Frontend Port and Open Browser
-        print("🔍 Scanning for active Frontend port (5173-5180)...", flush=True)
+        print(" Scanning for active Frontend port (5173-5180)...", flush=True)
         frontend_port = None
         
         # Scan ports up to 10 seconds
@@ -354,23 +380,23 @@ def run_demo_mode(**kwargs):
             print(".", end="", flush=True)
 
         if frontend_port:
-            print(f"\n✅ Frontend found on port {frontend_port}!", flush=True)
+            print(f"\nOK Frontend found on port {frontend_port}!", flush=True)
             url = f"http://localhost:{frontend_port}"
         else:
-            print("\n⚠️  Could not detect Frontend port. Defaulting to 5173.", flush=True)
+            print("\nWARN  Could not detect Frontend port. Defaulting to 5173.", flush=True)
             url = "http://localhost:5173"
 
         print(f"🌍 Opening Browser to {url}...", flush=True)
         import webbrowser
         webbrowser.open(url) 
 
-        print("\n✅ Demo Mode Initiated Successfully!", flush=True)
+        print("\nOK Demo Mode Initiated Successfully!", flush=True)
         print("   - Backend: Running & Verified")
         print("   - Frontend: Running in new window")
         print(f"   - Browser: Launched ({url})")
         return True
 
     except Exception as e:
-        print(f"\n❌ FATAL ERROR in run_demo_mode: {e}", flush=True)
+        print(f"\nERROR FATAL ERROR in run_demo_mode: {e}", flush=True)
         traceback.print_exc()
         return False

@@ -22,9 +22,9 @@ def run_test_paper(args=None):
     print(f"Positions: {summary['positions']}")
     
     if summary['cash'] == 100000.0 - 1500.0 and summary['positions']['AAPL']['quantity'] == 10:
-        print("✅ BUY Order Verified.")
+        print("OK BUY Order Verified.")
     else:
-        print("❌ BUY Order Failed.")
+        print("ERROR BUY Order Failed.")
         
     # 3. Sell AAPL
     print("\n--- SELL Order ---")
@@ -37,9 +37,9 @@ def run_test_paper(args=None):
     
     expected_cash = 98500.0 + (5 * 160.0) # 98500 + 800 = 99300
     if summary['cash'] == expected_cash and summary['positions']['AAPL']['quantity'] == 5:
-        print("✅ SELL Order Verified.")
+        print("OK SELL Order Verified.")
     else:
-         print(f"❌ SELL Order Failed. Expected ${expected_cash}, got ${summary['cash']}")
+         print(f"ERROR SELL Order Failed. Expected ${expected_cash}, got ${summary['cash']}")
          
     # 4. Fail Case
     print("\n--- Insufficient Funds Check ---")
@@ -47,6 +47,6 @@ def run_test_paper(args=None):
     print(f"Order Status: {order_fail['status']} ({order_fail['reason']})")
     
     if order_fail['status'] == "REJECTED":
-        print("✅ Insufficient Funds Logic Verified.")
+        print("OK Insufficient Funds Logic Verified.")
     else:
-        print("❌ Rejection Logic Failed.")
+        print("ERROR Rejection Logic Failed.")

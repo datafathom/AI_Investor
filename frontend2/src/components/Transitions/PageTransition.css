@@ -1,0 +1,116 @@
+.page-transition {
+  width: 100%;
+  height: 100%;
+}
+
+/* Fade variant */
+.page-transition--fade {
+  animation: pageFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pageFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Slide Up variant */
+.page-transition--slide-up {
+  animation: pageSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pageSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scale variant */
+.page-transition--scale {
+  animation: pageScale 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pageScale {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Slide Right variant */
+.page-transition--slide-right {
+  animation: pageSlideRight 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pageSlideRight {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Blur variant */
+.page-transition--blur {
+  animation: pageBlur 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pageBlur {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+/* Stagger children utility */
+.page-transition > * {
+  opacity: 0;
+  animation: staggerChild 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.page-transition > *:nth-child(1) { animation-delay: 0.05s; }
+.page-transition > *:nth-child(2) { animation-delay: 0.1s; }
+.page-transition > *:nth-child(3) { animation-delay: 0.15s; }
+.page-transition > *:nth-child(4) { animation-delay: 0.2s; }
+.page-transition > *:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes staggerChild {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .page-transition,
+  .page-transition > * {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}

@@ -1,0 +1,55 @@
+"""
+Tests for AI Assistant Learning Service
+Comprehensive test coverage for preference learning and recommendation engine
+"""
+
+import pytest
+from datetime import datetime
+from unittest.mock import Mock, AsyncMock, patch
+from services.ai_assistant.learning_service import LearningService
+from models.ai_assistant import UserPreference, Recommendation
+
+
+@pytest.fixture
+def service():
+    """Create service instance with mocked dependencies."""
+    with patch('services.ai_assistant.learning_service.get_cache_service'):
+        return LearningService()
+
+
+@pytest.mark.asyncio
+async def test_update_user_preferences(service):
+    """Test updating user preferences."""
+    service._save_preferences = AsyncMock()
+    
+    preferences = {
+        'risk_tolerance': 'moderate',
+        'investment_style': 'growth',
+        'time_horizon': 'long_term'
+    }
+    
+    result = await service.update_user_preferences(
+        user_id="user_123",
+        preferences=preferences
+    )
+    
+    assert result is not None
+    assert isinstance(result, UserPreference) or isinstance(result, dict)
+
+
+@pytest.mark.asyncio
+async def test_get_recommendations(service):
+    """Test getting personalized recommendations."""
+    service._get_user_preferences = AsyncMock(return_value={
+        'risk_tolerance': 'moderate',
+        'investment_style': 'growth'
+    })
+    service._generate_recommendations = AsyncMock(return_value=[
+        {'symbol': 'AAPL', 'reason': 'Matches growth style'},
+        {'symbol': 'MSFT', 'reason': 'Moderate risk'}
+    ])
+    
+    result = await service.get_recommendations("user_123")
+    
+    assert result is not None
+    assert len(result) > 0

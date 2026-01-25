@@ -12,7 +12,7 @@ def _get_compose_file():
     """Helper to get the path to docker-compose.yml"""
     compose_file = os.path.join(os.path.dirname(__file__), '..', '..', 'infra', 'docker-compose.yml')
     if not os.path.exists(compose_file):
-        print(f"❌ Error: docker-compose.yml not found at {compose_file}")
+        print(f"ERROR Error: docker-compose.yml not found at {compose_file}")
         sys.exit(1)
     return compose_file
 
@@ -21,7 +21,7 @@ def docker_up(build: bool = False):
     compose_file = _get_compose_file()
     
     build_msg = " and rebuilding images" if build else ""
-    print(f"🚀 Starting Docker Infrastructure Containers{build_msg}...")
+    print(f" Starting Docker Infrastructure Containers{build_msg}...")
     
     # Force stop first to ensure clean state
     print("🧹 Pre-flight cleanup: Stopping any running containers...")
@@ -40,15 +40,16 @@ def docker_up(build: bool = False):
             cmd,
             check=True
         )
-        print("✅ Docker Infrastructure started successfully!")
-        print("\n📊 Services running on localhost:")
+        print("OK Docker Infrastructure started successfully!")
+        print("\n Services running on localhost:")
         print("   - Kafka: 127.0.0.1:9092")
         print("   - PostgreSQL: 127.0.0.1:5432")
+        print("   - Redis: 127.0.0.1:6379")
         print("   - Neo4j HTTP: 127.0.0.1:7474")
         print("   - Neo4j Bolt: 127.0.0.1:7687")
         print("\n👉 Remember to start Backend and Frontend on host separately.")
     except subprocess.CalledProcessError:
-        print(f"❌ Error starting containers.")
+        print(f"ERROR Error starting containers.")
         sys.exit(1)
 
 def docker_down(volumes: bool = False):
@@ -66,9 +67,9 @@ def docker_down(volumes: bool = False):
             cmd,
             check=True
         )
-        print("✅ Docker containers stopped successfully!")
+        print("OK Docker containers stopped successfully!")
     except subprocess.CalledProcessError as e:
-        print(f"❌ Error stopping containers.")
+        print(f"ERROR Error stopping containers.")
         sys.exit(1)
 
 def docker_status():
@@ -77,14 +78,14 @@ def docker_status():
 
 def docker_ps():
     """Show status of Docker containers in a specific table format."""
-    print("📊 Docker container status:")
+    print(" Docker container status:")
     try:
         subprocess.run(
             ['docker', 'ps', '--format', 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}'],
             check=True
         )
     except subprocess.CalledProcessError as e:
-        print(f"❌ Error running docker ps: {e}")
+        print(f"ERROR Error running docker ps: {e}")
         sys.exit(1)
 
 def docker_logs(service: str = "", follow: bool = True):
@@ -103,11 +104,11 @@ def docker_logs(service: str = "", follow: bool = True):
     if service:
         cmd.append(service)
         
-    print(f"📋 Fetching logs{' for ' + service if service else ''}...")
+    print(f" Fetching logs{' for ' + service if service else ''}...")
     try:
         subprocess.run(cmd, check=True)
     except KeyboardInterrupt:
         print("\n👋 Stopped following logs.")
     except subprocess.CalledProcessError as e:
-        print(f"❌ Error fetching logs.")
+        print(f"ERROR Error fetching logs.")
         sys.exit(1)

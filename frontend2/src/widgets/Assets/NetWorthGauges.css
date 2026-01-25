@@ -1,0 +1,130 @@
+.net-worth-gauges {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  height: 100%;
+  position: relative;
+}
+
+.widget-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.badge-live {
+  background: rgba(255, 0, 0, 0.2);
+  color: var(--neon-red);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.gauge-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 240px;
+  height: 240px;
+}
+
+.circular-gauge {
+  transform: rotate(-90deg);
+}
+
+.gauge-segment {
+  transition: stroke-dasharray 1s ease-out;
+  filter: drop-shadow(0 0 4px rgba(0,0,0,0.5));
+}
+
+.delay-1 {
+  animation-delay: 0.2s;
+}
+
+.center-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.center-value .label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.center-value .value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: var(--font-data);
+  color: var(--text-primary);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.trend {
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.trend.positive { color: var(--neon-green); }
+
+.legend-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  width: 100%;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-secondary);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: 0 0 5px currentColor;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+}
+
+.info .type {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.info .amt {
+  font-family: var(--font-data);
+  font-weight: 600;
+  font-size: 0.9rem;
+}

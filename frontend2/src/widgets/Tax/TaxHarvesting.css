@@ -1,0 +1,152 @@
+.tax-harvesting-widget {
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    padding: 16px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.tax-harvesting-widget .widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.tax-harvesting-widget .widget-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.auto-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.auto-toggle svg.active {
+    color: var(--color-success);
+}
+
+.summary-cards {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.summary-card {
+    flex: 1;
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.summary-card svg {
+    color: var(--text-muted);
+}
+
+.summary-card .label {
+    display: block;
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.summary-card .value {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.summary-card .value.positive {
+    color: var(--color-bullish);
+}
+
+.summary-card .value.negative {
+    color: var(--color-bearish);
+}
+
+.tax-lots-table {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.5fr 1.5fr;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-primary);
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.table-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.5fr 1.5fr;
+    gap: 8px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-primary);
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.table-row.ineligible {
+    opacity: 0.5;
+}
+
+.table-row .symbol {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.table-row .unrealized.negative {
+    color: var(--color-bearish);
+}
+
+.wash-sale-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--color-bearish);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+}
+
+.eligible-badge {
+    background: rgba(46, 213, 115, 0.15);
+    color: var(--color-bullish);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+}
+
+.pending-badge {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--color-warning);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+}
+
+.widget-footer {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: var(--text-muted);
+}

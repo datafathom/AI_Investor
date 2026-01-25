@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useToast } from '../context/ToastContext';
 
 /**
  * useNotifications Hook
@@ -8,6 +9,7 @@ import { useState, useEffect, useCallback } from 'react';
  */
 export const useNotifications = () => {
     const [permission, setPermission] = useState(Notification.permission);
+    const { showToast } = useToast();
 
     useEffect(() => {
         if (Notification.permission === 'default') {
@@ -35,10 +37,10 @@ export const useNotifications = () => {
     /**
      * Send a notification
      */
-    const notify = useCallback(({ title, body, icon, type = 'info' }) => {
+    const notify = useCallback(({ title, body, icon, type = 'info', duration = null }) => {
         // Play contextual sound
-        if (type === 'success') playSound('fill');
-        else if (type === 'error') playSound('error');
+        if (type === 'success' || type === 'info') playSound('fill');
+        else if (type === 'error' || type === 'critical') playSound('error');
         else playSound('alert');
 
         // OS Notification
@@ -49,9 +51,11 @@ export const useNotifications = () => {
             });
         }
 
-        // Return for potential in-app toast integration
+        // In-app Toast Integration
+        showToast(body || title, type, duration);
+
         return { title, body, type };
-    }, [permission, playSound]);
+    }, [permission, playSound, showToast]);
 
     return { notify, permission, playSound };
 };

@@ -1,0 +1,280 @@
+/**
+ * ==============================================================================
+ * FILE: frontend2/src/pages/Accounts/IBKRDashboard.css
+ * ROLE: IBKR Dashboard Styles
+ * ==============================================================================
+ */
+
+.ibkr-dashboard {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.ibkr-dashboard__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.ibkr-dashboard__header h2 {
+    margin: 0;
+    color: var(--text-primary, #fff);
+    font-size: 1.75rem;
+}
+
+.gateway-status {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.gateway-status--running {
+    background: rgba(52, 168, 83, 0.2);
+    color: #34a853;
+    border: 1px solid rgba(52, 168, 83, 0.3);
+}
+
+.gateway-status--stopped {
+    background: rgba(234, 67, 53, 0.2);
+    color: #ea4335;
+    border: 1px solid rgba(234, 67, 53, 0.3);
+}
+
+.ibkr-dashboard__loading {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary, #888);
+}
+
+.ibkr-dashboard__summary {
+    margin-bottom: 2rem;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.summary-card {
+    background: var(--card-bg, rgba(20, 25, 35, 0.9));
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.summary-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #888);
+    margin-bottom: 0.5rem;
+}
+
+.summary-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--accent-color, #00d4ff);
+}
+
+.ibkr-dashboard__margin {
+    background: var(--card-bg, rgba(20, 25, 35, 0.9));
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.ibkr-dashboard__margin h3 {
+    margin: 0 0 1rem 0;
+    color: var(--text-primary, #fff);
+    font-size: 1.1rem;
+}
+
+.margin-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.margin-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.margin-label {
+    color: var(--text-secondary, #888);
+    font-size: 0.9rem;
+}
+
+.margin-value {
+    color: var(--text-primary, #fff);
+    font-weight: 600;
+}
+
+.margin-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--progress-bg, rgba(100, 150, 200, 0.2));
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+.margin-bar__fill {
+    height: 100%;
+    transition: width 0.3s;
+}
+
+.ibkr-dashboard__currency {
+    background: var(--card-bg, rgba(20, 25, 35, 0.9));
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.ibkr-dashboard__currency h3 {
+    margin: 0 0 1rem 0;
+    color: var(--text-primary, #fff);
+    font-size: 1.1rem;
+}
+
+.currency-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.currency-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--item-bg, rgba(30, 40, 50, 0.5));
+    border-radius: 6px;
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.1));
+}
+
+.currency-code {
+    font-weight: 600;
+    color: var(--text-primary, #fff);
+    min-width: 60px;
+}
+
+.currency-exposure {
+    color: var(--text-primary, #fff);
+    font-weight: 600;
+}
+
+.currency-percentage {
+    color: var(--text-secondary, #888);
+    font-size: 0.85rem;
+}
+
+.ibkr-dashboard__positions {
+    background: var(--card-bg, rgba(20, 25, 35, 0.9));
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.ibkr-dashboard__positions h3 {
+    margin: 0 0 1rem 0;
+    color: var(--text-primary, #fff);
+    font-size: 1.1rem;
+}
+
+.no-positions {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary, #888);
+}
+
+.positions-table {
+    overflow-x: auto;
+}
+
+.positions-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: var(--item-bg, rgba(30, 40, 50, 0.5));
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-secondary, #888);
+}
+
+.position-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: var(--item-bg, rgba(30, 40, 50, 0.5));
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.position-row:hover {
+    background: var(--item-hover-bg, rgba(30, 40, 50, 0.7));
+    border-color: var(--accent-color, rgba(0, 212, 255, 0.3));
+}
+
+.position-symbol {
+    font-weight: 600;
+    color: var(--text-primary, #fff);
+}
+
+.position-type {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #888);
+    text-transform: uppercase;
+}
+
+.position-qty,
+.position-cost,
+.position-price,
+.position-value {
+    color: var(--text-primary, #fff);
+}
+
+.position-pnl {
+    font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .positions-header,
+    .position-row {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 0.5rem;
+    }
+    
+    .positions-header > div:nth-child(n+4),
+    .position-row > div:nth-child(n+4) {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .ibkr-dashboard {
+        padding: 1rem;
+    }
+    
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .margin-info {
+        grid-template-columns: 1fr;
+    }
+}

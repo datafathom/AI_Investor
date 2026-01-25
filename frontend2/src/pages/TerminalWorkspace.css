@@ -1,10 +1,124 @@
+/**
+ * Terminal Workspace - Complete Architectural Reset
+ * Strict Window Manager environment with 100% viewport efficiency.
+ * 
+ * Architecture:
+ * ┌────────────────────────────────────────────────────┐
+ * │           Header Area (handled by App.jsx)          │
+ * ├────────────────────────────────────────────────────┤
+ * │                                                    │
+ * │   Terminal Workspace (this component)              │
+ * │   ├── Metrics Ticker Bar (flex-shrink: 0)         │
+ * │   └── Grid Workspace (flex: 1, overflow: hidden)  │
+ * │       └── Scrollable Grid Container               │
+ * │           ├── Widget 1                            │
+ * │           ├── Widget 2                            │
+ * │           ├── System Log Widget                   │
+ * │           └── ...                                 │
+ * │                                                    │
+ * ├────────────────────────────────────────────────────┤
+ * │           Status Bar (handled by App.jsx)          │
+ * └────────────────────────────────────────────────────┘
+ */
+
+/* HARD VIEWPORT LOCK - This is the critical constraint */
 .terminal-workspace {
-    /* Account for MenuBar (~48px) + SubHeaderNav (~36px) + Breadcrumbs (~32px) */
-    height: calc(100vh - 120px);
+    /* Fill the entire available space from parent */
+    height: 100%;
+    width: 100%;
+    /* Flex column to stack children */
+    display: flex;
+    flex-direction: column;
+    /* CRITICAL: No page-level scrolling */
+    overflow: hidden;
+    position: relative;
+}
+
+/* Dashboard fills remaining terminal space */
+.terminal-workspace .dashboard-container {
+    flex: 1;
+    min-height: 0; /* Critical for nested flex overflow */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Metrics bar stays fixed at top */
+.terminal-workspace .metrics-ticker-bar {
+    flex-shrink: 0;
+}
+
+/* Grid scroll wrapper takes remaining space */
+.terminal-workspace .grid-scroll-wrapper {
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
-    position: relative;
-    width: 100%;
-    /* Contain scroll within this element */
-    overscroll-behavior: contain;
+    /* Smooth scrolling */
+    scroll-behavior: smooth;
+    /* Custom scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.terminal-workspace .grid-scroll-wrapper::-webkit-scrollbar {
+    width: 6px;
+}
+
+.terminal-workspace .grid-scroll-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.terminal-workspace .grid-scroll-wrapper::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+}
+
+.terminal-workspace .grid-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Floating Action Bar - Positioned within the terminal viewport */
+.terminal-workspace .floating-action-bar {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    z-index: 100;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.floating-action-btn {
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(100, 116, 139, 0.4);
+    padding: 0.625rem;
+    border-radius: 10px;
+    color: rgba(148, 163, 184, 1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+}
+
+.floating-action-btn:hover {
+    color: white;
+    border-color: rgba(6, 182, 212, 0.5);
+    box-shadow: 0 4px 24px rgba(6, 182, 212, 0.15);
+    transform: translateY(-2px);
+}
+
+.notification-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background: #f59e0b;
+    border-radius: 50%;
+    animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.1); }
 }

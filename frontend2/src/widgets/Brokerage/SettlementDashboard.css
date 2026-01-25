@@ -1,0 +1,196 @@
+
+.settlement-widget {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    color: #f1f5f9;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    backdrop-filter: blur(12px);
+    height: 100%;
+}
+
+.settlement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.title-area h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.reporting-currency {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.total-equity-section {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(59, 130, 246, 0.05));
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    padding: 1rem;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.total-equity-section .label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #60a5fa;
+    letter-spacing: 1px;
+}
+
+.total-equity-section .value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.balances-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.balance-row {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 10px 12px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.currency-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.currency-code {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #fff;
+}
+
+.currency-name {
+    font-size: 0.7rem;
+    color: #64748b;
+}
+
+.balance-values {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.native-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.usd-val {
+    font-size: 0.75rem;
+    color: #4ade80;
+}
+
+.convert-tool {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tool-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+}
+
+.tool-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tool-inputs input {
+    width: 80px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 6px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.tool-inputs select {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.tool-inputs span {
+    font-size: 0.8rem;
+    color: #475569;
+}
+
+.convert-btn {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.convert-btn:hover {
+    background: #3b82f6;
+}
+
+.settlement-footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.65rem;
+    color: #475569;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

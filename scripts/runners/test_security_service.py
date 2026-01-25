@@ -33,6 +33,6 @@ def run_test_security(args=None):
     print(f"Decrypted Key:  {decrypted}")
     
     if decrypted == test_key:
-        print("\n✅ Security Logic Verified: Encryption/Decryption Successful.")
+        print("\nOK Security Logic Verified: Encryption/Decryption Successful.")
     else:
-        print("\n❌ Security Logic Failed: Decryption mismatch.")
+        print("\nERROR Security Logic Failed: Decryption mismatch.")

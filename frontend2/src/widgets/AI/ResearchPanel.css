@@ -1,0 +1,249 @@
+/**
+ * ResearchPanel.css
+ */
+
+.research-panel {
+    background: #202124;
+    color: #e8eaed;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+    border: 1px solid #3c4043;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    font-family: 'Roboto', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+.research-header {
+    padding: 1rem;
+    background: #292a2d;
+    border-bottom: 1px solid #3c4043;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.research-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #8ab4f8; /* Google/Perplexity blue-ish */
+}
+
+.clear-btn {
+    background: none;
+    border: 1px solid #5f6368;
+    color: #9aa0a6;
+    border-radius: 4px;
+    padding: 0.25rem 0.75rem;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.clear-btn:hover:not(:disabled) {
+    background: #3c4043;
+    color: #e8eaed;
+}
+
+.research-feed {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column-reverse; /* Newest at bottom visually if desired, but here we render history desc so standard flex-col is usually better for chat. Let's stick to standard flow and scroll to bottom. Wait, chat usually has newest at bottom. */
+    flex-direction: column; 
+    gap: 1.5rem;
+}
+
+/* Chat Bubbles */
+.research-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.question {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    align-self: flex-end;
+    max-width: 80%;
+}
+
+.question p {
+    background: #303134;
+    padding: 0.75rem 1rem;
+    border-radius: 18px 18px 4px 18px;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.user-avatar, .ai-avatar {
+    font-size: 1.25rem;
+}
+
+.time {
+    font-size: 0.7rem;
+    color: #9aa0a6;
+}
+
+.answer {
+    display: flex;
+    gap: 1rem;
+    max-width: 90%;
+    align-self: flex-start;
+}
+
+.answer .content {
+    background: transparent;
+    padding: 0;
+}
+
+.answer p {
+    margin: 0 0 0.5rem 0;
+    line-height: 1.5;
+    color: #e8eaed;
+}
+
+.citations {
+    background: #28292c;
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    border: 1px solid #3c4043;
+}
+
+.citations h6 {
+    margin: 0 0 0.5rem 0;
+    color: #9aa0a6;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.citations ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.citations li {
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+}
+
+.citations a {
+    color: #8ab4f8;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 300px;
+}
+
+.citations a:hover {
+    text-decoration: underline;
+}
+
+/* Input Area */
+.research-input {
+    padding: 1rem;
+    background: #292a2d;
+    border-top: 1px solid #3c4043;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.research-input input {
+    flex: 1;
+    background: #202124;
+    border: 1px solid #5f6368;
+    border-radius: 24px;
+    padding: 0.75rem 1.25rem;
+    color: #fff;
+    outline: none;
+}
+
+.research-input input:focus {
+    border-color: #8ab4f8;
+}
+
+.research-input button {
+    background: #8ab4f8;
+    border: none;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    color: #202124;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.research-input button:hover:not(:disabled) {
+    background: #aecbfa;
+}
+
+.research-input button:disabled {
+    background: #3c4043;
+    color: #5f6368;
+    cursor: default;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    color: #9aa0a6;
+    margin-top: 2rem;
+}
+
+.suggestions {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.suggestions span {
+    background: #303134;
+    padding: 0.5rem 1rem;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border: 1px solid #3c4043;
+}
+
+.suggestions span:hover {
+    background: #3c4043;
+}
+
+.mock-label {
+    position: absolute;
+    top: 0.5rem;
+    right: 3rem;
+    font-size: 0.6rem;
+    color: #5f6368;
+    opacity: 0.6;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pulse {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}

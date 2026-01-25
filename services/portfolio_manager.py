@@ -322,3 +322,16 @@ class PortfolioManager:
                 'aggressive_target': self.aggressive_allocation
             }
         }
+
+
+# Singleton instance
+_portfolio_manager: Optional[PortfolioManager] = None
+
+
+def get_portfolio_manager(total_capital: float = 100000.0) -> PortfolioManager:
+    """Get singleton portfolio manager instance."""
+    global _portfolio_manager
+    if _portfolio_manager is None:
+        _portfolio_manager = PortfolioManager(total_capital=total_capital)
+    return _portfolio_manager
+

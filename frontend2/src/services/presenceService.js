@@ -25,11 +25,11 @@ class PresenceService {
     }
 
     this.currentUser = { id: userId, username };
-    const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '3002';
-    const SOCKET_SERVER_URL = `http://localhost:${BACKEND_PORT}`;
-
-    this.socket = io(SOCKET_SERVER_URL, {
+    // Use relative path to leverage Vite proxy correctly in all environments
+    this.socket = io({
+      path: '/socket.io',
       transports: ['websocket', 'polling'],
+      reconnectionAttempts: 5
     });
 
     // Register user

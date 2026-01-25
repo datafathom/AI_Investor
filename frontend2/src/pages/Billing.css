@@ -1,0 +1,163 @@
+/**
+ * Billing.css
+ */
+
+.billing-page {
+    padding: 2rem;
+    color: #e8eaed;
+    background: #1a1a1a;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+}
+
+.billing-header {
+    margin-bottom: 3rem;
+    border-bottom: 1px solid #333;
+    padding-bottom: 1rem;
+}
+
+.billing-header h1 {
+    font-size: 2rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.billing-header p {
+    color: #9aa0a6;
+    margin: 0;
+}
+
+/* Current Subscription */
+.current-subs {
+    margin-bottom: 3rem;
+}
+
+.subs-card {
+    background: #25262b;
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    border: 1px solid #3c4043;
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.badge.active { background: #10b981; color: #fff; }
+.badge.canceled { background: #ef4444; color: #fff; }
+
+.subs-card h3 { margin: 0; font-size: 1.25rem; }
+.subs-card .price { color: #8ab4f8; font-size: 1.1rem; margin: 0; }
+.subs-card .renewal { color: #9aa0a6; font-size: 0.9rem; margin: 0; }
+
+/* Plans Grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.plan-card {
+    background: #202124;
+    border: 1px solid #3c4043;
+    border-radius: 12px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: transform 0.2s;
+}
+
+.plan-card:hover {
+    transform: translateY(-5px);
+    border-color: #5f6368;
+}
+
+.plan-card.active {
+    border-color: #10b981;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
+}
+
+.recommended {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #8ab4f8;
+    color: #000;
+    font-weight: 700;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+}
+
+.plan-card h3 { margin: 0 0 0.5rem 0; }
+.plan-card.pro h3 { color: #8ab4f8; }
+
+.plan-card .price {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 1.5rem 0;
+}
+
+.plan-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+    flex: 1;
+}
+
+.plan-card li {
+    margin-bottom: 0.75rem;
+    color: #bdc1c6;
+    font-size: 0.95rem;
+}
+
+.plan-card button {
+    padding: 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #5f6368;
+    background: transparent;
+    color: #e8eaed;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.plan-card button:hover:not(:disabled) {
+    background: #3c4043;
+}
+
+.plan-card button.primary-btn {
+    background: #8ab4f8;
+    color: #202124;
+    border: none;
+}
+
+.plan-card button.primary-btn:hover:not(:disabled) {
+    background: #aecbfa;
+}
+
+.plan-card button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.mock-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #f59e0b;
+    color: #000;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem;
+    z-index: 1000;
+}

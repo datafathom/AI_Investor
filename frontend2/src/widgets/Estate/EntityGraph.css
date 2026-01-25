@@ -1,0 +1,151 @@
+.entity-graph-widget {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 16px;
+    height: 100%;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    z-index: 10;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.graph-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.control-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--text-primary);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.control-btn.primary {
+    background: rgba(79, 70, 229, 0.2);
+    color: #818cf8;
+    border: 1px solid rgba(79, 70, 229, 0.3);
+}
+
+.graph-viewport {
+    flex-grow: 1;
+    background: radial-gradient(circle at center, rgba(20, 20, 30, 0.5) 0%, rgba(10, 10, 15, 0.5) 100%);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.graph-node {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    background: rgba(30, 30, 40, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 12px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 140px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 2;
+}
+
+.graph-node:hover {
+    border-color: #818cf8;
+    box-shadow: 0 0 15px rgba(129, 140, 248, 0.3);
+}
+
+.graph-node.main-trust {
+    border-color: #f59e0b;
+}
+
+.graph-node span {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.node-meta {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+}
+
+.graph-connections {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.entity-details-panel {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.detail-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.detail-badge {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.detail-grid .item {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-grid label {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+}
+
+.detail-grid span {
+    font-size: 0.8rem;
+    font-family: monospace;
+}

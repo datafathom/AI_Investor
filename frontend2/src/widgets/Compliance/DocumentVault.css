@@ -1,0 +1,208 @@
+.document-vault {
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    padding: 16px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.vault-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+}
+
+.header-left h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+
+.search-bar input {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 12px;
+    width: 150px;
+}
+
+.search-bar input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-bar svg {
+    color: var(--text-muted);
+}
+
+.category-filters {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border-primary);
+    color: var(--text-secondary);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-btn.active {
+    background: var(--color-info);
+    color: white;
+    border-color: var(--color-info);
+}
+
+.documents-grid {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+}
+
+.doc-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-surface-2);
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.doc-card:hover {
+    background: var(--bg-elevated);
+}
+
+.doc-icon {
+    color: var(--color-info);
+}
+
+.doc-details {
+    flex: 1;
+}
+
+.doc-name {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.doc-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.doc-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.doc-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.action-icon {
+    background: transparent;
+    border: 1px solid var(--border-secondary);
+    color: var(--text-muted);
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-icon:hover {
+    color: var(--text-primary);
+    border-color: var(--border-primary);
+}
+
+.audit-section {
+    border-top: 1px solid var(--border-primary);
+    padding-top: 12px;
+}
+
+.audit-section h4 {
+    margin: 0 0 8px 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.audit-log {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.audit-entry {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr 70px;
+    gap: 8px;
+    padding: 6px 8px;
+    background: var(--bg-surface-2);
+    border-radius: 4px;
+    font-size: 10px;
+}
+
+.audit-entry.denied {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.audit-user {
+    color: var(--color-info);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.audit-action {
+    color: var(--text-primary);
+}
+
+.audit-doc {
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.audit-time {
+    color: var(--text-muted);
+    text-align: right;
+}

@@ -155,7 +155,7 @@ export const SimpleLineChart = React.memo(({ data, width = 600, height = 400 }) 
                     <Legend />
                     {(data || []).map((series, index) => (
                         <Line
-                            key={series.label}
+                            key={`${series.label}-${index}`}
                             type="monotone"
                             dataKey={series.label}
                             stroke={colors[index % colors.length]}

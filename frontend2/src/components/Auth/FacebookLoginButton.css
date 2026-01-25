@@ -1,0 +1,75 @@
+/**
+ * ==============================================================================
+ * FILE: frontend2/src/components/Auth/FacebookLoginButton.css
+ * ROLE: Facebook Login Button Styles
+ * PURPOSE: Facebook-branded button following official guidelines
+ * ==============================================================================
+ */
+
+.facebook-login-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.625rem 1.25rem;
+    background: #1877F2;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.facebook-login-btn:hover:not(:disabled) {
+    background: #166FE5;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.facebook-login-btn:active:not(:disabled) {
+    background: #1457B8;
+    transform: translateY(0);
+}
+
+.facebook-login-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.facebook-login-btn--large {
+    padding: 0.875rem 1.5rem;
+    font-size: 16px;
+    min-width: 240px;
+}
+
+.facebook-login-btn__icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+}
+
+.facebook-login-btn--large .facebook-login-btn__icon {
+    width: 22px;
+    height: 22px;
+}
+
+.facebook-login-btn__text {
+    white-space: nowrap;
+}
+
+.facebook-login-btn__spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

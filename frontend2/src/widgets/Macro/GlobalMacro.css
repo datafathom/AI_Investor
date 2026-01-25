@@ -1,0 +1,201 @@
+.global-macro-widget {
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    padding: 16px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.global-macro-widget .widget-header {
+    margin-bottom: 16px;
+}
+
+.global-macro-widget .widget-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.macro-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    flex: 1;
+}
+
+.panel {
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.panel-header svg {
+    color: var(--text-muted);
+}
+
+/* Shipping Routes */
+.routes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.route-item {
+    padding: 8px;
+    background: var(--bg-surface);
+    border-radius: 6px;
+    border-left: 3px solid var(--color-info);
+}
+
+.route-item.congested {
+    border-left-color: var(--color-warning);
+}
+
+.route-item.surge {
+    border-left-color: var(--color-success);
+}
+
+.route-item.disrupted {
+    border-left-color: var(--color-danger);
+}
+
+.route-name {
+    display: block;
+    font-size: 11px;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.route-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+}
+
+.route-stats .volume {
+    color: var(--text-muted);
+}
+
+.route-stats .change.positive {
+    color: var(--color-bullish);
+}
+
+.route-stats .change.negative {
+    color: var(--color-bearish);
+}
+
+/* Political Signals */
+.signals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.signal-item {
+    padding: 8px;
+    background: var(--bg-surface);
+    border-radius: 6px;
+}
+
+.signal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.signal-header .region {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.signal-badge {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.signal-badge.bullish {
+    background: rgba(46, 213, 115, 0.15);
+    color: var(--color-bullish);
+}
+
+.signal-badge.bearish {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--color-bearish);
+}
+
+.signal-badge.neutral {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--color-warning);
+}
+
+.signal-item .reason {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+/* Commodities */
+.commodities-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.commodity-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    background: var(--bg-surface);
+    border-radius: 6px;
+}
+
+.commodity-name {
+    font-size: 11px;
+    color: var(--text-primary);
+}
+
+.commodity-data {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.commodity-data .price {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.commodity-data .change {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 10px;
+}
+
+.commodity-data .change.positive {
+    color: var(--color-bullish);
+}
+
+.commodity-data .change.negative {
+    color: var(--color-bearish);
+}

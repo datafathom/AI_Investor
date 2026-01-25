@@ -31,7 +31,7 @@ def run_seed_db():
         table_exists = cur.fetchone()[0]
         
         if not table_exists:
-            print("⚠️ 'users' table not found. Has the backend migration run?")
+            print("WARN 'users' table not found. Has the backend migration run?")
             print("   Please ensure the backend has started at least once to create tables.")
             return
 
@@ -46,17 +46,17 @@ def run_seed_db():
                     INSERT INTO users (username, password, created_at)
                     VALUES ('admin', 'password123', NOW());
                 """)
-                print("   ✅ Admin user created.")
+                print("   OK Admin user created.")
             except Exception as e:
-                print(f"   ❌ Failed to insert admin user: {e}")
+                print(f"   ERROR Failed to insert admin user: {e}")
         else:
-            print("   ✅ Admin user already exists.")
+            print("   OK Admin user already exists.")
 
         conn.close()
-        print("✅ Database seeding complete.")
+        print("OK Database seeding complete.")
         
     except Exception as e:
-        print(f"❌ Error seeding database: {e}")
+        print(f"ERROR Error seeding database: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":

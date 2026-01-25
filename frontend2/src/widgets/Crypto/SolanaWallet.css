@@ -1,0 +1,174 @@
+/**
+ * ==============================================================================
+ * FILE: frontend2/src/widgets/Crypto/SolanaWallet.css
+ * ROLE: Solana Wallet Widget Styles
+ * ==============================================================================
+ */
+
+.solana-wallet {
+    background: var(--card-bg, rgba(20, 25, 35, 0.9));
+    border-radius: 12px;
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    padding: 1.5rem;
+}
+
+.solana-wallet__header {
+    margin-bottom: 1.5rem;
+}
+
+.solana-wallet__header h3 {
+    margin: 0;
+    color: var(--text-primary, #fff);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.solana-wallet__form {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.solana-wallet__input {
+    flex: 1;
+    padding: 0.75rem;
+    background: var(--input-bg, rgba(30, 40, 50, 0.8));
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    border-radius: 6px;
+    color: var(--text-primary, #fff);
+    font-size: 0.95rem;
+    font-family: monospace;
+    outline: none;
+}
+
+.solana-wallet__input:focus {
+    border-color: var(--accent-color, #00d4ff);
+    box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.3);
+}
+
+.solana-wallet__submit {
+    background: var(--accent-color, #00d4ff);
+    color: #000;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.solana-wallet__error {
+    padding: 0.75rem;
+    background: rgba(234, 67, 53, 0.1);
+    border: 1px solid rgba(234, 67, 53, 0.3);
+    border-radius: 6px;
+    color: #ea4335;
+    margin-bottom: 1rem;
+}
+
+.solana-wallet__loading {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary, #888);
+}
+
+.solana-wallet__balance {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--item-bg, rgba(30, 40, 50, 0.5));
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.balance-label {
+    color: var(--text-secondary, #888);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.balance-value {
+    color: var(--accent-color, #00d4ff);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.balance-address {
+    color: var(--text-secondary, #888);
+    font-size: 0.85rem;
+    font-family: monospace;
+}
+
+.solana-wallet__tokens h4 {
+    margin: 0 0 1rem 0;
+    color: var(--text-primary, #fff);
+    font-size: 1rem;
+}
+
+.tokens-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.token-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--item-bg, rgba(30, 40, 50, 0.5));
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.1));
+    border-radius: 6px;
+}
+
+.token-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.token-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.token-icon-placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--accent-color, rgba(0, 212, 255, 0.2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-color, #00d4ff);
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.token-info {
+    flex: 1;
+}
+
+.token-symbol {
+    color: var(--text-primary, #fff);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.token-name {
+    color: var(--text-secondary, #888);
+    font-size: 0.85rem;
+}
+
+.token-balance {
+    color: var(--text-primary, #fff);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.solana-wallet__empty {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary, #888);
+}

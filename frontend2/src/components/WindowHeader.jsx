@@ -6,6 +6,7 @@
 
 import React from 'react';
 import './WindowHeader.css';
+import SymbolLinkBadge from './SymbolLinkBadge';
 
 export default function WindowHeader({
   title,
@@ -105,17 +106,10 @@ export default function WindowHeader({
           </button>
         </div>
 
-        <div className="linking-selector-container">
-          <button
-            className={`linking-dot ${linkingGroup}`}
-            onClick={(e) => handleButtonClick(e, () => {
-              const groups = ['none', 'red', 'blue', 'green'];
-              const next = groups[(groups.indexOf(linkingGroup) + 1) % groups.length];
-              onLinkingGroupChange(next);
-            })}
-            title="Link this window to a color group"
-          />
-        </div>
+        <SymbolLinkBadge 
+          group={linkingGroup} 
+          onGroupChange={onLinkingGroupChange} 
+        />
       </div>
       <div className="window-title">{title}</div>
       <div className="window-header-right">

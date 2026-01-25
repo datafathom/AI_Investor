@@ -3,10 +3,23 @@
     align-items: center;
     gap: 8px;
     padding: 12px 24px;
-    background: rgba(255, 255, 255, 0.03);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(13, 17, 23, 0.8); /* Darker, more opaque background */
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     font-size: 0.85rem;
     color: #94a3b8;
+    /* Ensure it sits below fixed headers if necessary, or just explicit stacking */
+    position: relative;
+    z-index: 50; 
+    margin-top: 12px; /* Explicit margin to push away from SubHeaderNav */
+}
+
+/* Fix overlap if preceding elements are fixed */
+.breadcrumbs-container {
+   /* If SubHeaderNav is fixed/sticky, we might need a margin or sticky trigger */
+   /* Assuming standard flow, but user reported cutoff. Adding safety padding. */
+   padding-top: 16px; 
+   padding-bottom: 16px;
 }
 
 .breadcrumb-item {
@@ -23,8 +36,15 @@
 }
 
 .breadcrumb-item.active {
-    color: var(--burgundy-primary, #5a1520);
+    /* High contrast for dark mode */
+    color: #38bdf8; /* Sky blue 400 - very visible on dark */
     font-weight: 600;
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+}
+
+body.light .breadcrumb-item.active {
+    color: var(--burgundy-primary, #5a1520); /* Keep burgundy for light mode */
+    text-shadow: none;
 }
 
 .breadcrumb-separator {

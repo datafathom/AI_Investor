@@ -1,0 +1,116 @@
+.progress-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.progress-bar__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-bar__label {
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.progress-bar__value {
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+}
+
+.progress-bar__track {
+  width: 100%;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Size variants */
+.progress-bar--sm .progress-bar__track {
+  height: 4px;
+}
+
+.progress-bar--md .progress-bar__track {
+  height: 8px;
+}
+
+.progress-bar--lg .progress-bar__track {
+  height: 12px;
+}
+
+.progress-bar__fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  position: relative;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Variant colors */
+.progress-bar__fill--default {
+  background: linear-gradient(90deg, var(--neon-cyan), #0ea5e9);
+}
+
+.progress-bar__fill--success {
+  background: linear-gradient(90deg, var(--neon-green), #22c55e);
+}
+
+.progress-bar__fill--warning {
+  background: linear-gradient(90deg, var(--neon-yellow), #f59e0b);
+}
+
+.progress-bar__fill--error {
+  background: linear-gradient(90deg, var(--neon-red), #ef4444);
+}
+
+/* Glow effect */
+.progress-bar__glow {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 200%;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.4), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.progress-bar__fill--animated .progress-bar__glow {
+  opacity: 1;
+  animation: progressGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes progressGlow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+/* Stripe animation for indeterminate state */
+.progress-bar__fill--animated::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    45deg,
+    transparent 25%,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 50%,
+    transparent 75%,
+    rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 20px 20px;
+  animation: progressStripe 0.5s linear infinite;
+}
+
+@keyframes progressStripe {
+  from { background-position: 0 0; }
+  to { background-position: 20px 0; }
+}

@@ -1,0 +1,161 @@
+.bank-run-sim-widget {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 16px;
+    height: 100%;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stress-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+
+.stress-control label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.stress-control input {
+    width: 80px;
+    accent-color: #ef4444;
+}
+
+.level-val {
+    font-size: 0.8rem;
+    font-weight: 700;
+    width: 20px;
+}
+
+.liquidity-visualizer {
+    flex-grow: 1;
+    background: radial-gradient(circle at center, rgba(16, 185, 129, 0.05), transparent 70%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    margin-bottom: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.viz-columns {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    height: 120px;
+    align-items: flex-end;
+}
+
+.order-book-depth, .spread-gap {
+    width: 60px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    position: relative;
+    transition: height 0.3s;
+}
+
+.order-book-depth .depth-fill {
+    height: 100%;
+    background: #10b981;
+    opacity: 0.5;
+    border-radius: 4px;
+}
+
+.spread-gap .spread-fill {
+    height: 100%;
+    background: #ef4444;
+    opacity: 0.5;
+    border-radius: 4px;
+}
+
+.depth-label, .gap-label {
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    white-space: nowrap;
+    color: var(--text-secondary);
+}
+
+.viz-message {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    min-height: 20px;
+}
+
+.toxic-positions h4 {
+    margin: 0 0 10px 0;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.position-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    font-size: 0.75rem;
+    padding: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.position-row.header {
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.position-row.critical {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.position-row.warning {
+    color: #f59e0b;
+}
+
+.action-footer {
+    margin-top: 16px;
+}
+
+.playbook-btn {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.playbook-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}

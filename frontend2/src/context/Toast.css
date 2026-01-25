@@ -59,10 +59,20 @@
 }
 
 /* Types */
-.toast.info { border-left: 4px solid var(--neon-cyan); }
-.toast.success { border-left: 4px solid var(--neon-green); }
-.toast.warning { border-left: 4px solid var(--neon-yellow); }
-.toast.error { border-left: 4px solid var(--neon-red); }
+.toast.info { border-left: 4px solid var(--color-info, #60a5fa); }
+.toast.success { border-left: 4px solid var(--color-success, #4ade80); }
+.toast.warning { border-left: 4px solid var(--color-warning, #facc15); }
+.toast.error { border-left: 4px solid var(--color-danger, #f87171); }
+.toast.critical { 
+  border-left: 4px solid #ef4444; 
+  background: rgba(127, 29, 29, 0.4);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+}
+
+.toast.critical .toast-message {
+  color: #fecaca;
+  font-weight: 600;
+}
 
 @keyframes toast-slide-in {
   from {

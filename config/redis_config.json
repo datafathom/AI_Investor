@@ -1,0 +1,9 @@
+{
+    "REDIS_HOST": "localhost",
+    "REDIS_PORT": 6379,
+    "REDIS_DB": 0,
+    "DEFAULT_TTL": 3600,
+    "MARKET_DATA_TTL": 1,
+    "RATES_TTL": 60,
+    "USER_SESSION_TTL": 86400
+}

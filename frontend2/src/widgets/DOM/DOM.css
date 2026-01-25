@@ -1,0 +1,127 @@
+.dom-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: transparent; /* Handled by widget wrapper */
+  color: var(--text-secondary);
+  font-family: var(--font-data);
+  font-size: 11px;
+}
+
+.dom-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.ticker-badge {
+  background: #1e90ff;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 12px;
+  margin-right: 10px;
+}
+
+.dom-title {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 10px;
+  color: #747d8c;
+}
+
+.dom-ladder-header {
+  display: flex;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.dom-ladder-header div {
+  flex: 1;
+  text-align: center;
+  color: #747d8c;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.dom-scroller {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.dom-row {
+  display: flex;
+  height: 24px;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.dom-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.col-price {
+  flex: 1;
+  text-align: center;
+  color: var(--text-primary);
+  font-weight: 500;
+  background: var(--bg-surface-2);
+}
+
+.col-size {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.size-label {
+  position: relative;
+  z-index: 2;
+  font-size: 10px;
+}
+
+.size-bar {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  z-index: 1;
+  opacity: 0.2;
+}
+
+.ask-bar { right: 0; background: #ff4757; }
+.bid-bar { left: 0; background: #2ed573; }
+
+.ask-row .price-cell { color: #ff4757; }
+.bid-row .price-cell { color: #2ed573; }
+
+.dom-midpoint {
+  padding: 10px 0;
+  background: rgba(255, 193, 7, 0.05);
+  border-top: 1px solid rgba(255, 193, 7, 0.2);
+  border-bottom: 1px solid rgba(255, 193, 7, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 4px 0;
+}
+
+.mid-label {
+  color: #ffc107;
+  font-size: 9px;
+  letter-spacing: 2px;
+  font-weight: bold;
+}
+
+.dom-empty {
+  padding: 40px;
+  text-align: center;
+  opacity: 0.5;
+}

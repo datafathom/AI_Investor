@@ -1,0 +1,180 @@
+/**
+ * CryptoTradingPanel.css
+ */
+
+.crypto-trading-panel {
+    background: #1e2026; /* Binance Dark Theme */
+    color: #eaecef;
+    border-radius: 4px;
+    padding: 1rem;
+    font-family: 'IBM Plex Sans', sans-serif;
+    max-width: 600px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #2b3139;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.ticker-info h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    display: inline-block;
+    margin-right: 1rem;
+}
+
+.price {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.price.green { color: #0ecb81; }
+.price.red { color: #f6465d; }
+
+.price small {
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+    font-weight: 400;
+}
+
+.live-tag {
+    font-size: 0.7rem;
+    background: #f6465d;
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-left: 0.5rem;
+    font-weight: 700;
+}
+
+/* Panel Layout */
+.panel-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+/* Order Book */
+.order-book {
+    font-size: 0.85rem;
+}
+
+.ob-header {
+    display: flex;
+    justify-content: space-between;
+    color: #848e9c;
+    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+}
+
+.ob-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+}
+
+.ob-row span:nth-child(1) { font-family: 'JetBrains Mono', monospace; }
+
+.ask span:nth-child(1) { color: #f6465d; }
+.bid span:nth-child(1) { color: #0ecb81; }
+
+.spread {
+    text-align: center;
+    color: #848e9c;
+    font-size: 0.8rem;
+    margin: 0.5rem 0;
+    border-top: 1px solid #2b3139;
+    border-bottom: 1px solid #2b3139;
+    padding: 4px 0;
+}
+
+/* Trade Form */
+.trade-form {
+    background: #2b3139;
+    padding: 1rem;
+    border-radius: 4px;
+}
+
+.trade-tabs {
+    display: flex;
+    margin-bottom: 1rem;
+    background: #1e2026;
+    border-radius: 20px; /* Pill shape container using background trick */
+    padding: 2px;
+}
+
+.tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #848e9c;
+    padding: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    border-radius: 4px;
+}
+
+.tab.buy.active { background: #0ecb81; color: #fff; }
+.tab.sell.active { background: #f6465d; color: #fff; }
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.75rem;
+    color: #848e9c;
+    margin-bottom: 0.25rem;
+}
+
+.form-group input {
+    width: 90%;
+    background: #1e2026;
+    border: 1px solid #474d57;
+    color: #eaecef;
+    padding: 0.5rem;
+    border-radius: 4px;
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.execute-btn {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    color: #fff;
+}
+
+.execute-btn.buy { background: #0ecb81; }
+.execute-btn.sell { background: #f6465d; }
+.execute-btn:disabled { opacity: 0.5; }
+
+.trade-msg {
+    margin-top: 1rem;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.trade-msg.success { background: rgba(14, 203, 129, 0.2); color: #0ecb81; }
+.trade-msg.error { background: rgba(246, 70, 93, 0.2); color: #f6465d; }
+
+.footer {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.7rem;
+    color: #5e6673;
+}

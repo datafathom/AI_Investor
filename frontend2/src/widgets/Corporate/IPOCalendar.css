@@ -1,0 +1,194 @@
+/**
+ * IPOCalendar.css
+ * Styling for the IPO Event Tracker widget
+ */
+
+.ipo-calendar {
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 20px;
+    color: #e2e8f0;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 500px;
+    overflow: hidden;
+}
+
+.ipo-calendar__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ipo-calendar__title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+}
+
+.ipo-calendar__refresh button {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: color 0.2s;
+}
+
+.ipo-calendar__refresh button:hover {
+    color: #ffffff;
+}
+
+.ipo-calendar__list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+/* Custom Scrollbar */
+.ipo-calendar__list::-webkit-scrollbar {
+    width: 4px;
+}
+.ipo-calendar__list::-webkit-scrollbar-track {
+    background: transparent;
+}
+.ipo-calendar__list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.ipo-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: background 0.2s;
+}
+
+.ipo-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.ipo-item__main {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.ipo-item__symbol-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.ipo-item__symbol {
+    font-weight: 800;
+    color: #ffffff;
+    font-size: 1rem;
+}
+
+.ipo-item__signal {
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.signal--bullish { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+.signal--bearish { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+.signal--neutral { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2); }
+
+.ipo-item__company {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #f1f5f9;
+}
+
+.ipo-item__date {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.ipo-item__stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ipo-stat__label {
+    font-size: 0.7rem;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+
+.ipo-stat__value-bar {
+    position: relative;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 7px;
+    overflow: hidden;
+}
+
+.ipo-stat__fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    border-radius: 7px;
+    transition: width 1s ease-out;
+}
+
+.ipo-stat__text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.ipo-stat__value {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #cbd5e1;
+}
+
+.ipo-calendar__footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: #475569;
+}
+
+.ipo-mock-tag {
+    color: #fbbf24;
+    font-weight: 600;
+}
+
+/* Skeletons */
+.ipo-calendar--loading .ipo-calendar__skeleton-header {
+    height: 24px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.ipo-calendar__skeleton-item {
+    height: 80px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+}

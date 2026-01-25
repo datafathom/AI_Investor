@@ -1,0 +1,108 @@
+{
+  "dashboard": {
+    "title": "Business Metrics Dashboard",
+    "tags": ["business", "metrics", "production"],
+    "timezone": "browser",
+    "schemaVersion": 27,
+    "version": 1,
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Active Users",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(rate(user_sessions_total[5m]))",
+            "legendFormat": "Active Users"
+          }
+        ],
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "New Signups (24h)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(increase(user_signups_total[24h]))",
+            "legendFormat": "New Signups"
+          }
+        ],
+        "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "Revenue (24h)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(revenue_total)",
+            "legendFormat": "Revenue"
+          }
+        ],
+        "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0}
+      },
+      {
+        "id": 4,
+        "title": "Trading Volume (24h)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(trading_volume_total)",
+            "legendFormat": "Volume"
+          }
+        ],
+        "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0}
+      },
+      {
+        "id": 5,
+        "title": "User Growth Trend",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "sum(increase(user_signups_total[1h]))",
+            "legendFormat": "New Users/Hour"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}
+      },
+      {
+        "id": 6,
+        "title": "Revenue Trend",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "sum(rate(revenue_total[5m]))",
+            "legendFormat": "Revenue Rate"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4}
+      },
+      {
+        "id": 7,
+        "title": "User Retention",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "sum(rate(user_logins_total[5m])) / sum(rate(user_signups_total[5m]))",
+            "legendFormat": "Retention Rate"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12}
+      },
+      {
+        "id": 8,
+        "title": "Feature Usage",
+        "type": "bargauge",
+        "targets": [
+          {
+            "expr": "sum by (feature) (feature_usage_total)",
+            "legendFormat": "{{feature}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12}
+      }
+    ]
+  }
+}

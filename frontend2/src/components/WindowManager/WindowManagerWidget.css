@@ -6,8 +6,8 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--color-backgrounds-card, #fefae8);
-  border-radius: 8px;
+  background: var(--bg-surface);
+  border-radius: var(--radius-card);
   overflow: hidden;
 }
 
@@ -16,21 +16,21 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  border-bottom: 1px solid var(--color-borders-secondary, #ddd4a8);
-  background: var(--color-backgrounds-main, #fffef0);
+  border-bottom: 1px solid var(--border-primary);
+  background: var(--bg-secondary);
 }
 
 .window-manager-widget-header h3 {
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
-  color: var(--color-text-primary, #2a0a0f);
+  color: var(--text-primary);
 }
 
 .window-manager-stats {
   font-size: 0.875rem;
-  color: var(--color-text-secondary, #5a4a3a);
-  background: var(--color-cream-medium, #faf5d8);
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
   padding: 0.25rem 0.5rem;
   border-radius: 12px;
 }
@@ -52,10 +52,10 @@
 
 .window-manager-btn {
   padding: 0.5rem 1rem;
-  border: 1px solid var(--color-borders-secondary, #ddd4a8);
+  border: 1px solid var(--border-secondary);
   border-radius: 6px;
-  background: var(--color-backgrounds-card, #fefae8);
-  color: var(--color-text-primary, #2a0a0f);
+  background: var(--bg-surface);
+  color: var(--text-primary);
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 500;
@@ -63,18 +63,20 @@
 }
 
 .window-manager-btn:hover {
-  background: var(--color-backgrounds-hover, #faf5d8);
-  border-color: var(--color-burgundy-primary, #5a1520);
+  background: var(--hover-bg);
+  border-color: var(--border-accent);
 }
 
 .window-manager-btn-primary {
-  background: var(--color-burgundy-primary, #5a1520);
-  color: var(--color-text-on_burgundy, #fffef0);
-  border-color: var(--color-burgundy-primary, #5a1520);
+  background: var(--neon-cyan);
+  color: #000;
+  border-color: var(--neon-cyan);
+  font-weight: 600;
 }
 
 .window-manager-btn-primary:hover {
-  background: var(--color-burgundy-dark, #3d0e15);
+  filter: brightness(1.1);
+  box-shadow: var(--hover-glow);
 }
 
 .window-manager-btn-small {
@@ -84,20 +86,20 @@
 }
 
 .window-manager-btn-danger:hover {
-  background: #ff5f57;
+  background: var(--neon-red);
   color: white;
-  border-color: #e0443e;
+  border-color: var(--neon-red);
 }
 
 .window-manager-registry-container {
   max-height: 400px;
-  border: 1px solid var(--color-borders-secondary, #ddd4a8);
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   overflow: hidden;
 }
 
 .window-manager-layouts {
-  border-top: 1px solid var(--color-borders-secondary, #ddd4a8);
+  border-top: 1px solid var(--border-primary);
   padding-top: 1rem;
 }
 
@@ -105,7 +107,7 @@
   margin: 0 0 0.75rem 0;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-text-primary, #2a0a0f);
+  color: var(--text-primary);
 }
 
 .window-manager-save-layout {
@@ -117,29 +119,30 @@
 .window-manager-input {
   flex: 1;
   padding: 0.5rem;
-  border: 1px solid var(--color-borders-secondary, #ddd4a8);
+  border: 1px solid var(--border-secondary);
   border-radius: 6px;
-  background: var(--color-backgrounds-card, #fefae8);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
   font-size: 0.875rem;
 }
 
 .window-manager-input:focus {
   outline: none;
-  border-color: var(--color-burgundy-primary, #5a1520);
+  border-color: var(--border-accent);
 }
 
 .window-manager-saved-layouts h5 {
   margin: 0 0 0.5rem 0;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--color-text-secondary, #5a4a3a);
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .window-manager-empty {
   font-size: 0.875rem;
-  color: var(--color-text-secondary, #5a4a3a);
+  color: var(--text-dim);
   font-style: italic;
   margin: 0.5rem 0;
 }
@@ -155,8 +158,8 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.5rem;
-  background: var(--color-backgrounds-main, #fffef0);
-  border: 1px solid var(--color-borders-secondary, #ddd4a8);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   font-size: 0.875rem;
 }
@@ -164,12 +167,12 @@
 .window-manager-layout-name {
   flex: 1;
   font-weight: 500;
-  color: var(--color-text-primary, #2a0a0f);
+  color: var(--text-primary);
 }
 
 .window-manager-layout-meta {
   font-size: 0.75rem;
-  color: var(--color-text-secondary, #5a4a3a);
+  color: var(--text-secondary);
 }
 
 .window-manager-layout-actions {

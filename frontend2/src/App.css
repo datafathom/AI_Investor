@@ -11,8 +11,16 @@ footer {
   width: 100vw;
   height: 100vh;
   position: relative;
-  overflow: hidden;
-  background: #0A0A0B;
+  overflow: hidden; /* Prevent body scroll */
+  background: var(--bg-app);
+}
+
+/* Allow main content to scroll */
+main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
 }
 
 /* Legacy Hero and Menu styles removed */
@@ -238,13 +246,56 @@ footer {
   flex-direction: column;
   flex: 1;
   width: 100%;
+  height: 100%; /* Ensure full height */
+  overflow-y: auto; /* Enable global scroll */
+  overflow-x: hidden;
+  background: var(--bg-app);
+  /* Content area below MenuBar (30px) + SubHeaderNav (52px) + Breadcrumbs (~30px) */
+  padding-top: 120px;
+  padding-bottom: 100px; /* Buffer at the bottom */
+}
+
+/* OS-STYLE PAGES: Hard viewport lock for Terminal/Zen/Political/Analytics */
+.institutional-os-container.os-bleed {
+  /* Exact height calculation: 100vh minus headers */
+  height: calc(100vh - 120px - 32px);
+  padding: 0 !important; 
+  margin: 0 !important;
+  overflow: hidden !important;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Breadcrumbs container for OS pages - minimal */
+.institutional-os-container.os-bleed .breadcrumbs-container {
+  flex-shrink: 0;
+}
+
+.page-shell-os {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  background: #0A0A0B;
-  /* Content area below MenuBar (30px) + SubHeaderNav (~52px) + Breadcrumbs (~45px) = ~127px */
+}
+
+/* Route content wrapper for OS pages - takes all remaining space */
+.route-content-os {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Regular route content - allows scrolling */
+.route-content {
+  flex: 1;
+  min-height: 0;
 }
 
 body.theme-dark .institutional-os-container {
-  background: #0A0A0B;
+  background: var(--bg-app);
 }
 
 .widget-grid-container {
@@ -271,12 +322,12 @@ body.theme-dark .institutional-os-container {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #050505;
-  border: 1px solid #222224;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
   box-shadow:
     0 8px 32px 0 rgba(0, 0, 0, 0.8),
-    0 0 0 1px rgba(255, 255, 255, 0.05);
+    0 0 0 1px var(--border-secondary);
 
   /* ENABLE CONTAINER QUERIES */
   container-type: inline-size;
@@ -327,12 +378,12 @@ body.theme-dark .widget-wrapper {
 
 .widget-wrapper.maximized {
   position: fixed !important;
-  top: 30px !important;
+  top: 120px !important; /* Adjusted for header offset */
   left: 0 !important;
   right: 0 !important;
   bottom: 0 !important;
   width: 100vw !important;
-  height: calc(100vh - 30px) !important;
+  height: calc(100vh - 120px) !important;
   z-index: 999;
   border-radius: 0;
   transform: none !important;
@@ -342,12 +393,12 @@ body.theme-dark .widget-wrapper {
 .react-grid-item:has(.widget-wrapper.maximized),
 .react-grid-item .widget-wrapper.maximized {
   position: fixed !important;
-  top: 30px !important;
+  top: 120px !important; /* Adjusted for header offset */
   left: 0 !important;
   right: 0 !important;
   bottom: 0 !important;
   width: 100vw !important;
-  height: calc(100vh - 30px) !important;
+  height: calc(100vh - 120px) !important;
   transform: none !important;
   z-index: 999 !important;
 }
@@ -382,8 +433,8 @@ body.theme-dark .widget-wrapper {
 
 /* Dark mode support for widget gradient - fully neutral */
 body.theme-dark .widget-wrapper {
-  background: #050505;
-  border: 1px solid #222224;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
   box-shadow:
     0 20px 50px rgba(0, 0, 0, 0.9),
     0 0 0 1px rgba(255, 255, 255, 0.05);

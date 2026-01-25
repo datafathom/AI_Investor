@@ -1,0 +1,9 @@
+.identity-profile-card {
+    background: rgba(13, 13, 18, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.identity-profile-card h2, .identity-profile-card h3 {
+    text-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+}

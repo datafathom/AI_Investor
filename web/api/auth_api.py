@@ -1,24 +1,36 @@
-
 from flask import Blueprint, jsonify, request
-from web.auth_utils import generate_token
+import flask
+from web.auth_utils import generate_token, login_required
+from services.communication.email_service import get_email_service
+from services.system.social_auth_service import get_social_auth_service
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    username = data.get('username')
+    email = data.get('email')
     password = data.get('password')
     
-    # Mock Authentication for Verification
-    if username == 'admin' and password in ['admin', 'password123']:
-        token = generate_token(user_id=1, tenant_id='default')
+    social_service = get_social_auth_service()
+    user_data = social_service._get_user_by_email(email)
+    
+    if not user_data:
+         return jsonify({'error': 'Invalid credentials'}), 401
+         
+    # Mock Password Verification
+    stored_hash = user_data.get("password_hash")
+    provided_hash = f"mock_hash_{password[::-1]}"
+    
+    if stored_hash == provided_hash or (email == 'admin' and password == 'admin'):
+        token = generate_token(user_id=user_data["id"], role=user_data["role"])
         return jsonify({
             'token': token,
             'user': {
-                'id': 1,
-                'username': 'admin',
-                'role': 'admin'
+                'id': user_data["id"],
+                'username': user_data["username"],
+                'email': email,
+                'role': user_data["role"]
             }
         })
     
@@ -26,11 +38,125 @@ def login():
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
-    # Mock Registration
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    
+    social_service = get_social_auth_service()
+    existing_user = social_service._get_user_by_email(email)
+    
+    if not existing_user:
+        # Create user via SQL migration logic handled in callback/set_password
+        # For direct email registration, we use callback simulation logic:
+        # Using handle_callback with a faux provider 'email'
+        res = social_service.handle_callback(provider='email', code=f"email:{email}")
+        social_service.set_password(email, password)
+        user_record = social_service._get_user_by_email(email)
+    else:
+        user_record = existing_user
+
+    # Send Verification Email
+    verification_url = f"http://localhost:5050/api/auth/verify-email?email={email}&token=mock_verify_token"
+    email_service = get_email_service()
+    email_service.send_transactional_email(
+        to=email,
+        template='email_verification',
+        context={'verification_url': verification_url}
+    )
+
     return jsonify({
-        'message': 'User registered successfully',
+        'message': 'User registered successfully. Please check your email for verification.',
         'user': {
-            'id': 2,
-            'username': request.get_json().get('username')
+            'id': user_record["id"],
+            'username': user_record["username"],
+            'email': email
         }
     })
+
+@auth_bp.route('/verify-email', methods=['GET'])
+def verify_email():
+    email = request.args.get('email')
+    token = request.args.get('token')
+    
+    if not email or token != 'mock_verify_token':
+        return jsonify({"error": "Invalid verification request"}), 400
+        
+    success = get_social_auth_service().verify_email(email)
+    if success:
+        return "Email Verified! You can now log in.", 200
+    return jsonify({"error": "User not found"}), 404
+
+@auth_bp.route('/add-password', methods=['POST'])
+@login_required
+def add_password():
+    # User must be logged in to add a password to their social account
+    user_id = flask.g.user_id
+    data = request.get_json()
+    password = data.get('password')
+    
+    if not password:
+        return jsonify({"error": "Password required"}), 400
+        
+    # Find user by ID in Postgres
+    social_service = get_social_auth_service()
+    user_record = social_service._get_user_by_id(user_id)
+            
+    if not user_record:
+        return jsonify({"error": "User session invalid"}), 404
+        
+    success = social_service.set_password(user_record["email"], password)
+    if success:
+        return jsonify({"message": "Password added successfully. You can now login via email or social provider."})
+    return jsonify({"error": "Failed to set password"}), 500
+
+# --- Phase 06: MFA Endpoints ---
+@auth_bp.route('/mfa/setup', methods=['POST'])
+def mfa_setup():
+    from services.system.totp_service import get_totp_service
+    # In production, we'd load/save this secret in the DB for the user
+    service = get_totp_service()
+    secret = service.generate_new_secret()
+    uri = service.get_provisioning_uri(secret, "admin")
+    
+    return jsonify({
+        "secret": secret,
+        "provisioning_uri": uri
+    })
+
+@auth_bp.route('/mfa/verify', methods=['POST'])
+def mfa_verify():
+    from services.system.totp_service import get_totp_service
+    data = request.get_json()
+    code = data.get('code')
+    secret = data.get('secret') # In production, load from DB
+    
+    service = get_totp_service()
+    is_valid = service.verify_code(secret, code)
+    
+    if is_valid:
+        return jsonify({"valid": True, "message": "MFA Verified"})
+    else:
+        return jsonify({"valid": False, "error": "Invalid Code"}), 401
+# --- Phase 13: Social/Vendor Auth Endpoints ---
+@auth_bp.route('/social/login/<provider>', methods=['GET'])
+def social_login(provider):
+    """Initiates the OAuth flow for a vendor."""
+    from services.system.social_auth_service import get_social_auth_service
+    url = get_social_auth_service().initiate_auth_flow(provider)
+    return jsonify({"redirect_url": url})
+
+@auth_bp.route('/social/callback/<provider>', methods=['POST'])
+def social_callback(provider):
+    """Handles the OAuth callback from a vendor."""
+    data = request.get_json()
+    code = data.get('code')
+    
+    if not code:
+        return jsonify({"error": "Missing authorization code"}), 400
+        
+    try:
+        from services.system.social_auth_service import get_social_auth_service
+        result = get_social_auth_service().handle_callback(provider, code)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

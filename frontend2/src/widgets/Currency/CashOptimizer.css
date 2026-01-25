@@ -1,0 +1,158 @@
+.cash-optimizer-widget {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 16px;
+    height: 100%;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.widget-header h3 {
+    margin: 0 0 16px 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.idle-cash-banner {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(30, 30, 35, 1));
+    border: 1px solid #4caf50;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.idle-cash-banner .label {
+    font-size: 0.75rem;
+    color: #81c784;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.idle-cash-banner .amount {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 8px 0 12px 0;
+    color: white;
+}
+
+.sweep-btn {
+    background: #4caf50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+    transition: transform 0.2s;
+}
+
+.sweep-btn:hover {
+    transform: scale(1.05);
+}
+
+.opportunities-list h4 {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0 0 12px 0;
+}
+
+.opportunities-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.opportunity-card {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+    cursor: pointer;
+}
+
+.opportunity-card:hover {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.opp-icon {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    color: #4caf50;
+}
+
+.opp-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.opp-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.opp-meta {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+.opp-yield {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #4caf50;
+}
+
+.apy {
+    font-size: 0.6rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+.yield-chart-placeholder {
+    margin-top: auto;
+    padding-top: 16px;
+}
+
+.chart-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.chart-mock {
+    height: 40px;
+    background: linear-gradient(90deg, rgba(76,175,80,0.1), rgba(76,175,80,0.3));
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.chart-mock::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20' preserveAspectRatio='none'%3E%3Cpath d='M0,20 L0,15 C20,10 40,18 60,8 C80,-2 100,5 100,5 L100,20 Z' fill='rgba(76,175,80,0.2)' /%3E%3Cpath d='M0,15 C20,10 40,18 60,8 C80,-2 100,5 100,5' fill='none' stroke='%234caf50' stroke-width='1' /%3E%3C/svg%3E");
+    background-size: cover;
+}

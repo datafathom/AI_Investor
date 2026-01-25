@@ -1,0 +1,179 @@
+/**
+ * BankLink.css
+ */
+
+.bank-link-widget {
+    background: #1a1a1a;
+    color: #e8eaed;
+    border-radius: 8px;
+    border: 1px solid #333;
+    padding: 1.5rem;
+    font-family: 'Inter', sans-serif;
+    max-width: 400px;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.status {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status.linked { color: #10b981; }
+.status.not-linked { color: #9aa0a6; }
+
+.plaid-btn {
+    background: #000; /* Plaid Black */
+    color: #fff;
+    border: 1px solid #333;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.2s;
+}
+
+.plaid-btn:hover:not(:disabled) {
+    background: #333;
+}
+
+.plaid-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.connect-action p {
+    color: #9aa0a6;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.accounts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.account-item {
+    background: #25262b; /* Slightly lighter dark */
+    padding: 1rem;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.acc-name {
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.acc-mask {
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.acc-balance {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: #8ab4f8;
+}
+
+.error-msg {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 4px;
+}
+
+/* Mock Modal */
+.mock-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.mock-modal {
+    background: #fff;
+    color: #333;
+    width: 360px;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-header h4 { margin: 0; font-size: 1.1rem; }
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+}
+
+.institution-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.inst-card {
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 1rem 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.inst-card:hover { background: #f8f9fa; }
+
+.inst-card .icon {
+    background: #333;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin: 0 auto 0.5rem auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.inst-card span { font-size: 0.8rem; font-weight: 600; }
+
+.modal-footer {
+    text-align: center;
+    font-size: 0.7rem;
+    color: #999;
+    margin-top: 1rem;
+    text-transform: uppercase;
+}

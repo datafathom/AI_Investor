@@ -1,0 +1,35 @@
+groups:
+  - name: ai_investor_alerts
+    rules:
+      # 1. High HTTP Error Rate
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(flask_http_request_total{status=~"5.."}[5m])) 
+          / 
+          sum(rate(flask_http_request_total[5m])) > 0.01
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High HTTP 5xx error rate on {{ $labels.instance }}"
+          description: "Error rate is above 1% for more than 5 minutes."
+
+      # 2. High Database Latency
+      - alert: SlowDatabaseQueries
+        expr: avg_over_time(db_query_duration_seconds_sum[5m]) / avg_over_time(db_query_duration_seconds_count[5m]) > 2
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow database queries detected"
+          description: "Average query duration is above 2s."
+
+      # 3. Redis Connectivity Lost
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis instance is down"
+          description: "The caching layer is unavailable, falling back to in-memory."

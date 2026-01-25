@@ -1,0 +1,120 @@
+.data-table-container {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border-primary);
+  background: var(--bg-surface);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.data-table__th {
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-weight: var(--font-semibold);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  border-bottom: 1px solid var(--border-primary);
+  white-space: nowrap;
+}
+
+.data-table__th--sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: var(--transition-fast);
+}
+
+.data-table__th--sortable:hover {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+.data-table__th-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.data-table__sort-icon {
+  color: var(--text-dim);
+  transition: var(--transition-fast);
+}
+
+.data-table__sort-icon--active {
+  color: var(--neon-cyan);
+}
+
+.data-table__row {
+  transition: var(--transition-fast);
+}
+
+.data-table__row:hover {
+  background: var(--hover-bg);
+}
+
+.data-table__row--clickable {
+  cursor: pointer;
+}
+
+.data-table__row--clickable:hover {
+  background: rgba(6, 182, 212, 0.05);
+}
+
+.data-table__row--clickable:active {
+  background: rgba(6, 182, 212, 0.1);
+}
+
+.data-table__td {
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-primary);
+  vertical-align: middle;
+}
+
+.data-table__row:last-child .data-table__td {
+  border-bottom: none;
+}
+
+.data-table__empty {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--text-tertiary);
+}
+
+/* Zebra striping (optional class) */
+.data-table--striped .data-table__row:nth-child(even) {
+  background: var(--bg-tertiary);
+}
+
+.data-table--striped .data-table__row:nth-child(even):hover {
+  background: var(--hover-bg);
+}
+
+/* Compact variant */
+.data-table--compact .data-table__th,
+.data-table--compact .data-table__td {
+  padding: var(--space-2) var(--space-3);
+}
+
+/* Status cell helpers */
+.data-table__cell--positive {
+  color: var(--neon-green);
+}
+
+.data-table__cell--negative {
+  color: var(--neon-red);
+}
+
+.data-table__cell--muted {
+  color: var(--text-tertiary);
+}
+
+.data-table__cell--mono {
+  font-family: var(--font-data);
+}

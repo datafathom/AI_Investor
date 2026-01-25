@@ -1,21 +1,13 @@
 /* PoliticalAlpha.css */
 
-/* Custom Scrollbar for the container */
-.political-alpha-container::-webkit-scrollbar {
-    width: 8px;
+/* Standard Grid Page wrapper - no local scroll */
+.political-alpha-page {
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.political-alpha-container::-webkit-scrollbar-track {
-    background: #0f172a;
-}
-
-.political-alpha-container::-webkit-scrollbar-thumb {
-    background: #475569;
-    border-radius: 4px;
-}
-
-.political-alpha-container::-webkit-scrollbar-thumb:hover {
-    background: #64748b;
+.political-alpha-page * {
+    box-sizing: border-box;
 }
 
 /* Glass Panel Variant for Gold/Amber theme */
@@ -26,6 +18,9 @@
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
     border-radius: 16px;
     transition: var(--transition-premium);
+    overflow: hidden; /* Ensure clipping */
+    contain: paint; /* Performance and strict clipping */
+    transform: translateZ(0); /* Force hardware accelerated clipping context */
 }
 
 .glass-panel-gold:hover {

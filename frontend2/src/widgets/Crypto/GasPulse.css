@@ -1,0 +1,126 @@
+.gas-pulse-widget {
+    background: linear-gradient(145deg, rgba(30, 30, 35, 0.9), rgba(20, 20, 25, 0.95));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 16px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #e0e0e0;
+    font-family: 'Inter', sans-serif;
+}
+
+.gas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 8px;
+}
+
+.gas-header h3 {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0;
+    color: #a0a0a0;
+}
+
+.gas-icon {
+    margin-right: 6px;
+    color: #ff9f43;
+}
+
+.gas-live-indicator {
+    display: flex;
+    align-items: center;
+    font-size: 0.7rem;
+    color: #ff4757;
+    font-weight: 700;
+}
+
+.pulse-dot {
+    width: 6px;
+    height: 6px;
+    background-color: #ff4757;
+    border-radius: 50%;
+    margin-right: 4px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.gas-meter-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.gas-metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+
+.gas-metric.primary {
+    transform: scale(1.1);
+    border-left: 1px solid rgba(255,255,255,0.05);
+    border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+.gas-label {
+    font-size: 0.7rem;
+    color: #6c757d;
+    margin-bottom: 4px;
+}
+
+.gas-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.gas-value-large {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #ff9f43, #ff6b6b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-variant-numeric: tabular-nums;
+}
+
+.gas-unit {
+    font-size: 0.65rem;
+    color: #495057;
+}
+
+.gas-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.75rem;
+    color: #adb5bd;
+}
+
+.gas-trend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.gas-eta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}

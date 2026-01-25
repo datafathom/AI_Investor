@@ -1,0 +1,209 @@
+/**
+ * ==============================================================================
+ * FILE: frontend2/src/widgets/Crypto/CoinbaseTrade.css
+ * ROLE: Coinbase Trade Widget Styles
+ * ==============================================================================
+ */
+
+.coinbase-trade {
+    background: var(--card-bg, rgba(20, 25, 35, 0.9));
+    border-radius: 12px;
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    padding: 1.5rem;
+}
+
+.coinbase-trade__header {
+    margin-bottom: 1.5rem;
+}
+
+.coinbase-trade__header h3 {
+    margin: 0;
+    color: var(--text-primary, #fff);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.coinbase-trade__pairs {
+    margin-bottom: 1.5rem;
+}
+
+.coinbase-trade__pairs label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary, #fff);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.coinbase-trade__select {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--input-bg, rgba(30, 40, 50, 0.8));
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    border-radius: 6px;
+    color: var(--text-primary, #fff);
+    font-size: 0.95rem;
+    outline: none;
+    cursor: pointer;
+}
+
+.coinbase-trade__select:focus {
+    border-color: var(--accent-color, #00d4ff);
+    box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.3);
+}
+
+.coinbase-trade__form {
+    margin-bottom: 1.5rem;
+}
+
+.coinbase-trade__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.coinbase-trade__field {
+    margin-bottom: 1rem;
+}
+
+.coinbase-trade__field label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary, #fff);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.coinbase-trade__input {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--input-bg, rgba(30, 40, 50, 0.8));
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    border-radius: 6px;
+    color: var(--text-primary, #fff);
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.coinbase-trade__input:focus {
+    border-color: var(--accent-color, #00d4ff);
+    box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.3);
+}
+
+.coinbase-trade__error {
+    padding: 0.75rem;
+    background: rgba(234, 67, 53, 0.1);
+    border: 1px solid rgba(234, 67, 53, 0.3);
+    border-radius: 6px;
+    color: #ea4335;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.coinbase-trade__submit {
+    width: 100%;
+    background: var(--accent-color, #00d4ff);
+    color: #000;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.coinbase-trade__submit:hover:not(:disabled) {
+    background: var(--accent-hover, #00b8e6);
+    transform: translateY(-1px);
+}
+
+.coinbase-trade__submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.coinbase-trade__orders {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+}
+
+.coinbase-trade__orders h4 {
+    margin: 0 0 1rem 0;
+    color: var(--text-primary, #fff);
+    font-size: 1rem;
+}
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--item-bg, rgba(30, 40, 50, 0.5));
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.1));
+    border-radius: 6px;
+}
+
+.order-item__info {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.order-item__pair {
+    font-weight: 600;
+    color: var(--text-primary, #fff);
+}
+
+.order-item__side {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.order-item__side--buy {
+    background: rgba(52, 168, 83, 0.2);
+    color: #34a853;
+}
+
+.order-item__side--sell {
+    background: rgba(234, 67, 53, 0.2);
+    color: #ea4335;
+}
+
+.order-item__type {
+    color: var(--text-secondary, #888);
+    font-size: 0.85rem;
+}
+
+.order-item__status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.order-item__status--filled {
+    background: rgba(52, 168, 83, 0.2);
+    color: #34a853;
+}
+
+.order-item__status--pending {
+    background: rgba(251, 188, 4, 0.2);
+    color: #fbbc04;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .coinbase-trade__row {
+        grid-template-columns: 1fr;
+    }
+}

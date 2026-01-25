@@ -1,0 +1,172 @@
+/**
+ * DebateViewer.css
+ */
+
+.debate-viewer {
+    background: linear-gradient(145deg, #1e1e24, #2a2a35);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    color: #e4e4e7;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+    min-height: 400px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.debate-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 1rem;
+}
+
+.debate-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    background: linear-gradient(to right, #a78bfa, #818cf8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.debate-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.debate-controls input {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 0.5rem;
+    color: #fff;
+    width: 80px;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.debate-controls button {
+    background: #4f46e5;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.debate-controls button:hover:not(:disabled) {
+    background: #4338ca;
+}
+
+.debate-controls button:disabled {
+    background: #3730a3;
+    opacity: 0.7;
+    cursor: wait;
+}
+
+.debate-stage {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    flex: 1;
+}
+
+.podium {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+}
+
+.podium .avatar {
+    font-size: 3rem;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+}
+
+.podium h4 {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.speech-bubble {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    position: relative;
+    min-height: 100px;
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s;
+}
+
+.speech-bubble.visible {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.podium.bull .speech-bubble {
+    border-left: 3px solid #10b981;
+}
+
+.podium.bear .speech-bubble {
+    border-left: 3px solid #ef4444;
+}
+
+.consensus-card {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    padding: 1rem;
+    width: 100%;
+    margin-top: 1rem;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.consensus-card .verdict {
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin-bottom: 0.25rem;
+}
+
+.consensus-card .verdict.buy { color: #10b981; }
+.consensus-card .verdict.sell { color: #ef4444; }
+.consensus-card .verdict.hold { color: #fbbf24; }
+
+.consensus-card .confidence {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    margin-bottom: 0.5rem;
+}
+
+.consensus-card .summary {
+    font-size: 0.85rem;
+    color: #d1d5db;
+    margin: 0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.mock-badge {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+    font-size: 0.65rem;
+    color: #818cf8;
+    opacity: 0.5;
+    pointer-events: none;
+}

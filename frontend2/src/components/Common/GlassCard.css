@@ -1,0 +1,102 @@
+.glass-card {
+  position: relative;
+  background: var(--glass-surface);
+  backdrop-filter: blur(var(--blur-strength));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  overflow: hidden;
+  transition: var(--transition-premium);
+}
+
+/* Variants */
+.glass-card--default {
+  box-shadow: var(--shadow-md);
+}
+
+.glass-card--elevated {
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  background: var(--bg-elevated);
+}
+
+.glass-card--inset {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  background: var(--bg-tertiary);
+}
+
+/* Status Accents */
+.glass-card__status-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+}
+
+.glass-card--success .glass-card__status-bar {
+  background: linear-gradient(180deg, var(--neon-green), #22c55e);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+}
+
+.glass-card--warning .glass-card__status-bar {
+  background: linear-gradient(180deg, var(--neon-yellow), #f59e0b);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.glass-card--error .glass-card__status-bar {
+  background: linear-gradient(180deg, var(--neon-red), #ef4444);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+.glass-card--success,
+.glass-card--warning,
+.glass-card--error {
+  padding-left: calc(var(--space-4) + 8px);
+}
+
+/* Hover Effects */
+.glass-card--hoverable:hover {
+  border-color: rgba(6, 182, 212, 0.4);
+  box-shadow: var(--shadow-lg), 0 0 20px rgba(6, 182, 212, 0.15);
+  transform: translateY(-2px);
+}
+
+.glass-card--clickable {
+  cursor: pointer;
+}
+
+.glass-card--clickable:active {
+  transform: scale(0.98);
+  transition: var(--transition-fast);
+}
+
+/* Focus Ring for Accessibility */
+.glass-card--clickable:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+}
+
+/* Content Container */
+.glass-card__content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Decorative Corner Glow */
+.glass-card--hoverable::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle at top right, rgba(6, 182, 212, 0.1), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.glass-card--hoverable:hover::before {
+  opacity: 1;
+}

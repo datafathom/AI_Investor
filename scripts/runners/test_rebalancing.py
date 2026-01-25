@@ -47,4 +47,4 @@ def run_test_rebalance(args=None):
         for o in orders:
             print(f" ➡️ {o['side']} {o['quantity']} {o['symbol']} ({o['reason']})")
             
-    print("\n✅ Rebalancing Logic Verified.")
+    print("\nOK Rebalancing Logic Verified.")

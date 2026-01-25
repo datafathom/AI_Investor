@@ -1,0 +1,27 @@
+.futures-curve-widget {
+    background: var(--bg-secondary);
+    padding: 16px;
+    border-radius: 8px;
+    height: 100%;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.futures-curve-widget h3 {
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.d3-container {
+    flex-grow: 1;
+    width: 100%;
+}
+
+.legend {
+    display: flex;
+    gap: 16px;
+    font-size: 0.8rem;
+    margin-top: 8px;
+}

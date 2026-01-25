@@ -1,0 +1,132 @@
+.real-estate-tracker {
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    padding: 16px;
+}
+
+.real-estate-tracker .widget-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.real-estate-tracker .widget-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.net-worth-summary {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.summary-item {
+    flex: 1;
+    padding: 12px;
+    background: var(--bg-surface-2);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.summary-item .label {
+    display: block;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.summary-item .value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.summary-item .value.positive { color: var(--color-bullish); }
+.summary-item .value.negative { color: var(--color-bearish); }
+
+.assets-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.asset-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-surface-2);
+    border-radius: 8px;
+}
+
+.asset-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--bg-surface);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+}
+
+.asset-info {
+    flex: 1;
+}
+
+.asset-name {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.asset-type {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: capitalize;
+}
+
+.asset-value {
+    text-align: right;
+}
+
+.asset-value .current {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.asset-value .change {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 2px;
+    font-size: 10px;
+}
+
+.asset-value .change.positive { color: var(--color-bullish); }
+.asset-value .change.negative { color: var(--color-bearish); }
+
+.add-asset-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--bg-surface-2);
+    border: 2px dashed var(--border-primary);
+    color: var(--text-muted);
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.add-asset-btn:hover {
+    border-color: var(--color-info);
+    color: var(--color-info);
+}

@@ -1,28 +1,113 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, Scale, TrendingUp, TrendingDown, ShieldCheck, AlertOctagon, Send } from 'lucide-react';
+import { Responsive, WidthProvider } from 'react-grid-layout';
 import SentimentGraph from '../components/Debate/SentimentGraph';
 import ConsensusMeter from '../components/Debate/ConsensusMeter';
-import TopicCards from '../components/Debate/TopicCards';
+import ArgumentTree from '../widgets/Debate/ArgumentTree';
+
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const DebateRoom = () => {
+    const DEFAULT_LAYOUT = {
+        lg: [
+            { i: 'podium', x: 0, y: 0, w: 3, h: 8 },
+            { i: 'transcript', x: 3, y: 0, w: 6, h: 8 },
+            { i: 'verdict', x: 9, y: 0, w: 3, h: 4 },
+            { i: 'sentiment', x: 9, y: 4, w: 3, h: 4 }
+        ]
+    };
+    const STORAGE_KEY = 'layout_debate_room';
+
+    const [layouts, setLayouts] = useState(() => {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : DEFAULT_LAYOUT;
+        } catch (e) {
+            return DEFAULT_LAYOUT;
+        }
+    });
+
+    const onLayoutChange = (currentLayout, allLayouts) => {
+        setLayouts(allLayouts);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+    };
+
     const [loading, setLoading] = useState(false);
     const [displayedResponses, setDisplayedResponses] = useState([]);
     const [result, setResult] = useState(null);
     const transcriptEndRef = useRef(null);
 
-    // Initial mock data load
+    // Live Data Loop
     useEffect(() => {
-        const mock = getMockDebateData('SPY');
-        setDisplayedResponses(mock.responses);
-        setResult(mock);
+        // Start debate on load
+        startDebate();
+        
+        // Poll for updates
+        const interval = setInterval(fetchUpdates, 3000);
+        return () => clearInterval(interval);
     }, []);
+
+    const startDebate = async () => {
+        setLoading(true);
+        try {
+            const res = await fetch('/api/v1/ai/debate/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ticker: 'SPY' })
+            });
+            const data = await res.json();
+            updateState(data);
+        } catch (e) {
+            console.error("Debate start failed", e);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchUpdates = async () => {
+        try {
+            const res = await fetch('/api/v1/ai/debate/stream');
+            const data = await res.json();
+            updateState(data);
+        } catch (e) {
+            console.error("Polling failed", e);
+        }
+    };
+
+    const updateState = (data) => {
+        if (!data || !data.transcript) return;
+        setDisplayedResponses(data.transcript);
+        setResult({ consensus: data.consensus });
+    };
+
+    const handleInject = async (e) => {
+        e.preventDefault();
+        const input = e.target.elements.argument.value;
+        if (!input) return;
+        
+        e.target.reset(); // clear input immediately for UX
+        
+        // Optimistic update (optional, but good for UX)
+        // setDisplayedResponses(prev => [...prev, { persona: 'User', reasoning: input, role: 'Human' }]);
+
+        try {
+            await fetch('/api/v1/ai/debate/inject', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ argument: input })
+            });
+            fetchUpdates(); // trigger immediate refresh
+        } catch (e) {
+            console.error("Injection failed", e);
+        }
+    };
 
     useEffect(() => {
         transcriptEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [displayedResponses]);
 
     return (
-        <div className="debate-room-container bg-[#050505] min-h-screen text-slate-300 p-6 flex flex-col font-sans">
+        <div className="full-bleed-page debate-room-container text-slate-300 font-sans">
             <header className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-amber-900/20 border border-amber-500/30 rounded-full">
@@ -35,96 +120,133 @@ const DebateRoom = () => {
                 </div>
                 <div className="text-right font-mono">
                     <div className="text-slate-500 text-[10px] uppercase">Session Hash</div>
-                    <div className="text-white text-xs">A7X-98B-Z012</div>
+                    <div className="text-white text-xs">LIVE-Orch-v2</div>
                 </div>
             </header>
 
-            <main className="flex-1 grid grid-cols-12 gap-6 overflow-hidden min-h-[600px]">
-                {/* Left: The Podium (Agents) */}
-                <div className="col-span-12 lg:col-span-3 flex flex-col gap-4">
-                    <AgentPodium
-                        name="The Bull" role="Growth Advocate" color="green"
-                        icon={<TrendingUp size={24} />} active={true}
-                    />
-                    <AgentPodium
-                        name="The Bear" role="Skeptic & Critic" color="red"
-                        icon={<TrendingDown size={24} />} active={true}
-                    />
-                    <AgentPodium
-                        name="The Risk Manager" role="Capital Guardian" color="blue"
-                        icon={<ShieldCheck size={24} />} active={true}
-                    />
+            <div className="scrollable-content-wrapper">
+                <ResponsiveGridLayout
+                    className="layout"
+                    layouts={layouts}
+                    onLayoutChange={onLayoutChange}
+                    breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                    cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                    rowHeight={80}
+                    isDraggable={true}
+                    isResizable={true}
+                    draggableHandle=".glass-panel"
+                    margin={[16, 16]}
+                >
+                    {/* Left: The Podium (Agents) */}
+                    <div key="podium" style={{ borderRadius: '12px', overflow: 'hidden' }}>
+                        <div className="h-full flex flex-col gap-4">
+                            <AgentPodium
+                                name="The Bull" role="Growth Advocate" color="green"
+                                icon={<TrendingUp size={24} />} active={true}
+                            />
+                            <AgentPodium
+                                name="The Bear" role="Skeptic & Critic" color="red"
+                                icon={<TrendingDown size={24} />} active={true}
+                            />
+                            <AgentPodium
+                                name="The Risk Manager" role="Capital Guardian" color="blue"
+                                icon={<ShieldCheck size={24} />} active={true}
+                            />
 
-                    <div className="glass-panel p-4 bg-slate-900/40 border border-slate-800 rounded-xl flex-1">
-                        <TopicCards />
-                    </div>
-                </div>
-
-                {/* Center: Live Transcript */}
-                <div className="col-span-12 lg:col-span-6 flex flex-col bg-slate-900/30 border border-slate-800 rounded-xl overflow-hidden relative">
-                    <div className="p-4 border-b border-slate-800 bg-slate-900/30 flex justify-between items-center">
-                        <span className="text-xs font-mono text-slate-500 uppercase flex items-center gap-2">
-                            <MessageSquare size={14} /> Official Transcript
-                        </span>
-                        <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                            <span className="text-green-500 text-[10px] font-mono">LIVE FEED</span>
+                            <div className="glass-panel p-4 bg-slate-900/40 border border-slate-800 rounded-xl flex-1 flex flex-col min-h-[200px]">
+                                <h3 className="text-xs font-bold text-slate-500 uppercase mb-2 text-center">Debate Structure</h3>
+                                <ArgumentTree transcript={displayedResponses} />
+                            </div>
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide">
-                        {displayedResponses.map((resp, idx) => (
-                            <div key={idx} className={`transcript-entry flex flex-col gap-2 ${resp.persona === 'The Bull' ? 'items-start' : resp.persona === 'The Bear' ? 'items-end' : 'items-center'}`}>
+                    {/* Center: Live Transcript */}
+                    <div key="transcript" style={{ borderRadius: '12px', overflow: 'hidden' }}>
+                        <div className="glass-panel w-full h-full flex flex-col bg-slate-900/30 border border-slate-800 rounded-xl overflow-hidden relative">
+                            <div className="p-4 border-b border-slate-800 bg-slate-900/30 flex justify-between items-center cursor-move" style={{ cursor: 'move' }}>
+                                <span className="text-xs font-mono text-slate-500 uppercase flex items-center gap-2">
+                                    <MessageSquare size={14} /> Official Transcript
+                                </span>
                                 <div className="flex items-center gap-2">
-                                    <span className={`text-[10px] font-black uppercase tracking-widest ${resp.persona === 'The Bull' ? 'text-green-400' : resp.persona === 'The Bear' ? 'text-red-400' : 'text-blue-400'}`}>
-                                        {resp.persona}
-                                    </span>
-                                </div>
-                                <div className={`p-4 rounded-2xl max-w-[80%] border text-sm shadow-xl transition-all hover:scale-[1.01] cursor-default glass-premium ${resp.persona === 'The Bull' ? 'bg-green-950/20 border-green-500/30 text-green-100' :
-                                    resp.persona === 'The Bear' ? 'bg-red-950/20 border-red-500/30 text-red-100' :
-                                        'bg-blue-950/20 border-blue-500/30 text-blue-100 text-center'
-                                    }`}>
-                                    {resp.reasoning}
+                                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                    <span className="text-green-500 text-[10px] font-mono">LIVE FEED</span>
                                 </div>
                             </div>
-                        ))}
-                        <div ref={transcriptEndRef} />
-                    </div>
-                </div>
 
-                {/* Right: Verdict & Metrics */}
-                <div className="col-span-12 lg:col-span-3 flex flex-col gap-6">
-                    <div className="glass-panel p-6 flex flex-col items-center justify-center bg-slate-900/40 border border-slate-800 rounded-xl h-1/2 glass-premium shadow-amber-900/20">
-                        <h3 className="text-amber-200 font-bold mb-8 flex items-center gap-2 uppercase tracking-widest text-xs">
-                            <Scale size={16} /> Final Decision
-                        </h3>
-                        {result && (
-                            <div className="w-full space-y-8">
-                                <ConsensusMeter score={result.consensus.buy_ratio * 100} />
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="text-center p-3 bg-black/40 rounded-lg border border-slate-800">
-                                        <div className="text-[10px] text-slate-500 uppercase">Conviction</div>
-                                        <div className="text-2xl font-black text-white">{result.consensus.avg_score}/10</div>
+                            <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide">
+                                {displayedResponses.map((resp, idx) => (
+                                    <div key={idx} className={`transcript-entry flex flex-col gap-2 ${resp.persona === 'The Bull' ? 'items-start' : resp.persona === 'The Bear' ? 'items-end' : resp.persona === 'User' ? 'items-end' : 'items-center'}`}>
+                                        <div className="flex items-center gap-2">
+                                            <span className={`text-[10px] font-black uppercase tracking-widest ${resp.persona === 'The Bull' ? 'text-green-400' : resp.persona === 'The Bear' ? 'text-red-400' : resp.persona === 'User' ? 'text-purple-400' : 'text-blue-400'}`}>
+                                                {resp.persona}
+                                            </span>
+                                        </div>
+                                        <div className={`p-4 rounded-2xl max-w-[80%] border text-sm shadow-xl transition-all hover:scale-[1.01] cursor-default glass-premium ${resp.persona === 'The Bull' ? 'bg-green-950/20 border-green-500/30 text-green-100' :
+                                            resp.persona === 'The Bear' ? 'bg-red-950/20 border-red-500/30 text-red-100' :
+                                            resp.persona === 'User' ? 'bg-purple-950/20 border-purple-500/30 text-purple-100' :
+                                                'bg-blue-950/20 border-blue-500/30 text-blue-100 text-center'
+                                            }`}>
+                                            {resp.reasoning}
+                                        </div>
                                     </div>
-                                    <div className="text-center p-3 bg-black/40 rounded-lg border border-slate-800">
-                                        <div className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Signal</div>
-                                        <div className={`text-xl font-black ${result.consensus.is_approved ? 'text-green-400 text-glow-cyan' : 'text-red-400 text-glow-red'}`}>
-                                            {result.consensus.decision}
+                                ))}
+                                <div ref={transcriptEndRef} />
+                            </div>
+
+                            {/* Input Area */}
+                            <form onSubmit={handleInject} className="p-4 border-t border-slate-800 bg-black/40 flex gap-2">
+                                <input 
+                                    name="argument"
+                                    type="text" 
+                                    placeholder="Inject an argument (e.g., 'What about inflation?')..." 
+                                    className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-amber-500 transition-colors"
+                                />
+                                <button type="submit" className="p-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors">
+                                    <Send size={18} />
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {/* Right: Verdict & Metrics */}
+                    <div key="verdict" style={{ borderRadius: '12px', overflow: 'hidden' }}>
+                        <div className="glass-panel p-6 flex flex-col items-center justify-center bg-slate-900/40 border border-slate-800 rounded-xl h-full glass-premium shadow-amber-900/20">
+                            <h3 className="text-amber-200 font-bold mb-8 flex items-center gap-2 uppercase tracking-widest text-xs">
+                                <Scale size={16} /> Final Decision
+                            </h3>
+                            {result && result.consensus && (
+                                <div className="w-full space-y-8">
+                                    <ConsensusMeter score={result.consensus.buy_ratio * 100} />
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="text-center p-3 bg-black/40 rounded-lg border border-slate-800">
+                                            <div className="text-[10px] text-slate-500 uppercase">Conviction</div>
+                                            <div className="text-2xl font-black text-white">{result.consensus.score}/10</div>
+                                        </div>
+                                        <div className="text-center p-3 bg-black/40 rounded-lg border border-slate-800">
+                                            <div className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Signal</div>
+                                            <div className={`text-xl font-black ${result.consensus.is_approved === false && result.consensus.decision === 'HOLD' ? 'text-amber-400' : result.consensus.decision === 'BUY' ? 'text-green-400 text-glow-cyan' : 'text-red-400 text-glow-red'}`}>
+                                                {result.consensus.decision}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="glass-panel p-4 flex-1 bg-slate-900/40 border border-slate-800 rounded-xl flex flex-col">
-                        <h3 className="text-xs font-bold text-slate-500 uppercase mb-4 text-center">Bull/Bear Sentiment Oscillator</h3>
-                        <div className="flex-1">
-                            <SentimentGraph />
+                            )}
                         </div>
                     </div>
-                </div>
-            </main>
+
+                    <div key="sentiment" style={{ borderRadius: '12px', overflow: 'hidden' }}>
+                        <div className="glass-panel p-4 flex-1 bg-slate-900/40 border border-slate-800 rounded-xl flex flex-col h-full">
+                            <h3 className="text-xs font-bold text-slate-500 uppercase mb-4 text-center">Bull/Bear Sentiment Oscillator</h3>
+                            <div className="flex-1">
+                                <SentimentGraph />
+                            </div>
+                        </div>
+                    </div>
+                </ResponsiveGridLayout>
+                
+                {/* Bottom Buffer */}
+                <div className="scroll-buffer-100" />
+            </div>
         </div>
     );
 };

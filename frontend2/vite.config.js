@@ -129,13 +129,13 @@ export default defineConfig({
       '/api': {
         // Target the Express backend server
         // BACKEND_PORT is set by run_nodeApps.py when starting the server
-        target: `http://localhost:${process.env.BACKEND_PORT || '5050'}`,
+        target: `http://127.0.0.1:${process.env.BACKEND_PORT || '5050'}`,
         changeOrigin: true,
         secure: false,
       },
       // Socket.io WebSocket proxy
       '/socket.io': {
-        target: `http://localhost:${process.env.BACKEND_PORT || '5050'}`,
+        target: `http://127.0.0.1:${process.env.BACKEND_PORT || '5050'}`,
         ws: true, // Enable WebSocket proxying
         changeOrigin: true,
       },
@@ -148,10 +148,12 @@ export default defineConfig({
     sourcemap: true, // Generate source maps for debugging
     rollupOptions: {
       output: {
-        // manualChunks: {
-        //   // Split vendor chunks for better caching
-        //   'react-vendor': ['react', 'react-dom'],
-        // },
+        manualChunks: {
+          // Split vendor chunks for better caching
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'chart-vendor': ['recharts', 'chart.js', 'react-chartjs-2'],
+          'ui-vendor': ['lucide-react', 'framer-motion'],
+        },
       },
     },
   },

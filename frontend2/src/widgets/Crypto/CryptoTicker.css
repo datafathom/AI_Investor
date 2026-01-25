@@ -1,0 +1,71 @@
+/**
+ * CryptoTicker.css
+ * Styling for the infinite scrolling ticker.
+ */
+
+.crypto-ticker {
+    width: 100%;
+    background: rgba(17, 24, 39, 0.9);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    height: 40px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.ticker-track {
+    display: flex;
+    gap: 32px;
+    animation: scroll-left 30s linear infinite;
+    white-space: nowrap;
+    padding-left: 20px;
+}
+
+.ticker-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+}
+
+.ticker-symbol {
+    font-weight: 700;
+    color: #e5e7eb;
+}
+
+.ticker-price {
+    color: #9ca3af;
+}
+
+.ticker-change {
+    font-size: 0.75rem;
+}
+
+.ticker-change.positive { color: #10b981; }
+.ticker-change.negative { color: #ef4444; }
+
+.ticker-mock-badge {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.65rem;
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+    padding: 2px 6px;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+@keyframes scroll-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.crypto-ticker:hover .ticker-track {
+    animation-play-state: paused;
+}

@@ -1,0 +1,114 @@
+.database-gauges-widget {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 16px;
+    height: 100%;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.widget-header h3 {
+    margin: 0 0 20px 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gauge-row {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.gauge-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.gauge-circle {
+    width: 80px;
+    height: 80px;
+    position: relative;
+}
+
+.gauge-val {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.gauge-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.slow-query-log {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 16px;
+}
+
+.slow-query-log h4 {
+    margin: 0 0 10px 0;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.query-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.query-item {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 8px;
+}
+
+.query-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    font-size: 0.7rem;
+}
+
+.db-badge {
+    padding: 2px 4px;
+    border-radius: 2px;
+    font-weight: 700;
+}
+
+.db-badge.pg { background: #3b82f6; color: white; }
+.db-badge.neo { background: #22c55e; color: white; }
+
+.query-text {
+    font-family: monospace;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.disk-alert {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    padding: 8px;
+    border-radius: 6px;
+}

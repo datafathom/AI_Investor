@@ -1,0 +1,203 @@
+/**
+ * SectorAttribution Widget Styles
+ * 
+ * Phase 49: Glassmorphism styling for attribution visualization
+ * Uses 20px backdrop-blur with 70% opacity for professional HUD aesthetic.
+ */
+
+.sector-attribution-widget {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  min-height: 500px;
+}
+
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 12px;
+}
+
+.widget-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.benchmark-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.benchmark-dropdown {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: white;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.benchmark-dropdown:hover {
+  border-color: rgba(96, 165, 250, 0.5);
+  box-shadow: 0 0 10px rgba(96, 165, 250, 0.2);
+}
+
+.benchmark-dropdown:focus {
+  outline: none;
+  border-color: #60a5fa;
+}
+
+.attribution-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 12px;
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 8px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summary-item .label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}
+
+.summary-item .value {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.summary-item .value.positive {
+  color: #4ade80;
+  text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+}
+
+.summary-item .value.negative {
+  color: #f87171;
+  text-shadow: 0 0 10px rgba(248, 113, 113, 0.5);
+}
+
+.summary-breakdown {
+  display: flex;
+  gap: 16px;
+  font-size: 0.85rem;
+}
+
+.breakdown-item {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.breakdown-item.allocation {
+  background: rgba(74, 222, 128, 0.15);
+  color: #4ade80;
+}
+
+.breakdown-item.selection {
+  background: rgba(96, 165, 250, 0.15);
+  color: #60a5fa;
+}
+
+.breakdown-item.interaction {
+  background: rgba(192, 132, 252, 0.15);
+  color: #c084fc;
+}
+
+.chart-container {
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-container svg {
+  overflow: visible;
+}
+
+.loading-spinner {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+}
+
+.attribution-bar {
+  transition: opacity 0.2s ease;
+}
+
+.attribution-bar:hover {
+  opacity: 0.85;
+  filter: brightness(1.1);
+}
+
+.attribution-tooltip {
+  position: fixed;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 0.85rem;
+  color: white;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1000;
+  max-width: 250px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  transition: opacity 0.15s ease;
+}
+
+.sector-detail-panel {
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(30, 41, 59, 0.6);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sector-detail-panel h4 {
+  margin: 0 0 12px 0;
+  color: #60a5fa;
+}
+
+.sector-detail-panel button {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #f87171;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sector-detail-panel button:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+/* Axis styling */
+.chart-container svg line {
+  stroke: rgba(255, 255, 255, 0.1);
+}
+
+.chart-container svg .domain {
+  stroke: rgba(255, 255, 255, 0.2);
+}
+
+.chart-container svg .tick line {
+  stroke: rgba(255, 255, 255, 0.1);
+}

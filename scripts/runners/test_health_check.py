@@ -17,6 +17,6 @@ def run_health_check(args=None):
     print(f"Status:       {vitals['status']}")
     
     if vitals['status'] == "HEALTHY":
-        print("✅ System is Healthy.")
+        print("OK System is Healthy.")
     else:
-        print("⚠️ System Load High.")
+        print("WARN System Load High.")

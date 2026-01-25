@@ -5,7 +5,7 @@ import GestureControls from '../components/VR/GestureControls';
 
 const VRCockpit = () => {
     return (
-        <div className="relative w-full h-screen bg-black overflow-hidden font-sans">
+        <div className="full-bleed-page relative w-full h-screen bg-black overflow-hidden font-sans">
             <InfiniteGrid />
             <HUDOverlay />
             <GestureControls />

@@ -1,0 +1,68 @@
+.carbon-footprint-widget {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 16px;
+    height: 100%;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.widget-header h3 {
+    margin: 0 0 16px 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.scatter-container {
+    flex-grow: 1;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.offset-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.footprint-stats {
+    display: flex;
+    flex-direction: column;
+}
+
+.footprint-stats .lbl {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+.footprint-stats .val {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.offset-btn {
+    background: #22c55e;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.offset-btn:hover {
+    background: #16a34a;
+}

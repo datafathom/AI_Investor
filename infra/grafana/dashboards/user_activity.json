@@ -1,0 +1,108 @@
+{
+  "dashboard": {
+    "title": "User Activity Dashboard",
+    "tags": ["users", "activity", "production"],
+    "timezone": "browser",
+    "schemaVersion": 27,
+    "version": 1,
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Active Users (Now)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(user_sessions_active)",
+            "legendFormat": "Active"
+          }
+        ],
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "Total Users",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(user_total)",
+            "legendFormat": "Total"
+          }
+        ],
+        "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "Logins (24h)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(increase(user_logins_total[24h]))",
+            "legendFormat": "Logins"
+          }
+        ],
+        "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0}
+      },
+      {
+        "id": 4,
+        "title": "Onboarding Completion Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(onboarding_completed_total) / sum(onboarding_started_total)",
+            "legendFormat": "Completion Rate"
+          }
+        ],
+        "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0}
+      },
+      {
+        "id": 5,
+        "title": "User Activity Over Time",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "sum(rate(user_actions_total[5m]))",
+            "legendFormat": "Actions/sec"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}
+      },
+      {
+        "id": 6,
+        "title": "User Sessions by Hour",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "sum(increase(user_sessions_total[1h]))",
+            "legendFormat": "Sessions"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4}
+      },
+      {
+        "id": 7,
+        "title": "Feature Usage by Type",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "sum by (feature) (feature_usage_total)",
+            "legendFormat": "{{feature}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12}
+      },
+      {
+        "id": 8,
+        "title": "User Retention Cohort",
+        "type": "table",
+        "targets": [
+          {
+            "expr": "sum by (cohort) (user_retention_total)",
+            "legendFormat": "{{cohort}}"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12}
+      }
+    ]
+  }
+}

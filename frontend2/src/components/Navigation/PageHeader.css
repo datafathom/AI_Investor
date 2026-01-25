@@ -1,0 +1,33 @@
+
+.page-header-standard {
+    position: relative;
+    z-index: 10;
+}
+
+.page-icon-wrapper {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%);
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+}
+
+.shadow-glow-gold-sm {
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+}
+
+.page-header-standard h1 {
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.header-actions-area .text-right {
+    position: relative;
+}
+
+.header-actions-area .text-right::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 20px;
+    height: 1px;
+    background: rgba(245, 158, 11, 0.3);
+}

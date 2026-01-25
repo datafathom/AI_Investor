@@ -1,0 +1,182 @@
+/**
+ * RedditSentiment.css
+ */
+
+.reddit-sentiment-widget {
+    background: rgba(31, 41, 55, 0.5); /* Glassmorphism base */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    color: #f3f4f6;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+    max-height: 500px;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 1rem;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #ff4500; /* Reddit Orange */
+    font-weight: 700;
+}
+
+.ticker-selector {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.ticker-selector button {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #9ca3af;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.ticker-selector button.active,
+.ticker-selector button:hover {
+    background: rgba(255, 69, 0, 0.2);
+    border-color: #ff4500;
+    color: #fff;
+}
+
+.sentiment-dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.metric-card {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.metric-card .label {
+    display: block;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.metric-card .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.metric-card .value.hype {
+    color: #fbbf24;
+}
+
+.metric-card .value .unit {
+    font-size: 0.9rem;
+    color: #6b7280;
+    font-weight: 400;
+}
+
+.feed-container h4 {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.9rem;
+    color: #d1d5db;
+}
+
+.posts-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    max-height: 250px;
+    padding-right: 0.5rem;
+}
+
+/* Scrollbar Styling */
+.posts-list::-webkit-scrollbar {
+    width: 6px;
+}
+.posts-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+.posts-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.post-item {
+    display: flex;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.post-item:last-child {
+    border-bottom: none;
+}
+
+.post-score {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    min-width: 50px;
+    text-align: right;
+}
+
+.post-content {
+    flex: 1;
+}
+
+.post-title {
+    display: block;
+    color: #e5e7eb;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    line-height: 1.4;
+}
+
+.post-title:hover {
+    color: #ff4500;
+}
+
+.post-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.75rem;
+    color: #6b7280;
+    align-items: center;
+}
+
+.sentiment-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.mock-badge {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 0.65rem;
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+    padding: 2px 6px;
+    border-radius: 4px;
+    pointer-events: none;
+}

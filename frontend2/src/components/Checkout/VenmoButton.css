@@ -1,0 +1,69 @@
+/**
+ * VenmoButton.css
+ */
+
+.venmo-button {
+    background: #008CFF; /* Venmo Blue */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    transition: background 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 0.5rem;
+}
+
+.venmo-button:hover:not(:disabled) {
+    background: #0077d9;
+}
+
+.venmo-button:disabled {
+    opacity: 0.7;
+    cursor: default;
+}
+
+.v-logo {
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    font-style: italic;
+}
+
+.mock-tag {
+    font-size: 0.6rem;
+    color: rgba(255,255,255,0.8);
+    margin-left: 0.5rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+    font-style: normal;
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+.label {
+    display: flex;
+    align-items: baseline;
+}
+
+/* Spinner */
+.spinner {
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

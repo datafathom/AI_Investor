@@ -1,0 +1,189 @@
+/**
+ * ==============================================================================
+ * FILE: frontend2/src/widgets/Crypto/WalletConnect.css
+ * ROLE: Wallet Connect Widget Styles
+ * ==============================================================================
+ */
+
+.wallet-connect {
+    background: var(--card-bg, rgba(20, 25, 35, 0.9));
+    border-radius: 12px;
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    padding: 1.5rem;
+}
+
+.wallet-connect__header {
+    margin-bottom: 1.5rem;
+}
+
+.wallet-connect__header h3 {
+    margin: 0;
+    color: var(--text-primary, #fff);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.wallet-connect__form {
+    margin-bottom: 1.5rem;
+}
+
+.wallet-connect__input-group {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.wallet-connect__input {
+    flex: 1;
+    padding: 0.75rem;
+    background: var(--input-bg, rgba(30, 40, 50, 0.8));
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    border-radius: 6px;
+    color: var(--text-primary, #fff);
+    font-size: 0.95rem;
+    font-family: monospace;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.wallet-connect__input:focus {
+    border-color: var(--accent-color, #00d4ff);
+    box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.3);
+}
+
+.wallet-connect__input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.wallet-connect__connect-btn {
+    background: var(--accent-color, #00d4ff);
+    color: #000;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.wallet-connect__connect-btn:hover:not(:disabled) {
+    background: var(--accent-hover, #00b8e6);
+    transform: translateY(-1px);
+}
+
+.wallet-connect__connect-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.wallet-connect__error {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(234, 67, 53, 0.1);
+    border: 1px solid rgba(234, 67, 53, 0.3);
+    border-radius: 6px;
+    color: #ea4335;
+    font-size: 0.9rem;
+}
+
+.wallet-connect__wallets {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+}
+
+.wallet-connect__wallets h4 {
+    margin: 0 0 1rem 0;
+    color: var(--text-primary, #fff);
+    font-size: 1rem;
+}
+
+.wallets-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.wallet-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--item-bg, rgba(30, 40, 50, 0.5));
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.1));
+    border-radius: 6px;
+}
+
+.wallet-item__info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.wallet-item__address {
+    font-family: monospace;
+    font-weight: 600;
+    color: var(--text-primary, #fff);
+    font-size: 0.95rem;
+}
+
+.wallet-item__balance {
+    color: var(--accent-color, #00d4ff);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.wallet-item__tokens {
+    color: var(--text-secondary, #888);
+    font-size: 0.85rem;
+}
+
+.wallet-item__disconnect {
+    background: transparent;
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    color: var(--text-secondary, #888);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.wallet-item__disconnect:hover {
+    background: rgba(234, 67, 53, 0.1);
+    border-color: #ea4335;
+    color: #ea4335;
+}
+
+.wallet-connect__note {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 6px;
+}
+
+.wallet-connect__note p {
+    margin: 0;
+    color: var(--text-secondary, #888);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .wallet-connect__input-group {
+        flex-direction: column;
+    }
+    
+    .wallet-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+    
+    .wallet-item__disconnect {
+        width: 100%;
+    }
+}

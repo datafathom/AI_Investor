@@ -6,8 +6,9 @@
     z-index: 900; /* Below MenuBar dropdown (1001) */
     display: flex;
     justify-content: center;
-    position: sticky;
+    position: fixed;
     top: 30px; /* MenuBar is 30px */
+    width: 100%;
 }
 
 .nav-container {

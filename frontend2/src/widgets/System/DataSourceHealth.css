@@ -1,0 +1,151 @@
+/**
+ * ==============================================================================
+ * FILE: frontend2/src/widgets/System/DataSourceHealth.css
+ * ROLE: Styles for Data Source Health Monitor
+ * PURPOSE: Provides layout and visual indicators for API health monitoring.
+ *          
+ * AUTHOR: AI Investor Team
+ * CREATED: 2026-01-21
+ * ==============================================================================
+ */
+
+.ds-health {
+    background: rgba(26, 31, 46, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.ds-health__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.ds-health__title {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #8892b0;
+    text-transform: uppercase;
+}
+
+.ds-health__refresh-dot {
+    width: 8px;
+    height: 8px;
+    background: #00d4aa;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00d4aa;
+    animation: ds-pulse 1.5s infinite;
+}
+
+@keyframes ds-pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.ds-health__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.ds-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.ds-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.ds-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.ds-card__name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: white;
+}
+
+.ds-card__status {
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.status--online { background: rgba(0, 212, 170, 0.1); color: #00d4aa; }
+.status--warning { background: rgba(255, 165, 2, 0.1); color: #ffa502; }
+.status--error { background: rgba(255, 71, 87, 0.1); color: #ff4757; }
+
+.ds-card__metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.ds-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ds-metric__label {
+    font-size: 0.7rem;
+    color: #8892b0;
+}
+
+.ds-metric__value {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ccd6f6;
+}
+
+.ds-quota {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ds-quota__bar {
+    flex-grow: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.ds-quota__fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1s ease-out;
+}
+
+.ds-quota__text {
+    font-size: 0.7rem;
+    font-weight: 700;
+    min-width: 30px;
+    text-align: right;
+}
+
+.ds-card__footer {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.6rem;
+    color: #495670;
+}

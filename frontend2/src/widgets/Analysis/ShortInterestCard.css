@@ -1,0 +1,172 @@
+/**
+ * ShortInterestCard.css
+ * Premium styling for Short Interest Analysis widget
+ */
+
+.short-interest-card {
+    background: rgba(30, 34, 45, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 16px;
+    color: #ffffff;
+    width: 100%;
+    max-width: 350px;
+    font-family: 'Inter', sans-serif;
+    transition: transform 0.2s ease;
+}
+
+.short-interest-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.short-interest-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.short-interest-card__title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.short-interest-card__symbol {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+    background: rgba(59, 130, 246, 0.2);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.short-interest-card__main {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.short-interest-card__gauge-container {
+    flex: 0 0 100px;
+}
+
+.short-interest-card__gauge {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.short-interest-card__gauge svg {
+    transform: rotate(-90deg);
+}
+
+.gauge-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.05);
+    stroke-width: 8;
+}
+
+.gauge-fill {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.5s ease-in-out;
+}
+
+/* Dynamic colors based on risk */
+.short-interest-card--low .gauge-fill { stroke: #10b981; }
+.short-interest-card--medium .gauge-fill { stroke: #fbbf24; }
+.short-interest-card--high .gauge-fill { stroke: #f97316; }
+.short-interest-card--extreme .gauge-fill { stroke: #ef4444; }
+
+.gauge-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.gauge-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.gauge-label {
+    font-size: 0.6rem;
+    color: #9ca3af;
+}
+
+.short-interest-card__metrics {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.metric-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+}
+
+.metric-label {
+    color: #9ca3af;
+}
+
+.metric-value {
+    font-weight: 600;
+}
+
+.risk-low { color: #10b981; }
+.risk-medium { color: #fbbf24; }
+.risk-high { color: #f97316; }
+.risk-extreme { color: #ef4444; }
+
+.short-interest-card__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.source-tag {
+    font-size: 0.7rem;
+    color: #6b7280;
+}
+
+.refresh-btn {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: color 0.2s;
+}
+
+.refresh-btn:hover {
+    color: #ffffff;
+}
+
+/* Skeletons */
+.short-interest-card--loading .short-interest-card__skeleton-header {
+    height: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.short-interest-card--loading .short-interest-card__skeleton-content {
+    height: 100px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}

@@ -20,9 +20,9 @@ def run_test_algo(args=None):
     print(f"Schedule: {schedule}")
     
     if schedule[0] == 5000 and sum(schedule) == qty:
-        print("✅ VWAP Schedule Verified.")
+        print("OK VWAP Schedule Verified.")
     else:
-        print("❌ VWAP Schedule Failed.")
+        print("ERROR VWAP Schedule Failed.")
         
     # 2. TWAP Test
     print("\n--- TWAP Schedule Generation ---")
@@ -36,6 +36,6 @@ def run_test_algo(args=None):
     
     # 1000 / 4 = 250 each.
     if len(schedule_twap) == 4 and schedule_twap[0] == 250:
-         print("✅ TWAP Schedule Verified.")
+         print("OK TWAP Schedule Verified.")
     else:
-         print("❌ TWAP Schedule Failed.")
+         print("ERROR TWAP Schedule Failed.")

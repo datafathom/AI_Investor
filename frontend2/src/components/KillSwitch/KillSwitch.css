@@ -1,0 +1,113 @@
+
+.kill-switch-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9000; /* Above windows, below modal/toasts */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.kill-switch-button {
+    width: 64px;
+    height: 64px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    border-radius: 50%;
+    border: 2px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    position: relative;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.kill-switch-button:hover {
+    border-color: #ff4757;
+    box-shadow: 0 0 20px rgba(255, 71, 87, 0.3);
+}
+
+.kill-switch-button.active {
+    background: rgba(255, 71, 87, 0.1);
+    border-color: #ff4757;
+}
+
+.ks-icon-wrapper {
+    color: #ff4757;
+    z-index: 2;
+}
+
+.ks-progress-ring {
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    width: 64px;
+    height: 64px;
+    transform: rotate(-90deg);
+    pointer-events: none;
+}
+
+.ks-ring-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.05);
+    stroke-width: 4;
+}
+
+.ks-ring-progress {
+    fill: none;
+    stroke: #ff4757;
+    stroke-width: 4;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.1s linear;
+}
+
+.ks-warning-tooltip {
+    position: absolute;
+    bottom: 80px;
+    background: #ff4757;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    white-space: nowrap;
+    animation: ks-tooltip-bounce 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.ks-warning-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #ff4757;
+}
+
+@keyframes ks-tooltip-bounce {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.ks-pulse-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7);
+    animation: ks-pulse 1.5s infinite;
+}
+
+@keyframes ks-pulse {
+    0% { transform: translate(-50%, -50%) scale(0.95); box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); }
+    70% { transform: translate(-50%, -50%) scale(1.5); box-shadow: 0 0 0 20px rgba(255, 71, 87, 0); }
+    100% { transform: translate(-50%, -50%) scale(0.95); box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
+}

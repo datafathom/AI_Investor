@@ -1,0 +1,108 @@
+.agent-load-balancer-widget {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 16px;
+    height: 100%;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.balancer-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.scale-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--text-primary);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.scale-btn:hover { background: rgba(255, 255, 255, 0.15); }
+
+.process-tree {
+    flex-grow: 1;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-family: monospace;
+    font-size: 0.75rem;
+    overflow-y: auto;
+    margin-bottom: 16px;
+}
+
+.tree-header {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr 1fr 1.5fr;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.tree-item {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr 1fr 1.5fr;
+    padding: 6px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.tree-item:hover { background: rgba(255, 255, 255, 0.03); }
+
+.tree-item.error { background: rgba(239, 68, 68, 0.05); }
+
+.col {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.col.name { color: #c084fc; font-weight: 600; }
+.expander { display: inline-block; width: 14px; text-align: center; cursor: pointer; color: var(--text-secondary); }
+
+.health-summary {
+    display: flex;
+    gap: 20px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.summary-item .count {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.summary-item.error .count { color: #ef4444; }
+
+.summary-item .lbl {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}

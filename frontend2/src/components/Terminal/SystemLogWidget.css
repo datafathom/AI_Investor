@@ -1,0 +1,116 @@
+.system-log-widget {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: transparent;
+}
+
+.log-entries {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.log-entry {
+    display: flex;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: var(--transition-fast);
+}
+
+.log-entry:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.log-icon-wrapper {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Severity Colors */
+.log-entry.critical .log-icon { color: var(--neon-red); }
+.log-entry.critical { border-left: 2px solid var(--neon-red); }
+
+.log-entry.warning .log-icon { color: var(--neon-yellow); }
+.log-entry.warning { border-left: 2px solid var(--neon-yellow); }
+
+.log-entry.success .log-icon { color: var(--neon-green); }
+.log-entry.success { border-left: 2px solid var(--neon-green); }
+
+.log-entry.info .log-icon { color: var(--neon-cyan); }
+.log-entry.info { border-left: 2px solid var(--neon-cyan); }
+
+.log-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.2rem;
+}
+
+.log-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.log-timestamp {
+    font-family: var(--font-data);
+    font-size: 0.65rem;
+    color: var(--text-tertiary);
+}
+
+.log-description {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.log-footer {
+    padding: 0.5rem 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.6rem;
+    font-weight: 800;
+    font-family: var(--font-data);
+    color: var(--text-dim);
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--neon-green);
+    border-radius: 50%;
+    box-shadow: 0 0 5px var(--neon-green);
+}
+
+.pulse {
+    animation: pulse 2s infinite ease-in-out;
+}

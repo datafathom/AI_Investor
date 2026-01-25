@@ -26,6 +26,6 @@ def run_test_broker(args=None):
     print(f"Positions: {positions}")
     
     if len(positions) > 0 and positions[0]['symbol'] == 'NVDA':
-        print("✅ Broker Integration Verified (Mock Mode).")
+        print("OK Broker Integration Verified (Mock Mode).")
     else:
-        print("❌ Broker Integration Failed.")
+        print("ERROR Broker Integration Failed.")

@@ -147,6 +147,15 @@ app.get('/api/health', (req, res) => {
 });
 
 /**
+ * Health check endpoint for load balancer
+ * GET /health
+ * Simple health check for container orchestration
+ */
+app.get('/health', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'health.html'));
+});
+
+/**
  * Layout Management (Protected)
  */
 app.get('/api/layout', authenticateToken, async (req, res) => {

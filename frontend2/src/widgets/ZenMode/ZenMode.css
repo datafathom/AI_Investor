@@ -1,0 +1,225 @@
+.zen-mode {
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    padding: 16px;
+}
+
+.zen-mode .widget-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.zen-mode .widget-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.enough-section {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.enough-circle {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 12px;
+}
+
+.enough-circle svg {
+    width: 100%;
+    height: 100%;
+}
+
+.enough-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.enough-percent {
+    display: block;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.enough-label {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.enough-target {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.enough-target .current {
+    color: var(--color-success);
+    font-weight: 600;
+}
+
+.enough-target .divider {
+    color: var(--text-muted);
+}
+
+.enough-target .target {
+    color: var(--text-secondary);
+}
+
+.retirement-countdown {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-surface-2);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    color: var(--text-muted);
+}
+
+.countdown-value {
+    display: block;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.countdown-label {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.goals-section {
+    margin-bottom: 16px;
+}
+
+.goals-section h4 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 8px 0;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.goal-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: var(--bg-surface-2);
+    border-radius: 8px;
+    margin-bottom: 6px;
+}
+
+.goal-row.achieved {
+    border-left: 3px solid var(--color-success);
+}
+
+.goal-info {
+    flex: 1;
+}
+
+.goal-name {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.goal-target {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.goal-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--border-primary);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--color-success);
+    border-radius: 3px;
+}
+
+.achieved-icon {
+    color: var(--color-success);
+}
+
+.autopilot-section {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: var(--bg-surface-2);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.autopilot-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    color: var(--text-primary);
+}
+
+.autopilot-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.autopilot-desc {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.autopilot-toggle {
+    width: 48px;
+    height: 26px;
+    background: var(--border-secondary);
+    border-radius: 13px;
+    position: relative;
+    transition: background 0.2s;
+}
+
+.autopilot-toggle.on {
+    background: var(--color-success);
+}
+
+.autopilot-toggle .toggle-knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+
+.autopilot-toggle.on .toggle-knob {
+    transform: translateX(22px);
+}

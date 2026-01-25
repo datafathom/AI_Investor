@@ -21,9 +21,9 @@ def run_test_circuit_breaker(args=None):
             print(f"  Reason: {cb.freeze_reason}")
             
     if cb.portfolio_frozen:
-        print("✅ Portfolio Freeze Verified.")
+        print("OK Portfolio Freeze Verified.")
     else:
-        print("❌ Portfolio Freeze Failed.")
+        print("ERROR Portfolio Freeze Failed.")
         
     # Reset for next test
     cb.reset()
@@ -42,6 +42,6 @@ def run_test_circuit_breaker(args=None):
     print(f"TSLA (Drop 15%): {'HALTED' if halt_tsla else 'TRADING'}")
     
     if halt_tsla and not halt_aapl:
-        print("✅ Asset Kill Switch Verified.")
+        print("OK Asset Kill Switch Verified.")
     else:
-        print("❌ Kill Switch Logic Failed.")
+        print("ERROR Kill Switch Logic Failed.")

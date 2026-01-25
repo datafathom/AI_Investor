@@ -38,11 +38,11 @@ def run_test_hype(args=None):
         }
         result = tracker.process_social_mention(item["symbol"], item["source"], metrics)
         
-        status = "🚀 VIRAL" if result["is_viral"] else "⚖️ STEADY"
+        status = "VIRAL" if result["is_viral"] else "STEADY"
         print(f"[{item['source']}] {item['symbol']} | Score: {result['hype_score']} | {status}")
 
     print("\n--- AGGREGATE STATS ---")
     for sym, stats in tracker.tracked_tickers.items():
         print(f"Ticker: {sym} | Avg Hype: {stats['avg_hype']:.2f} | Mentions: {stats['total_mentions']}")
 
-    print("\n✅ Hype Tracking Logic Verified.")
+    print("\nOK Hype Tracking Logic Verified.")

@@ -41,7 +41,7 @@ def run_simulation():
         avg = distillery.history[-1]["avg_fitness"]
         print(f"{i+1:<5} | {best:<15.4f} | {avg:<15.4f}")
         
-    print("\n✅ Evolution Complete!")
+    print("\nOK Evolution Complete!")
     print(f"Final Alpha Genome: {distillery.population[0].genes}")
     print(f"Final Fitness Score: {distillery.population[0].fitness:.4f}")
 

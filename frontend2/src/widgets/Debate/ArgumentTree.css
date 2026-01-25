@@ -1,0 +1,170 @@
+.argument-tree {
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    padding: 16px;
+    height: 100%;
+    position: relative;
+}
+
+.argument-tree .widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.argument-tree .widget-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.zoom-controls {
+    display: flex;
+    gap: 4px;
+}
+
+.zoom-controls button {
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border-primary);
+    color: var(--text-secondary);
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.argument-tree svg {
+    width: 100%;
+    height: auto;
+    background: var(--bg-surface-2);
+    border-radius: 8px;
+}
+
+.link {
+    stroke-opacity: 0.6;
+}
+
+.link.pro {
+    stroke: var(--color-success);
+}
+
+.link.con {
+    stroke: var(--color-danger);
+}
+
+.link.evidence {
+    stroke: var(--color-info);
+    stroke-dasharray: 4 2;
+}
+
+.node-circle {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.node-circle.proposal {
+    fill: var(--color-info);
+}
+
+.node-circle.pro {
+    fill: var(--color-success);
+}
+
+.node-circle.con {
+    fill: var(--color-danger);
+}
+
+.node-circle.fact {
+    fill: var(--color-warning);
+}
+
+.node-circle:hover {
+    stroke: white;
+    stroke-width: 2;
+}
+
+.node-label {
+    fill: white;
+    font-size: 8px;
+    font-weight: 500;
+    pointer-events: none;
+}
+
+.node-detail {
+    position: absolute;
+    top: 60px;
+    right: 16px;
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 12px;
+    width: 180px;
+}
+
+.node-detail h4 {
+    margin: 0 0 8px 0;
+    font-size: 12px;
+    color: var(--text-primary);
+}
+
+.node-detail p {
+    margin: 4px 0;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.node-detail .pro { color: var(--color-success); }
+.node-detail .con { color: var(--color-danger); }
+.node-detail .fact { color: var(--color-warning); }
+
+.source-link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--color-info) !important;
+}
+
+.node-detail button {
+    margin-top: 8px;
+    width: 100%;
+    background: var(--border-secondary);
+    border: none;
+    color: var(--text-secondary);
+    padding: 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.tree-legend {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.legend-item {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.legend-item.pro {
+    background: rgba(46, 213, 115, 0.15);
+    color: var(--color-success);
+}
+
+.legend-item.con {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--color-danger);
+}
+
+.legend-item.fact {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--color-warning);
+}

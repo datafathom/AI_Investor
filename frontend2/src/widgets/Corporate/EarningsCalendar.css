@@ -1,0 +1,129 @@
+.earnings-calendar-widget {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 16px;
+    height: 100%;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.view-toggle {
+    display: flex;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.view-toggle button {
+    background: transparent;
+    border: none;
+    color: #aaa;
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    border-radius: 2px;
+}
+
+.view-toggle button.active {
+    background: #3b82f6;
+    color: white;
+}
+
+.calendar-grid {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    overflow-y: auto;
+}
+
+.day-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.day-header {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--text-secondary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 4px;
+}
+
+.event-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    padding: 8px;
+}
+
+.event-card.bmo { border-left: 3px solid #fbbf24; } /* Before Market Open */
+.event-card.amc { border-left: 3px solid #8b5cf6; } /* After Market Close */
+
+.event-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.ticker { font-weight: 700; font-size: 0.85rem; }
+.time { font-size: 0.65rem; color: var(--text-secondary); background: rgba(0,0,0,0.2); padding: 1px 4px; border-radius: 3px; }
+
+.event-details {
+    font-size: 0.7rem;
+    color: #ccc;
+    display: flex;
+    justify-content: space-between;
+}
+
+.whisper { color: #f472b6; }
+
+.implied-move {
+    margin-top: 6px;
+    font-size: 0.65rem;
+    background: rgba(59, 130, 246, 0.1);
+    color: #60a5fa;
+    text-align: center;
+    padding: 2px;
+    border-radius: 3px;
+}
+
+.implied-move.overvalued {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.debate-link {
+    margin-top: 10px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 10px;
+}
+
+.debate-link a {
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.debate-link a:hover { text-decoration: underline; }

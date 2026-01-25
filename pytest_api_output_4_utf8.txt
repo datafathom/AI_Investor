@@ -1,0 +1,64 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.1, pytest-7.4.0, pluggy-1.6.0
+rootdir: C:\Users\astir\Desktop\AI_Company\AI_Investor
+plugins: anyio-4.12.1, asyncio-0.21.1
+asyncio: mode=Mode.STRICT
+collected 2 items
+
+tests\web\test_workspace_api.py EE                                       [100%]
+
+=================================== ERRORS ====================================
+_______________ ERROR at setup of test_get_workspace_not_found ________________
+
+    @pytest.fixture
+    def client():
+>       app, socketio = create_app()
+
+tests\web\test_workspace_api.py:8: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+web\app.py:170: in create_app
+    from web.api.privacy_api import privacy_bp
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    
+    from flask import Blueprint, jsonify, request, Response
+    from services.system.privacy_service import get_privacy_service
+>   from services.auth.auth_service import token_required
+E   ModuleNotFoundError: No module named 'services.auth.auth_service'
+
+web\api\privacy_api.py:4: ModuleNotFoundError
+---------------------------- Captured stdout setup ----------------------------
+DEBUG: create_app() started
+DEBUG: Flask instance created
+________________ ERROR at setup of test_save_workspace_success ________________
+
+    @pytest.fixture
+    def client():
+>       app, socketio = create_app()
+
+tests\web\test_workspace_api.py:8: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+web\app.py:170: in create_app
+    from web.api.privacy_api import privacy_bp
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    
+    from flask import Blueprint, jsonify, request, Response
+    from services.system.privacy_service import get_privacy_service
+>   from services.auth.auth_service import token_required
+E   ModuleNotFoundError: No module named 'services.auth.auth_service'
+
+web\api\privacy_api.py:4: ModuleNotFoundError
+---------------------------- Captured stdout setup ----------------------------
+DEBUG: create_app() started
+DEBUG: Flask instance created
+============================== warnings summary ===============================
+tests/web/test_workspace_api.py::test_get_workspace_not_found
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\venv\Lib\site-packages\pythonjsonlogger\jsonlogger.py:11: DeprecationWarning: pythonjsonlogger.jsonlogger has been moved to pythonjsonlogger.json
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/web/test_workspace_api.py::test_get_workspace_not_found - ModuleN...
+ERROR tests/web/test_workspace_api.py::test_save_workspace_success - ModuleNo...
+======================== 1 warning, 2 errors in 33.77s ========================

@@ -1,0 +1,104 @@
+.danger-zone-widget {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.danger-zone-widget.active {
+    border-color: #ef4444;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);
+}
+
+.danger-zone-widget .widget-header {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.danger-zone-widget h3 {
+    font-size: 0.9rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+}
+
+.gauge-container {
+    position: relative;
+    width: 180px;
+    height: 90px;
+    margin: 10px 0 30px 0;
+    overflow: hidden;
+}
+
+.gauge-track {
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 12px solid rgba(255, 255, 255, 0.05);
+    top: 0;
+}
+
+.gauge-progress {
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 12px solid transparent;
+    border-top: 12px solid #10b981;
+    top: 0;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.gauge-center {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.buffer-percent {
+    font-size: 1.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+}
+
+.buffer-label {
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    opacity: 0.5;
+    margin-top: -4px;
+}
+
+.risk-metrics {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.7rem;
+}
+
+.metric .label {
+    color: var(--text-secondary);
+}
+
+.metric .val {
+    font-weight: 700;
+}
+
+.metric .val.urgent { color: #ef4444; }
+.metric .val.safe { color: #10b981; }

@@ -1,0 +1,248 @@
+/**
+ * ==============================================================================
+ * FILE: frontend2/src/widgets/Macro/MacroDashboard.css
+ * ROLE: Styles for Macro Widgets
+ * PURPOSE: Provides layout and visual styles for MacroHealthGauge, 
+ *          YieldCurveChart, and RegimeIndicator components.
+ *          
+ * AUTHOR: AI Investor Team
+ * CREATED: 2026-01-21
+ * ==============================================================================
+ */
+
+:root {
+  --macro-bg: rgba(26, 31, 46, 0.85);
+  --macro-border: rgba(255, 255, 255, 0.1);
+  --macro-accent: #00d4ff;
+  --macro-success: #00d4aa;
+  --macro-warning: #ffa502;
+  --macro-danger: #ff4757;
+  --macro-text: #ffffff;
+  --macro-text-muted: #8892b0;
+}
+
+/* --- Container Shared Styles --- */
+.macro-gauge, .yield-curve, .regime-indicator {
+  background: var(--macro-bg);
+  border: 1px solid var(--macro-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+  margin-bottom: 1rem;
+}
+
+/* --- MacroHealthGauge --- */
+.macro-gauge {
+  text-align: center;
+}
+
+.macro-gauge__title {
+  margin: 0 0 1.5rem 0;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--macro-text-muted);
+}
+
+.macro-gauge__container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.macro-gauge__svg {
+  width: 220px;
+  max-width: 100%;
+}
+
+.macro-gauge__value-display {
+  margin-top: -30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.macro-gauge__score {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.macro-gauge__status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+
+.macro-gauge__footer {
+  margin-top: 1.5rem;
+  font-size: 0.65rem;
+  color: var(--macro-text-muted);
+}
+
+/* --- YieldCurveChart --- */
+.yield-curve__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.yield-curve__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--macro-text);
+}
+
+.yield-curve__badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.yield-curve__badge--inverted {
+  background: rgba(255, 71, 87, 0.2);
+  color: var(--macro-danger);
+  border: 1px solid var(--macro-danger);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.yield-curve__chart-container {
+  margin: 1rem -1rem;
+}
+
+.yield-curve__stats {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--macro-border);
+}
+
+.yield-curve__stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.yield-curve__label {
+  font-size: 0.7rem;
+  color: var(--macro-text-muted);
+}
+
+.yield-curve__value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.yield-curve__value.negative {
+  color: var(--macro-danger);
+}
+
+/* --- RegimeIndicator --- */
+.regime-indicator__header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+  padding-left: 1rem;
+  border-left: 4px solid var(--macro-accent);
+}
+
+.regime-indicator__icon-box {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.regime-indicator__title-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.regime-indicator__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+}
+
+.regime-indicator__desc {
+  margin: 4px 0 0 0;
+  font-size: 0.8rem;
+  color: var(--macro-text-muted);
+}
+
+.regime-indicator__signals {
+  margin-bottom: 1.5rem;
+}
+
+.regime-indicator__signals-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--macro-text-muted);
+}
+
+.regime-indicator__tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.regime-indicator__tag {
+  background: rgba(0, 212, 255, 0.1);
+  color: var(--macro-accent);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.regime-indicator__tag--neutral {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--macro-text-muted);
+  border-color: transparent;
+}
+
+.regime-indicator__data-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--macro-border);
+}
+
+.regime-indicator__metric-item {
+  display: flex;
+  justify-content: space-between;
+}
+
+.regime-indicator__metric-name {
+  font-size: 0.7rem;
+  color: var(--macro-text-muted);
+  text-transform: uppercase;
+}
+
+.regime-indicator__metric-value {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--macro-text);
+}

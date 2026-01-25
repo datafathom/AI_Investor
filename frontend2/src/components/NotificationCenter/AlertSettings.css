@@ -1,0 +1,137 @@
+.alert-settings {
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    padding: 16px;
+    width: 300px;
+}
+
+.settings-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.settings-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.dnd-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: var(--bg-surface-2);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    cursor: pointer;
+}
+
+.dnd-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-primary);
+}
+
+.dnd-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.dnd-desc {
+    display: block;
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.toggle-switch {
+    width: 40px;
+    height: 22px;
+    background: var(--border-secondary);
+    border-radius: 11px;
+    position: relative;
+    transition: background 0.2s;
+}
+
+.toggle-switch.active {
+    background: var(--color-success);
+}
+
+.toggle-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+
+.toggle-switch.active .toggle-knob {
+    transform: translateX(18px);
+}
+
+.categories-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.category-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: var(--bg-surface-2);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.category-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.category-icon {
+    color: var(--text-muted);
+}
+
+.category-info {
+    flex: 1;
+}
+
+.category-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.category-desc {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.settings-footer {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-primary);
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.dnd-active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: var(--color-warning);
+}

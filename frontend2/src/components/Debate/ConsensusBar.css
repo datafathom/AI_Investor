@@ -1,0 +1,163 @@
+.consensus-bar-widget {
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    padding: 16px;
+}
+
+.consensus-bar-widget .widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.consensus-bar-widget .widget-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.consensus-badge {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.consensus-badge.approved {
+    background: rgba(46, 213, 115, 0.15);
+    color: var(--color-success);
+}
+
+.consensus-badge.pending {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--color-warning);
+}
+
+.progress-section {
+    margin-bottom: 16px;
+}
+
+.progress-bar {
+    position: relative;
+    height: 12px;
+    background: var(--bg-surface-2);
+    border-radius: 6px;
+    overflow: visible;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.5s ease;
+}
+
+.threshold-marker {
+    position: absolute;
+    top: -4px;
+    width: 2px;
+    height: 20px;
+    background: var(--text-primary);
+    transform: translateX(-1px);
+}
+
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 10px;
+}
+
+.progress-labels span:first-child {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.threshold-label {
+    color: var(--text-muted);
+}
+
+.vote-summary {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 16px;
+}
+
+.vote-count {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+}
+
+.vote-count.for {
+    color: var(--color-success);
+}
+
+.vote-count.against {
+    color: var(--color-danger);
+}
+
+.vote-count.abstain {
+    color: var(--text-muted);
+}
+
+.dissenters {
+    margin-bottom: 16px;
+}
+
+.dissenters-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-warning);
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.dissent-list {
+    margin-top: 8px;
+    padding: 8px;
+    background: var(--bg-surface-2);
+    border-radius: 6px;
+}
+
+.dissent-item {
+    display: flex;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 11px;
+}
+
+.dissent-agent {
+    color: var(--color-danger);
+    font-weight: 500;
+    min-width: 80px;
+}
+
+.dissent-reason {
+    color: var(--text-secondary);
+}
+
+.approve-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.approve-btn.enabled {
+    background: var(--color-success);
+    color: white;
+}
+
+.approve-btn.disabled {
+    background: var(--border-secondary);
+    color: var(--text-muted);
+    cursor: not-allowed;
+}

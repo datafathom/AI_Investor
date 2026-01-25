@@ -1,0 +1,152 @@
+/**
+ * ==============================================================================
+ * FILE: frontend2/src/components/Banking/PlaidLinkModal.css
+ * ROLE: Plaid Link Modal Styles
+ * ==============================================================================
+ */
+
+.plaid-link-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.plaid-link-modal {
+    background: var(--card-bg, rgba(20, 25, 35, 0.95));
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.plaid-link-modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+}
+
+.plaid-link-modal__header h3 {
+    margin: 0;
+    color: var(--text-primary, #fff);
+    font-size: 1.25rem;
+}
+
+.plaid-link-modal__close {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary, #888);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.plaid-link-modal__close:hover {
+    background: var(--hover-bg, rgba(100, 150, 200, 0.1));
+    color: var(--text-primary, #fff);
+}
+
+.plaid-link-modal__content {
+    padding: 1.5rem;
+}
+
+.plaid-link-modal__loading {
+    text-align: center;
+    padding: 2rem;
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 1rem;
+    border: 4px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    border-top-color: var(--accent-color, #00d4ff);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.plaid-link-modal__loading p {
+    color: var(--text-secondary, #888);
+    margin: 0;
+}
+
+.plaid-link-modal__error {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(234, 67, 53, 0.1);
+    border: 1px solid rgba(234, 67, 53, 0.3);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.plaid-link-modal__error p {
+    color: #ea4335;
+    margin: 0 0 1rem 0;
+}
+
+.retry-btn {
+    background: var(--accent-color, #00d4ff);
+    color: #000;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.retry-btn:hover {
+    background: var(--accent-hover, #00b8e6);
+}
+
+.plaid-link-modal__info {
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.plaid-link-modal__info p {
+    color: var(--text-primary, #fff);
+    margin: 0.5rem 0;
+    line-height: 1.5;
+}
+
+.plaid-link-modal__note {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #888);
+    font-style: italic;
+}
+
+#plaid-link-container {
+    margin-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .plaid-link-modal {
+        width: 95%;
+        max-height: 95vh;
+    }
+}

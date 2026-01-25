@@ -18,9 +18,9 @@ def run_test_sor(args=None):
     print(f"Batches: {strategy['batches']}")
     
     if strategy['execution_style'] == "ICEBERG" and len(strategy['batches']) == 12:
-        print("✅ Iceberg Logic Verified: Order split correctly.")
+        print("OK Iceberg Logic Verified: Order split correctly.")
     else:
-        print("❌ Iceberg Logic Failed.")
+        print("ERROR Iceberg Logic Failed.")
         
     # 2. Volatility Check
     print("\n--- Volatility Logic ---")
@@ -34,6 +34,6 @@ def run_test_sor(args=None):
     print(f"High Vol (5%): Order Type = {strat_high['order_type']}")
     
     if strat_low['order_type'] == "MARKET" and strat_high['order_type'] == "LIMIT":
-        print("✅ Volatility Logic Verified: High vol forces Limit Order.")
+        print("OK Volatility Logic Verified: High vol forces Limit Order.")
     else:
-        print("❌ Volatility Logic Failed.")
+        print("ERROR Volatility Logic Failed.")

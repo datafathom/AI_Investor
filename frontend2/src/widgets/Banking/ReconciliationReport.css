@@ -1,0 +1,127 @@
+.recon-report-widget {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    height: 100%;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.recon-report-widget .widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.recon-report-widget .widget-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.recon-report-widget .badge {
+    font-size: 0.65rem;
+    background: rgba(6, 182, 212, 0.1);
+    color: #06b6d4;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.stat-box {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.stat-box .label {
+    display: block;
+    font-size: 0.7rem;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+
+.stat-box .val {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.val.good { color: #10b981; }
+.val.warn { color: #f59e0b; }
+
+.unmatched-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.unmatched-list h4 {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 15px;
+}
+
+.unmatched-item {
+    display: grid;
+    grid-template-columns: 80px 1fr 80px 70px;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+}
+
+.u-date { color: #64748b; font-size: 0.75rem; }
+.u-amount { font-family: 'JetBrains Mono', monospace; font-weight: 600; text-align: right; }
+
+.btn-resolve {
+    background: transparent;
+    border: 1px solid #334155;
+    color: #94a3b8;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-resolve:hover {
+    border-color: #06b6d4;
+    color: #06b6d4;
+}
+
+.recon-actions {
+    margin-top: 20px;
+}
+
+.btn-primary {
+    width: 100%;
+    background: #06b6d4;
+    color: #000;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+}

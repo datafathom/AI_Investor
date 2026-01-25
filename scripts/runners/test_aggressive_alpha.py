@@ -45,6 +45,6 @@ def run_test_aggressive(args=None):
     print(f"Selected Growth Assets: {growth_list}")
     
     if "BTC (Growth)" in growth_list and "SHY (Bond)" not in growth_list:
-        print("\n✅ Verification Successful: Correctly identified growth assets.")
+        print("\nOK Verification Successful: Correctly identified growth assets.")
     else:
-        print("\n❌ Verification Failed: Asset filtering logic incorrect.")
+        print("\nERROR Verification Failed: Asset filtering logic incorrect.")

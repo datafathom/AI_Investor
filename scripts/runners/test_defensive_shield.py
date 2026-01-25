@@ -34,6 +34,6 @@ def run_test_shield(args=None):
     print(f"Selected Safe Assets: {safe_list}")
     
     if "BND (Safe)" in safe_list and "ARKK (Risky)" not in safe_list:
-        print("\n✅ Verification Successful: Correctly identified safe assets.")
+        print("\nOK Verification Successful: Correctly identified safe assets.")
     else:
-        print("\n❌ Verification Failed: Asset filtering logic incorrect.")
+        print("\nERROR Verification Failed: Asset filtering logic incorrect.")

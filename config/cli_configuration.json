@@ -32,6 +32,10 @@
             ],
             "handler": "scripts.runners.system_control:check_port"
         },
+        "check-runtimes": {
+            "description": "Check if dev ports (5050, 5173) are listening.",
+            "handler": "scripts.runners.system_control:check_runtimes"
+        },
         "stop-all": {
             "description": "Gracefully stop all services.",
             "handler": "scripts.runners.system_control:stop_all"
@@ -43,6 +47,10 @@
         "demo-start": {
             "description": "Stop prev runtimes and start Backend/Frontend in new windows.",
             "handler": "scripts.runners.system_control:run_demo_mode"
+        },
+        "dev": {
+            "description": "Developer Mode: Hot-Reload for Backend & Frontend (Fast Iteration).",
+            "handler": "scripts.runners.dev_runner:start_dev_mode"
         },
         "verify-pipeline": {
             "description": "Run End-to-End verification of the Data->Signal->Trade pipeline.",
@@ -364,6 +372,995 @@
         "test-politics": {
             "description": "Test Phase 36 Political Alpha Tracker.",
             "handler": "scripts.runners.test_politics:run_test_politics"
+        },
+        "test-quandl": {
+            "description": "Test Phase 4 Quandl Integration (Short Interest).",
+            "arguments": [
+                {
+                    "name": "symbol",
+                    "type": "string",
+                    "default": "TSLA",
+                    "help": "Ticker symbol to test"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run in simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_quandl:run_test_quandl"
+        },
+        "test-finnhub": {
+            "description": "Test Phase 5 Finnhub Integration (IPO & News).",
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run in simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_finnhub:run_test_finnhub"
+        },
+        "test-news": {
+            "description": "Test Phase 6 NewsAPI Integration (Sentiment).",
+            "arguments": [
+                {
+                    "name": "topic",
+                    "type": "string",
+                    "default": "market",
+                    "help": "Keyword or ticker to search"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run in simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_news:run_test_news"
+        },
+        "test-crypto": {
+            "description": "Test Phase 7 CryptoCompare Integration.",
+            "arguments": [
+                {
+                    "name": "symbols",
+                    "type": "string",
+                    "default": "BTC,ETH",
+                    "help": "Comma-separated list of symbols"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run in simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_crypto:run_test_crypto"
+        },
+        "test-reddit": {
+            "description": "Test Phase 8 Reddit Integration (Mock).",
+            "arguments": [
+                {
+                    "name": "subreddit",
+                    "type": "string",
+                    "default": "wallstreetbets",
+                    "help": "Target subreddit"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Force simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_reddit:run_test_reddit"
+        },
+        "test-debate": {
+            "description": "Test Phase 9 Anthropic Debate Chamber (Mock).",
+            "arguments": [
+                {
+                    "name": "ticker",
+                    "type": "string",
+                    "default": "SPY",
+                    "help": "Symbol to debate"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Force simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_debate:run_test_debate"
+        },
+        "test-gemini": {
+            "description": "Test Phase 10 Gemini Briefing (Mock).",
+            "arguments": [],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Force simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_gemini:run_test_gemini"
+        },
+        "test-research": {
+            "description": "Test Phase 11 Perplexity Research (Mock).",
+            "arguments": [
+                {
+                    "name": "query",
+                    "type": "string",
+                    "default": "Why is NVDA up today?",
+                    "help": "Question to ask"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Force simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_research:run_test_research"
+        },
+        "test-stripe": {
+            "description": "Test Phase 12 Stripe Billing (Mock).",
+            "arguments": [
+                {
+                    "name": "action",
+                    "type": "string",
+                    "default": "checkout",
+                    "help": "Action to test: checkout, subscription"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Force simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_stripe:run_test_stripe"
+        },
+        "test-paypal": {
+            "description": "Test Phase 13 PayPal (Mock).",
+            "arguments": [
+                {
+                    "name": "action",
+                    "type": "string",
+                    "default": "order",
+                    "help": "Action to test: order"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Force simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_paypal:run_test_paypal"
+        },
+        "test-venmo": {
+            "description": "Test Phase 14 Venmo (Mock).",
+            "arguments": [
+                {
+                    "name": "amount",
+                    "type": "float",
+                    "default": 29.00,
+                    "help": "Amount to pay"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Force simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_venmo:run_test_venmo"
+        },
+        "test-square": {
+            "description": "Test Phase 15 Square Merchant (Mock).",
+            "arguments": [
+                {
+                    "name": "action",
+                    "type": "string",
+                    "default": "stats",
+                    "help": "Action to test: stats, catalog"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Force simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_square:run_test_square"
+        },
+        "test-plaid": {
+            "description": "Test Phase 16 Plaid Banking (Mock).",
+            "arguments": [
+                {
+                    "name": "action",
+                    "type": "string",
+                    "default": "flow",
+                    "help": "Action to test: flow"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Force simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_plaid:run_test_plaid"
+        },
+        "test-coinbase": {
+            "description": "Test Phase 17 Coinbase Wallet (Mock).",
+            "arguments": [
+                {
+                    "name": "action",
+                    "type": "string",
+                    "default": "balance",
+                    "help": "Action to test: balance, transactions"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Force simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_coinbase:run_test_coinbase"
+        },
+        "test-binance": {
+            "description": "Test Phase 18 Binance Exchange (Mock).",
+            "arguments": [
+                {
+                    "name": "action",
+                    "type": "string",
+                    "default": "ticker",
+                    "help": "Action to test: ticker, depth, trade"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Force simulation mode"
+                },
+                {
+                    "name": "symbol",
+                    "type": "string",
+                    "default": "BTCUSDT",
+                    "help": "Symbol to trade/query"
+                }
+            ],
+            "handler": "scripts.runners.test_binance:run_test_binance"
+        },
+        "test-tax-harvesting": {
+            "description": "Test Phase 19 Tax Loss Harvesting (Mock).",
+            "arguments": [
+                {
+                    "name": "action",
+                    "type": "string",
+                    "default": "analyze",
+                    "help": "Action to test: analyze"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Force simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_tax_harvesting:run_test_tax_harvesting"
+        },
+        "test-twilio": {
+            "description": "Test Phase 20 Twilio SMS (Mock).",
+            "arguments": [
+                {
+                    "name": "action",
+                    "type": "string",
+                    "default": "send",
+                    "help": "Action to test: send"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Force simulation mode"
+                },
+                {
+                    "name": "to",
+                    "type": "string",
+                    "default": "+15551234567",
+                    "help": "Recipient phone number"
+                }
+            ],
+            "handler": "scripts.runners.test_twilio:run_test_twilio"
+        },
+        "test-sendgrid": {
+            "description": "Test Phase 21 SendGrid Email (Mock).",
+            "arguments": [
+                {
+                    "name": "action",
+                    "type": "string",
+                    "default": "send",
+                    "help": "Action to test: send"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Force simulation mode"
+                },
+                {
+                    "name": "to",
+                    "type": "string",
+                    "default": "user@example.com",
+                    "help": "Recipient email"
+                }
+            ],
+            "handler": "scripts.runners.test_sendgrid:run_test_sendgrid"
+        },
+        "test-pagerduty": {
+            "description": "Test Phase 22 PagerDuty Incidents (Mock).",
+            "arguments": [
+                {
+                    "name": "action",
+                    "type": "string",
+                    "default": "trigger",
+                    "help": "Action to test: trigger, list"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Force simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_pagerduty:run_test_pagerduty"
+        },
+        "test-slack": {
+            "description": "Test Phase 23 Slack Integration (Mock).",
+            "arguments": [
+                {
+                    "name": "action",
+                    "type": "string",
+                    "default": "post",
+                    "help": "Action to test: post, list"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Force simulation mode"
+                },
+                {
+                    "name": "channel",
+                    "type": "string",
+                    "default": "#general",
+                    "help": "Target channel"
+                }
+            ],
+            "handler": "scripts.runners.test_slack:run_test_slack"
+        },
+        "test": {
+            "description": "Run test suites by category",
+            "subcommands": {
+                "list": {
+                    "description": "List all available test categories",
+                    "handler": "scripts.runners.test_runner:list_test_categories"
+                },
+                "all": {
+                    "description": "Run all tests across the entire application",
+                    "flags": [
+                        {
+                            "name": "verbose",
+                            "short": "v",
+                            "type": "boolean",
+                            "default": false,
+                            "help": "Verbose output"
+                        },
+                        {
+                            "name": "coverage",
+                            "type": "boolean",
+                            "default": false,
+                            "help": "Generate coverage report"
+                        },
+                        {
+                            "name": "parallel",
+                            "short": "n",
+                            "type": "boolean",
+                            "default": false,
+                            "help": "Run tests in parallel"
+                        },
+                        {
+                            "name": "fail-fast",
+                            "short": "x",
+                            "type": "boolean",
+                            "default": false,
+                            "help": "Stop on first failure"
+                        },
+                        {
+                            "name": "html",
+                            "type": "boolean",
+                            "default": false,
+                            "help": "Generate HTML test report"
+                        }
+                    ],
+                    "handler": "scripts.runners.test_runner:run_test_category",
+                    "arguments": [
+                        {
+                            "name": "category",
+                            "type": "string",
+                            "default": "all",
+                            "help": "Test category (default: all)"
+                        }
+                    ]
+                },
+                "backend": {
+                    "description": "Run all backend service tests",
+                    "flags": [
+                        {
+                            "name": "verbose",
+                            "short": "v",
+                            "type": "boolean",
+                            "default": false
+                        },
+                        {
+                            "name": "coverage",
+                            "type": "boolean",
+                            "default": false
+                        },
+                        {
+                            "name": "parallel",
+                            "short": "n",
+                            "type": "boolean",
+                            "default": false
+                        },
+                        {
+                            "name": "fail-fast",
+                            "short": "x",
+                            "type": "boolean",
+                            "default": false
+                        }
+                    ],
+                    "handler": "scripts.runners.test_runner:run_test_category",
+                    "arguments": [
+                        {
+                            "name": "category",
+                            "type": "string",
+                            "default": "backend"
+                        }
+                    ]
+                },
+                "frontend": {
+                    "description": "Run frontend component tests",
+                    "flags": [
+                        {
+                            "name": "verbose",
+                            "short": "v",
+                            "type": "boolean",
+                            "default": false
+                        },
+                        {
+                            "name": "coverage",
+                            "type": "boolean",
+                            "default": false
+                        }
+                    ],
+                    "handler": "scripts.runners.test_runner:run_test_category",
+                    "arguments": [
+                        {
+                            "name": "category",
+                            "type": "string",
+                            "default": "frontend"
+                        }
+                    ]
+                },
+                "api": {
+                    "description": "Run API endpoint tests",
+                    "flags": [
+                        {
+                            "name": "verbose",
+                            "short": "v",
+                            "type": "boolean",
+                            "default": false
+                        },
+                        {
+                            "name": "coverage",
+                            "type": "boolean",
+                            "default": false
+                        },
+                        {
+                            "name": "parallel",
+                            "short": "n",
+                            "type": "boolean",
+                            "default": false
+                        }
+                    ],
+                    "handler": "scripts.runners.test_runner:run_test_category",
+                    "arguments": [
+                        {
+                            "name": "category",
+                            "type": "string",
+                            "default": "api"
+                        }
+                    ]
+                },
+                "models": {
+                    "description": "Run Pydantic model validation tests",
+                    "flags": [
+                        {
+                            "name": "verbose",
+                            "short": "v",
+                            "type": "boolean",
+                            "default": false
+                        },
+                        {
+                            "name": "coverage",
+                            "type": "boolean",
+                            "default": false
+                        }
+                    ],
+                    "handler": "scripts.runners.test_runner:run_test_category",
+                    "arguments": [
+                        {
+                            "name": "category",
+                            "type": "string",
+                            "default": "models"
+                        }
+                    ]
+                },
+                "quick": {
+                    "description": "Run quick smoke tests for critical paths",
+                    "flags": [
+                        {
+                            "name": "verbose",
+                            "short": "v",
+                            "type": "boolean",
+                            "default": false
+                        }
+                    ],
+                    "handler": "scripts.runners.test_runner:run_test_category",
+                    "arguments": [
+                        {
+                            "name": "category",
+                            "type": "string",
+                            "default": "quick"
+                        }
+                    ]
+                },
+                "unit": {
+                    "description": "Run all unit tests (services and models)",
+                    "flags": [
+                        {
+                            "name": "verbose",
+                            "short": "v",
+                            "type": "boolean",
+                            "default": false
+                        },
+                        {
+                            "name": "coverage",
+                            "type": "boolean",
+                            "default": false
+                        }
+                    ],
+                    "handler": "scripts.runners.test_runner:run_test_category",
+                    "arguments": [
+                        {
+                            "name": "category",
+                            "type": "string",
+                            "default": "unit"
+                        }
+                    ]
+                },
+                "integration": {
+                    "description": "Run integration tests (APIs and frontend)",
+                    "flags": [
+                        {
+                            "name": "verbose",
+                            "short": "v",
+                            "type": "boolean",
+                            "default": false
+                        },
+                        {
+                            "name": "coverage",
+                            "type": "boolean",
+                            "default": false
+                        }
+                    ],
+                    "handler": "scripts.runners.test_runner:run_test_category",
+                    "arguments": [
+                        {
+                            "name": "category",
+                            "type": "string",
+                            "default": "integration"
+                        }
+                    ]
+                }
+            }
+        },
+        "test-category": {
+            "description": "Run tests for a specific category (use test list to see all categories)",
+            "arguments": [
+                {
+                    "name": "category",
+                    "type": "string",
+                    "required": true,
+                    "help": "Test category name (e.g., backend-phase1, api-trading, models-core)"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "verbose",
+                    "short": "v",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Verbose output"
+                },
+                {
+                    "name": "coverage",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Generate coverage report"
+                },
+                {
+                    "name": "parallel",
+                    "short": "n",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run tests in parallel"
+                },
+                {
+                    "name": "fail-fast",
+                    "short": "x",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Stop on first failure"
+                },
+                {
+                    "name": "html",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Generate HTML test report"
+                }
+            ],
+            "handler": "scripts.runners.test_runner:run_test_category"
+        },
+        "frontend": {
+            "description": "Frontend operations (React/Vite)",
+            "subcommands": {
+                "dev": {
+                    "description": "Start frontend development server",
+                    "flags": [
+                        {
+                            "name": "port",
+                            "type": "integer",
+                            "default": 5173,
+                            "help": "Port to run dev server on"
+                        }
+                    ],
+                    "handler": "scripts.runners.frontend_runner:run_frontend_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "dev"
+                        }
+                    ]
+                },
+                "build": {
+                    "description": "Build frontend for production",
+                    "handler": "scripts.runners.frontend_runner:run_frontend_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "build"
+                        }
+                    ]
+                },
+                "preview": {
+                    "description": "Preview production build",
+                    "handler": "scripts.runners.frontend_runner:run_frontend_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "preview"
+                        }
+                    ]
+                },
+                "install": {
+                    "description": "Install frontend dependencies",
+                    "handler": "scripts.runners.frontend_runner:run_frontend_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "install"
+                        }
+                    ]
+                },
+                "lint": {
+                    "description": "Run frontend linter",
+                    "handler": "scripts.runners.frontend_runner:run_frontend_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "lint"
+                        }
+                    ]
+                },
+                "verify": {
+                    "description": "Verify frontend setup",
+                    "handler": "scripts.runners.frontend_runner:run_frontend_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "verify"
+                        }
+                    ]
+                }
+            }
+        },
+        "backend": {
+            "description": "Backend operations (Flask/Python)",
+            "subcommands": {
+                "dev": {
+                    "description": "Start backend development server",
+                    "flags": [
+                        {
+                            "name": "port",
+                            "type": "integer",
+                            "default": 5050,
+                            "help": "Port to run server on"
+                        },
+                        {
+                            "name": "host",
+                            "type": "string",
+                            "default": "127.0.0.1",
+                            "help": "Host to bind to"
+                        }
+                    ],
+                    "handler": "scripts.runners.backend_runner:run_backend_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "dev"
+                        }
+                    ]
+                },
+                "prod": {
+                    "description": "Start backend production server (Gunicorn)",
+                    "flags": [
+                        {
+                            "name": "workers",
+                            "type": "integer",
+                            "default": 4,
+                            "help": "Number of worker processes"
+                        },
+                        {
+                            "name": "port",
+                            "type": "integer",
+                            "default": 5050,
+                            "help": "Port to run server on"
+                        }
+                    ],
+                    "handler": "scripts.runners.backend_runner:run_backend_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "prod"
+                        }
+                    ]
+                },
+                "install": {
+                    "description": "Install backend dependencies",
+                    "handler": "scripts.runners.backend_runner:run_backend_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "install"
+                        }
+                    ]
+                },
+                "verify": {
+                    "description": "Verify backend setup",
+                    "handler": "scripts.runners.backend_runner:run_backend_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "verify"
+                        }
+                    ]
+                }
+            }
+        },
+        "deploy": {
+            "description": "Deployment operations",
+            "subcommands": {
+                "prod": {
+                    "description": "Deploy to production",
+                    "flags": [
+                        {
+                            "name": "env",
+                            "type": "string",
+                            "help": "Environment file path"
+                        }
+                    ],
+                    "handler": "scripts.runners.deployment_runner:run_deployment_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "prod"
+                        }
+                    ]
+                },
+                "rollback": {
+                    "description": "Rollback deployment",
+                    "handler": "scripts.runners.deployment_runner:run_deployment_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "rollback"
+                        }
+                    ]
+                },
+                "build": {
+                    "description": "Build Docker images",
+                    "handler": "scripts.runners.deployment_runner:run_deployment_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "build"
+                        }
+                    ]
+                },
+                "health": {
+                    "description": "Check deployment health",
+                    "handler": "scripts.runners.deployment_runner:run_deployment_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "health"
+                        }
+                    ]
+                }
+            }
+        },
+        "db": {
+            "description": "Database operations",
+            "subcommands": {
+                "migrate": {
+                    "description": "Run database migrations",
+                    "flags": [
+                        {
+                            "name": "direction",
+                            "type": "string",
+                            "default": "up",
+                            "help": "Migration direction: up or down"
+                        },
+                        {
+                            "name": "migration-id",
+                            "type": "string",
+                            "help": "Specific migration to run"
+                        }
+                    ],
+                    "handler": "scripts.runners.database_runner:run_db_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "migrate"
+                        }
+                    ]
+                },
+                "backup": {
+                    "description": "Backup database",
+                    "flags": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "default": "all",
+                            "help": "Backup type: postgres, neo4j, or all"
+                        }
+                    ],
+                    "handler": "scripts.runners.database_runner:run_db_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "backup"
+                        }
+                    ]
+                },
+                "restore": {
+                    "description": "Restore database from backup",
+                    "flags": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "required": true,
+                            "help": "Backup file path"
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "default": "postgres",
+                            "help": "Database type: postgres or neo4j"
+                        }
+                    ],
+                    "handler": "scripts.runners.database_runner:run_db_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "restore"
+                        }
+                    ]
+                },
+                "status": {
+                    "description": "Check migration status",
+                    "handler": "scripts.runners.database_runner:run_db_command",
+                    "arguments": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "default": "status"
+                        }
+                    ]
+                }
+            }
         }
     }
 }

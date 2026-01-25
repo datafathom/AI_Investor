@@ -1,0 +1,327 @@
+/**
+ * MenuBar Styles
+ * 
+ * Traditional desktop application menu bar styling.
+ * IMPORTANT: MenuBar should ALWAYS appear dark regardless of theme.
+ */
+
+.menu-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;
+  /* Force dark styling always */
+  background: #5a1520 !important;
+  border-bottom: 1px solid #3d0e15 !important;
+  color: #fffef0 !important;
+  font-size: 13px;
+  font-family: var(--font-display);
+  user-select: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transform: scale(1) !important;
+}
+
+
+.menu-bar-left {
+  display: flex;
+  align-items: center;
+}
+
+.menu-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.menu-bar.dark {
+  background: var(--color-burgundy-primary, #5a1520);
+  border-bottom-color: var(--color-burgundy-dark, #3d0e15);
+  color: var(--color-text-on_burgundy, #fffef0);
+}
+
+.menu-item {
+  position: relative;
+  padding: 4px 12px;
+  cursor: pointer;
+  color: #fffef0 !important;
+  transition: var(--transition-fast);
+  outline: none;
+}
+
+.menu-item:hover,
+.menu-item:focus {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+.menu-item.active {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+
+.menu-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 200px;
+  /* Force dark dropdown */
+  background: #1a1512 !important;
+  border: 1px solid #3a342d !important;
+  border-radius: var(--radius-card);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  padding: 4px 0;
+  margin-top: 1px;
+  z-index: 1001;
+  animation: menuFadeIn 0.15s ease-out;
+}
+
+
+.menu-bar.dark .menu-dropdown {
+  background: var(--color-surface-200, #2a2520);
+  border-color: var(--color-surface-400, #3a342d);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes menuFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 24px 6px 12px;
+  cursor: pointer;
+  color: #fffef0 !important;
+  transition: var(--transition-fast);
+  outline: none;
+  position: relative;
+}
+
+
+/* Always use readable text color */
+.menu-bar.dark .menu-dropdown-item {
+  color: var(--color-text-light, #fffef0);
+}
+
+.menu-checkmark {
+  width: 16px;
+  text-align: center;
+  margin-right: 8px;
+  font-size: 12px;
+  color: var(--neon-cyan);
+}
+
+.menu-dropdown-item.checked .menu-item-label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.menu-dropdown-item:hover:not(.disabled),
+.menu-dropdown-item:focus:not(.disabled) {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+
+.menu-dropdown-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: var(--color-text-secondary, #8a7a6a);
+}
+
+/* Sub-menu styling */
+.menu-submenu-trigger {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.menu-submenu-arrow {
+  margin-left: auto;
+  font-size: 10px;
+  opacity: 0.7;
+  padding-left: 10px;
+}
+
+.menu-submenu {
+  position: absolute;
+  top: -4px;
+  left: 100%;
+  min-width: 200px;
+  /* Force dark submenu */
+  background: #1a1512 !important;
+  border: 1px solid #3a342d !important;
+  border-radius: var(--radius-card);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  padding: 4px 0;
+  display: none;
+  z-index: 1002;
+}
+
+
+.menu-bar.dark .menu-submenu {
+  background: var(--color-surface-200, #2a2520);
+  border-color: var(--color-surface-400, #3a342d);
+}
+
+.menu-dropdown-item:hover .menu-submenu,
+.menu-dropdown-item:focus-within .menu-submenu {
+  display: block;
+  animation: menuFadeIn 0.15s ease-out;
+}
+
+.menu-item-label {
+  flex: 1;
+}
+
+.menu-item-shortcut {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-left: 24px;
+  font-family: 'Courier New', monospace;
+}
+
+.menu-dropdown-item:hover .menu-item-shortcut,
+.menu-dropdown-item:focus .menu-item-shortcut {
+  opacity: 0.9;
+}
+
+.menu-divider {
+  height: 1px;
+  background: var(--border-primary);
+  margin: 4px 8px;
+}
+
+/* Keyboard navigation highlight */
+.menu-item:focus-visible,
+.menu-dropdown-item:focus-visible {
+  outline: 2px solid var(--color-burgundy-primary, #5a1520);
+  outline-offset: -2px;
+}
+
+/* Right-aligned buttons */
+.menu-bar-button {
+  border: 0;
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-on_burgundy, #fffef0);
+  transition: background-color 0.15s;
+  outline: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.menu-bar-button:hover,
+.menu-bar-button:focus {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.menu-bar-button:active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Zoom buttons with magnifying glass icon */
+.menu-bar-zoom-button {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 4px 8px;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.menu-bar-zoom-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.menu-bar-zoom-button .zoom-icon {
+  font-size: 11px;
+  line-height: 1;
+}
+
+.menu-bar-zoom-button .zoom-symbol {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Theme toggle in menu bar */
+.menu-bar-theme-toggle {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 11px;
+  color: var(--color-text-on_burgundy, #fffef0);
+}
+
+.menu-bar-theme-toggle span {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.menu-bar-theme-toggle .switch {
+  position: relative;
+  width: 36px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.menu-bar-theme-toggle .switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.menu-bar-theme-toggle .switch .slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 18px;
+  transition: background 0.2s ease;
+}
+
+.menu-bar-theme-toggle .switch .slider::before {
+  content: '';
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  left: 2px;
+  top: 2px;
+  background: var(--color-text-on_burgundy, #fffef0);
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.menu-bar-theme-toggle .switch input:checked + .slider {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.menu-bar-theme-toggle .switch input:checked + .slider::before {
+  transform: translateX(18px);
+}
+

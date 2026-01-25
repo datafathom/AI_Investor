@@ -1,0 +1,137 @@
+.quick-actions {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+
+.quick-actions--bottom-right {
+  bottom: calc(var(--space-6) + 64px); /* Above bottom nav on mobile */
+  right: var(--space-6);
+}
+
+.quick-actions--bottom-left {
+  bottom: calc(var(--space-6) + 64px);
+  left: var(--space-6);
+  align-items: flex-start;
+}
+
+@media (min-width: 769px) {
+  .quick-actions--bottom-right {
+    bottom: var(--space-6);
+  }
+  
+  .quick-actions--bottom-left {
+    bottom: var(--space-6);
+  }
+}
+
+/* Main FAB */
+.quick-actions__fab {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 4px 20px rgba(6, 182, 212, 0.4),
+    0 0 0 0 rgba(6, 182, 212, 0.3);
+  transition: var(--transition-spring);
+}
+
+.quick-actions__fab:hover {
+  transform: scale(1.05);
+  box-shadow: 
+    0 6px 30px rgba(6, 182, 212, 0.5),
+    0 0 0 8px rgba(6, 182, 212, 0.1);
+}
+
+.quick-actions__fab:active {
+  transform: scale(0.95);
+}
+
+.quick-actions__fab--open {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-secondary);
+  transform: rotate(45deg);
+}
+
+.quick-actions__fab--open:hover {
+  transform: rotate(45deg) scale(1.05);
+}
+
+/* Action menu */
+.quick-actions__menu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px) scale(0.8);
+  transition: var(--transition-spring);
+}
+
+.quick-actions__menu--open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+/* Action items */
+.quick-actions__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-full);
+  color: var(--text-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-fast);
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.quick-actions__menu--open .quick-actions__item {
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: var(--delay);
+}
+
+.quick-actions__item:hover {
+  background: var(--bg-elevated);
+  border-color: var(--action-color);
+  color: var(--action-color);
+  transform: translateX(-4px);
+}
+
+.quick-actions__item:active {
+  transform: scale(0.98);
+}
+
+.quick-actions__label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+}
+
+/* Hide labels on mobile for compact view */
+@media (max-width: 480px) {
+  .quick-actions__item {
+    padding: var(--space-3);
+    border-radius: 50%;
+  }
+  
+  .quick-actions__label {
+    display: none;
+  }
+}

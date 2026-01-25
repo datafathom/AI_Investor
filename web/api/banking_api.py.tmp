@@ -1,0 +1,11 @@
+
+from services.banking.banking_service import get_banking_service
+from services.banking.reconciliation_service import get_reconciliation_service
+from flask import Blueprint, jsonify, request, g
+from web.auth_utils import login_required, requires_role
+import datetime
+
+banking_bp = Blueprint('banking_api_v1', __name__, url_prefix='/api/v1/banking')
+
+# ... existing endpoints (will be replaced by multi_replace later if needed, but I'll write the full file here for consistency if I can't guarantee previous state)
+# Actually, I'll just add the new endpoint to the existing file using replace_file_content.

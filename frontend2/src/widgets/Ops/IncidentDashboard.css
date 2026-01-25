@@ -1,0 +1,145 @@
+/**
+ * IncidentDashboard.css
+ */
+
+.incident-dashboard {
+    background: #1f2937; /* Dark Ops Theme */
+    color: #f3f4f6;
+    border-radius: 8px;
+    padding: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    max-width: 450px;
+    border: 1px solid #374151;
+}
+
+.dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #374151;
+    padding-bottom: 1rem;
+}
+
+.dash-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #e5e7eb;
+}
+
+.pd-logo {
+    background: #04c21e; /* PagerDuty Green */
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-family: sans-serif;
+}
+
+.trigger-section {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.trigger-section input {
+    flex: 1;
+    background: #111827;
+    border: 1px solid #4b5563;
+    color: #fff;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.9rem;
+}
+
+.trigger-btn {
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.8rem;
+    transition: background 0.2s;
+}
+
+.trigger-btn:hover {
+    background: #b91c1c;
+}
+
+.trigger-btn:disabled {
+    background: #7f1d1d;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.incident-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.incident-card {
+    background: #111827;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    border-left: 4px solid #6b7280;
+}
+
+.inc-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+.inc-urgency.high { color: #dc2626; font-weight: 700; }
+.inc-urgency.low { color: #d97706; }
+
+.inc-title {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.inc-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    border-top: 1px solid #374151;
+    padding-top: 0.5rem;
+}
+
+.inc-status {
+    font-weight: 700;
+}
+
+.inc-time {
+    color: #6b7280;
+}
+
+.empty-state {
+    text-align: center;
+    color: #059669;
+    padding: 2rem;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.error-msg {
+    color: #f87171;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.7rem;
+    color: #6b7280;
+}

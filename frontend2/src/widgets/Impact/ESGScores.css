@@ -1,0 +1,141 @@
+.esg-scores {
+    background: rgba(30, 30, 30, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    color: #e0e0e0;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 100%;
+}
+
+.esg-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+.esg-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gauges-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.gauge-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.circular-gauge {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    border-radius: 50%;
+    /* border: 2px solid rgba(255,255,255,0.1); */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: conic-gradient(
+        var(--gauge-color) var(--gauge-percent), 
+        rgba(255,255,255,0.1) 0deg
+    );
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+
+.gauge-inner {
+    width: 65px;
+    height: 65px;
+    background: #1a1a1a;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.gauge-inner strong {
+    font-size: 1.2rem;
+    color: white;
+}
+
+.gauge-inner small {
+    font-size: 0.6rem;
+    color: #888;
+}
+
+.gauge-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #ccc;
+}
+
+.karma-score-bar {
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.karma-label {
+    display: flex;
+    flex-direction: column;
+}
+
+.karma-label span {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.karma-label strong {
+    font-size: 1.1rem;
+    color: #f59e0b; /* Amber */
+}
+
+.karma-stars {
+    color: #f59e0b;
+    letter-spacing: 2px;
+}
+
+.sin-stock-alert {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sin-icon {
+    color: #ef4444;
+}
+
+.sin-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.sin-details strong {
+    color: #fca5a5;
+}

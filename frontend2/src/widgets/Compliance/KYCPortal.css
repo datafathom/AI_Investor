@@ -1,0 +1,178 @@
+.kyc-portal {
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    padding: 16px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.portal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.header-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--color-success) 0%, var(--color-info) 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.header-text h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.header-text .subtitle {
+    font-size: 10px;
+    color: var(--color-success);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.progress-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background: var(--bg-surface-2);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-warning) 0%, var(--color-success) 100%);
+    transition: width 0.3s ease;
+}
+
+.progress-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    min-width: 80px;
+}
+
+.documents-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.document-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-surface-2);
+    border-radius: 8px;
+    border-left: 3px solid var(--border-primary);
+}
+
+.document-row.approved {
+    border-left-color: var(--color-success);
+}
+
+.document-row.rejected {
+    border-left-color: var(--color-danger);
+}
+
+.document-row.in_review {
+    border-left-color: var(--color-warning);
+}
+
+.doc-icon {
+    color: var(--text-muted);
+}
+
+.doc-info {
+    flex: 1;
+}
+
+.doc-type {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.doc-status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.status-approved { color: var(--color-success); }
+.status-rejected { color: var(--color-danger); }
+.status-review { color: var(--color-warning); }
+.status-pending { color: var(--text-muted); }
+
+.encrypted-badge {
+    background: rgba(46, 213, 115, 0.15);
+    color: var(--color-success);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: 600;
+}
+
+.upload-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--color-info);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.verification-actions {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-primary);
+}
+
+.action-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.action-btn.primary {
+    background: linear-gradient(135deg, var(--color-info) 0%, var(--color-success) 100%);
+    color: white;
+}
+
+.portal-footer {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-muted);
+}

@@ -1,0 +1,113 @@
+.what-if-simulator {
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    padding: 16px;
+}
+
+.what-if-simulator .widget-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.what-if-simulator .widget-header h3 {
+    margin: 0;
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.reset-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    border: 1px solid var(--border-secondary);
+    color: var(--text-muted);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.impact-display {
+    text-align: center;
+    padding: 16px;
+    background: var(--bg-surface-2);
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.impact-display .label {
+    display: block;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.impact-display .value {
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.impact-display .value.positive { color: var(--color-bullish); }
+.impact-display .value.negative { color: var(--color-bearish); }
+
+.scenarios-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.scenario-card {
+    padding: 10px;
+    background: var(--bg-surface-2);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.scenario-card.active {
+    border-color: var(--color-info);
+    background: var(--bg-elevated);
+}
+
+.scenario-card.bearish .scenario-impact { color: var(--color-bearish); }
+.scenario-card.bullish .scenario-impact { color: var(--color-bullish); }
+
+.scenario-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.scenario-name {
+    font-size: 10px;
+    color: var(--text-primary);
+}
+
+.scenario-impact {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.run-simulation-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--color-info);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}

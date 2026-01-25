@@ -1,0 +1,119 @@
+.forecast-chart-widget {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 16px;
+    height: 100%;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.widget-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-stats .stat {
+    text-align: right;
+}
+
+.header-stats .label {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+.header-stats .val {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.header-stats .val.negative { color: #ef4444; }
+
+.chart-area-mock {
+    flex-grow: 1;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.chart-label {
+    position: absolute;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.chart-label.baseline {
+    top: 20px;
+    right: 20px;
+    color: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.chart-label.shock {
+    bottom: 40px;
+    right: 50px;
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.analysis-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.shield-indicator {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.shield-text .status {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fca5a5;
+}
+
+.shield-text .sub {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+.recovery-time {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    text-align: right;
+}
+
+.recovery-time .icon {
+    color: var(--text-secondary);
+}
+
+.recovery-time .text span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+}
+
+.recovery-time .text strong {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}

@@ -34,4 +34,4 @@ def run_test_briefing(args=None):
     print("\n--- Testing Alert Notification ---")
     notifier = get_notification_manager()
     notifier.send_alert("Test Critical Alert", AlertPriority.CRITICAL)
-    print("✅ Notification sent to mock channels.")
+    print("OK Notification sent to mock channels.")

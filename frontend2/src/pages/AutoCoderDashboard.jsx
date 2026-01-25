@@ -5,8 +5,34 @@ import { Bot, Code2, Play, Rocket, ShieldCheck, Terminal, Save, X, Eye, FileCode
 import FileTree from '../components/AutoCoder/FileTree';
 import CodeDiffViewer from '../components/AutoCoder/CodeDiffViewer';
 import TaskQueue from '../components/AutoCoder/TaskQueue';
+import { Responsive, WidthProvider } from 'react-grid-layout';
+
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const AutoCoderDashboard = () => {
+    const DEFAULT_LAYOUT = {
+        lg: [
+            { i: 'filetree', x: 0, y: 0, w: 2, h: 12 },
+            { i: 'editor', x: 2, y: 0, w: 7, h: 12 },
+            { i: 'sidebar', x: 9, y: 0, w: 3, h: 12 }
+        ]
+    };
+    const STORAGE_KEY = 'layout_autocoder';
+
+    const [layouts, setLayouts] = useState(() => {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : DEFAULT_LAYOUT;
+        } catch (e) {
+            return DEFAULT_LAYOUT;
+        }
+    });
+
+    const onLayoutChange = (currentLayout, allLayouts) => {
+        setLayouts(allLayouts);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+    };
+
     const [task, setTask] = useState('Create a data normalizer for 10-year yield data.');
     const [code, setCode] = useState('');
     const [loading, setLoading] = useState(false);
@@ -38,7 +64,7 @@ const AutoCoderDashboard = () => {
     };
 
     return (
-        <div className="autocoder-container glass h-screen flex flex-col bg-slate-950 text-slate-300">
+        <div className="full-bleed-page autocoder-container h-screen flex flex-col bg-slate-950 text-slate-300">
             <header className="autocoder-header border-b border-slate-800 bg-slate-900/50 p-4 flex justify-between items-center backdrop-blur-md">
                 <div className="flex items-center gap-3">
                     <Bot className="text-cyan-400" size={24} />
@@ -54,16 +80,36 @@ const AutoCoderDashboard = () => {
                 </div>
             </header>
 
-            <main className="flex-1 overflow-hidden grid grid-cols-12">
+            <ResponsiveGridLayout
+                className="layout h-full overflow-hidden"
+                layouts={layouts}
+                onLayoutChange={onLayoutChange}
+                breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                rowHeight={60} // Smaller row height for fine-grained IDE control
+                isDraggable={true}
+                isResizable={true}
+                draggableHandle=".draggable-handle"
+                margin={[2, 2]} // Minimal margin for IDE feel
+            >
 
                 {/* LEFT: File Tree */}
-                <div className="col-span-2 border-r border-slate-800 bg-slate-900/30 flex flex-col pt-2">
-                    <FileTree />
+                <div key="filetree" className="border-r border-slate-800 bg-slate-900/30 flex flex-col h-full">
+                    <div className="draggable-handle p-2 bg-slate-900/50 cursor-move border-b border-slate-800 text-[10px] uppercase font-bold text-slate-500">
+                        File Explorer
+                    </div>
+                    <div className="flex-1 overflow-auto">
+                        <FileTree />
+                    </div>
                 </div>
 
                 {/* CENTER: Editor & Actions */}
-                <div className="col-span-7 flex flex-col border-r border-slate-800 bg-[#0a0a0a]">
+                <div key="editor" className="flex flex-col border-r border-slate-800 bg-[#0a0a0a] h-full">
                     {/* Prompt Bar */}
+                    <div className="draggable-handle p-2 bg-slate-900/50 cursor-move border-b border-slate-800 flex justify-between items-center">
+                        <span className="text-[10px] uppercase font-bold text-slate-500">Editor Workspace</span>
+                    </div>
+                    
                     <div className="p-4 border-b border-slate-800 bg-slate-900/50 flex gap-2">
                         <div className="flex-1 relative">
                             <input
@@ -123,8 +169,11 @@ const AutoCoderDashboard = () => {
                 </div>
 
                 {/* RIGHT: Tasks & Logs */}
-                <div className="col-span-3 flex flex-col bg-slate-900/30">
-                    <div className="h-1/2 border-b border-slate-800 flex flex-col overflow-hidden pt-2">
+                <div key="sidebar" className="flex flex-col bg-slate-900/30 h-full">
+                    <div className="h-1/2 border-b border-slate-800 flex flex-col overflow-hidden">
+                        <div className="draggable-handle p-2 bg-slate-900/50 cursor-move border-b border-slate-800 text-[10px] uppercase font-bold text-slate-500">
+                            Task Queue
+                        </div>
                         <TaskQueue />
                     </div>
 
@@ -144,7 +193,7 @@ const AutoCoderDashboard = () => {
                     </div>
                 </div>
 
-            </main>
+            </ResponsiveGridLayout>
         </div>
     );
 };

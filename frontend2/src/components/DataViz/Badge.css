@@ -1,0 +1,106 @@
+.badge-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  font-size: var(--text-xs);
+  font-weight: var(--font-bold);
+  font-family: var(--font-data);
+  border-radius: var(--radius-full);
+  min-width: 18px;
+  height: 18px;
+  line-height: 1;
+}
+
+/* Variants */
+.badge--default {
+  background: var(--neon-cyan);
+  color: var(--bg-primary);
+}
+
+.badge--success {
+  background: var(--neon-green);
+  color: var(--bg-primary);
+}
+
+.badge--warning {
+  background: var(--neon-yellow);
+  color: var(--bg-primary);
+}
+
+.badge--error {
+  background: var(--neon-red);
+  color: white;
+}
+
+.badge--info {
+  background: var(--neon-purple);
+  color: white;
+}
+
+/* Dot variant */
+.badge--dot {
+  width: 8px;
+  height: 8px;
+  min-width: 8px;
+  padding: 0;
+}
+
+/* Positions */
+.badge--top-right {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+}
+
+.badge--top-left {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+}
+
+.badge--bottom-right {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+}
+
+.badge--bottom-left {
+  position: absolute;
+  bottom: -4px;
+  left: -4px;
+}
+
+/* Pulse animation */
+.badge--pulse::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  animation: badgePulse 1.5s ease-out infinite;
+}
+
+@keyframes badgePulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Large count */
+.badge--large {
+  padding: 4px 8px;
+  font-size: var(--text-sm);
+  min-width: 24px;
+  height: 24px;
+}

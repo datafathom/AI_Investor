@@ -1,0 +1,106 @@
+.tooltip-trigger {
+  display: inline-flex;
+}
+
+.rich-tooltip {
+  position: fixed;
+  z-index: 10002;
+  pointer-events: none;
+  animation: tooltipFadeIn 0.15s ease-out;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.rich-tooltip__content {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-card);
+  padding: var(--space-2) var(--space-3);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  max-width: 300px;
+  line-height: var(--leading-relaxed);
+}
+
+.rich-tooltip__arrow {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
+  transform: rotate(45deg);
+}
+
+/* Placement variants */
+.rich-tooltip--top .rich-tooltip__arrow {
+  bottom: -5px;
+  left: 50%;
+  margin-left: -4px;
+  border-top: none;
+  border-left: none;
+}
+
+.rich-tooltip--bottom .rich-tooltip__arrow {
+  top: -5px;
+  left: 50%;
+  margin-left: -4px;
+  border-bottom: none;
+  border-right: none;
+}
+
+.rich-tooltip--left .rich-tooltip__arrow {
+  right: -5px;
+  top: 50%;
+  margin-top: -4px;
+  border-bottom: none;
+  border-left: none;
+}
+
+.rich-tooltip--right .rich-tooltip__arrow {
+  left: -5px;
+  top: 50%;
+  margin-top: -4px;
+  border-top: none;
+  border-right: none;
+}
+
+/* Rich content styles */
+.rich-tooltip__content h4 {
+  margin: 0 0 var(--space-1);
+  font-weight: var(--font-semibold);
+  font-size: var(--text-sm);
+}
+
+.rich-tooltip__content p {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.rich-tooltip__content kbd {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-secondary);
+  border-radius: 3px;
+  padding: 1px 4px;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+/* Dark theme enhancements */
+body.theme-dark .rich-tooltip__content {
+  background: rgba(26, 26, 28, 0.98);
+  backdrop-filter: blur(12px);
+  box-shadow: 
+    var(--shadow-lg),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}

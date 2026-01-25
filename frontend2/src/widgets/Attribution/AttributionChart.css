@@ -1,0 +1,86 @@
+.attribution-chart {
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    padding: 16px;
+    height: 100%;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.chart-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.period-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.attribution-chart svg {
+    width: 100%;
+    height: auto;
+}
+
+.attribution-chart .axis text {
+    fill: var(--text-secondary);
+    font-size: 10px;
+}
+
+.attribution-chart .axis line,
+.attribution-chart .axis path {
+    stroke: var(--border-secondary);
+}
+
+.bar-selection,
+.bar-interaction {
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.bar-selection:hover,
+.bar-interaction:hover {
+    opacity: 1 !important;
+}
+
+.sector-detail {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.sector-detail strong {
+    display: block;
+    color: var(--text-primary);
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.sector-detail .positive {
+    color: var(--color-bullish);
+}
+
+.sector-detail .negative {
+    color: var(--color-bearish);
+}
+
+/* Legend styling */
+.legend text {
+    font-family: var(--font-data);
+}

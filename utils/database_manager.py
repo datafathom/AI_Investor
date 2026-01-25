@@ -63,18 +63,44 @@ class DatabaseManager:
         
         # Apply Tenant Isolation
         try:
-            from services.auth.tenant_manager import tenant_manager
-            schema = tenant_manager.get_current_tenant_schema()
+            # Check if we are inside a Flask context
+            import flask
+            if not flask.has_app_context():
+                 # Standalone script mode: use public schema
+                 schema = "public"
+            else:
+                from services.auth.tenant_manager import tenant_manager
+                schema = tenant_manager.get_current_tenant_schema()
             
-            with conn.cursor() as cur:
-                # Security: schema name must be trusted (from manager)
-                cur.execute(f"SET search_path TO {schema}, public;")
-                logger.debug(f"Switched connection to schema: {schema}")
-        except Exception as e:
-            logger.error(f"Failed to set tenant schema context: {e}")
-            # Fallback to public for safety (or raise error depending on policy)
+            if schema and schema != "public":
+                with conn.cursor() as cur:
+                    # Security: schema name must be trusted (from manager)
+                    cur.execute(f"SET search_path TO {schema}, public;")
+                    logger.debug(f"Switched connection to schema: {schema}")
+        except (ImportError, RuntimeError, AttributeError) as e:
+            logger.debug(f"Standalone mode or Error setting tenant schema: {e}")
+            # Fallback to public (default)
             
         return conn
+
+    from contextlib import contextmanager
+
+    @contextmanager
+    def pg_cursor(self):
+        """
+        Context manager that yields a cursor and automatically releases the connection.
+        """
+        conn = self.get_pg_connection()
+        try:
+            with conn.cursor() as cur:
+                yield cur
+            conn.commit()
+        except Exception as e:
+            conn.rollback()
+            logger.error(f"Database error in pg_cursor: {e}")
+            raise
+        finally:
+            self.release_pg_connection(conn)
 
     def release_pg_connection(self, conn):
         """Release a Postgres connection back to the pool."""
@@ -97,3 +123,5 @@ class DatabaseManager:
             logger.info("Neo4j driver closed.")
 
 db_manager = DatabaseManager()
+def get_database_manager() -> DatabaseManager:
+    return DatabaseManager()

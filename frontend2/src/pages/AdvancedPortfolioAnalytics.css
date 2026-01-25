@@ -1,0 +1,108 @@
+.advanced-portfolio-analytics {
+  color: #fff;
+  background: transparent;
+}
+
+.analytics-header {
+  margin-bottom: 2rem;
+}
+
+.analytics-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #00d4ff, #5b86e5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  color: #888;
+  font-size: 1rem;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+}
+
+.analytics-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.analytics-card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #00d4ff;
+}
+
+.metric {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.metric .label {
+  color: #aaa;
+}
+
+.metric .value {
+  font-weight: bold;
+  color: #00d4ff;
+}
+
+.breakdown {
+  margin-top: 1.5rem;
+}
+
+.breakdown h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  color: #fff;
+}
+
+.breakdown-item {
+  padding: 0.5rem 0;
+  color: #ccc;
+}
+
+.contributions-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.contribution-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+}
+
+.contribution-item .symbol {
+  font-weight: bold;
+  color: #00d4ff;
+}
+
+.contribution-item .contribution {
+  color: #5b86e5;
+}
+
+.no-data {
+  color: #888;
+  text-align: center;
+  padding: 2rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  color: #00d4ff;
+  font-size: 1.2rem;
+}

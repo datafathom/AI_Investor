@@ -1,0 +1,195 @@
+/**
+ * ==============================================================================
+ * FILE: frontend2/src/components/Brokerage/RobinhoodConnect.css
+ * ROLE: Robinhood Connect Modal Styles
+ * ==============================================================================
+ */
+
+.robinhood-connect-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.robinhood-connect-modal {
+    background: var(--card-bg, rgba(20, 25, 35, 0.95));
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    border-radius: 12px;
+    max-width: 450px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.robinhood-connect__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+}
+
+.robinhood-connect__header h3 {
+    margin: 0;
+    color: var(--text-primary, #fff);
+    font-size: 1.25rem;
+}
+
+.robinhood-connect__close {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary, #888);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.robinhood-connect__close:hover {
+    background: var(--hover-bg, rgba(100, 150, 200, 0.1));
+    color: var(--text-primary, #fff);
+}
+
+.robinhood-connect__form {
+    padding: 1.5rem;
+}
+
+.robinhood-connect__info {
+    margin-bottom: 1.5rem;
+}
+
+.robinhood-connect__info p {
+    margin: 0.5rem 0;
+    color: var(--text-primary, #fff);
+    line-height: 1.5;
+}
+
+.robinhood-connect__note {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #888);
+    font-style: italic;
+}
+
+.robinhood-connect__error {
+    padding: 0.75rem;
+    background: rgba(234, 67, 53, 0.1);
+    border: 1px solid rgba(234, 67, 53, 0.3);
+    border-radius: 6px;
+    color: #ea4335;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.robinhood-connect__field {
+    margin-bottom: 1.25rem;
+}
+
+.robinhood-connect__field label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary, #fff);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.robinhood-connect__field input {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--input-bg, rgba(30, 40, 50, 0.8));
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    border-radius: 6px;
+    color: var(--text-primary, #fff);
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.robinhood-connect__field input:focus {
+    border-color: var(--accent-color, #00d4ff);
+    box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.3);
+}
+
+.robinhood-connect__field input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.robinhood-connect__mfa-hint {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary, #888);
+    font-style: italic;
+}
+
+.robinhood-connect__actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+}
+
+.robinhood-connect__cancel,
+.robinhood-connect__submit {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.robinhood-connect__cancel {
+    background: transparent;
+    border: 1px solid var(--border-color, rgba(100, 150, 200, 0.2));
+    color: var(--text-primary, #fff);
+}
+
+.robinhood-connect__cancel:hover:not(:disabled) {
+    background: var(--hover-bg, rgba(100, 150, 200, 0.1));
+}
+
+.robinhood-connect__submit {
+    background: var(--accent-color, #00d4ff);
+    color: #000;
+}
+
+.robinhood-connect__submit:hover:not(:disabled) {
+    background: var(--accent-hover, #00b8e6);
+    transform: translateY(-1px);
+}
+
+.robinhood-connect__cancel:disabled,
+.robinhood-connect__submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .robinhood-connect-modal {
+        width: 95%;
+        max-height: 95vh;
+    }
+    
+    .robinhood-connect__actions {
+        flex-direction: column;
+    }
+    
+    .robinhood-connect__cancel,
+    .robinhood-connect__submit {
+        width: 100%;
+    }
+}

@@ -18,9 +18,9 @@ def run_test_risk(args=None):
     print(f"95% VaR (1-Day): ${var:,.2f}")
     
     if var > 32000 and var < 33000:
-         print("✅ VaR Calculation Verified (approx $32,900)")
+         print("OK VaR Calculation Verified (approx $32,900)")
     else:
-         print("❌ VaR Calculation Failed")
+         print("ERROR VaR Calculation Failed")
          
     # 2. Test Concentration Limits
     print("\n--- Concentration Checks ---")
@@ -36,6 +36,6 @@ def run_test_risk(args=None):
         print(f"ALERT: {w}")
         
     if len(warnings) >= 2:
-        print("✅ Concentration Limits Verified: Detects both Asset and Sector violations.")
+        print("OK Concentration Limits Verified: Detects both Asset and Sector violations.")
     else:
-         print("❌ Concentration Checks Failed")
+         print("ERROR Concentration Checks Failed")

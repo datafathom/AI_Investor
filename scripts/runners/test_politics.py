@@ -38,4 +38,4 @@ def run_test_politics(args=None):
         status = "🛰️ HIGH ALPHA" if score > 0.5 else "⚖️ NEUTRAL"
         print(f"Ticker: {ticker} | Score: {score} | Lobbying: {correlation['lobbying_intensity']} | {status}")
 
-    print("\n✅ Political Alpha Logic Verified.")
+    print("\nOK Political Alpha Logic Verified.")

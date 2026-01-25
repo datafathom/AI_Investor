@@ -57,4 +57,4 @@ def run_backtest_v2(args=None):
         sym_qty = log['positions'].get('AAPL', 0)
         print(f"[{log['timestamp']}] Val: ${log['value']:.2f} | AAPL: {sym_qty} shares | Cash: ${log['cash']:.2f}")
 
-    print("\n✅ Event-Driven Backtest Verified.")
+    print("\nOK Event-Driven Backtest Verified.")

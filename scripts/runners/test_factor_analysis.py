@@ -37,6 +37,6 @@ def run_test_factors(args=None):
     low_vol_weight = weights.get("BND (Low Vol)", 0)
     
     if low_vol_weight > high_vol_weight:
-        print("\n✅ Verification Successful: Low Volatility asset has higher weight.")
+        print("\nOK Verification Successful: Low Volatility asset has higher weight.")
     else:
         print("\n❌ Verification Failed: Risk Parity logic invalid.")

@@ -1,0 +1,138 @@
+.mobile-actions {
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    padding: 16px;
+}
+
+.mobile-actions .widget-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.mobile-actions .widget-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.setting-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-surface-2);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.setting-icon {
+    color: var(--text-muted);
+}
+
+.setting-info {
+    flex: 1;
+}
+
+.setting-name {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.setting-desc {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.toggle {
+    width: 40px;
+    height: 22px;
+    background: var(--border-secondary);
+    border-radius: 11px;
+    position: relative;
+    transition: background 0.2s;
+}
+
+.toggle.on {
+    background: var(--color-success);
+}
+
+.toggle-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+
+.toggle.on .toggle-knob {
+    transform: translateX(18px);
+}
+
+.auth-history h4 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 8px 0;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.auth-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    background: var(--bg-surface-2);
+    border-radius: 6px;
+    margin-bottom: 6px;
+    border-left: 3px solid;
+}
+
+.auth-row.approved { border-left-color: var(--color-success); }
+.auth-row.denied { border-left-color: var(--color-danger); }
+
+.auth-action {
+    display: block;
+    font-size: 11px;
+    color: var(--text-primary);
+}
+
+.auth-method {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.auth-meta {
+    text-align: right;
+}
+
+.auth-time {
+    display: block;
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.auth-status {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.auth-status.approved { color: var(--color-success); }
+.auth-status.denied { color: var(--color-danger); }

@@ -54,8 +54,8 @@ def run_test_allocator(args=None):
     # Verification
     if 'NVDA' in weights and 'T-BILL' in weights:
         if weights['NVDA'] > weights['T-BILL']:
-             print("\n✅ Verification Successful: Alpha assets weighted higher in Bull/Neutral market.")
+             print("\nOK Verification Successful: Alpha assets weighted higher in Bull/Neutral market.")
         else:
-             print("\n❌ Verification Failed: Weights do not reflect regime.")
+             print("\nERROR Verification Failed: Weights do not reflect regime.")
     else:
-         print("\n❌ Verification Failed: Assets missing.")
+         print("\nERROR Verification Failed: Assets missing.")

@@ -1,0 +1,134 @@
+/**
+ * TaxHarvestingDashboard.css
+ */
+
+.tax-dash {
+    background: #fff;
+    color: #333;
+    border-radius: 8px;
+    padding: 1.5rem;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    max-width: 450px;
+}
+
+.dash-header {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dash-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1f2937;
+}
+
+.source-badge {
+    background: #e0e7ff;
+    color: #4f46e5; /* Indigo */
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.savings-card {
+    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%); /* Indigo Gradient */
+    color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3);
+}
+
+.savings-label {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.savings-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.savings-sub {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.opps-list h4 {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+.opp-row {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.opp-info .asset {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #111827;
+}
+
+.opp-info .strategy {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.opp-action {
+    text-align: right;
+}
+
+.loss-amt {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #dc2626; /* Red for loss */
+    margin-bottom: 0.5rem;
+}
+
+.harvest-btn {
+    background: #fff;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.harvest-btn:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.7rem;
+    color: #9ca3af;
+}
+
+.loading-state {
+    padding: 2rem;
+    text-align: center;
+    color: #6b7280;
+}

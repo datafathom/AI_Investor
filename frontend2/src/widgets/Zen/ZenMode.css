@@ -1,0 +1,176 @@
+/* Zen Mode Styles */
+.zen-mode-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  padding: 2rem;
+  background: radial-gradient(circle at top right, rgba(79, 172, 254, 0.15) 0%, transparent 50%),
+              radial-gradient(circle at bottom left, rgba(63, 43, 150, 0.1) 0%, transparent 50%);
+  color: var(--text-primary);
+  overflow: hidden;
+  transition: all 1s ease;
+  position: relative;
+}
+
+.zen-mode-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('https://www.transparenttextures.com/patterns/dark-matter.png'); /* Subtle grain */
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.zen-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.zen-title {
+  font-family: 'Dancing Script', cursive; /* Or a serif font if available */
+  font-size: 3rem;
+  font-weight: 400;
+  margin: 0;
+  background: linear-gradient(to right, #a8c0ff, #3f2b96);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0.9;
+}
+
+.zen-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  font-weight: 300;
+  margin-top: 0.5rem;
+}
+
+.zen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-auto-rows: 1fr; /* Force uniform height across rows */
+  gap: 2rem;
+  width: 100%;
+  flex: 1;
+  margin: 0;
+  align-content: center;
+}
+
+/* Widget Containers */
+.zen-widget {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 2rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%; /* Occupy full track height */
+  display: flex;
+  flex-direction: column;
+}
+
+.zen-widget:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.widget-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* Goal Progress Bar */
+.progress-container {
+    width: 100%;
+    height: 12px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+    border-radius: 6px;
+    transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
+}
+
+.progress-glow {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 20px;
+    background: rgba(255,255,255,0.8);
+    filter: blur(5px);
+    opacity: 0.7;
+}
+
+/* Toggle Switch */
+.zen-toggle {
+    appearance: none;
+    width: 60px;
+    height: 32px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 16px;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    transition: background 0.3s;
+}
+
+.zen-toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 28px;
+    height: 28px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.zen-toggle:checked {
+    background: #4facfe;
+}
+
+.zen-toggle:checked::after {
+    transform: translateX(28px);
+}
+
+/* Homeostasis Overlay */
+.homeostasis-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 5, 10, 0.6);
+    backdrop-filter: blur(15px);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeInSlow 2s ease-out;
+}
+
+.breathe-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(79,172,254,0.4) 0%, rgba(0,0,0,0) 70%);
+    animation: breathe 8s infinite ease-in-out;
+}
+
+@keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.5); opacity: 0.8; }
+}
+
+@keyframes fadeInSlow {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

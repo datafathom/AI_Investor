@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { captureException } from '../utils/errorTracking';
 
 class GlobalErrorBoundary extends React.Component {
     constructor(props) {
@@ -13,6 +14,11 @@ class GlobalErrorBoundary extends React.Component {
 
     componentDidCatch(error, errorInfo) {
         console.error("Global Error Boundary caught an error", error, errorInfo);
+        // Send to error tracking
+        captureException(error, {
+            componentStack: errorInfo.componentStack,
+            errorBoundary: 'GlobalErrorBoundary',
+        });
         this.setState({
             error,
             errorInfo: errorInfo || { componentStack: 'Not available' }

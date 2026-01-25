@@ -1,0 +1,124 @@
+/**
+ * SquareDashboard.css
+ */
+
+.square-dash {
+    background: #fff;
+    color: #333;
+    border-radius: 8px;
+    padding: 1.5rem;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    max-width: 600px;
+}
+
+.dash-header {
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+}
+
+.title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.square-dash h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #1a1a1a;
+}
+
+.subtitle {
+    margin: 0.25rem 0 0 0;
+    color: #666;
+    font-size: 0.85rem;
+    font-family: monospace;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.status-badge.online { background: #e6fffa; color: #047857; }
+.status-badge.offline { background: #fff5f5; color: #e53e3e; }
+
+/* KPI Grid */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.kpi-card {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.kpi-card h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.8rem;
+    color: #666;
+    text-transform: uppercase;
+}
+
+.kpi-card .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.kpi-card .subtext {
+    font-size: 0.75rem;
+    color: #888;
+}
+
+/* Catalog */
+.catalog-section h4 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+.catalog-list {
+    border: 1px solid #eee;
+    border-radius: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.catalog-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem;
+    border-bottom: 1px solid #eee;
+    font-size: 0.9rem;
+}
+
+.catalog-item:last-child {
+    border-bottom: none;
+}
+
+.item-name { font-weight: 500; }
+.item-price { color: #666; }
+
+.footer {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #999;
+}
+
+.loading-state, .square-dash.error {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+}

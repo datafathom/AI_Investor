@@ -1,0 +1,124 @@
+"""
+==============================================================================
+FILE: services/ai_predictions/ai_analytics_service.py
+ROLE: AI Analytics Service
+PURPOSE: Provides sentiment analysis, news impact prediction, and market
+         regime detection.
+
+INTEGRATION POINTS:
+    - NewsService: News sentiment data
+    - PredictionEngine: Price predictions
+    - AIAnalyticsAPI: Analytics endpoints
+    - FrontendAI: Analytics dashboard
+
+FEATURES:
+    - Sentiment analysis
+    - News impact prediction
+    - Market regime detection
+    - AI-powered insights
+
+AUTHOR: AI Investor Team
+CREATED: 2026-01-21
+LAST_MODIFIED: 2026-01-21
+==============================================================================
+"""
+
+import logging
+from datetime import datetime
+from typing import Dict, List, Optional
+from models.ai_predictions import MarketRegime
+from services.ai_predictions.prediction_engine import get_prediction_engine
+from services.system.cache_service import get_cache_service
+
+logger = logging.getLogger(__name__)
+
+
+class AIAnalyticsService:
+    """
+    Service for AI-powered analytics.
+    """
+    
+    def __init__(self):
+        """Initialize service with dependencies."""
+        self.prediction_engine = get_prediction_engine()
+        self.cache_service = get_cache_service()
+        
+    async def detect_market_regime(
+        self,
+        market_index: str = "SPY"
+    ) -> MarketRegime:
+        """
+        Detect current market regime.
+        
+        Args:
+            market_index: Market index symbol
+            
+        Returns:
+            MarketRegime object
+        """
+        logger.info(f"Detecting market regime for {market_index}")
+        
+        # In production, would analyze market conditions, volatility, trends
+        # For now, use simplified detection
+        regime_type = "bull"  # Mock
+        confidence = 0.80
+        
+        regime = MarketRegime(
+            regime_id=f"regime_{market_index}_{datetime.utcnow().timestamp()}",
+            regime_type=regime_type,
+            confidence=confidence,
+            detected_date=datetime.utcnow(),
+            expected_duration="3-6 months"
+        )
+        
+        # Save regime
+        await self._save_regime(regime)
+        
+        return regime
+    
+    async def predict_news_impact(
+        self,
+        symbol: str,
+        news_sentiment: float
+    ) -> Dict:
+        """
+        Predict market impact from news sentiment.
+        
+        Args:
+            symbol: Stock symbol
+            news_sentiment: News sentiment score (-1 to 1)
+            
+        Returns:
+            Impact prediction dictionary
+        """
+        logger.info(f"Predicting news impact for {symbol}")
+        
+        # In production, would use ML model trained on historical news impact
+        # For now, use simplified calculation
+        impact_score = abs(news_sentiment) * 0.5  # Scale impact
+        expected_change = news_sentiment * 3.0  # 3% per unit sentiment
+        
+        return {
+            "symbol": symbol,
+            "impact_score": impact_score,
+            "expected_change_pct": expected_change,
+            "time_horizon": "1-3 days",
+            "confidence": 0.65
+        }
+    
+    async def _save_regime(self, regime: MarketRegime):
+        """Save market regime to cache."""
+        cache_key = f"regime:{regime.regime_id}"
+        self.cache_service.set(cache_key, regime.dict(), ttl=86400 * 7)
+
+
+# Singleton instance
+_ai_analytics_service: Optional[AIAnalyticsService] = None
+
+
+def get_ai_analytics_service() -> AIAnalyticsService:
+    """Get singleton AI analytics service instance."""
+    global _ai_analytics_service
+    if _ai_analytics_service is None:
+        _ai_analytics_service = AIAnalyticsService()
+    return _ai_analytics_service
