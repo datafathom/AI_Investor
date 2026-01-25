@@ -5,6 +5,7 @@ This guide explains how to set up production error tracking and monitoring for t
 ## Overview
 
 The error tracking system includes:
+
 - **Sentry**: Error tracking and performance monitoring
 - **Log Aggregation**: Centralized logging (ELK, Loki, or CloudWatch)
 - **Alerting**: Real-time alerts via Slack, PagerDuty, Email, SMS
@@ -14,7 +15,7 @@ The error tracking system includes:
 
 ### 1. Create Sentry Project
 
-1. Go to https://sentry.io and create an account
+1. Go to <https://sentry.io> and create an account
 2. Create a new project:
    - Platform: Python (for backend)
    - Platform: React (for frontend)
@@ -23,6 +24,7 @@ The error tracking system includes:
 ### 2. Configure Backend
 
 Add to `.env.production`:
+
 ```bash
 SENTRY_DSN=https://your-sentry-dsn@sentry.io/project-id
 SENTRY_TRACES_SAMPLE_RATE=0.1
@@ -34,6 +36,7 @@ APP_VERSION=1.0.0
 ### 3. Configure Frontend
 
 Add to `frontend2/.env.production`:
+
 ```bash
 VITE_SENTRY_DSN=https://your-sentry-dsn@sentry.io/project-id
 VITE_SENTRY_TRACES_SAMPLE_RATE=0.1
@@ -43,11 +46,13 @@ VITE_SENTRY_REPLAY_SAMPLE_RATE=0.1
 ### 4. Install Dependencies
 
 **Backend**:
+
 ```bash
 pip install sentry-sdk
 ```
 
 **Frontend**:
+
 ```bash
 cd frontend2
 npm install @sentry/react
@@ -58,6 +63,7 @@ npm install @sentry/react
 ### Option 1: ELK Stack (Elasticsearch, Logstash, Kibana)
 
 1. **Deploy ELK Stack**:
+
    ```bash
    docker-compose -f infra/docker-compose.logging.yml up -d
    ```
@@ -67,13 +73,14 @@ npm install @sentry/react
    - Forward logs from application to Elasticsearch
 
 3. **Access Kibana**:
-   - URL: http://localhost:5601
+   - URL: <http://localhost:5601>
    - Create index patterns
    - Build dashboards
 
 ### Option 2: Loki (Grafana Loki)
 
 1. **Deploy Loki**:
+
    ```bash
    docker-compose -f infra/docker-compose.loki.yml up -d
    ```
@@ -84,13 +91,14 @@ npm install @sentry/react
    - Forward to Loki
 
 3. **Access Grafana**:
-   - URL: http://localhost:3000
+   - URL: <http://localhost:3000>
    - Add Loki as data source
    - Create dashboards
 
 ### Option 3: AWS CloudWatch
 
 1. **Install CloudWatch Agent**:
+
    ```bash
    wget https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm
    sudo rpm -U ./amazon-cloudwatch-agent.rpm
@@ -111,12 +119,13 @@ npm install @sentry/react
 ### Slack Integration
 
 1. **Create Slack Webhook**:
-   - Go to https://api.slack.com/apps
+   - Go to <https://api.slack.com/apps>
    - Create new app
    - Enable Incoming Webhooks
    - Create webhook URL
 
 2. **Configure**:
+
    ```bash
    # SLACK_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/WEBHOOK/URL
    ```
@@ -124,11 +133,12 @@ npm install @sentry/react
 ### PagerDuty Integration
 
 1. **Create PagerDuty Service**:
-   - Sign up at https://www.pagerduty.com
+   - Sign up at <https://www.pagerduty.com>
    - Create new service
    - Copy Integration Key
 
 2. **Configure**:
+
    ```bash
    PAGERDUTY_ROUTING_KEY=your-routing-key
    ```
@@ -136,6 +146,7 @@ npm install @sentry/react
 ### Email Alerts
 
 1. **Configure SendGrid**:
+
    ```bash
    SENDGRID_API_KEY=your-sendgrid-api-key
    ADMIN_EMAIL=admin@yourdomain.com
@@ -144,6 +155,7 @@ npm install @sentry/react
 ### SMS Alerts (Twilio)
 
 1. **Configure Twilio**:
+
    ```bash
    TWILIO_ACCOUNT_SID=your-account-sid
    TWILIO_AUTH_TOKEN=your-auth-token
@@ -165,7 +177,7 @@ The application exports metrics at `/metrics` endpoint. Prometheus will scrape t
 
 ### 3. Import Grafana Dashboards
 
-1. Access Grafana: http://localhost:3000
+1. Access Grafana: <http://localhost:3000>
 2. Import dashboards from `infra/grafana/dashboards/`
 3. Configure data sources (Prometheus, Loki)
 

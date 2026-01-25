@@ -22,67 +22,13 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Responsive, WidthProvider } from 'react-grid-layout';
 import './ResearchReportsDashboard.css';
+
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
 const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
-const ResearchReportsDashboard = () => {
-  const [reports, setReports] = useState([]);
-  const [templates, setTemplates] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [userId] = useState('user_1');
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
-  const [reportParams, setReportParams] = useState({ title: '', format: 'pdf' });
-
-  useEffect(() => {
-    loadReports();
-    loadTemplates();
-  }, []);
-
-  const loadReports = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/research/reports`, {
-        params: { user_id: userId }
-      });
-      setReports(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading reports:', error);
-    }
-  };
-
-  const loadTemplates = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/research/templates`);
-      setTemplates(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading templates:', error);
-    }
-  };
-
-  const generateReport = async () => {
-    if (!selectedTemplate || !reportParams.title) return;
-    setLoading(true);
-    try {
-      const res = await axios.post(`${API_BASE}/api/v1/research/generate`, {
-        user_id: userId,
-        template_id: selectedTemplate,
-        report_title: reportParams.title,
-        format: reportParams.format
-      });
-      loadReports();
-      alert('Report generated successfully!');
-    } catch (error) {
-      console.error('Error generating report:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-import { Responsive, WidthProvider } from 'react-grid-layout';
-
-const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const ResearchReportsDashboard = () => {
   const [reports, setReports] = useState([]);
@@ -115,12 +61,7 @@ const ResearchReportsDashboard = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
   };
 
-  useEffect(() => {
-    loadReports();
-    loadTemplates();
-  }, []);
-
-  const loadReports = async () => {
+  const loadReports = React.useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE}/api/v1/research/reports`, {
         params: { user_id: userId }
@@ -129,16 +70,21 @@ const ResearchReportsDashboard = () => {
     } catch (error) {
       console.error('Error loading reports:', error);
     }
-  };
+  }, [userId]);
 
-  const loadTemplates = async () => {
+  const loadTemplates = React.useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE}/api/v1/research/templates`);
       setTemplates(res.data.data || []);
     } catch (error) {
       console.error('Error loading templates:', error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadReports();
+    loadTemplates();
+  }, [loadReports, loadTemplates]);
 
   const generateReport = async () => {
     if (!selectedTemplate || !reportParams.title) return;
@@ -285,8 +231,6 @@ const ResearchReportsDashboard = () => {
         <div className="scroll-buffer-100" />
       </div>
     </div>
-  );
-};
   );
 };
 

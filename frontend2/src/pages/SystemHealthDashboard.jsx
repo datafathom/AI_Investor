@@ -8,7 +8,7 @@ import SupplyChainWidget from '../widgets/System/SupplyChainWidget';
 import '../widgets/System/KafkaHealth.css';
 
 // New UI/UX Components
-import { StatCard, ProgressBar, Badge } from '../components/DataViz';
+import { StatCard, Badge } from '../components/DataViz';
 import { GlassCard } from '../components/Common';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -127,7 +127,6 @@ const SystemHealthDashboard = () => {
                         </div>
                         <SupplyChainWidget />
                     </GlassCard>
-                </div>
                 </div>
             </ResponsiveGridLayout>
             
