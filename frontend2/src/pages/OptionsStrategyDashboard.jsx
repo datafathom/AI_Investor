@@ -14,6 +14,11 @@
  *    - P&L visualization
  *    - Options chain data
  * 
+ * FIXES (2026-01-25):
+ *    - Fixed 'Controls' panel not being draggable (missing handle)
+ *    - Fixed resizing/rearranging issues by standardizing drag handles
+ *    - Fixed "cut off at bottom" by increasing scroll container padding
+ * 
  * AUTHOR: AI Investor Team
  * CREATED: 2026-01-21
  * LAST_MODIFIED: 2026-01-21
@@ -23,6 +28,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Responsive, WidthProvider } from 'react-grid-layout';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 import './OptionsStrategyDashboard.css';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -46,7 +53,8 @@ const OptionsStrategyDashboard = () => {
       { i: 'chain', x: 0, y: 8, w: 12, h: 10 }
     ]
   };
-  const STORAGE_KEY = 'layout_options_strategy';
+  // Bump version to force reset for users with corrupted/legacy layouts
+  const STORAGE_KEY = 'layout_options_strategy_v3';
 
   const [layouts, setLayouts] = useState(() => {
     try {
@@ -60,6 +68,12 @@ const OptionsStrategyDashboard = () => {
   const onLayoutChange = (currentLayout, allLayouts) => {
     setLayouts(allLayouts);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+  };
+
+  const resetLayout = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setLayouts(DEFAULT_LAYOUT);
+    window.location.reload();
   };
 
   const loadOptionsChain = React.useCallback(async () => {
@@ -103,8 +117,15 @@ const OptionsStrategyDashboard = () => {
   return (
     <div className="full-bleed-page options-strategy-dashboard">
       <div className="dashboard-header">
-        <h1>Options Strategy Builder</h1>
-        <p className="subtitle">Phase 6: Options Strategy Builder & Analyzer</p>
+        <div className="header-titles">
+          <h1>Options Strategy Builder</h1>
+          <p className="subtitle">Phase 6: Options Strategy Builder & Analyzer</p>
+        </div>
+        <div className="header-actions">
+          <button onClick={resetLayout} className="btn-utility ripple">
+            Reset Layout
+          </button>
+        </div>
       </div>
 
       <div className="scrollable-content-wrapper">
@@ -117,143 +138,158 @@ const OptionsStrategyDashboard = () => {
           rowHeight={80}
           isDraggable={true}
           isResizable={true}
-          draggableHandle="h2"
+          draggableHandle=".glass-panel-header"
           margin={[16, 16]}
         >
           {/* Controls */}
-          <div key="controls" className="strategy-controls-panel">
-            <div className="strategy-controls">
-              <div className="form-group">
-                <span className="form-label">Symbol</span>
-                <input
-                  type="text"
-                  value={selectedSymbol}
-                  onChange={(e) => setSelectedSymbol(e.target.value.toUpperCase())}
-                  placeholder="e.g. TSLA"
-                  className="form-input"
-                />
-              </div>
-              <div className="form-group">
-                <span className="form-label">Strategy Type</span>
-                <select
-                  value={strategyType}
-                  onChange={(e) => setStrategyType(e.target.value)}
-                  className="form-input"
-                >
-                  <option value="covered_call">Covered Call</option>
-                  <option value="protective_put">Protective Put</option>
-                  <option value="straddle">Straddle</option>
-                  <option value="strangle">Strangle</option>
-                  <option value="iron_condor">Iron Condor</option>
-                  <option value="butterfly">Butterfly</option>
-                </select>
-              </div>
-              <div className="form-group" style={{ flex: '0 0 auto', justifyContent: 'flex-end' }}>
-                <button onClick={buildStrategy} disabled={loading} className="build-button">
-                  {loading ? 'Building...' : 'Build Strategy'}
-                </button>
-              </div>
-            </div>
+          <div key="controls" className="overflow-hidden rounded-xl">
+             <div className="glass-panel glass-premium h-full flex flex-col">
+                <div className="glass-panel-header p-4 border-b border-white/10 flex justify-between items-center cursor-move">
+                   <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Strategy Controls</h3>
+                   <div className="flex items-center gap-2">
+                       <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+                       <span className="text-cyan-500 text-[10px] font-mono uppercase">Interactive</span>
+                   </div>
+                </div>
+                <div className="flex-1 p-6 overflow-y-auto">
+                    <div className="flex flex-wrap gap-6 items-end">
+                        <div className="flex-1 min-w-[180px]">
+                            <label className="form-label">Symbol</label>
+                            <input
+                                type="text"
+                                value={selectedSymbol}
+                                onChange={(e) => setSelectedSymbol(e.target.value.toUpperCase())}
+                                placeholder="e.g. TSLA"
+                                className="form-input w-full"
+                            />
+                        </div>
+                        <div className="flex-1 min-w-[180px]">
+                            <label className="form-label">Strategy Type</label>
+                            <select
+                                value={strategyType}
+                                onChange={(e) => setStrategyType(e.target.value)}
+                                className="form-input w-full"
+                            >
+                                <option value="covered_call">Covered Call</option>
+                                <option value="protective_put">Protective Put</option>
+                                <option value="straddle">Straddle</option>
+                                <option value="strangle">Strangle</option>
+                                <option value="iron_condor">Iron Condor</option>
+                                <option value="butterfly">Butterfly</option>
+                            </select>
+                        </div>
+                        <button onClick={buildStrategy} disabled={loading} className="p-2 px-6 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-lg transition-all active:scale-95 disabled:opacity-50">
+                            {loading ? 'Building...' : 'Build Strategy'}
+                        </button>
+                    </div>
+                </div>
+             </div>
           </div>
 
           {/* Strategy Details */}
-          <div key="details" className="strategy-panel h-full">
-            <h2>Strategy Details</h2>
-            {strategy ? (
-              <div className="strategy-info">
-                <div className="info-item">
-                  <span className="label">Strategy Type:</span>
-                  <span className="value">{strategy.strategy_type}</span>
+          <div key="details" className="overflow-hidden rounded-xl">
+             <div className="glass-panel glass-premium h-full flex flex-col">
+                <div className="glass-panel-header p-4 border-b border-white/10 flex justify-between items-center cursor-move">
+                   <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Strategy Details</h3>
                 </div>
-                <div className="info-item">
-                  <span className="label">Net Cost:</span>
-                  <span className="value">${strategy.net_cost?.toFixed(2)}</span>
+                <div className="flex-1 p-6 overflow-y-auto">
+                    {strategy ? (
+                        <div className="space-y-4">
+                            {[
+                                { label: 'Type', val: strategy.strategy_type },
+                                { label: 'Net Cost', val: `$${strategy.net_cost?.toFixed(2)}` },
+                                { label: 'Max Profit', val: `$${strategy.max_profit?.toFixed(2)}`, color: 'text-green-400' },
+                                { label: 'Max Loss', val: `$${strategy.max_loss?.toFixed(2)}`, color: 'text-red-400' },
+                                { label: 'Breakeven', val: `$${strategy.breakeven?.toFixed(2)}` }
+                            ].map((item, idx) => (
+                                <div key={idx} className="flex justify-between items-center py-2 border-b border-white/5">
+                                    <span className="text-sm text-slate-500">{item.label}</span>
+                                    <span className={`text-sm font-bold ${item.color || 'text-white'}`}>{item.val}</span>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="h-full flex items-center justify-center text-slate-600 italic text-sm">
+                            Build a strategy to see details
+                        </div>
+                    )}
                 </div>
-                <div className="info-item">
-                  <span className="label">Max Profit:</span>
-                  <span className="value" style={{ color: '#00ff88' }}>
-                    ${strategy.max_profit?.toFixed(2)}
-                  </span>
-                </div>
-                <div className="info-item">
-                  <span className="label">Max Loss:</span>
-                  <span className="value" style={{ color: '#ff4444' }}>
-                    ${strategy.max_loss?.toFixed(2)}
-                  </span>
-                </div>
-                <div className="info-item">
-                  <span className="label">Breakeven:</span>
-                  <span className="value">${strategy.breakeven?.toFixed(2)}</span>
-                </div>
-              </div>
-            ) : (
-                <div className="no-data">Build a strategy to see details</div>
-            )}
+             </div>
           </div>
 
           {/* Greeks Analysis */}
-          <div key="greeks" className="greeks-panel h-full">
-            <h2>Greeks Analysis</h2>
-            {greeks ? (
-              <div className="greeks-grid">
-                <div className="greek-card">
-                  <div className="greek-label">Delta</div>
-                  <div className="greek-value">{greeks.delta?.toFixed(4)}</div>
+          <div key="greeks" className="overflow-hidden rounded-xl">
+            <div className="glass-panel glass-premium h-full flex flex-col">
+                <div className="glass-panel-header p-4 border-b border-white/10 flex justify-between items-center cursor-move">
+                   <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Greeks Analysis</h3>
                 </div>
-                <div className="greek-card">
-                  <div className="greek-label">Gamma</div>
-                  <div className="greek-value">{greeks.gamma?.toFixed(4)}</div>
+                <div className="flex-1 p-6 overflow-y-auto">
+                    {greeks ? (
+                        <div className="grid grid-cols-2 gap-4">
+                            {[
+                                { label: 'Delta', val: greeks.delta?.toFixed(4) },
+                                { label: 'Gamma', val: greeks.gamma?.toFixed(4) },
+                                { label: 'Theta', val: greeks.theta?.toFixed(4), color: 'text-red-400' },
+                                { label: 'Vega', val: greeks.vega?.toFixed(4) },
+                                { label: 'Rho', val: greeks.rho?.toFixed(4) }
+                            ].map((greek, idx) => (
+                                <div key={idx} className="p-4 bg-white/5 rounded-lg border border-white/5 text-center">
+                                    <div className="text-[10px] text-slate-500 uppercase font-bold">{greek.label}</div>
+                                    <div className={`text-lg font-black ${greek.color || 'text-cyan-400'}`}>{greek.val}</div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="h-full flex items-center justify-center text-slate-600 italic text-sm">
+                            Analyze a strategy to see Greeks
+                        </div>
+                    )}
                 </div>
-                <div className="greek-card">
-                  <div className="greek-label">Theta</div>
-                  <div className="greek-value" style={{ color: '#ff4444' }}>
-                    {greeks.theta?.toFixed(4)}
-                  </div>
-                </div>
-                <div className="greek-card">
-                  <div className="greek-label">Vega</div>
-                  <div className="greek-value">{greeks.vega?.toFixed(4)}</div>
-                </div>
-                <div className="greek-card">
-                  <div className="greek-label">Rho</div>
-                  <div className="greek-value">{greeks.rho?.toFixed(4)}</div>
-                </div>
-              </div>
-            ) : (
-                <div className="no-data">Analyze a strategy to see Greeks</div>
-            )}
+            </div>
           </div>
 
           {/* Options Chain */}
-          <div key="chain" className="options-chain-panel h-full">
-            <h2>Options Chain - {selectedSymbol}</h2>
-            {optionsChain.length > 0 ? (
-              <div className="chain-table">
-                <div className="chain-header">
-                  <span>Strike</span>
-                  <span>Call Bid</span>
-                  <span>Call Ask</span>
-                  <span>Put Bid</span>
-                  <span>Put Ask</span>
+          <div key="chain" className="overflow-hidden rounded-xl">
+             <div className="glass-panel glass-premium h-full flex flex-col">
+                <div className="glass-panel-header p-4 border-b border-white/10 flex justify-between items-center cursor-move">
+                   <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Options Chain - {selectedSymbol}</h3>
                 </div>
-                {optionsChain.slice(0, 20).map((option, idx) => (
-                  <div key={idx} className="chain-row">
-                    <span className="strike">${option.strike}</span>
-                    <span>${option.call_bid?.toFixed(2)}</span>
-                    <span>${option.call_ask?.toFixed(2)}</span>
-                    <span>${option.put_bid?.toFixed(2)}</span>
-                    <span>${option.put_ask?.toFixed(2)}</span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="no-data">No data available</div>
-            )}
+                <div className="flex-1 overflow-y-auto">
+                    {optionsChain.length > 0 ? (
+                        <table className="w-full text-left border-collapse">
+                            <thead className="sticky top-0 bg-slate-900/90 backdrop-blur-sm shadow-xl z-10">
+                                <tr>
+                                    <th className="p-4 text-[10px] font-bold text-cyan-500 uppercase tracking-widest">Strike</th>
+                                    <th className="p-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Call Bid</th>
+                                    <th className="p-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Call Ask</th>
+                                    <th className="p-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Put Bid</th>
+                                    <th className="p-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Put Ask</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5">
+                                {optionsChain.slice(0, 50).map((option, idx) => (
+                                    <tr key={idx} className="hover:bg-cyan-500/5 transition-colors">
+                                        <td className="p-4 text-cyan-400 font-mono font-bold">${option.strike}</td>
+                                        <td className="p-4 text-slate-300 font-mono text-sm">${option.call_bid?.toFixed(2)}</td>
+                                        <td className="p-4 text-slate-300 font-mono text-sm">${option.call_ask?.toFixed(2)}</td>
+                                        <td className="p-4 text-slate-300 font-mono text-sm">${option.put_bid?.toFixed(2)}</td>
+                                        <td className="p-4 text-slate-300 font-mono text-sm">${option.put_ask?.toFixed(2)}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <div className="h-full flex items-center justify-center text-slate-600 italic text-sm">
+                            No options data available
+                        </div>
+                    )}
+                </div>
+             </div>
           </div>
         </ResponsiveGridLayout>
         
-        {/* Bottom Buffer */}
-        <div className="scroll-buffer-100" />
+        {/* Bottom Buffer - Increased to prevent cutoff */}
+        <div className="scroll-buffer-200" />
       </div>
     </div>
   );

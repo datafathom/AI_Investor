@@ -9,10 +9,12 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 const MissionControl = () => {
     const DEFAULT_LAYOUT = {
         lg: [
-            { i: 'allocation', x: 0, y: 0, w: 3, h: 8 },
-            { i: 'map', x: 3, y: 0, w: 6, h: 5 },
-            { i: 'logs', x: 3, y: 5, w: 6, h: 3 },
-            { i: 'risk', x: 9, y: 0, w: 3, h: 8 }
+            { i: 'header', x: 0, y: 0, w: 8, h: 2 },
+            { i: 'threat', x: 8, y: 0, w: 4, h: 2 },
+            { i: 'allocation', x: 0, y: 2, w: 3, h: 8 },
+            { i: 'map', x: 3, y: 2, w: 6, h: 5 },
+            { i: 'logs', x: 3, y: 7, w: 6, h: 3 },
+            { i: 'risk', x: 9, y: 2, w: 3, h: 8 }
         ]
     };
     const STORAGE_KEY = 'layout_mission_control';
@@ -51,45 +53,6 @@ const MissionControl = () => {
 
     return (
         <div className="full-bleed-page mission-control-container text-slate-300 font-sans">
-            {/* TOP BAR: System Status */}
-            <div className="grid grid-cols-12 gap-4 mb-6">
-                <div className="col-span-8 glass-panel p-4 flex items-center justify-between relative overflow-hidden bg-slate-900/40 border-slate-800 rounded-xl glass-premium shadow-cyan-900/20 shadow-2xl">
-                    <div className="flex items-center gap-4 z-10 transition-transform duration-300 hover:scale-[1.01]">
-                        <Activity className={`text-cyan-400 ${systemPulse ? 'opacity-100' : 'opacity-50'} transition-opacity animate-neon-pulse`} size={24} />
-                        <div>
-                            <h1 className="text-2xl font-bold text-white tracking-widest uppercase text-glow-cyan">Mission Control</h1>
-                            <span className="text-cyan-500 text-xs font-mono">SYSTEM ONLINE /// UPTIME: 99.98%</span>
-                        </div>
-                    </div>
-
-                    {/* Resource Timeline Widget */}
-                    <div className="w-64 h-16 z-10 opacity-80 hover:opacity-100 transition-opacity">
-                        <ResourceTimeline />
-                    </div>
-
-                    <div className="flex gap-8 z-10">
-                        <div className="text-center">
-                            <span className="block text-slate-500 uppercase text-[10px]">Active Agents</span>
-                            <span className="text-xl font-bold text-white">12</span>
-                        </div>
-                        <div className="text-center">
-                            <span className="block text-slate-500 uppercase text-[10px]">Latency</span>
-                            <span className="text-xl font-bold text-green-400">42ms</span>
-                        </div>
-                    </div>
-
-                    <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
-                </div>
-
-                <div className={`col-span-4 glass-panel p-4 flex flex-col justify-center items-center rounded-xl border-2 ${defconLevel < 2 ? 'bg-red-950/20 border-red-500' : 'bg-slate-900/40 border-slate-800'}`} data-tour-id="threat-level-display">
-                    <h2 className="text-lg font-bold uppercase tracking-widest text-white mb-1">Global Threat Level</h2>
-                    <div className="text-5xl font-black text-white drop-shadow-lg">DEFCON {defconLevel}</div>
-                    <span className="text-slate-400 bg-black/20 px-2 rounded mt-2 uppercase text-[10px]">
-                        {risk?.freeze_reason || "Nominal Operations"}
-                    </span>
-                </div>
-            </div>
-
             <div className="scrollable-content-wrapper">
                 <ResponsiveGridLayout
                     className="layout"
@@ -100,9 +63,51 @@ const MissionControl = () => {
                     rowHeight={80}
                     isDraggable={true}
                     isResizable={true}
-                    draggableHandle=".glass-panel"
+                    draggableHandle=".glass-panel, h3"
                     margin={[16, 16]}
                 >
+                {/* WIDGET: Mission Control Header */}
+                <div key="header">
+                    <div className="glass-panel p-4 flex items-center justify-between relative overflow-hidden bg-slate-900/40 border-slate-800 rounded-xl glass-premium shadow-cyan-900/20 shadow-2xl h-full">
+                        <div className="flex items-center gap-4 z-10 transition-transform duration-300 hover:scale-[1.01]">
+                            <Activity className={`text-cyan-400 ${systemPulse ? 'opacity-100' : 'opacity-50'} transition-opacity animate-neon-pulse`} size={24} />
+                            <div>
+                                <h1 className="text-2xl font-bold text-white tracking-widest uppercase text-glow-cyan">Mission Control</h1>
+                                <span className="text-cyan-500 text-xs font-mono">SYSTEM ONLINE /// UPTIME: 99.98%</span>
+                            </div>
+                        </div>
+
+                        {/* Resource Timeline Widget */}
+                        <div className="w-64 h-16 z-10 opacity-80 hover:opacity-100 transition-opacity">
+                            <ResourceTimeline />
+                        </div>
+
+                        <div className="flex gap-8 z-10">
+                            <div className="text-center">
+                                <span className="block text-slate-500 uppercase text-[10px]">Active Agents</span>
+                                <span className="text-xl font-bold text-white">12</span>
+                            </div>
+                            <div className="text-center">
+                                <span className="block text-slate-500 uppercase text-[10px]">Latency</span>
+                                <span className="text-xl font-bold text-green-400">42ms</span>
+                            </div>
+                        </div>
+
+                        <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
+                    </div>
+                </div>
+
+                {/* WIDGET: Threat Level */}
+                <div key="threat">
+                    <div className={`glass-panel p-4 flex flex-col justify-center items-center rounded-xl border-2 h-full ${defconLevel < 2 ? 'bg-red-950/20 border-red-500' : 'bg-slate-900/40 border-slate-800'}`} data-tour-id="threat-level-display">
+                        <h2 className="text-lg font-bold uppercase tracking-widest text-white mb-1">Global Threat Level</h2>
+                        <div className="text-5xl font-black text-white drop-shadow-lg">DEFCON {defconLevel}</div>
+                        <span className="text-slate-400 bg-black/20 px-2 rounded mt-2 uppercase text-[10px]">
+                            {risk?.freeze_reason || "Nominal Operations"}
+                        </span>
+                    </div>
+                </div>
+
                 {/* LEFT COLUMN: Capital Allocation */}
                 <div key="allocation">
                     <div className="glass-panel p-6 flex flex-col h-full bg-slate-900/40 border border-slate-800 rounded-xl" data-tour-id="capital-allocation-panel">

@@ -9,32 +9,32 @@ import NewsTicker from '../components/Political/NewsTicker';
 import PageHeader from '../components/Navigation/PageHeader';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
-const STORAGE_KEY = 'political_alpha_layout_v15'; // Incremented for fresh layout
+const STORAGE_KEY = 'political_alpha_layout_v16'; // Incremented for fresh layout
 
 const DEFAULT_LAYOUTS = {
     lg: [
         { i: 'summary', x: 0, y: 0, w: 12, h: 3 },
         { i: 'sentiment', x: 0, y: 3, w: 12, h: 8 },
         { i: 'impact', x: 0, y: 11, w: 12, h: 6 },
-        { i: 'watchlist', x: 0, y: 17, w: 12, h: 10 },
-        { i: 'feed', x: 0, y: 27, w: 12, h: 16 },
-        { i: 'news-ticker', x: 0, y: 43, w: 12, h: 1.5 }
+        { i: 'watchlist', x: 0, y: 17, w: 12, h: 8 },
+        { i: 'feed', x: 0, y: 25, w: 12, h: 8 },
+        { i: 'news-ticker', x: 0, y: 33, w: 12, h: 2 }
     ],
     md: [
         { i: 'summary', x: 0, y: 0, w: 10, h: 3 },
         { i: 'sentiment', x: 0, y: 3, w: 10, h: 8 },
         { i: 'impact', x: 0, y: 11, w: 10, h: 6 },
-        { i: 'watchlist', x: 0, y: 17, w: 10, h: 10 },
-        { i: 'feed', x: 0, y: 27, w: 10, h: 16 },
-        { i: 'news-ticker', x: 0, y: 43, w: 10, h: 1.5 }
+        { i: 'watchlist', x: 0, y: 17, w: 10, h: 8 },
+        { i: 'feed', x: 0, y: 25, w: 10, h: 8 },
+        { i: 'news-ticker', x: 0, y: 33, w: 10, h: 2 }
     ],
     sm: [
         { i: 'summary', x: 0, y: 0, w: 6, h: 4 },
         { i: 'sentiment', x: 0, y: 4, w: 6, h: 8 },
         { i: 'impact', x: 0, y: 12, w: 6, h: 6 },
-        { i: 'watchlist', x: 0, y: 18, w: 6, h: 10 },
-        { i: 'feed', x: 0, y: 28, w: 6, h: 24 },
-        { i: 'news-ticker', x: 0, y: 52, w: 6, h: 1.5 }
+        { i: 'watchlist', x: 0, y: 18, w: 6, h: 8 },
+        { i: 'feed', x: 0, y: 26, w: 6, h: 10 },
+        { i: 'news-ticker', x: 0, y: 36, w: 6, h: 2 }
     ]
 };
 
@@ -81,18 +81,7 @@ const MOCK_CHAMBER_DATA = [
     }
 ];
 
-// Standardized Widget Header Component
-const WidgetHeader = ({ icon: Icon, title, subtitle }) => (
-    <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
-        <div className="flex flex-col">
-            <h3 className="text-lg font-bold text-amber-100 flex items-center gap-3">
-                <Icon size={20} className="text-amber-400" /> {title}
-            </h3>
-            {subtitle && <span className="text-[10px] font-mono text-slate-500 mt-1 tracking-[0.2em] uppercase pl-8">{subtitle}</span>}
-        </div>
-        {/* Placeholder for potential right-side actions */}
-    </div>
-);
+// Standardized Widget Header (Inline handles in JSX below)
 
 const PoliticalAlpha = () => {
     // ... (state logic remains unchanged) ...
@@ -249,6 +238,43 @@ const PoliticalAlpha = () => {
         };
     }, []);
 
+    // Enable scrolling on parent containers for this page
+    useEffect(() => {
+        const root = document.getElementById('root');
+        const appShell = document.querySelector('.app-shell');
+        const main = document.querySelector('main');
+        
+        const originalStyles = {
+            root: root ? root.style.cssText : '',
+            appShell: appShell ? appShell.style.cssText : '',
+            main: main ? main.style.cssText : ''
+        };
+
+        if (root) {
+            root.style.height = 'auto';
+            root.style.minHeight = '100vh';
+            root.style.overflowY = 'auto';
+            root.style.overflowX = 'hidden';
+        }
+        if (appShell) {
+            appShell.style.height = 'auto';
+            appShell.style.minHeight = '100vh';
+            appShell.style.overflowY = 'auto';
+            appShell.style.overflowX = 'hidden';
+        }
+        if (main) {
+            main.style.overflow = 'visible';
+            main.style.height = 'auto';
+        }
+
+        // Cleanup: restore original styles when leaving page
+        return () => {
+            if (root) root.style.cssText = originalStyles.root;
+            if (appShell) appShell.style.cssText = originalStyles.appShell;
+            if (main) main.style.cssText = originalStyles.main;
+        };
+    }, []);
+
     if (loading) return (
         <div className="flex items-center justify-center p-20 text-amber-500">
             <div className="flex flex-col items-center animate-pulse">
@@ -265,7 +291,7 @@ const PoliticalAlpha = () => {
                 title={<>POLITICAL <span className="text-amber-400">ALPHA</span></>}
             />
 
-            <div className="scrollable-content-wrapper">
+            <div style={{ height: 'calc(100vh - 120px)', overflowY: 'auto', overflowX: 'hidden' }}>
                 <ResponsiveGridLayout
                     className="layout"
                     layouts={layouts}
@@ -278,7 +304,7 @@ const PoliticalAlpha = () => {
                     margin={[20, 20]}
                 >
                     {/* 0. Political Summary Widget */}
-                    <div key="summary" className="glass-panel-gold flex items-center justify-between px-10 py-6">
+                    <div key="summary" className="glass-panel flex items-center justify-between px-10 py-6">
                         <div className="flex flex-col justify-center">
                              <h3 className="text-amber-500/80 font-mono text-xs tracking-[0.2em] mb-2 uppercase">
                                  CONGRESSIONAL INSIDER TRADING & LEGISLATIVE IMPACT TRACKER
@@ -297,9 +323,12 @@ const PoliticalAlpha = () => {
                     </div>
 
                     {/* 1. Senate Sentiment Map */}
-                    <div key="sentiment" className="glass-panel-gold">
+                    <div key="sentiment" className="glass-panel">
+                       <div className="glass-panel-header">
+                            <Activity size={14} className="text-amber-400" />
+                            <span>Senate Sentiment Map | Institutional Pulse</span>
+                       </div>
                        <div className="p-6 h-full flex flex-col overflow-y-auto scrollbar-gold">
-                            <WidgetHeader icon={Activity} title="Senate Sentiment Map" subtitle="Institutional Chamber Pulse" />
                             
                             <div className="flex-1 grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
                                 {MOCK_CHAMBER_DATA.map((committee) => (
@@ -374,9 +403,12 @@ const PoliticalAlpha = () => {
                     </div>
 
                     {/* 2. Sector Impact Chart */}
-                    <div key="impact" className="glass-panel-gold overflow-hidden">
+                    <div key="impact" className="glass-panel overflow-hidden">
+                        <div className="glass-panel-header">
+                            <PieChart size={14} className="text-amber-400" />
+                            <span>Sector Impact Profile</span>
+                        </div>
                         <div className="p-6 h-full flex flex-col">
-                            <WidgetHeader icon={PieChart} title="Sector Impact Profile" />
                             <div className="flex-1 min-h-0">
                                 <SectorImpactChart />
                             </div>
@@ -384,9 +416,12 @@ const PoliticalAlpha = () => {
                     </div>
 
                     {/* 3. Active Legislation Tracker */}
-                    <div key="watchlist" className="glass-panel-gold overflow-hidden">
+                    <div key="watchlist" className="glass-panel overflow-hidden">
+                        <div className="glass-panel-header">
+                            <Gavel size={14} className="text-amber-400" />
+                            <span>Legislative Watchlist</span>
+                        </div>
                         <div className="p-6 h-full flex flex-col">
-                            <WidgetHeader icon={Gavel} title="Legislative Watchlist" />
                             <div className="flex-1 overflow-y-auto pr-2 scrollbar-gold grid grid-cols-1 xl:grid-cols-2 gap-4 items-start">
                                 {bills.map(bill => (
                                     <div key={bill.id} className="bill-item p-5 bg-slate-900/60 border border-white/5 rounded-2xl hover:border-amber-400/30 transition-all duration-300 hover:bg-slate-900/80 shadow-xl group cursor-pointer">
@@ -433,11 +468,15 @@ const PoliticalAlpha = () => {
                     </div>
 
                     {/* 4. Right Column: Disclosure Feed (The "Data Stream") */}
-                    <div key="feed" className="glass-panel-gold overflow-hidden flex flex-col h-full w-full">
+                    <div key="feed" className="glass-panel overflow-hidden flex flex-col h-full w-full">
+                        <div className="glass-panel-header">
+                            <Eye size={14} className="text-amber-400" />
+                            <span>Live Disclosure Feed | Data Stream</span>
+                        </div>
                         <div className="p-6 h-full flex flex-col w-full">
                             <div className="flex items-center justify-between mb-6">
                                 <h3 className="text-lg font-bold text-amber-200 flex items-center gap-2">
-                                    <Eye size={18} /> Live Disclosure Feed
+                                     Export Protocol
                                 </h3>
                                 <button 
                                     onClick={handleExport}
@@ -447,7 +486,7 @@ const PoliticalAlpha = () => {
                                 </button>
                             </div>
 
-                            <div className="flex-1 overflow-visible rounded-lg border-2 border-slate-600 bg-black/20 shadow-inner w-full" style={{ display: 'flex', flexDirection: 'column' }}>
+                            <div className="flex-1 overflow-hidden rounded-lg border-2 border-slate-600 bg-black/20 shadow-inner w-full h-full min-h-0" style={{ display: 'flex', flexDirection: 'column' }}>
                                 <div className="w-full relative overflow-y-auto scrollbar-gold" style={{ flex: 1 }}>
                                     <table className="w-full table-fixed border-collapse" style={{ width: '100%', minWidth: '100%' }}>
                                         
@@ -461,7 +500,7 @@ const PoliticalAlpha = () => {
                                             <col style={{ width: 100 }} /> 
                                         </colgroup>
 
-                                        <thead className="sticky top-0 z-50 shadow-xl" style={{ backgroundColor: '#2563eb', borderBottom: '4px solid #1e40af' }}>
+                                        <thead className="sticky top-0 z-[100] shadow-xl" style={{ backgroundColor: '#2563eb', borderBottom: '4px solid #1e40af' }}>
                                             <tr className="text-[11px] text-white uppercase tracking-[0.1em] font-mono font-black">
                                                 {[
                                                     { key: 'member', label: 'Member' },
@@ -569,13 +608,17 @@ const PoliticalAlpha = () => {
                     </div>
 
                     {/* 5. News Ticker Widget */}
-                    <div key="news-ticker" className="glass-panel-gold overflow-hidden">
+                    <div key="news-ticker" className="glass-panel overflow-hidden">
+                        <div className="glass-panel-header">
+                            <TrendingUp size={14} className="text-amber-400" />
+                            <span>Capitol Hill Ticker</span>
+                        </div>
                         <NewsTicker isWidget={true} />
                     </div>
                 </ResponsiveGridLayout>
                 
                 {/* Bottom Buffer */}
-                <div className="scroll-buffer-100" />
+                <div className="scroll-buffer-200" />
             </div>
 
             {/* Premium Features */}

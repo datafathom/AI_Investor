@@ -1,0 +1,24 @@
+
+ROADMAP_1_14_26.md
+ we are going to start the next build cycle and here is the ROADMAP..    in the same folder you will find Phase_X_ImplementationPlan.md   where X is the Phase Number 
+
+as you go through implementing each Phase 1 at a time,  update both the ROADMAP file and that specific Phase's Implementation plan  as source of truth      with : started, paused, canceled, completed, 
+
+that way future coders can pick up smoothly where the previous had stopped...   
+
+many phases and deliverables may already be started in this system, so use existing architechure style and implementation practices..
+
+
+use the 
+jobrecruiter.md
+  dont ask for approve..  
+UX_OS_Layout.md
+Browser_Verification_Style.md
+   use these coding style guides
+
+use the cli.py commands like 
+python cli.py stop-all
+python cli.py dev
+
+for streamline debugging and verification
+ALWAYS FOLLOW YOUR FUCKING RULES FILE!!!!  

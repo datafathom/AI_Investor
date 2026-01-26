@@ -7,28 +7,28 @@ const HUDOverlay = () => {
             {/* Top Bar */}
             <div className="flex justify-between items-start">
                 <div className="flex gap-4">
-                    <div className="border border-cyan-500/50 bg-cyan-900/20 p-2 rounded-tl-xl backdrop-blur-sm">
-                        <div className="text-[10px] text-cyan-400 uppercase font-mono">Shield Integrity</div>
+                    <div className="glass-panel p-4 flex flex-col items-center justify-center">
+                        <div className="text-[10px] text-cyan-400 uppercase font-mono mb-1">Shield Integrity</div>
                         <div className="text-xl font-bold text-white flex items-center gap-2">
-                            <Shield size={16} /> 100%
+                            <Shield size={16} className="text-cyan-400" /> 100%
                         </div>
                     </div>
-                    <div className="border border-red-500/50 bg-red-900/20 p-2 rounded backdrop-blur-sm">
-                        <div className="text-[10px] text-red-400 uppercase font-mono">Market Volatility</div>
+                    <div className="glass-panel p-4 flex flex-col items-center justify-center">
+                        <div className="text-[10px] text-red-400 uppercase font-mono mb-1">Market Volatility</div>
                         <div className="text-xl font-bold text-white flex items-center gap-2">
-                            <Activity size={16} /> HIGH
+                            <Activity size={16} className="text-red-400" /> HIGH
                         </div>
                     </div>
                 </div>
 
                 <div className="flex flex-col items-end gap-1">
                     <div className="flex gap-1 text-cyan-400">
-                        <span className="w-8 h-1 bg-cyan-500"></span>
-                        <span className="w-1 h-1 bg-cyan-500"></span>
-                        <span className="w-1 h-1 bg-cyan-500"></span>
+                        <span className="w-8 h-1 bg-cyan-500 shadow-[0_0_10px_#22d3ee]"></span>
+                        <span className="w-1 h-1 bg-cyan-500 shadow-[0_0_10px_#22d3ee]"></span>
+                        <span className="w-1 h-1 bg-cyan-500 shadow-[0_0_10px_#22d3ee]"></span>
                     </div>
                     <div className="text-xs font-mono text-cyan-300 flex items-center gap-2">
-                        SYSTEM ONLINE <Wifi size={12} />
+                        SYSTEM ONLINE <Wifi size={12} className="animate-pulse" />
                     </div>
                 </div>
             </div>
@@ -41,14 +41,14 @@ const HUDOverlay = () => {
 
             {/* Bottom Bar */}
             <div className="flex justify-between items-end">
-                <div className="text-xs font-mono text-cyan-500/80 max-w-[200px]">
+                <div className="text-xs font-mono text-cyan-500/80 max-w-[200px] glass-panel-header px-4 py-2 border-l-2 border-cyan-500">
                     <p>{'>'} INITIALIZING NEURAL LINK...</p>
                     <p>{'>'} CONNECTED TO ALPHA_ZERO</p>
                     <p>{'>'} READY FOR INPUT</p>
                 </div>
-                <div className="border-r-4 border-cyan-500 h-16 w-64 bg-slate-900/50 flex flex-col justify-end p-2 items-end">
-                    <span className="text-4xl font-black text-white italic">VR-OS</span>
-                    <span className="text-[10px] text-cyan-500 tracking-[0.3em]">IMMERSIVE INTERFACE</span>
+                <div className="glass-panel h-20 w-72 flex flex-col justify-center px-6 items-end border-r-4 border-cyan-500">
+                    <span className="text-5xl font-black text-white italic tracking-tighter">VR-OS</span>
+                    <span className="text-[10px] text-cyan-500 font-mono tracking-[0.3em] mt-1">IMMERSIVE INTERFACE</span>
                 </div>
             </div>
         </div>

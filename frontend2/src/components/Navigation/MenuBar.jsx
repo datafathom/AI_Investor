@@ -135,6 +135,21 @@ const MENU_ITEMS = [
     label: "Routes",
     items: [
       {
+        label: "Module Overviews",
+        submenu: [
+          { label: "Core Workspace Overview", action: "nav-overview-workspace" },
+          { label: "Analytics Overview", action: "nav-overview-analytics" },
+          { label: "Portfolio Overview", action: "nav-overview-portfolio" },
+          { label: "Analyst Overview", action: "nav-overview-analyst" },
+          { label: "Guardian Overview", action: "nav-overview-guardian" },
+          { label: "Strategist Overview", action: "nav-overview-strategist" },
+          { label: "Architect Overview", action: "nav-overview-architect" },
+          { label: "Observer Overview", action: "nav-overview-observer" },
+          { label: "Scanner Overview", action: "nav-overview-scanner" },
+        ],
+      },
+      { type: "divider" },
+      {
         label: "Core Workspaces",
         submenu: [
           { label: "Terminal Workspace", action: "show-dashboard" },
@@ -329,6 +344,14 @@ const MENU_ITEMS = [
       { label: "Keyboard Shortcuts", action: "shortcuts", shortcut: "?" },
       { type: "divider" },
       { label: "About", action: "about" },
+      { type: "divider" },
+      {
+        label: "Legal",
+        submenu: [
+          { label: "Terms of Service", action: "nav-legal-terms" },
+          { label: "Privacy Policy", action: "nav-legal-privacy" },
+        ],
+      },
     ],
   },
 ];
@@ -482,7 +505,7 @@ export default function MenuBar({
             {
               label: "Profile Settings",
               action: "profile-settings",
-              disabled: true,
+              disabled: false,
             },
             { label: "Sync Cloud Layout", action: "save-layout" },
             { type: "divider" },

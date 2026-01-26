@@ -26,7 +26,7 @@ const GlassCard = ({
   
   return (
     <div 
-      className={`glass-card glass-card--${variant} ${statusClass} ${hoverClass} ${clickClass} ${className}`}
+      className={`glass-card glass-panel glass-card--${variant} ${statusClass} ${hoverClass} ${clickClass} ${className}`}
       onClick={onClick}
       role={clickable ? 'button' : undefined}
       tabIndex={clickable ? 0 : undefined}

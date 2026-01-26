@@ -371,35 +371,35 @@ const Dashboard = ({
                 preventCollision={false}
             >
                 {widgetVisibility['monitor-view'] !== false && (
-                    <div key="monitor-view" data-widget-id="monitor-view" className={`widget-wrapper ${widgetStates['monitor-view']?.minimized ? 'minimized' : ''} ${widgetStates['monitor-view']?.maximized ? 'maximized' : ''}`}>
+                    <div key="monitor-view" data-widget-id="monitor-view" className={`widget-wrapper glass-panel ${widgetStates['monitor-view']?.minimized ? 'minimized' : ''} ${widgetStates['monitor-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['monitor-view']} onMinimize={() => handleWidgetMinimize('monitor-view')} onMaximize={() => handleWidgetMaximize('monitor-view')} onClose={() => handleWidgetClose('monitor-view')} onLock={() => handleWidgetLock('monitor-view')} onMinimumFullView={() => handleMinimumFullView('monitor-view')} onViewSource={() => handleViewSource('monitor-view')} isMaximized={widgetStates['monitor-view']?.maximized} isLocked={widgetStates['monitor-view']?.locked} linkingGroup={widgetStates['monitor-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('monitor-view', g)} />
                         <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
                         {!widgetStates['monitor-view']?.minimized && <div className="window-content"><MonitorWidget /></div>}
                     </div>
                 )}
                 {widgetVisibility['command-view'] !== false && (
-                    <div key="command-view" data-widget-id="command-view" className={`widget-wrapper ${widgetStates['command-view']?.minimized ? 'minimized' : ''} ${widgetStates['command-view']?.maximized ? 'maximized' : ''}`}>
+                    <div key="command-view" data-widget-id="command-view" className={`widget-wrapper glass-panel ${widgetStates['command-view']?.minimized ? 'minimized' : ''} ${widgetStates['command-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['command-view']} onMinimize={() => handleWidgetMinimize('command-view')} onMaximize={() => handleWidgetMaximize('command-view')} onClose={() => handleWidgetClose('command-view')} onLock={() => handleWidgetLock('command-view')} onMinimumFullView={() => handleMinimumFullView('command-view')} onViewSource={() => handleViewSource('command-view')} isMaximized={widgetStates['command-view']?.maximized} isLocked={widgetStates['command-view']?.locked} linkingGroup={widgetStates['command-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('command-view', g)} />
                         <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
                         {!widgetStates['command-view']?.minimized && <div className="window-content"><CommandWidget /></div>}
                     </div>
                 )}
                 {widgetVisibility['portfolio-view'] !== false && (
-                    <div key="portfolio-view" data-widget-id="portfolio-view" className={`widget-wrapper ${widgetStates['portfolio-view']?.minimized ? 'minimized' : ''} ${widgetStates['portfolio-view']?.maximized ? 'maximized' : ''}`}>
+                    <div key="portfolio-view" data-widget-id="portfolio-view" className={`widget-wrapper glass-panel ${widgetStates['portfolio-view']?.minimized ? 'minimized' : ''} ${widgetStates['portfolio-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['portfolio-view']} onMinimize={() => handleWidgetMinimize('portfolio-view')} onMaximize={() => handleWidgetMaximize('portfolio-view')} onClose={() => handleWidgetClose('portfolio-view')} onLock={() => handleWidgetLock('portfolio-view')} onMinimumFullView={() => handleMinimumFullView('portfolio-view')} onViewSource={() => handleViewSource('portfolio-view')} isMaximized={widgetStates['portfolio-view']?.maximized} isLocked={widgetStates['portfolio-view']?.locked} linkingGroup={widgetStates['portfolio-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('portfolio-view', g)} />
                         <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
                         {!widgetStates['portfolio-view']?.minimized && <div className="window-content"><PortfolioWidget /></div>}
                     </div>
                 )}
                 {widgetVisibility['research-view'] !== false && (
-                    <div key="research-view" data-widget-id="research-view" className={`widget-wrapper ${widgetStates['research-view']?.minimized ? 'minimized' : ''} ${widgetStates['research-view']?.maximized ? 'maximized' : ''}`}>
+                    <div key="research-view" data-widget-id="research-view" className={`widget-wrapper glass-panel ${widgetStates['research-view']?.minimized ? 'minimized' : ''} ${widgetStates['research-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['research-view']} onMinimize={() => handleWidgetMinimize('research-view')} onMaximize={() => handleWidgetMaximize('research-view')} onClose={() => handleWidgetClose('research-view')} onLock={() => handleWidgetLock('research-view')} onMinimumFullView={() => handleMinimumFullView('research-view')} onViewSource={() => handleViewSource('research-view')} isMaximized={widgetStates['research-view']?.maximized} isLocked={widgetStates['research-view']?.locked} linkingGroup={widgetStates['research-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('research-view', g)} />
                         <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
                         {!widgetStates['research-view']?.minimized && <div className="window-content"><ResearchWidget /></div>}
                     </div>
                 )}
                 {widgetVisibility['terminal-view'] !== false && (
-                    <div key="terminal-view" data-widget-id="terminal-view" className={`widget-wrapper ${widgetStates['terminal-view']?.minimized ? 'minimized' : ''} ${widgetStates['terminal-view']?.maximized ? 'maximized' : ''}`}>
+                    <div key="terminal-view" data-widget-id="terminal-view" className={`widget-wrapper glass-panel ${widgetStates['terminal-view']?.minimized ? 'minimized' : ''} ${widgetStates['terminal-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['terminal-view']} onMinimize={() => handleWidgetMinimize('terminal-view')} onMaximize={() => handleWidgetMaximize('terminal-view')} onClose={() => handleWidgetClose('terminal-view')} onLock={() => handleWidgetLock('terminal-view')} onMinimumFullView={() => handleMinimumFullView('terminal-view')} onViewSource={() => handleViewSource('terminal-view')} isMaximized={widgetStates['terminal-view']?.maximized} isLocked={widgetStates['terminal-view']?.locked} linkingGroup={widgetStates['terminal-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('terminal-view', g)} />
                         <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
                         {!widgetStates['terminal-view']?.minimized && <div className="window-content"><TerminalWidget logs={logs} onClearHistory={handleClearLogs} /></div>}
@@ -407,7 +407,7 @@ const Dashboard = ({
                 )}
                 {/* Charts */}
                 {widgetVisibility['bar-chart'] !== false && (
-                    <div key="bar-chart" data-widget-id="bar-chart" className={`widget-wrapper ${widgetStates['bar-chart']?.minimized ? 'minimized' : ''} ${widgetStates['bar-chart']?.maximized ? 'maximized' : ''}`}>
+                    <div key="bar-chart" data-widget-id="bar-chart" className={`widget-wrapper glass-panel ${widgetStates['bar-chart']?.minimized ? 'minimized' : ''} ${widgetStates['bar-chart']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['bar-chart']} onMinimize={() => handleWidgetMinimize('bar-chart')} onMaximize={() => handleWidgetMaximize('bar-chart')} onClose={() => handleWidgetClose('bar-chart')} onLock={() => handleWidgetLock('bar-chart')} onMinimumFullView={() => handleMinimumFullView('bar-chart')} onViewSource={() => handleViewSource('bar-chart')} isMaximized={widgetStates['bar-chart']?.maximized} isLocked={widgetStates['bar-chart']?.locked} />
                         <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
                         {!widgetStates['bar-chart']?.minimized && <div className="window-content chart-card"><div style={{ flex: 1, minHeight: '300px' }}><SimpleBarChart data={barChartData} /></div></div>}

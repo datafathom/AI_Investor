@@ -45,7 +45,7 @@ const RoleOverview = () => {
   const IconComponent = ICON_MAP[content.icon] || Layout;
 
   return (
-    <div className="role-overview-dashboard p-8 animate-fade-in">
+    <div className="role-overview-dashboard glass-panel p-8 animate-fade-in">
       <header className="mb-10">
         <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">

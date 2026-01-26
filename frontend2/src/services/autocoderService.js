@@ -1,132 +1,128 @@
-/**
- * autoCoderService.js
- * 
- * Simulates the AI "Stacker Agent" writing code in real-time.
- * Provides streams of characters to create a hacking/coding effect.
- */
-
-const DEMO_SCRIPTS = [
-    {
-        id: 'module_alpha_v1',
-        name: 'Generate Alpha_Vantage_Wrapper.py',
-        description: 'Implementing robust error handling for API rate limits.',
-        language: 'python',
-        code: `class AlphaVantageWrapper:
-    def __init__(self, api_key):
-        self.api_key = api_key
-        self.base_url = "https://www.alphavantage.co/query"
-        self.session = requests.Session()
-
-    def get_intraday(self, symbol, interval='5min'):
-        """
-        Fetches intraday time series for a given symbol.
-        Implements exponential backoff for rate limits.
-        """
-        params = {
-            "function": "TIME_SERIES_INTRADAY",
-            "symbol": symbol,
-            "interval": interval,
-            "apikey": self.api_key
-        }
-        
-        try:
-            # AI OPTIMIZATION: Using retries with jitter
-            response = self._make_request(params)
-            data = response.json()
-            
-            if "Error Message" in data:
-                raise ValueError(f"API Error: {data['Error Message']}")
-                
-            return self._parse_timeseries(data)
-            
-        except Exception as e:
-            self.logger.error(f"Failed to fetch {symbol}: {str(e)}")
-            return None
-
-    def _make_request(self, params, retries=3):
-        for i in range(retries):
-            resp = self.session.get(self.base_url, params=params)
-            if resp.status_code == 200:
-                return resp
-            time.sleep(2 ** i) # Exponential backoff
-            
-    # AI NOTE: Automatically verified against pylint
-`
-    },
-    {
-        id: 'strategy_mom_v2',
-        name: 'Optimize Momentum_Strategy.py',
-        description: 'Refining signal generation with RSI and MACD confluence.',
-        language: 'python',
-        code: `class MomentumStrategy(BaseStrategy):
-    def on_tick(self, tick):
-        # AI-derived Logic: check for trend strength
-        rsi = self.indicators.rsi(tick.symbol, period=14)
-        macd, signal, hist = self.indicators.macd(tick.symbol)
-        
-        # BUY SIGNAL CONFIRMATION
-        if rsi < 30 and macd > signal:
-            risk_score = self.risk_manager.evaluate(tick.symbol)
-            
-            if risk_score > 0.7:
-                self.logger.info(f"High risk trade skipped: {tick.symbol}")
-                return
-                
-            qty = self.position_sizer.calc(self.portfolio.balance)
-            self.broker.submit_order(tick.symbol, qty, 'BUY')
-            
-        # SELL SIGNAL (Take Profit)
-        elif rsi > 70:
-            self.broker.close_position(tick.symbol)
-
-    # Unit Test created autonomously:
-    # test_momentum_strategy.py passed (14/14 tests)
-`
-    }
-];
+import { authService } from './authService';
 
 class AutoCoderService {
     constructor() {
-        this.currentTask = null;
+        this.baseUrl = '/api/v1/dev';
     }
 
+    /**
+     * Triggers AI code generation for a specific task.
+     */
+    async generateCode(task) {
+        try {
+            const response = await authService.authenticatedFetch(`${this.baseUrl}/generate`, {
+                method: 'POST',
+                body: JSON.stringify({ task })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Generation failed');
+            return data.code;
+        } catch (error) {
+            console.error('AutoCoder Store Error [generate]:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Validates generated code against the execution environment.
+     */
+    async validateCode(code) {
+        try {
+            const response = await authService.authenticatedFetch(`${this.baseUrl}/validate`, {
+                method: 'POST',
+                body: JSON.stringify({ code })
+            });
+            const data = await response.json();
+            return data.is_valid;
+        } catch (error) {
+            console.error('AutoCoder Store Error [validate]:', error);
+            return false;
+        }
+    }
+
+    /**
+     * Deploys validated code to the active registry.
+     */
+    async deployModule(name, code) {
+        try {
+            const response = await authService.authenticatedFetch(`${this.baseUrl}/deploy`, {
+                method: 'POST',
+                body: JSON.stringify({ name, code })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'Deployment failed');
+            return data;
+        } catch (error) {
+            console.error('AutoCoder Store Error [deploy]:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Gets the current status of the AutoCoder registry.
+     */
+    async getStatus() {
+        try {
+            const response = await authService.authenticatedFetch(`${this.baseUrl}/status`);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('AutoCoder Store Error [status]:', error);
+            return { status: 'offline', modules: [] };
+        }
+    /**
+     * Gets pending optimization tasks for the sandbox.
+     */
     getTasks() {
-        return DEMO_SCRIPTS.map(s => ({
-            id: s.id,
-            name: s.name,
-            description: s.description
-        }));
+        return [
+            { id: 't1', name: 'Data Normalizer', description: 'Optimize pandas vectorized operations for 10Y yield data.' },
+            { id: 't2', name: 'API Shield', description: 'Implement rate limiting and JWT validation for high-traffic endpoints.' },
+            { id: 't3', name: 'Sentiment Engine', description: 'Refactor social media NLP pipeline for lower latency.' },
+            { id: 't4', name: 'Port Scanner', description: 'Automated auditing of open internal services.' }
+        ];
     }
 
-    async streamCode(taskId, onChar, onComplete) {
-        const script = DEMO_SCRIPTS.find(s => s.id === taskId);
-        if (!script) return;
+    /**
+     * Streams code generation progress (Mock stream for Sandbox visualization).
+     */
+    async streamCode(taskId, onUpdate, onComplete) {
+        const fullCode = `
+import pandas as pd
+import numpy as np
 
-        this.currentTask = taskId;
-        let index = 0;
-        const code = script.code;
+def normalize_yield_data(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Optimized yield normalization using vector subtraction.
+    """
+    try:
+        # Step 1: Calculate basis points shift
+        df['bp_shift'] = df['yield'].diff() * 100
+        
+        # Step 2: Apply Gaussian smoothing
+        df['smooth'] = df['bp_shift'].rolling(window=5).mean()
+        
+        return df.dropna()
+    except Exception as e:
+        logger.error(f"Normalization failed: {e}")
+        raise
 
-        // Simulate typing speed variation
-        const typeChar = () => {
-            if (index < code.length && this.currentTask === taskId) {
-                onChar(code.substring(0, index + 1));
-                index++;
-
-                // Randomize typing speed (bursts and pauses)
-                const delay = Math.random() > 0.9 ? 150 : Math.random() * 30 + 10;
-                setTimeout(typeChar, delay);
-            } else {
-                if (this.currentTask === taskId) onComplete();
-            }
-        };
-
-        typeChar();
-    }
-
-    stop() {
-        this.currentTask = null;
+if __name__ == "__main__":
+    # Integration test
+    data = pd.DataFrame({'yield': [4.2, 4.25, 4.18, 4.31]})
+    print(normalize_yield_data(data))
+        `;
+        
+        let current = "";
+        const lines = fullCode.split('\n');
+        for (let line of lines) {
+            current += line + '\n';
+            onUpdate(current);
+            await new Promise(r => setTimeout(r, 50));
+        }
+        onComplete();
     }
 }
 
 export const autoCoderService = new AutoCoderService();
 export default autoCoderService;
+

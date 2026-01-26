@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { autoCoderService } from '../services/autoCoderService';
+import { autoCoderService } from '../services/autocoderService';
 import { Terminal, Code, Play, CheckCircle, Cpu, Loader, AlertTriangle, PlayCircle } from 'lucide-react';
 import './AutoCoderSandbox.css';
 

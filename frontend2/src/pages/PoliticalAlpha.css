@@ -10,6 +10,50 @@
     box-sizing: border-box;
 }
 
+/* CRITICAL: Ensure the scrollable wrapper expands to fit grid content */
+.political-alpha-page .scrollable-content-wrapper {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    min-height: 0;
+    height: auto !important;
+    max-height: none !important;
+}
+
+/* Allow the grid layout to expand naturally */
+.political-alpha-page .react-grid-layout {
+    height: auto !important;
+    min-height: auto !important;
+}
+
+/* Large scroll buffer at bottom */
+.political-alpha-page .scroll-buffer-200 {
+    height: 200px;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+/* Override app-shell viewport lock for this page */
+body:has(.political-alpha-page) #root,
+body:has(.political-alpha-page) .app-shell {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+/* Override main container for scrolling */
+body:has(.political-alpha-page) main {
+    overflow: visible !important;
+    height: auto !important;
+}
+
+/* Override full-bleed-page for this page */
+.political-alpha-page.full-bleed-page {
+    min-height: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
 /* Glass Panel Variant for Gold/Amber theme */
 .glass-panel-gold {
     background: rgba(15, 23, 42, 0.7);

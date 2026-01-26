@@ -5,6 +5,7 @@ import GalaxyView from '../components/Scanner/GalaxyView';
 import FilterBuilder from '../components/Scanner/FilterBuilder';
 import SectorCarousel from '../components/Scanner/SectorCarousel';
 import DataTable from '../components/DataViz/DataTable';
+import { scannerService } from '../services/scannerService';
 
 import './GlobalScanner.css';
 
@@ -107,13 +108,31 @@ const GlobalScanner = () => {
         }
     ];
 
-    const matchData = [
-        { id: 1, asset: 'NVDA', change: 2.4, sector: 'TECH', signal: 'BULLISH' },
-        { id: 2, asset: 'AMD', change: 1.1, sector: 'TECH', signal: 'BULLISH' },
-        { id: 3, asset: 'TSLA', change: -1.2, sector: 'CONSUMER', signal: 'BEARISH' },
-        { id: 4, asset: 'PLTR', change: 2.1, sector: 'DATA', signal: 'BULLISH' },
-        { id: 5, asset: 'COIN', change: -0.5, sector: 'FINANCE', signal: 'BEARISH' },
-    ];
+    const [matchData, setMatchData] = useState([]);
+    const [pulseData, setPulseData] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    React.useEffect(() => {
+        const loadScannerData = async () => {
+            setLoading(true);
+            try {
+                const [matches, pulse] = await Promise.all([
+                    scannerService.getLatestMatches(),
+                    scannerService.getMarketPulse()
+                ]);
+                setMatchData(matches);
+                setPulseData(pulse);
+            } catch (err) {
+                console.error("Failed to load scanner data", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadScannerData();
+
+        const interval = setInterval(loadScannerData, 30000); // 30s refresh
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <div className="full-bleed-page global-scanner-page text-white font-sans">
@@ -155,7 +174,7 @@ const GlobalScanner = () => {
                 >
                     {/* ... (keep widgets as they are but within the grid) ... */}
                     {/* 1. Market Galaxy 3D View */}
-                    <div key="galaxy" className="widget-container border-slate-800/50">
+                    <div key="galaxy" className="widget-container glass-panel border-slate-800/50">
                         <div className="widget-header-drag p-4 cursor-move">
                             <WidgetHeader icon={Globe2} title="Market Galaxy 3D" subtitle="Visual Correlation Map" />
                         </div>
@@ -169,24 +188,21 @@ const GlobalScanner = () => {
                     </div>
 
                     {/* 2. New Market Pulse Widget */}
-                    <div key="pulse" className="widget-container border-slate-800/50">
+                    <div key="pulse" className="widget-container glass-panel border-slate-800/50">
                         <div className="widget-header-drag p-4 cursor-move">
                             <WidgetHeader icon={Activity} title="Market Pulse" subtitle="Sector Momentum" colorClass="text-emerald-400" />
                         </div>
                         <div className="px-4 pb-4 flex flex-col gap-3">
-                            {[
-                                { name: 'Tech', change: 2.4 },
-                                { name: 'Finance', change: 1.1 },
-                                { name: 'Energy', change: -0.5 },
-                                { name: 'Health', change: -1.2 }
-                            ].map(sector => (
+                            {pulseData.length > 0 ? pulseData.map(sector => (
                                 <div key={sector.name} className="flex items-center justify-between p-2.5 bg-white/5 rounded border border-white/5 hover:bg-white/10 transition-colors">
                                     <span className="text-xs font-bold text-slate-300">{sector.name}</span>
                                     <span className={`text-xs font-mono font-black ${sector.change >= 0 ? 'text-bullish' : 'text-bearish'}`}>
                                         {sector.change >= 0 ? '+' : ''}{sector.change}%
                                     </span>
                                 </div>
-                            ))}
+                            )) : (
+                                <div className="text-center text-slate-500 py-8 text-[10px] uppercase font-mono">Initializing Neural Feed...</div>
+                            )}
                             <div className="mt-auto pt-4 border-t border-white/5 flex justify-center">
                                 <span className="text-[8px] font-black text-slate-500 font-mono tracking-[0.2em] uppercase">
                                     SCAN INTERVAL: <span className="text-blue-400">LIVE</span>
@@ -196,7 +212,7 @@ const GlobalScanner = () => {
                     </div>
 
                     {/* 3. Filter Controls */}
-                    <div key="filters" className="widget-container border-slate-800/50">
+                    <div key="filters" className="widget-container glass-panel border-slate-800/50">
                         <div className="widget-header-drag p-4 cursor-move">
                             <WidgetHeader icon={Filter} title="Scanning Parameters" subtitle="Advanced Signal Logic" colorClass="text-amber-400" />
                         </div>
@@ -206,7 +222,7 @@ const GlobalScanner = () => {
                     </div>
 
                     {/* 4. Recent Matches (Full Table) */}
-                    <div key="matches" className="widget-container border-slate-800/50">
+                    <div key="matches" className="widget-container glass-panel border-slate-800/50">
                         <div className="widget-header-drag p-4 cursor-move flex justify-between items-center">
                             <WidgetHeader icon={Scan} title="Recent Scanner Matches" subtitle="Institutional Signal Feed" colorClass="text-cyan-400" />
                             <div className="flex gap-2">

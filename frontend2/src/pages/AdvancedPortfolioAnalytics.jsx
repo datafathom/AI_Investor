@@ -24,14 +24,14 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { analyticsService } from '../services/analyticsService';
+import { GlassCard } from '../components/Common';
+import PageHeader from '../components/Navigation/PageHeader';
 import './AdvancedPortfolioAnalytics.css';
 
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
 
 const AdvancedPortfolioAnalytics = () => {
   const DEFAULT_LAYOUT = {
@@ -69,17 +69,12 @@ const AdvancedPortfolioAnalytics = () => {
   const loadAnalytics = async () => {
     setLoading(true);
     try {
-      // Load performance attribution
-      const attrRes = await axios.get(`${API_BASE}/api/v1/analytics/performance-attribution`, {
-        params: { portfolio_id: portfolioId }
-      });
-      setAttribution(attrRes.data.data);
-
-      // Load risk decomposition
-      const riskRes = await axios.get(`${API_BASE}/api/v1/analytics/risk-decomposition`, {
-        params: { portfolio_id: portfolioId }
-      });
-      setRiskDecomp(riskRes.data.data);
+      const [attr, risk] = await Promise.all([
+        analyticsService.getPerformanceAttribution(portfolioId),
+        analyticsService.getRiskDecomposition(portfolioId)
+      ]);
+      setAttribution(attr);
+      setRiskDecomp(risk);
     } catch (error) {
       console.error('Error loading analytics:', error);
     } finally {
@@ -116,82 +111,113 @@ const AdvancedPortfolioAnalytics = () => {
           margin={[16, 16]}
         >
           {/* Performance Attribution */}
-          <div key="attribution" className="analytics-card">
-            <h2>Performance Attribution</h2>
-            {attribution ? (
-              <div className="attribution-details">
-                <div className="metric">
-                  <span className="label">Total Return:</span>
-                  <span className="value">{attribution.total_return?.toFixed(2)}%</span>
-                </div>
-                <div className="metric">
-                  <span className="label">Benchmark Return:</span>
-                  <span className="value">{attribution.benchmark_return?.toFixed(2)}%</span>
-                </div>
-                <div className="metric">
-                  <span className="label">Active Return:</span>
-                  <span className="value">{attribution.active_return?.toFixed(2)}%</span>
-                </div>
-                <div className="breakdown">
-                  <h3>Attribution Breakdown</h3>
-                  {attribution.breakdown?.map((item, idx) => (
-                    <div key={idx} className="breakdown-item">
-                      <span>{item.factor}: {item.contribution?.toFixed(2)}%</span>
-                    </div>
-                  ))}
-                </div>
+          <div key="attribution">
+            <GlassCard variant="elevated" className="h-full">
+              <div className="glass-card-drag-handle">
+                <h2 className="text-xl font-bold mb-4">Performance Attribution</h2>
               </div>
-            ) : (
-              <div className="no-data">No attribution data available</div>
-            )}
+              {attribution ? (
+                <div className="attribution-details">
+                  <div className="metrics-row flex gap-4 mb-6">
+                    <div className="flex-1 p-4 bg-white/5 rounded-xl border border-white/10">
+                      <div className="text-[10px] text-zinc-500 uppercase font-bold mb-1">Total Return</div>
+                      <div className="text-2xl font-black text-white">{attribution.total_return?.toFixed(2)}%</div>
+                    </div>
+                    <div className="flex-1 p-4 bg-white/5 rounded-xl border border-white/10">
+                      <div className="text-[10px] text-zinc-500 uppercase font-bold mb-1">Benchmark</div>
+                      <div className="text-2xl font-black text-zinc-400">{attribution.benchmark_return?.toFixed(2)}%</div>
+                    </div>
+                    <div className="flex-1 p-4 bg-cyan-500/10 rounded-xl border border-cyan-500/20">
+                      <div className="text-[10px] text-cyan-500 uppercase font-bold mb-1">Alpha</div>
+                      <div className="text-2xl font-black text-cyan-400">{attribution.active_return?.toFixed(2)}%</div>
+                    </div>
+                  </div>
+                  <div className="breakdown space-y-2">
+                    <h3 className="text-xs font-black text-zinc-600 uppercase tracking-widest mb-4">Factor Contributions</h3>
+                    {attribution.breakdown?.map((item, idx) => (
+                      <div key={idx} className="flex justify-between items-center p-3 bg-zinc-900/50 rounded-lg border border-zinc-800">
+                        <span className="text-zinc-400 font-medium">{item.factor}</span>
+                        <span className={`font-bold ${item.contribution >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                          {item.contribution >= 0 ? '+' : ''}{item.contribution?.toFixed(2)}%
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full text-zinc-600">No attribution data available</div>
+              )}
+            </GlassCard>
           </div>
 
           {/* Risk Decomposition */}
-          <div key="risk" className="analytics-card">
-            <h2>Risk Decomposition</h2>
-            {riskDecomp ? (
-              <div className="risk-details">
-                <div className="metric">
-                  <span className="label">Total Risk:</span>
-                  <span className="value">{riskDecomp.total_risk?.toFixed(2)}%</span>
-                </div>
-                <div className="metric">
-                  <span className="label">Systematic Risk:</span>
-                  <span className="value">{riskDecomp.systematic_risk?.toFixed(2)}%</span>
-                </div>
-                <div className="metric">
-                  <span className="label">Idiosyncratic Risk:</span>
-                  <span className="value">{riskDecomp.idiosyncratic_risk?.toFixed(2)}%</span>
-                </div>
-                <div className="breakdown">
-                  <h3>Factor Exposures</h3>
-                  {riskDecomp.factor_exposures?.map((factor, idx) => (
-                    <div key={idx} className="breakdown-item">
-                      <span>{factor.factor}: {factor.exposure?.toFixed(2)}</span>
-                    </div>
-                  ))}
-                </div>
+          <div key="risk">
+            <GlassCard variant="elevated" className="h-full">
+              <div className="glass-card-drag-handle">
+                <h2 className="text-xl font-bold mb-4">Risk Decomposition</h2>
               </div>
-            ) : (
-              <div className="no-data">No risk data available</div>
-            )}
+              {riskDecomp ? (
+                <div className="risk-details">
+                  <div className="metrics-row flex gap-4 mb-6">
+                     <div className="flex-1 p-4 bg-white/5 rounded-xl">
+                        <div className="text-[10px] text-zinc-500 uppercase font-bold mb-1">Total Vol</div>
+                        <div className="text-2xl font-black text-white">{riskDecomp.total_risk?.toFixed(2)}%</div>
+                     </div>
+                     <div className="flex-1 p-4 bg-white/5 rounded-xl">
+                        <div className="text-[10px] text-zinc-500 uppercase font-bold mb-1">Beta</div>
+                        <div className="text-2xl font-black text-zinc-400">1.04</div>
+                     </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-zinc-500">Systematic Risk</span>
+                      <span className="text-white font-bold">{riskDecomp.systematic_risk?.toFixed(2)}%</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-zinc-500">Idiosyncratic Risk</span>
+                      <span className="text-white font-bold">{riskDecomp.idiosyncratic_risk?.toFixed(2)}%</span>
+                    </div>
+                   
+                    <div className="breakdown pt-4 border-t border-white/5">
+                      <h3 className="text-xs font-black text-zinc-600 uppercase tracking-widest mb-4">Factor Exposures</h3>
+                      <div className="grid grid-cols-2 gap-3">
+                        {riskDecomp.factor_exposures?.map((factor, idx) => (
+                          <div key={idx} className="p-3 bg-zinc-900/50 rounded-lg border border-zinc-800 flex justify-between items-center">
+                            <span className="text-xs text-zinc-400">{factor.factor}</span>
+                            <span className="text-xs font-bold text-white">{factor.exposure?.toFixed(2)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full text-zinc-600">No risk data available</div>
+              )}
+            </GlassCard>
           </div>
 
           {/* Holding Contributions */}
-          <div key="contributions" className="analytics-card">
-            <h2>Holding Contributions</h2>
-            {attribution?.holding_contributions ? (
-              <div className="contributions-list">
-                {attribution.holding_contributions.slice(0, 10).map((holding, idx) => (
-                  <div key={idx} className="contribution-item">
-                    <span className="symbol">{holding.symbol}</span>
-                    <span className="contribution">{holding.contribution?.toFixed(2)}%</span>
-                  </div>
-                ))}
+          <div key="contributions">
+            <GlassCard variant="default" className="h-full">
+              <div className="glass-card-drag-handle">
+                <h2 className="text-xl font-bold mb-4">Holding Contributions</h2>
               </div>
-            ) : (
-              <div className="no-data">No contribution data available</div>
-            )}
+              {attribution?.holding_contributions ? (
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  {attribution.holding_contributions.slice(0, 10).map((holding, idx) => (
+                    <div key={idx} className="p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 hover:border-cyan-500/30 transition-all group">
+                      <div className="text-lg font-black text-white mb-1 group-hover:text-cyan-400 transition-colors uppercase italic">{holding.symbol}</div>
+                      <div className={`text-sm font-bold ${holding.contribution >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                        {holding.contribution >= 0 ? '+' : ''}{holding.contribution?.toFixed(2)}%
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full text-zinc-600">No contribution data available</div>
+              )}
+            </GlassCard>
           </div>
         </ResponsiveGridLayout>
         

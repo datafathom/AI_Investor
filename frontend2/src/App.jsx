@@ -141,6 +141,7 @@ function AppContent() {
     '/trading/paper',
     '/analytics/political',
     '/analytics/strategy',
+    '/analytics/options',
     '/workspace/debate',
     '/research/reports',
     '/workspace/mission-control',
@@ -271,12 +272,15 @@ function AppContent() {
           .then(res => res.json())
           .then(data => {
             if (data.success && !data.data.completed) {
-              setShowOnboarding(true);
+              // Double check local storage didn't change during fetch
+              if (!localStorage.getItem('onboarding_completed')) {
+                  setShowOnboarding(true);
+              }
             }
           })
           .catch(() => {
             // If API fails, check localStorage
-            if (!onboardingCompleted) {
+            if (!localStorage.getItem('onboarding_completed')) {
               setShowOnboarding(true);
             }
           });
@@ -394,6 +398,10 @@ function AppContent() {
       case 'nav-ai-assistant': navigate('/ai/assistant'); break;
       case 'nav-ml-training': navigate('/ml/training'); break;
       
+      // Legal
+      case 'nav-legal-terms': navigate('/legal/terms'); break;
+      case 'nav-legal-privacy': navigate('/legal/privacy'); break;
+      
       // Integrations & Platform
       case 'nav-integrations': navigate('/integrations'); break;
       case 'nav-developer-platform': navigate('/developer/platform'); break;
@@ -447,9 +455,21 @@ function AppContent() {
       case 'logout': handleLogout(); break;
       case 'signin': setIsAuthModalOpen(true); break;
       
+      // Overviews
+      case 'nav-overview-workspace': navigate('/workspace'); break;
+      case 'nav-overview-analytics': navigate('/analytics'); break;
+      case 'nav-overview-portfolio': navigate('/portfolio'); break;
+      case 'nav-overview-analyst': navigate('/analyst'); break;
+      case 'nav-overview-guardian': navigate('/guardian'); break;
+      case 'nav-overview-strategist': navigate('/strategist'); break;
+      case 'nav-overview-architect': navigate('/architect'); break;
+      case 'nav-overview-observer': navigate('/observer'); break;
+      case 'nav-overview-scanner': navigate('/scanner'); break;
+
       // Debug
       case 'force-loading': setDebugStates(prev => ({ ...prev, forceLoading: !prev.forceLoading })); break;
       case 'force-error': setDebugStates(prev => ({ ...prev, forceError: !prev.forceError })); break;
+      case 'show-chat': navigate('/chat'); break;
 
       default: break;
     }

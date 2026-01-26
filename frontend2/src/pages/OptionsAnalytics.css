@@ -1,3 +1,8 @@
+.options-analytics-page {
+    position: relative;
+    z-index: 1;
+}
+
 .options-analytics-page .glass-panel {
     background: rgba(15, 23, 42, 0.4);
     backdrop-filter: blur(12px);

@@ -10,7 +10,7 @@ import React, { useEffect, useState } from 'react';
 import ViralAlertBadge from '../components/ViralAlertBadge';
 import './HypeMeterWidget.css';
 
-const HypeMeterWidget = () => {
+const HypeMeterWidget = ({ hideHeader = false }) => {
     const [feed, setFeed] = useState([]);
     
     useEffect(() => {
@@ -34,10 +34,12 @@ const HypeMeterWidget = () => {
 
     return (
         <div className="hypemeter-widget">
-            <header className="hm-header">
-                <h3>Social HypeMeter</h3>
-                <span className="live-tag">LIVE</span>
-            </header>
+            {!hideHeader && (
+                <header className="hm-header">
+                    <h3>Social HypeMeter</h3>
+                    <span className="live-tag">LIVE</span>
+                </header>
+            )}
             
             <div className="tape-container">
                 {feed.map(item => (

@@ -1,6 +1,112 @@
-.options-strategy-dashboard {
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.header-titles h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.25rem;
+  background: linear-gradient(90deg, #00d4ff, #5b86e5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.btn-utility {
+  padding: 0.6rem 1.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
   color: #fff;
-  background: transparent;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.btn-utility:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--neon-cyan);
+}
+
+/* Base Panel Styles Refined */
+.strategy-panel,
+.greeks-panel,
+.options-chain-panel,
+.strategy-controls-panel {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* React Grid Item & Handle Overrides (CRITICAL FIX) */
+.react-grid-item {
+  overflow: visible !important; /* Allow handles and borders to show */
+  z-index: 1;
+  /* Enforce Absolute Positioning for Grid */
+  position: absolute !important; 
+}
+
+.react-grid-item.react-grid-placeholder {
+  background: rgba(0, 212, 255, 0.1) !important;
+  border-radius: var(--radius-lg) !important;
+  opacity: 0.5 !important;
+  border: 1px dashed var(--neon-cyan) !important;
+  z-index: 0;
+}
+
+.react-resizable-handle {
+  z-index: 10 !important;
+}
+
+/* Draggable Handle Robustness */
+/* Draggable Handle Robustness */
+.grid-drag-handle {
+  font-size: 1.25rem;
+  margin-bottom: 1.25rem;
+  color: var(--neon-cyan);
+  cursor: grab;
+  padding: 0.5rem 1rem;
+  /* Pull handles to edges of container padding (1.5rem) */
+  margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+  background: rgba(255, 255, 255, 0.1); /* Increased visibility */
+  border-top: 2px solid var(--neon-cyan); /* High visibility top border */
+  border-radius: 12px 12px 0 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  user-select: none;
+  transition: background 0.2s;
+  z-index: 100 !important; /* Ensure it's above everything */
+  
+  /* Flex for controls header */
+  display: flex;
+  align-items: center;
+}
+
+.grid-drag-handle:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.grid-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Specifics for the H2 within */
+h2.grid-drag-handle {
+  display: block; /* Ensure H2 behaves */
+}
+
+/* New Controls Header */
+.panel-header-row {
+  margin-bottom: 1rem; /* Less margin for the controls panel */
+}
+
+.panel-title-sm {
+  font-size: 1rem;
+  margin: 0;
+  text-transform: uppercase;
+  color: #aaa;
+  font-weight: 600;
+  letter-spacing: 0.05em;
 }
 
 .strategy-controls {
@@ -8,7 +114,6 @@
   flex-wrap: wrap;
   gap: 1.5rem;
   align-items: flex-end;
-  margin-bottom: 2rem;
 }
 
 .form-group {
@@ -16,63 +121,6 @@
   flex-direction: column;
   flex: 1;
   min-width: 180px;
-}
-
-.strategy-panel,
-.greeks-panel,
-.options-chain-panel,
-.strategy-controls-panel {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 1.5rem;
-  backdrop-filter: blur(10px);
-}
-
-
-.dashboard-header {
-  margin-bottom: 2rem;
-}
-
-.dashboard-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(90deg, #00d4ff, #5b86e5);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.strategy-controls {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  align-items: center;
-}
-
-.symbol-input {
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
-  color: #fff;
-  font-size: 1rem;
-  width: 150px;
-}
-
-.symbol-input:focus {
-  outline: none;
-  border-color: #00d4ff;
-}
-
-.strategy-select {
-  flex: 1;
-  max-width: 300px;
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
-  color: #fff;
-  font-size: 1rem;
 }
 
 .build-button {
@@ -96,44 +144,23 @@
   cursor: not-allowed;
 }
 
-.dashboard-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-}
-
-.strategy-panel,
-.greeks-panel {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 1.5rem;
-  backdrop-filter: blur(10px);
-}
-
-.strategy-panel h2,
-.greeks-panel h2 {
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
-  color: #00d4ff;
-}
-
 .strategy-info {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: 0.75rem;
+  flex: 1;
 }
 
 .info-item {
   display: flex;
   justify-content: space-between;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .info-item .label {
   color: #aaa;
+  font-size: 0.9rem;
 }
 
 .info-item .value {
@@ -141,87 +168,44 @@
   font-weight: bold;
 }
 
-.strategy-legs {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.strategy-legs h3 {
-  font-size: 1.1rem;
-  margin-bottom: 0.75rem;
-  color: #fff;
-}
-
-.leg-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.75rem;
-  margin-bottom: 0.5rem;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 6px;
-  color: #ccc;
-}
-
-.leg-cost {
-  color: #00d4ff;
-  font-weight: bold;
-}
-
 .greeks-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 1rem;
+  flex: 1;
 }
 
 .greek-card {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 8px;
-  padding: 1.5rem;
+  padding: 1rem;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .greek-label {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: #aaa;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   text-transform: uppercase;
 }
 
 .greek-value {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #00d4ff;
-  margin-bottom: 0.25rem;
-}
-
-.greek-description {
-  font-size: 0.75rem;
-  color: #888;
-}
-
-.options-chain-panel {
-  grid-column: 1 / -1;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 1.5rem;
-  backdrop-filter: blur(10px);
-}
-
-.options-chain-panel h2 {
   font-size: 1.5rem;
-  margin-bottom: 1.5rem;
-  color: #00d4ff;
+  font-weight: bold;
+  color: var(--neon-cyan);
 }
 
 .chain-table {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  max-height: 500px;
+  flex: 1;
   overflow-y: auto;
+  min-height: 0;
 }
 
 .chain-header {
@@ -232,7 +216,10 @@
   background: rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   font-weight: bold;
-  color: #00d4ff;
+  color: var(--neon-cyan);
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .chain-row {
@@ -243,15 +230,58 @@
   background: rgba(255, 255, 255, 0.03);
   border-radius: 6px;
   color: #ccc;
+  transition: background 0.2s;
+}
+
+.chain-row:hover {
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .chain-row .strike {
   font-weight: bold;
-  color: #00d4ff;
+  color: var(--neon-cyan);
 }
 
 .no-data {
   text-align: center;
-  padding: 3rem;
+  padding: 2rem;
   color: #888;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* React Grid Layout Overrides Extension */
+.react-resizable-handle::after {
+  content: "";
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  width: 15px; /* Larger hit area */
+  height: 15px;
+  border-right: 3px solid var(--neon-cyan);
+  border-bottom: 3px solid var(--neon-cyan);
+  opacity: 0.8;
+  z-index: 100;
+}
+
+.react-resizable-handle:hover::after {
+  opacity: 1;
+  filter: drop-shadow(0 0 5px var(--neon-cyan));
+}
+
+.h-full {
+  height: 100% !important;
+}
+
+.options-strategy-dashboard .scrollable-content-wrapper {
+  padding-bottom: 8rem; /* Dramatically increased bottom padding */
+}
+
+.scroll-buffer-200 {
+  height: 200px;
+  width: 100%;
+  flex-shrink: 0;
+  pointer-events: none;
 }

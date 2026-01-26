@@ -9,7 +9,7 @@
 import React, { useEffect, useState } from 'react';
 import './KafkaStreamMonitor.css';
 
-const KafkaStreamMonitor = () => {
+const KafkaStreamMonitor = ({ hideHeader = false }) => {
     const [stats, setStats] = useState([]);
     const [messages, setMessages] = useState([]);
     const [filter, setFilter] = useState('all');
@@ -74,14 +74,16 @@ const KafkaStreamMonitor = () => {
 
     return (
         <div className="kafka-monitor-widget">
-            <header className="monitor-header">
-                <h3>Kafka Nervous System</h3>
-                <div className="topic-filters">
-                    <button className={filter === 'all' ? 'active' : ''} onClick={() => setFilter('all')}>All</button>
-                    <button className={filter === 'market-data' ? 'active' : ''} onClick={() => setFilter('market-data')}>Market</button>
-                    <button className={filter === 'options-flow' ? 'active' : ''} onClick={() => setFilter('options-flow')}>Options</button>
-                </div>
-            </header>
+            {!hideHeader && (
+                <header className="monitor-header">
+                    <h3>Kafka Nervous System</h3>
+                    <div className="topic-filters">
+                        <button className={filter === 'all' ? 'active' : ''} onClick={() => setFilter('all')}>All</button>
+                        <button className={filter === 'market-data' ? 'active' : ''} onClick={() => setFilter('market-data')}>Market</button>
+                        <button className={filter === 'options-flow' ? 'active' : ''} onClick={() => setFilter('options-flow')}>Options</button>
+                    </div>
+                </header>
+            )}
 
             <div className="throughput-grid">
                 {Array.isArray(stats) && stats.map(s => (

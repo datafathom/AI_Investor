@@ -21,14 +21,13 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { analyticsService } from '../services/analyticsService';
+import { GlassCard } from '../components/Common';
 import './AdvancedRiskDashboard.css';
 
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
 
 const AdvancedRiskDashboard = () => {
   const DEFAULT_LAYOUT = {
@@ -68,10 +67,8 @@ const AdvancedRiskDashboard = () => {
   const loadRiskMetrics = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE}/api/v1/advanced-risk/risk-metrics`, {
-        params: { portfolio_id: portfolioId, confidence_level: 0.95 }
-      });
-      setRiskMetrics(res.data.data);
+      const data = await analyticsService.getRiskMetrics(portfolioId);
+      setRiskMetrics(data);
     } catch (error) {
       console.error('Error loading risk metrics:', error);
     } finally {
@@ -82,11 +79,8 @@ const AdvancedRiskDashboard = () => {
   const runStressTest = async () => {
     setLoading(true);
     try {
-      const res = await axios.post(`${API_BASE}/api/v1/advanced-risk/stress-test`, {
-        portfolio_id: portfolioId,
-        scenario: selectedScenario
-      });
-      setStressTestResult(res.data.data);
+      const data = await analyticsService.runStressTest(portfolioId, selectedScenario);
+      setStressTestResult(data);
     } catch (error) {
       console.error('Error running stress test:', error);
     } finally {
@@ -97,12 +91,12 @@ const AdvancedRiskDashboard = () => {
   const runMonteCarlo = async () => {
     setLoading(true);
     try {
-      const res = await axios.post(`${API_BASE}/api/v1/advanced-risk/monte-carlo`, {
+      const data = await analyticsService.runMonteCarlo({
         portfolio_id: portfolioId,
         simulations: 10000,
         time_horizon_days: 30
       });
-      setMonteCarloResult(res.data.data);
+      setMonteCarloResult(data);
     } catch (error) {
       console.error('Error running Monte Carlo:', error);
     } finally {
@@ -131,134 +125,125 @@ const AdvancedRiskDashboard = () => {
           margin={[16, 16]}
         >
           {/* ... (widgets remain the same) ... */}
-          <div key="metrics" className="risk-metrics-panel">
-            <h2>Risk Metrics</h2>
-            {loading && !riskMetrics ? (
-              <div className="loading">Loading risk metrics...</div>
-            ) : riskMetrics ? (
-              <div className="metrics-grid">
-                <div className="metric-card">
-                  <div className="metric-label">Value at Risk (VaR)</div>
-                  <div className="metric-value" style={{ color: '#ff4444' }}>
-                    ${Math.abs(riskMetrics.var?.toFixed(2))}
-                  </div>
-                  <div className="metric-subtitle">95% Confidence</div>
-                </div>
-                <div className="metric-card">
-                  <div className="metric-label">Conditional VaR (CVaR)</div>
-                  <div className="metric-value" style={{ color: '#ff8844' }}>
-                    ${Math.abs(riskMetrics.cvar?.toFixed(2))}
-                  </div>
-                  <div className="metric-subtitle">Expected Tail Loss</div>
-                </div>
-                <div className="metric-card">
-                  <div className="metric-label">Maximum Drawdown</div>
-                  <div className="metric-value" style={{ color: '#ff4444' }}>
-                    {(riskMetrics.max_drawdown * 100).toFixed(2)}%
-                  </div>
-                  <div className="metric-subtitle">Peak to Trough</div>
-                </div>
-                <div className="metric-card">
-                  <div className="metric-label">Sharpe Ratio</div>
-                  <div className="metric-value" style={{ color: '#00ff88' }}>
-                    {riskMetrics.sharpe_ratio?.toFixed(2)}
-                  </div>
-                  <div className="metric-subtitle">Risk-Adjusted Return</div>
-                </div>
-                <div className="metric-card">
-                  <div className="metric-label">Sortino Ratio</div>
-                  <div className="metric-value" style={{ color: '#00ff88' }}>
-                    {riskMetrics.sortino_ratio?.toFixed(2)}
-                  </div>
-                  <div className="metric-subtitle">Downside Risk Adjusted</div>
-                </div>
-                <div className="metric-card">
-                  <div className="metric-label">Calmar Ratio</div>
-                  <div className="metric-value" style={{ color: '#00ff88' }}>
-                    {riskMetrics.calmar_ratio?.toFixed(2)}
-                  </div>
-                  <div className="metric-subtitle">Return / Max Drawdown</div>
-                </div>
+          <div key="metrics">
+            <GlassCard variant="elevated" className="h-full">
+              <div className="glass-card-drag-handle">
+                <h2 className="text-xl font-bold mb-4">Risk Metrics</h2>
               </div>
-            ) : (
-              <div className="no-data">No risk metrics available</div>
-            )}
+              {riskMetrics ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="p-4 bg-rose-500/5 rounded-2xl border border-rose-500/10">
+                    <div className="text-[10px] text-zinc-500 uppercase font-bold mb-1">Value at Risk (VaR)</div>
+                    <div className="text-2xl font-black text-rose-400">${Math.abs(riskMetrics.var?.toFixed(2))}</div>
+                    <div className="text-[10px] text-zinc-600 font-bold mt-1">95% CONFIDENCE</div>
+                  </div>
+                  <div className="p-4 bg-orange-500/5 rounded-2xl border border-orange-500/10">
+                    <div className="text-[10px] text-zinc-500 uppercase font-bold mb-1">Expected Tail Loss</div>
+                    <div className="text-2xl font-black text-orange-400">${Math.abs(riskMetrics.cvar?.toFixed(2))}</div>
+                  </div>
+                  <div className="p-4 bg-rose-500/5 rounded-2xl border border-rose-500/10">
+                    <div className="text-[10px] text-zinc-500 uppercase font-bold mb-1">Max Drawdown</div>
+                    <div className="text-2xl font-black text-rose-400">{(riskMetrics.max_drawdown * 100).toFixed(2)}%</div>
+                  </div>
+                  <div className="p-4 bg-emerald-500/5 rounded-2xl border border-emerald-500/10">
+                    <div className="text-[10px] text-zinc-500 uppercase font-bold mb-1">Sharpe Ratio</div>
+                    <div className="text-2xl font-black text-emerald-400">{riskMetrics.sharpe_ratio?.toFixed(2)}</div>
+                  </div>
+                  <div className="p-4 bg-emerald-500/5 rounded-2xl border border-emerald-500/10">
+                    <div className="text-[10px] text-zinc-500 uppercase font-bold mb-1">Sortino Ratio</div>
+                    <div className="text-2xl font-black text-emerald-400">{riskMetrics.sortino_ratio?.toFixed(2)}</div>
+                  </div>
+                  <div className="p-4 bg-cyan-500/5 rounded-2xl border border-cyan-500/10">
+                    <div className="text-[10px] text-zinc-500 uppercase font-bold mb-1">Vol / Drawdown</div>
+                    <div className="text-2xl font-black text-cyan-400">{riskMetrics.calmar_ratio?.toFixed(2)}</div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full text-zinc-600">No risk metrics available</div>
+              )}
+            </GlassCard>
           </div>
 
-          <div key="stress" className="stress-test-panel">
-            <h2>Stress Testing</h2>
-            <div className="stress-controls">
-              <select
-                value={selectedScenario}
-                onChange={(e) => setSelectedScenario(e.target.value)}
-                className="scenario-select"
-              >
-                <option value="market_crash_2008">2008 Financial Crisis</option>
-                <option value="covid_2020">2020 COVID-19 Crash</option>
-                <option value="inflation_2022">2022 Inflation Spike</option>
-                <option value="sector_shock_tech">Tech Sector Shock</option>
-              </select>
-              <button onClick={runStressTest} disabled={loading} className="run-button">
-                Run Stress Test
-              </button>
-            </div>
-            {stressTestResult && (
-              <div className="stress-results">
-                <div className="stress-metric">
-                  <span className="label">Portfolio Impact:</span>
-                  <span className="value" style={{ color: stressTestResult.portfolio_impact < 0 ? '#ff4444' : '#00ff88' }}>
-                    {(stressTestResult.portfolio_impact * 100).toFixed(2)}%
-                  </span>
+          <div key="stress">
+            <GlassCard variant="default" className="h-full">
+              <div className="glass-card-drag-handle">
+                <h2 className="text-xl font-bold mb-4">Stress Testing</h2>
+              </div>
+              <div className="flex gap-2 mb-6">
+                <select
+                  value={selectedScenario}
+                  onChange={(e) => setSelectedScenario(e.target.value)}
+                  className="flex-1 bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/50"
+                >
+                  <option value="market_crash_2008">2008 Financial Crisis</option>
+                  <option value="covid_2020">2020 COVID-19 Crash</option>
+                  <option value="inflation_2022">2022 Inflation Spike</option>
+                  <option value="sector_shock_tech">Tech Sector Shock</option>
+                </select>
+                <button onClick={runStressTest} disabled={loading} className="px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 rounded-lg text-cyan-400 font-bold text-xs hover:bg-cyan-500/20 transition-all">
+                  RUN
+                </button>
+              </div>
+              {stressTestResult ? (
+                <div className="space-y-4">
+                  <div className="p-4 bg-zinc-900/50 rounded-xl border border-white/5 flex justify-between items-center">
+                    <span className="text-zinc-500 text-sm">Portfolio Impact</span>
+                    <span className={`text-xl font-black ${stressTestResult.portfolio_impact < 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
+                      {(stressTestResult.portfolio_impact * 100).toFixed(2)}%
+                    </span>
+                  </div>
+                  <div className="scenario-details space-y-2">
+                    {stressTestResult.scenario_impacts?.slice(0, 5).map((impact, idx) => (
+                      <div key={idx} className="flex justify-between text-xs">
+                        <span className="text-zinc-600 font-bold uppercase italic">{impact.symbol}</span>
+                        <span className={impact.impact < 0 ? 'text-rose-500' : 'text-emerald-500'}>{(impact.impact * 100).toFixed(2)}%</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="stress-metric">
-                  <span className="label">Value Loss:</span>
-                  <span className="value" style={{ color: '#ff4444' }}>
-                    ${Math.abs(stressTestResult.value_loss?.toFixed(2))}
-                  </span>
-                </div>
-                <div className="scenario-details">
-                  <h3>Scenario Details</h3>
-                  {stressTestResult.scenario_impacts?.map((impact, idx) => (
-                    <div key={idx} className="impact-item">
-                      <span>{impact.symbol}: {(impact.impact * 100).toFixed(2)}%</span>
+              ) : (
+                <div className="flex items-center justify-center h-24 text-zinc-700 italic text-sm">Select scenario to simulate impact</div>
+              )}
+            </GlassCard>
+          </div>
+
+          <div key="monte_carlo">
+            <GlassCard variant="default" className="h-full">
+              <div className="glass-card-drag-handle">
+                <h2 className="text-xl font-bold mb-4">Monte Carlo Simulation</h2>
+              </div>
+              <div className="mb-6">
+                <button onClick={runMonteCarlo} disabled={loading} className="w-full py-3 bg-zinc-900 border border-zinc-800 rounded-xl text-zinc-400 font-bold text-xs hover:border-cyan-500/50 hover:text-white transition-all uppercase tracking-widest">
+                  {loading ? 'CALCULATING...' : 'GENERATE 10K PATHS'}
+                </button>
+              </div>
+              {monteCarloResult ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-3 bg-white/5 rounded-lg">
+                      <div className="text-[10px] text-zinc-600 uppercase font-black">Exp. Value</div>
+                      <div className="text-lg font-bold text-white">${monteCarloResult.expected_value?.toLocaleString()}</div>
                     </div>
-                  ))}
+                    <div className="p-3 bg-rose-500/5 rounded-lg border border-rose-500/10">
+                      <div className="text-[10px] text-rose-500 uppercase font-black">Prob. Loss</div>
+                      <div className="text-lg font-bold text-rose-400">{(monteCarloResult.probability_of_loss * 100).toFixed(1)}%</div>
+                    </div>
+                  </div>
+                  <div className="pt-4 border-t border-white/5">
+                    <div className="flex justify-between text-xs mb-2">
+                       <span className="text-zinc-500">5th Percentile (Tail)</span>
+                       <span className="text-rose-400 font-bold">${monteCarloResult.percentile_5?.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                       <span className="text-zinc-500">95th Percentile (Peak)</span>
+                       <span className="text-emerald-400 font-bold">${monteCarloResult.percentile_95?.toLocaleString()}</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-
-          <div key="monte_carlo" className="monte-carlo-panel">
-            <h2>Monte Carlo Simulation</h2>
-            <button onClick={runMonteCarlo} disabled={loading} className="run-button">
-              Run Simulation
-            </button>
-            {monteCarloResult && (
-              <div className="monte-carlo-results">
-                <div className="simulation-metric">
-                  <span className="label">Expected Value:</span>
-                  <span className="value">${monteCarloResult.expected_value?.toFixed(2)}</span>
-                </div>
-                <div className="simulation-metric">
-                  <span className="label">5th Percentile:</span>
-                  <span className="value" style={{ color: '#ff4444' }}>
-                    ${monteCarloResult.percentile_5?.toFixed(2)}
-                  </span>
-                </div>
-                <div className="simulation-metric">
-                  <span className="label">95th Percentile:</span>
-                  <span className="value" style={{ color: '#00ff88' }}>
-                    ${monteCarloResult.percentile_95?.toFixed(2)}
-                  </span>
-                </div>
-                <div className="simulation-metric">
-                  <span className="label">Probability of Loss:</span>
-                  <span className="value">
-                    {(monteCarloResult.probability_of_loss * 100).toFixed(1)}%
-                  </span>
-                </div>
-              </div>
-            )}
+              ) : (
+                <div className="flex items-center justify-center h-24 text-zinc-700 italic text-sm">Initiate paths for probability analysis</div>
+              )}
+            </GlassCard>
           </div>
         </ResponsiveGridLayout>
         

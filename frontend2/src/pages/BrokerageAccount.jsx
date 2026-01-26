@@ -78,7 +78,7 @@ const BrokerageAccount = () => {
     };
 
     return (
-        <div className="full-bleed-page brokerage-container">
+        <div className="full-bleed-page brokerage-container glass-panel">
             {/* Header */}
             <header className="mb-2">
                 <h1 className="text-3xl font-black text-white tracking-tight uppercase mb-1">

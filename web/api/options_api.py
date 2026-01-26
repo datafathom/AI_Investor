@@ -291,3 +291,36 @@ async def analyze_strategy(strategy_id: str):
             'success': False,
             'error': str(e)
         }), 500
+
+
+@options_bp.route('/chain', methods=['GET'])
+async def get_options_chain():
+    """
+    Get options chain for symbol.
+    """
+    try:
+        symbol = request.args.get('symbol', 'AAPL')
+        
+        # Mock Data Generation
+        import random
+        strikes = [100 + i*5 for i in range(20)]
+        chain = []
+        for strike in strikes:
+            chain.append({
+                'strike': strike,
+                'call_bid': round(random.uniform(1.0, 10.0), 2),
+                'call_ask': round(random.uniform(1.1, 10.1), 2),
+                'put_bid': round(random.uniform(1.0, 10.0), 2),
+                'put_ask': round(random.uniform(1.1, 10.1), 2)
+            })
+            
+        return jsonify({
+            'success': True,
+            'data': chain
+        })
+    except Exception as e:
+        logger.error(f"Error getting options chain: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500

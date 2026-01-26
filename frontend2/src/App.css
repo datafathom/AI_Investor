@@ -261,7 +261,8 @@ main {
   height: calc(100vh - 120px - 32px);
   padding: 0 !important; 
   margin: 0 !important;
-  overflow: hidden !important;
+  /* overflow: hidden !important;  <-- REMOVED: Causing clipped content on small screens */
+  overflow: auto !important; /* Allow scroll if content exceeds viewport */
   display: flex;
   flex-direction: column;
 }

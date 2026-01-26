@@ -1,31 +1,23 @@
-/**
- * ==============================================================================
- * FILE: frontend2/src/pages/AIAssistantDashboard.jsx
- * ROLE: AI Assistant Dashboard
- * PURPOSE: Phase 26 - Personalized AI Assistant
- *          Conversational AI assistant with personalized investment advice.
- * 
- * INTEGRATION POINTS:
- *    - AIAssistantAPI: /api/ai-assistant endpoints
- * 
- * FEATURES:
- *    - Chat interface
- *    - Conversation history
- *    - Personalized recommendations
- *    - Context-aware responses
- * 
- * AUTHOR: AI Investor Team
- * CREATED: 2026-01-21
- * LAST_MODIFIED: 2026-01-21
- * ==============================================================================
- */
-
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import { assistantService } from '../services/assistantService';
 import './AIAssistantDashboard.css';
+import { Bot, MessageSquare, Lightbulb, Send, Clock, Sparkles, RefreshCw } from 'lucide-react';
+import { Responsive, WidthProvider } from 'react-grid-layout';
+import PageHeader from '../components/Navigation/PageHeader';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
+const ResponsiveGridLayout = WidthProvider(Responsive);
+const STORAGE_KEY = 'layout_ai_assistant_v1';
+
+const DEFAULT_LAYOUTS = {
+  lg: [
+    { i: 'chat', x: 0, y: 0, w: 8, h: 12 },
+    { i: 'recommendations', x: 8, y: 0, w: 4, h: 12 }
+  ],
+  md: [
+    { i: 'chat', x: 0, y: 0, w: 6, h: 12 },
+    { i: 'recommendations', x: 6, y: 0, w: 4, h: 12 }
+  ]
+};
 
 const AIAssistantDashboard = () => {
   const [conversation, setConversation] = useState(null);
@@ -36,8 +28,22 @@ const AIAssistantDashboard = () => {
   const [userId] = useState('user_1');
   const messagesEndRef = useRef(null);
 
+  const [layouts, setLayouts] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : DEFAULT_LAYOUTS;
+    } catch (e) {
+      return DEFAULT_LAYOUTS;
+    }
+  });
+
+  const onLayoutChange = (current, all) => {
+    setLayouts(all);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+  };
+
   useEffect(() => {
-    createConversation();
+    initAssistant();
     loadRecommendations();
   }, []);
 
@@ -49,173 +55,185 @@ const AIAssistantDashboard = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const createConversation = async () => {
+  const initAssistant = async () => {
     try {
-      const res = await axios.post(`${API_BASE}/api/ai-assistant/conversation/create`, {
-        user_id: userId,
-        title: 'Investment Assistant Chat'
-      });
-      setConversation(res.data.data);
+      const data = await assistantService.createConversation(userId);
+      setConversation(data);
     } catch (error) {
-      console.error('Error creating conversation:', error);
+      console.error('Failed to init assistant:', error);
     }
   };
 
   const loadRecommendations = async () => {
     try {
-      const res = await axios.get(`${API_BASE}/api/ai-assistant/recommendations/${userId}`);
-      setRecommendations(res.data.data || []);
+      const data = await assistantService.getRecommendations(userId);
+      setRecommendations(data);
     } catch (error) {
-      console.error('Error loading recommendations:', error);
+      console.error('Failed to load recommendations:', error);
     }
   };
 
-  const sendMessage = async () => {
-    if (!inputMessage.trim() || !conversation) return;
-    
+  const handleSendMessage = async (e) => {
+    if (e) e.preventDefault();
+    if (!inputMessage.trim() || !conversation || loading) return;
+
     const userMsg = {
       role: 'user',
       content: inputMessage,
       timestamp: new Date().toISOString()
     };
-    
-    setMessages([...messages, userMsg]);
+
+    setMessages(prev => [...prev, userMsg]);
     setInputMessage('');
     setLoading(true);
 
     try {
-      const res = await axios.post(
-        `${API_BASE}/api/ai-assistant/conversation/${conversation.conversation_id}/message`,
-        { message: inputMessage }
-      );
-      
+      const data = await assistantService.sendMessage(conversation.conversation_id, inputMessage);
       const assistantMsg = {
         role: 'assistant',
-        content: res.data.data.content,
-        timestamp: res.data.data.timestamp
+        content: data.content,
+        timestamp: data.timestamp
       };
-      
-      setMessages([...messages, userMsg, assistantMsg]);
+      setMessages(prev => [...prev, assistantMsg]);
     } catch (error) {
-      console.error('Error sending message:', error);
-      const errorMsg = {
+      const errorMessage = {
         role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again.',
-        timestamp: new Date().toISOString()
+        content: 'I encountered an error while processing your request. Please check your connection and try again.',
+        timestamp: new Date().toISOString(),
+        error: true
       };
-      setMessages([...messages, userMsg, errorMsg]);
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  };
-
   return (
-    <div className="ai-assistant-dashboard">
-      <div className="dashboard-header">
-        <h1>AI Investment Assistant</h1>
-        <p className="subtitle">Phase 26: Personalized AI Assistant</p>
-      </div>
+    <div className="full-bleed-page ai-assistant-page">
+      <PageHeader
+        icon={<Bot />}
+        title={<>AI <span className="text-purple-400">ASSISTANT</span></>}
+      />
 
-      <div className="assistant-layout">
-        {/* Chat Panel */}
-        <div className="chat-panel">
-          <div className="chat-header">
-            <h2>Chat</h2>
-            <div className="chat-status">Online</div>
-          </div>
+      <div className="scrollable-content-wrapper">
+        <ResponsiveGridLayout
+          className="layout"
+          layouts={layouts}
+          onLayoutChange={onLayoutChange}
+          breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+          cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+          rowHeight={60}
+          isDraggable={true}
+          isResizable={true}
+          draggableHandle=".glass-panel-header"
+          margin={[15, 15]}
+        >
+          {/* Main Chat Interface */}
+          <div key="chat" className="glass-panel">
+            <div className="glass-panel-header">
+              <MessageSquare size={14} className="text-purple-400" />
+              <span>Personalized Investment Link | Neural Stream</span>
+            </div>
 
-          <div className="messages-container">
-            {messages.length === 0 ? (
-              <div className="welcome-message">
-                <h3>Welcome to your AI Investment Assistant!</h3>
-                <p>Ask me anything about investing, portfolio management, or financial planning.</p>
-                <div className="example-questions">
-                  <p>Try asking:</p>
-                  <ul>
-                    <li>"What should I invest in for retirement?"</li>
-                    <li>"How can I diversify my portfolio?"</li>
-                    <li>"Explain tax-loss harvesting"</li>
-                  </ul>
-                </div>
-              </div>
-            ) : (
-              messages.map((msg, idx) => (
-                <div key={idx} className={`message ${msg.role}`}>
-                  <div className="message-content">
-                    {msg.content}
+            <div className="flex-1 flex flex-col min-h-0 bg-black/20">
+              <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-gold">
+                {messages.length === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center text-center p-10 opacity-50">
+                    <Sparkles size={48} className="text-purple-500 mb-4 animate-pulse" />
+                    <h3 className="text-xl font-bold text-white mb-2">Neural Link Ready</h3>
+                    <p className="max-w-md text-sm font-mono uppercase tracking-widest text-slate-500">
+                      Ask about portfolio diversification, retirement strategies, or technical market analysis.
+                    </p>
                   </div>
-                  <div className="message-time">
-                    {new Date(msg.timestamp).toLocaleTimeString()}
-                  </div>
-                </div>
-              ))
-            )}
-            {loading && (
-              <div className="message assistant">
-                <div className="message-content">
-                  <div className="typing-indicator">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
-                </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-
-          <div className="chat-input-container">
-            <input
-              type="text"
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Ask me anything about investing..."
-              className="chat-input"
-              disabled={loading}
-            />
-            <button onClick={sendMessage} disabled={loading || !inputMessage.trim()} className="send-button">
-              Send
-            </button>
-          </div>
-        </div>
-
-        {/* Recommendations Panel */}
-        <div className="recommendations-panel">
-          <h2>Personalized Recommendations</h2>
-          {recommendations.length > 0 ? (
-            <div className="recommendations-list">
-              {recommendations.map((rec) => (
-                <div key={rec.recommendation_id} className="recommendation-card">
-                  <div className="recommendation-header">
-                    <h3>{rec.title}</h3>
-                    <div className="confidence-badge">
-                      {(rec.confidence * 100).toFixed(0)}% confidence
+                ) : (
+                  messages.map((msg, idx) => (
+                    <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[80%] p-4 rounded-2xl border ${
+                        msg.role === 'user' 
+                          ? 'bg-purple-900/20 border-purple-500/30 text-purple-100 rounded-tr-none' 
+                          : msg.error ? 'bg-red-950/20 border-red-500/30 text-red-200' : 'bg-slate-900/60 border-slate-700/50 text-slate-100 rounded-tl-none'
+                      } shadow-xl`}>
+                        <p className="text-sm leading-relaxed">{msg.content}</p>
+                        <div className="flex items-center gap-2 mt-2 opacity-40 text-[9px] font-mono uppercase font-bold">
+                          <Clock size={10} />
+                          {new Date(msg.timestamp).toLocaleTimeString()}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <p className="recommendation-description">{rec.description}</p>
-                  <div className="recommendation-reasoning">
-                    <strong>Reasoning:</strong> {rec.reasoning}
-                  </div>
-                </div>
-              ))}
+                  ))
+                )}
+                {loading && (
+                   <div className="flex justify-start">
+                     <div className="bg-slate-900/60 border border-slate-700/50 p-4 rounded-2xl rounded-tl-none">
+                        <div className="flex gap-1.5 h-4 items-center">
+                           <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                           <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                           <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce" />
+                        </div>
+                     </div>
+                   </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Chat Input */}
+              <form onSubmit={handleSendMessage} className="p-4 border-t border-white/5 bg-black/40 flex gap-3">
+                <input
+                  type="text"
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500/50 transition-all font-mono"
+                  placeholder="Inquire AI engine..."
+                />
+                <button
+                  type="submit"
+                  disabled={loading || !inputMessage.trim()}
+                  className="bg-purple-600/20 text-purple-400 border border-purple-500/30 w-12 h-12 rounded-xl flex items-center justify-center hover:bg-purple-500/30 disabled:opacity-50 transition-all"
+                >
+                  {loading ? <RefreshCw className="animate-spin" size={18} /> : <Send size={18} />}
+                </button>
+              </form>
             </div>
-          ) : (
-            <div className="no-recommendations">
-              <p>No recommendations available yet.</p>
-              <p>Start chatting to get personalized investment advice!</p>
+          </div>
+
+          {/* Recommendations Side Panel */}
+          <div key="recommendations" className="glass-panel">
+            <div className="glass-panel-header">
+              <Lightbulb size={14} className="text-purple-400" />
+              <span>Smart Recommendations</span>
             </div>
-          )}
-        </div>
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-gold bg-black/10">
+               {recommendations.length > 0 ? (
+                 recommendations.map((rec, idx) => (
+                   <div key={idx} className="p-4 bg-slate-900/40 border border-white/5 rounded-xl hover:border-purple-500/30 transition-all group cursor-pointer">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="text-xs font-black text-white group-hover:text-purple-300 transition-colors uppercase tracking-tight">{rec.title}</h4>
+                        <span className="text-[9px] font-bold bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded-full border border-purple-500/20">
+                          {(rec.confidence * 100).toFixed(0)}% Match
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 leading-tight mb-3 italic">"{rec.description}"</p>
+                      <div className="text-[9px] font-bold text-slate-600 uppercase tracking-widest border-t border-white/5 pt-2">
+                         Logic: {rec.reasoning}
+                      </div>
+                   </div>
+                 ))
+               ) : (
+                 <div className="h-full flex flex-col items-center justify-center text-center p-6 opacity-30 text-slate-500">
+                    <Lightbulb size={32} className="mb-2" />
+                    <p className="text-[10px] font-mono uppercase">Initializing logic engine...</p>
+                 </div>
+               )}
+            </div>
+          </div>
+        </ResponsiveGridLayout>
+        <div className="scroll-buffer-100" />
       </div>
     </div>
+  );
+};
+
+export default AIAssistantDashboard;
   );
 };
 

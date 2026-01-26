@@ -21,14 +21,13 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { analyticsService } from '../services/analyticsService';
+import { GlassCard } from '../components/Common';
 import './TaxOptimizationDashboard.css';
 
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
 
 const TaxOptimizationDashboard = () => {
   const DEFAULT_LAYOUT = {
@@ -66,10 +65,8 @@ const TaxOptimizationDashboard = () => {
 
   const loadHarvestCandidates = async () => {
     try {
-      const res = await axios.get(`${API_BASE}/api/v1/tax-optimization/harvest-candidates`, {
-        params: { portfolio_id: portfolioId }
-      });
-      setHarvestCandidates(res.data.data || []);
+      const data = await analyticsService.getTaxHarvestCandidates(portfolioId);
+      setHarvestCandidates(data || []);
     } catch (error) {
       console.error('Error loading harvest candidates:', error);
     }
@@ -77,10 +74,8 @@ const TaxOptimizationDashboard = () => {
 
   const loadTaxProjection = async () => {
     try {
-      const res = await axios.get(`${API_BASE}/api/v1/tax-optimization/tax-projection`, {
-        params: { portfolio_id: portfolioId, tax_year: selectedYear }
-      });
-      setTaxProjection(res.data.data);
+      const data = await analyticsService.getTaxProjection(portfolioId, selectedYear);
+      setTaxProjection(data);
     } catch (error) {
       console.error('Error loading tax projection:', error);
     }
@@ -119,89 +114,74 @@ const TaxOptimizationDashboard = () => {
           margin={[16, 16]}
         >
           {/* Tax Projection */}
-          <div key="projection" className="tax-projection-panel">
-            <h2>Tax Projection ({selectedYear})</h2>
-            {taxProjection ? (
-              <div className="projection-metrics">
-                <div className="projection-card">
-                  <div className="projection-label">Estimated Capital Gains</div>
-                  <div className="projection-value" style={{ color: '#ff8844' }}>
-                    ${taxProjection.estimated_capital_gains?.toFixed(2)}
-                  </div>
-                </div>
-                <div className="projection-card">
-                  <div className="projection-label">Estimated Tax Liability</div>
-                  <div className="projection-value" style={{ color: '#ff4444' }}>
-                    ${taxProjection.estimated_tax_liability?.toFixed(2)}
-                  </div>
-                </div>
-                <div className="projection-card">
-                  <div className="projection-label">Realized Losses</div>
-                  <div className="projection-value" style={{ color: '#00ff88' }}>
-                    ${Math.abs(taxProjection.realized_losses || 0).toFixed(2)}
-                  </div>
-                </div>
-                <div className="projection-card">
-                  <div className="projection-label">Tax Savings Potential</div>
-                  <div className="projection-value" style={{ color: '#00ff88' }}>
-                    ${taxProjection.tax_savings_potential?.toFixed(2)}
-                  </div>
-                </div>
+          <div key="projection">
+            <GlassCard variant="elevated" className="h-full">
+              <div className="glass-card-drag-handle">
+                <h2 className="text-xl font-bold mb-4">Tax Projection ({selectedYear})</h2>
               </div>
-            ) : (
-              <div className="no-data">No tax projection available</div>
-            )}
+              {taxProjection ? (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                   <div className="p-4 bg-white/5 rounded-2xl">
+                      <div className="text-[10px] text-zinc-500 uppercase font-bold mb-1">Cap. Gains</div>
+                      <div className="text-2xl font-black text-white">${taxProjection.estimated_capital_gains?.toLocaleString()}</div>
+                   </div>
+                   <div className="p-4 bg-rose-500/5 rounded-2xl border border-rose-500/10">
+                      <div className="text-[10px] text-rose-500 uppercase font-bold mb-1">Liability</div>
+                      <div className="text-2xl font-black text-rose-400">${taxProjection.estimated_tax_liability?.toLocaleString()}</div>
+                   </div>
+                   <div className="p-4 bg-emerald-500/5 rounded-2xl border border-emerald-500/10">
+                      <div className="text-[10px] text-emerald-500 uppercase font-bold mb-1">Realized Loss</div>
+                      <div className="text-2xl font-black text-emerald-400">${Math.abs(taxProjection.realized_losses || 0).toLocaleString()}</div>
+                   </div>
+                   <div className="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20">
+                      <div className="text-[10px] text-cyan-500 uppercase font-bold mb-1">Savings Potential</div>
+                      <div className="text-2xl font-black text-cyan-400">${taxProjection.tax_savings_potential?.toLocaleString()}</div>
+                   </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full text-zinc-600">No tax projection data</div>
+              )}
+            </GlassCard>
           </div>
 
-          {/* Harvest Candidates */}
-          <div key="candidates" className="harvest-candidates-panel">
-            <h2>Tax-Loss Harvesting Candidates</h2>
-            {harvestCandidates.length > 0 ? (
-              <div className="candidates-list">
-                {harvestCandidates.map((candidate, idx) => (
-                  <div key={idx} className="candidate-card">
-                    <div className="candidate-header">
-                      <span className="symbol">{candidate.symbol}</span>
-                      <span className="unrealized-loss" style={{ color: '#00ff88' }}>
-                        ${Math.abs(candidate.unrealized_loss).toFixed(2)} loss
-                      </span>
-                    </div>
-                    <div className="candidate-details">
-                      <div className="detail-item">
-                        <span className="label">Cost Basis:</span>
-                        <span className="value">${candidate.cost_basis?.toFixed(2)}</span>
+          <div key="candidates">
+            <GlassCard variant="default" className="h-full">
+              <div className="glass-card-drag-handle">
+                <h2 className="text-xl font-bold mb-4">Harvesting Candidates</h2>
+              </div>
+              {harvestCandidates.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {harvestCandidates.map((candidate, idx) => (
+                    <div key={idx} className="p-6 bg-zinc-900/40 rounded-2xl border border-white/5 hover:border-emerald-500/30 transition-all group">
+                      <div className="flex justify-between items-start mb-6">
+                         <div>
+                            <div className="text-2xl font-black text-white italic uppercase">{candidate.symbol}</div>
+                            <div className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Candidate #{idx + 1}</div>
+                         </div>
+                         <div className="px-3 py-1 bg-emerald-500/10 rounded-full text-emerald-400 text-xs font-bold">
+                            Loss: ${Math.abs(candidate.unrealized_loss).toLocaleString()}
+                         </div>
                       </div>
-                      <div className="detail-item">
-                        <span className="label">Current Value:</span>
-                        <span className="value">${candidate.current_value?.toFixed(2)}</span>
+                      <div className="space-y-3 mb-6">
+                         <div className="flex justify-between text-sm">
+                            <span className="text-zinc-500">Net Tax Benefit</span>
+                            <span className="text-emerald-400 font-bold">${candidate.tax_benefit?.toLocaleString()}</span>
+                         </div>
+                         <div className="flex justify-between text-sm">
+                            <span className="text-zinc-500">Replacement</span>
+                            <span className="text-white font-medium italic">{candidate.replacement_suggestion || 'N/A'}</span>
+                         </div>
                       </div>
-                      <div className="detail-item">
-                        <span className="label">Tax Benefit:</span>
-                        <span className="value" style={{ color: '#00ff88' }}>
-                          ${candidate.tax_benefit?.toFixed(2)}
-                        </span>
-                      </div>
-                      {candidate.replacement_suggestion && (
-                        <div className="replacement-suggestion">
-                          <span className="label">Suggested Replacement:</span>
-                          <span className="value">{candidate.replacement_suggestion}</span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="candidate-actions">
-                      <button
-                        onClick={() => checkWashSale(candidate.symbol)}
-                        className="check-button"
-                      >
-                        Check Wash Sale
+                      <button onClick={() => checkWashSale(candidate.symbol)} className="w-full py-2 bg-white/5 border border-white/10 rounded-lg text-zinc-400 font-bold text-[10px] uppercase hover:bg-white/10 hover:text-white transition-all">
+                         Validate Wash Sale Risk
                       </button>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="no-data">No harvest candidates at this time</div>
-            )}
+                  ))}
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full text-zinc-600 italic">No candidates at this time</div>
+              )}
+            </GlassCard>
           </div>
         </ResponsiveGridLayout>
         

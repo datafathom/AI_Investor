@@ -17,6 +17,42 @@
   contain: paint;
 }
 
+/* React Grid Layout - GLOBAL STANDARDS (CRITICAL FIX) */
+.react-grid-layout {
+  position: relative;
+  transition: height 200ms ease;
+}
+
+.react-grid-item {
+  transition: all 200ms ease;
+  transition-property: left, top, width, height;
+  /* Enforce absolute positioning to prevent stacking */
+  position: absolute !important;
+  z-index: 1;
+}
+
+.react-grid-item.cssTransforms {
+  transition-property: transform, width, height;
+}
+
+.react-grid-item.resizing {
+  z-index: 1;
+  will-change: width, height;
+}
+
+.react-grid-item.react-draggable-dragging {
+  transition: none;
+  z-index: 3;
+  will-change: transform;
+}
+
+.react-grid-item.react-grid-placeholder {
+  background: rgba(22, 101, 192, 0.1) !important;
+  border-radius: 12px !important;
+  border: 2px dashed rgba(22, 101, 192, 0.3) !important;
+  z-index: 2;
+}
+
 :root {
   font-size: 16px;
   
@@ -184,6 +220,26 @@ body.theme-light {
   box-shadow: 0 8px 32px 0 var(--glass-shadow);
   border-radius: var(--radius-card);
   transition: var(--transition-premium);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.glass-panel-header {
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.03);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--font-black);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  cursor: move;
+  flex-shrink: 0;
 }
 
 .glass-premium {
@@ -567,11 +623,12 @@ select option {
 
 /* Shared page-shell spacing for Viewport Efficiency */
 .full-bleed-page {
-  height: 100%;
+  min-height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 1.5rem;
 }
 
@@ -588,3 +645,30 @@ select option {
   width: 100%;
   flex-shrink: 0;
 }
+
+.scroll-buffer-200 {
+  height: 200px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* ESSENTIAL LAYOUT UTILITIES (FAILSAFE) */
+.flex { display: flex !important; }
+.flex-col { flex-direction: column !important; }
+.flex-1 { flex: 1 1 0% !important; }
+.h-full { height: 100% !important; }
+.w-full { width: 100% !important; }
+.overflow-hidden { overflow: hidden !important; }
+.overflow-y-auto { overflow-y: auto !important; }
+.relative { position: relative !important; }
+.items-center { align-items: center !important; }
+.justify-between { justify-content: space-between !important; }
+.p-3 { padding: 0.75rem !important; }
+.p-4 { padding: 1rem !important; }
+.p-6 { padding: 1.5rem !important; }
+.gap-2 { gap: 0.5rem !important; }
+.rounded-xl { border-radius: 1rem !important; }
+
+/* Grid Interaction handle */
+.cursor-move { cursor: move !important; }
+

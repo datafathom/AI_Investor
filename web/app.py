@@ -123,6 +123,7 @@ from web.api.web3_api import web3_bp
 from web.api.workspace_api import workspace_bp
 from web.api.youtube_api import youtube_bp
 from web.api.payment_transfer_api import payment_transfer_bp
+from web.api.scanner_api import scanner_bp
 from web.routes.market_routes import market_bp
 from web.routes.system_routes import system_bp as system_routes_bp
 # --- FINISHED CONSOLIDATION ---
@@ -382,10 +383,10 @@ def create_app() -> Flask:
     app.register_blueprint(spatial_bp)
     # app.register_blueprint(assets_bp, url_prefix='/api/v1/assets')
     # app.register_blueprint(attribution_bp, url_prefix='/api/v1/attribution')
-    # app.register_blueprint(analytics_bp)  # Phase 1: Advanced Portfolio Analytics
-    # app.register_blueprint(optimization_bp)  # Phase 2: Portfolio Optimization & Rebalancing
-    # app.register_blueprint(advanced_risk_bp)  # Phase 3: Advanced Risk Management & Stress Testing
-    # app.register_blueprint(tax_optimization_bp)  # Phase 4: Tax-Loss Harvesting & Optimization
+    app.register_blueprint(analytics_bp, url_prefix='/api/v1/analytics')
+    app.register_blueprint(optimization_bp, url_prefix='/api/v1/optimization')
+    app.register_blueprint(advanced_risk_bp, url_prefix='/api/v1/advanced-risk')
+    app.register_blueprint(tax_optimization_bp, url_prefix='/api/v1/tax-optimization')
     # app.register_blueprint(charting_bp)  # Phase 5: Advanced Charting & Technical Analysis
     app.register_blueprint(options_bp)  # Phase 6: Options Strategy Builder & Analyzer
     app.register_blueprint(financial_planning_bp)  # Phase 7: Financial Planning & Goal Tracking
@@ -589,6 +590,7 @@ def create_app() -> Flask:
     # Onboarding API
     # from web.api.onboarding_api import onboarding_bp # ABSOLUTE STRIP
     app.register_blueprint(onboarding_bp, url_prefix='/api/v1')
+    app.register_blueprint(scanner_bp)
     
     # Phase 23: Payment Transfer API
     app.register_blueprint(payment_transfer_bp)
