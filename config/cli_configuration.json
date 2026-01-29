@@ -75,6 +75,12 @@
                             "type": "boolean",
                             "default": false,
                             "help": "Rebuild images before starting"
+                        },
+                        {
+                            "name": "profile",
+                            "type": "string",
+                            "default": "full",
+                            "help": "Docker Compose profile to run (e.g. storage, graph, full)"
                         }
                     ],
                     "handler": "scripts.runners.docker_control:docker_up"

@@ -49,8 +49,8 @@ python cli.py dev
 ### 🏃 Step 3: Running the Cluster
 1. **On the STORAGE Machine**:
    ```bash
-   # Start the containers
-   docker compose -f infra/docker-compose.yml --profile storage up -d
+   # Start the containers with the storage profile via CLI
+   python cli.py docker up --profile storage
    ```
 2. **On the DEVELOPER Machine**:
    ```powershell

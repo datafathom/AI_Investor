@@ -16,12 +16,12 @@ def _get_compose_file():
         sys.exit(1)
     return compose_file
 
-def docker_up(build: bool = False):
-    """Start Docker containers using docker-compose."""
+def docker_up(profile: str = "full", build: bool = False):
+    """Start Docker containers using docker-compose with a specific profile."""
     compose_file = _get_compose_file()
     
     build_msg = " and rebuilding images" if build else ""
-    print(f" Starting Docker Infrastructure Containers{build_msg}...")
+    print(f" Starting Docker Infrastructure Containers with profile '{profile}'{build_msg}...")
     
     # Force stop first to ensure clean state
     print("🧹 Pre-flight cleanup: Stopping any running containers...")
@@ -31,8 +31,7 @@ def docker_up(build: bool = False):
         pass # Ignore exit from docker_down if it succeeds
         
     try:
-        # We use the 'full' profile by default to maintain backward compatibility with local Dev mode
-        cmd = ['docker-compose', '-f', compose_file, '--profile', 'full', 'up', '-d', '--remove-orphans']
+        cmd = ['docker-compose', '-f', compose_file, '--profile', profile, 'up', '-d', '--remove-orphans']
         if build:
             cmd.append('--build')
             
