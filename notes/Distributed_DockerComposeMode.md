@@ -49,14 +49,36 @@ python cli.py dev
 ### 🏃 Step 3: Running the Cluster
 1. **On the STORAGE Machine**:
    ```bash
-   # Start the containers with the storage profile via CLI
+   # 1. Install dependencies (Crucial!)
+   # If this is ONLY a Storage Host:
+   pip install -r requirements-linux-storage-host.txt
+   
+   # If this box is ALSO your Linux Dev Box (Dual Role):
+   # pip install -r requirements-linux-dev.txt
+
+   # 2. Start the containers with the storage profile via CLI
    python cli.py docker up --profile storage
    ```
 2. **On the DEVELOPER Machine**:
    ```powershell
-   # Just start the app (it now auto-connects to 192.168.1.27)
+   # 1. Install dependencies
+   pip install -r requirements-windows-dev.txt
+   
+   # 2. Start the app (it now auto-connects to 192.168.1.27)
    python cli.py dev
    ```
+
+---
+
+## 🏗️ Dependency Selection Guide
+
+| Machine Role | OS | Installation Command |
+| :--- | :--- | :--- |
+| **Developer Laptop** | Windows | `pip install -r requirements.txt` |
+| **Linux Dev Workstation** | Linux | `pip install -r requirements-linux-dev.txt` |
+| **Full Host (Dev + Storage)** | Linux | `pip install -r requirements-linux-dev.txt` |
+| **Production Storage Node** | Linux | `pip install -r requirements-linux-storage-host.txt` |
+| **Windows Storage Node** | Windows | `pip install -r requirements-windows-storage-host.txt` |
 
 ---
 
