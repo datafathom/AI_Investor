@@ -20,7 +20,7 @@ function Settings() {
   const fetchIdentity = async () => {
     setLoadingIdentity(true);
     try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('widget_os_token');
         const res = await fetch('/api/v1/identity/profile', {
             headers: { 'Authorization': `Bearer ${token}` }
         });

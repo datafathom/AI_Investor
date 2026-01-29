@@ -14,11 +14,11 @@ const STORAGE_KEY = 'political_alpha_layout_v16'; // Incremented for fresh layou
 const DEFAULT_LAYOUTS = {
     lg: [
         { i: 'summary', x: 0, y: 0, w: 12, h: 3 },
-        { i: 'sentiment', x: 0, y: 3, w: 12, h: 8 },
-        { i: 'impact', x: 0, y: 11, w: 12, h: 6 },
-        { i: 'watchlist', x: 0, y: 17, w: 12, h: 8 },
-        { i: 'feed', x: 0, y: 25, w: 12, h: 8 },
-        { i: 'news-ticker', x: 0, y: 33, w: 12, h: 2 }
+        { i: 'sentiment', x: 0, y: 3, w: 12, h: 10 },
+        { i: 'impact', x: 0, y: 13, w: 12, h: 8 },
+        { i: 'watchlist', x: 0, y: 21, w: 12, h: 10 },
+        { i: 'feed', x: 0, y: 31, w: 12, h: 12 },
+        { i: 'news-ticker', x: 0, y: 43, w: 12, h: 2 }
     ],
     md: [
         { i: 'summary', x: 0, y: 0, w: 10, h: 3 },
@@ -298,10 +298,10 @@ const PoliticalAlpha = () => {
                     onLayoutChange={onLayoutChange}
                     breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                     cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-                    rowHeight={50}
+                    rowHeight={40}
                     isDraggable={true}
                     isResizable={true}
-                    margin={[20, 20]}
+                    margin={[10, 10]}
                 >
                     {/* 0. Political Summary Widget */}
                     <div key="summary" className="glass-panel flex items-center justify-between px-10 py-6">

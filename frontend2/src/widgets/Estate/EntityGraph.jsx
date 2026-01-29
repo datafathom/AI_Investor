@@ -8,12 +8,12 @@ const EntityGraph = () => {
     const [selectedNodeId, setSelectedNodeId] = useState('n1');
 
     useEffect(() => {
-        if (entityGraph.nodes.length === 0) {
+        if ((entityGraph?.nodes || []).length === 0) {
             fetchEstateData();
         }
-    }, [fetchEstateData, entityGraph.nodes.length]);
+    }, [fetchEstateData, entityGraph?.nodes?.length]);
 
-    const selectedNode = entityGraph.nodes.find(n => n.id === selectedNodeId) || entityGraph.nodes[0];
+    const selectedNode = (entityGraph?.nodes || []).find(n => n.id === selectedNodeId) || (entityGraph?.nodes || [])[0];
 
     const getNodeIcon = (type) => {
         switch (type) {
@@ -23,7 +23,7 @@ const EntityGraph = () => {
         }
     };
 
-    if (isLoading && entityGraph.nodes.length === 0) {
+    if (isLoading && (entityGraph?.nodes || []).length === 0) {
         return (
             <div className="entity-graph-widget loading">
                 <Loader2 className="animate-spin" />
@@ -43,7 +43,7 @@ const EntityGraph = () => {
             </div>
 
             <div className="graph-viewport">
-                {entityGraph.nodes.map((node, idx) => (
+                {(entityGraph?.nodes || []).map((node, idx) => (
                     <div 
                         key={node.id} 
                         className={`graph-node ${node.type.toLowerCase()} ${selectedNodeId === node.id ? 'active' : ''}`}
@@ -59,10 +59,10 @@ const EntityGraph = () => {
                     </div>
                 ))}
 
-                <svg className="graph-connections" width="100%" height="100%">
-                    {entityGraph.edges.map((edge, i) => {
-                        const sourceIdx = entityGraph.nodes.findIndex(n => n.id === edge.source);
-                        const targetIdx = entityGraph.nodes.findIndex(n => n.id === edge.target);
+                    <svg className="graph-connections" width="100%" height="100%">
+                    {(entityGraph?.edges || []).map((edge, i) => {
+                        const sourceIdx = (entityGraph?.nodes || []).findIndex(n => n.id === edge.source);
+                        const targetIdx = (entityGraph?.nodes || []).findIndex(n => n.id === edge.target);
                         if (sourceIdx === -1 || targetIdx === -1) return null;
                         
                         const x1 = 20 + (sourceIdx * 20);

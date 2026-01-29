@@ -10,7 +10,7 @@ const SARWorkflow = () => {
         fetchSarAlerts();
     }, [fetchSarAlerts]);
 
-    const activeCase = sarAlerts.find(a => a.status === 'pending') || sarAlerts[0];
+    const activeCase = (sarAlerts || []).find(a => a.status === 'pending') || (sarAlerts || [])[0];
 
     const handleStatusUpdate = async (id, status) => {
         await updateSarStatus(id, status);

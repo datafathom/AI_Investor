@@ -1,0 +1,35 @@
+{
+  "type": "record",
+  "name": "MarketTelemetry",
+  "namespace": "com.ai_investor.telemetry",
+  "fields": [
+    {
+      "name": "timestamp",
+      "type": "long",
+      "doc": "Unix timestamp in milliseconds"
+    },
+    {
+      "name": "symbol",
+      "type": "string",
+      "doc": "Ticker symbol (e.g. AAPL, EURUSD)"
+    },
+    { "name": "price", "type": "double", "doc": "Current price" },
+    {
+      "name": "volume",
+      "type": ["null", "double"],
+      "default": null,
+      "doc": "Volume if available"
+    },
+    {
+      "name": "source",
+      "type": "string",
+      "doc": "Data source (e.g. ALPHA_VANTAGE, POLYGON)"
+    },
+    {
+      "name": "metadata",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "JSON string of extra metadata"
+    }
+  ]
+}

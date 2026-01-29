@@ -96,15 +96,28 @@ def start_dev_mode():
 
     # 3. Start Backend (Flask Debug)
     print("Launching Backend (Hot-Reload Enabled)...")
-    # Using 'python -m flask' enables the robust reloader
+    
+    # Robust Python Detection: Prefer Venv if it exists
+    python_exe = sys.executable
+    venv_python = PROJECT_ROOT / "venv" / "Scripts" / "python.exe"
+    if not venv_python.exists():
+        venv_python = PROJECT_ROOT / "venv" / "bin" / "python"
+        
+    if venv_python.exists():
+        print(f"📦 Using virtual environment: {venv_python}")
+        python_exe = str(venv_python)
+    else:
+        print(f"⚠️ Warning: Virtual environment not found. Using system python: {python_exe}")
+
     backend_env = os.environ.copy()
     backend_env["FLASK_APP"] = "web.app"
     backend_env["FLASK_ENV"] = "development"
     backend_env["FLASK_DEBUG"] = "1"
     backend_env["PYTHONIOENCODING"] = "utf-8"
+    backend_env["PYTHONPATH"] = str(PROJECT_ROOT) # Ensure project root is in path
     
     backend_cmd = [
-        sys.executable, "web/app.py"
+        python_exe, "web/app.py"
     ]
     
     backend_proc = subprocess.Popen(

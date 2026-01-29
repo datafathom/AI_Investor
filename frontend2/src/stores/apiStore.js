@@ -32,12 +32,23 @@ const useAPIStore = create((set, get) => ({
         try {
             const response = await fetch('/api/v1/integrations/connectors');
             const data = await response.json();
-            set({ connectors: data.connectors || [] });
+            set({ connectors: data || [] });
         } catch (error) {
             console.error('Fetch connectors failed:', error);
         }
     },
     
+    // Async: Fetch webhooks
+    fetchWebhooks: async () => {
+        try {
+            const response = await fetch('/api/v1/integrations/webhooks');
+            const data = await response.json();
+            set({ webhooks: data || [] });
+        } catch (error) {
+            console.error('Fetch webhooks failed:', error);
+        }
+    },
+
     // Async: Test connector
     testConnector: async (connectorId) => {
         try {
@@ -45,6 +56,18 @@ const useAPIStore = create((set, get) => ({
             return await response.json();
         } catch (error) {
             console.error('Test connector failed:', error);
+            throw error;
+        }
+    },
+
+    // Async: Test webhook
+    testWebhook: async (webhookId) => {
+        try {
+            // Assuming endpoint for testing a specific webhook
+            const response = await fetch(`/api/v1/integrations/webhooks/${webhookId}/test`, { method: 'POST' });
+            return await response.json();
+        } catch (error) {
+            console.error('Test webhook failed:', error);
             throw error;
         }
     },

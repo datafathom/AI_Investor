@@ -20,85 +20,30 @@
  * ==============================================================================
  */
 
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect } from 'react';
+import useIntegrationStore from '../stores/integrationStore';
 import './IntegrationsDashboard.css';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 const IntegrationsDashboard = () => {
-  const [availableIntegrations, setAvailableIntegrations] = useState([]);
-  const [connectedIntegrations, setConnectedIntegrations] = useState([]);
-  const [syncHistory, setSyncHistory] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [userId] = useState('user_1');
+  const {
+    availableIntegrations,
+    connectedIntegrations,
+    syncHistory,
+    loading,
+    fetchAvailable,
+    fetchConnected,
+    fetchSyncHistory,
+    connectIntegration,
+    syncIntegration
+  } = useIntegrationStore();
+
+  const userId = 'user_1';
 
   useEffect(() => {
-    loadAvailableIntegrations();
-    loadConnectedIntegrations();
-    loadSyncHistory();
-  }, []);
-
-  const loadAvailableIntegrations = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/integrations/available`);
-      setAvailableIntegrations(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading available integrations:', error);
-    }
-  };
-
-  const loadConnectedIntegrations = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/integrations/connected`, {
-        params: { user_id: userId }
-      });
-      setConnectedIntegrations(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading connected integrations:', error);
-    }
-  };
-
-  const loadSyncHistory = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/integrations/sync-history`, {
-        params: { user_id: userId, limit: 20 }
-      });
-      setSyncHistory(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading sync history:', error);
-    }
-  };
-
-  const connectIntegration = async (integrationId) => {
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/integrations/connect`, {
-        user_id: userId,
-        integration_id: integrationId
-      });
-      loadConnectedIntegrations();
-    } catch (error) {
-      console.error('Error connecting integration:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const syncIntegration = async (integrationId) => {
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/integrations/sync`, {
-        integration_id: integrationId
-      });
-      loadSyncHistory();
-    } catch (error) {
-      console.error('Error syncing integration:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    fetchAvailable();
+    fetchConnected(userId);
+    fetchSyncHistory(userId);
+  }, [fetchAvailable, fetchConnected, fetchSyncHistory, userId]);
 
   return (
     <div className="integrations-dashboard">
@@ -131,11 +76,11 @@ const IntegrationsDashboard = () => {
                       </button>
                     ) : (
                       <button
-                        onClick={() => connectIntegration(integration.integration_id)}
+                        onClick={() => connectIntegration(integration.integration_id, userId)}
                         disabled={loading}
                         className="connect-button"
                       >
-                        Connect
+                        {loading ? 'Connecting...' : 'Connect'}
                       </button>
                     )}
                   </div>
@@ -166,11 +111,11 @@ const IntegrationsDashboard = () => {
                   </div>
                   <div className="connection-actions">
                     <button
-                      onClick={() => syncIntegration(integration.integration_id)}
+                      onClick={() => syncIntegration(integration.integration_id, userId)}
                       disabled={loading}
                       className="sync-button"
                     >
-                      Sync Now
+                      {loading ? 'Syncing...' : 'Sync Now'}
                     </button>
                     <button className="disconnect-button">Disconnect</button>
                   </div>

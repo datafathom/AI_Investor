@@ -20,65 +20,40 @@
  * ==============================================================================
  */
 
+
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useWealthStore } from '../stores/wealthStore';
 import './FinancialPlanningDashboard.css';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 const FinancialPlanningDashboard = () => {
-  const [goals, setGoals] = useState([]);
-  const [recommendations, setRecommendations] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const { 
+    goals, 
+    recommendations, 
+    isLoading, 
+    fetchGoals, 
+    fetchRecommendations, 
+    createGoal 
+  } = useWealthStore();
+
   const [userId] = useState('user_1');
   const [newGoal, setNewGoal] = useState({ name: '', target_amount: '', target_date: '', goal_type: 'retirement' });
 
   useEffect(() => {
-    loadGoals();
-    loadRecommendations();
-  }, []);
+    fetchGoals(userId);
+    fetchRecommendations(userId);
+  }, [fetchGoals, fetchRecommendations, userId]);
 
-  const loadGoals = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/financial-planning/goals`, {
-        params: { user_id: userId }
-      });
-      setGoals(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading goals:', error);
-    }
-  };
-
-  const loadRecommendations = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/financial-planning/recommendations`, {
-        params: { user_id: userId }
-      });
-      setRecommendations(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading recommendations:', error);
-    }
-  };
-
-  const createGoal = async () => {
+  const handleCreateGoal = async () => {
     if (!newGoal.name || !newGoal.target_amount) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/financial-planning/goals/create`, {
-        user_id: userId,
+    
+    await createGoal(userId, {
         goal_name: newGoal.name,
         target_amount: parseFloat(newGoal.target_amount),
         target_date: newGoal.target_date,
         goal_type: newGoal.goal_type
-      });
-      setNewGoal({ name: '', target_amount: '', target_date: '', goal_type: 'retirement' });
-      loadGoals();
-    } catch (error) {
-      console.error('Error creating goal:', error);
-    } finally {
-      setLoading(false);
-    }
+    });
+    
+    setNewGoal({ name: '', target_amount: '', target_date: '', goal_type: 'retirement' });
   };
 
   const getProgressPercentage = (goal) => {
@@ -144,7 +119,7 @@ const FinancialPlanningDashboard = () => {
                 </select>
               </div>
               <div className="form-group" style={{ justifyContent: 'flex-end' }}>
-                <button onClick={createGoal} disabled={loading} className="create-button">
+                <button onClick={handleCreateGoal} disabled={isLoading} className="create-button">
                   Create Goal
                 </button>
               </div>

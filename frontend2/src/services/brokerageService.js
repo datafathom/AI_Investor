@@ -5,9 +5,10 @@
  * Interfaces with backend brokerage_api.py.
  */
 
+import apiClient from './apiClient';
+
 class BrokerageService {
     constructor() {
-        this.baseUrl = '/api/v1/brokerage';
         this.listeners = [];
         this.currentData = null;
         this.interval = null;
@@ -32,15 +33,10 @@ class BrokerageService {
 
     async fetchUpdates() {
         try {
-            const [statusRes, positionsRes] = await Promise.all([
-                fetch(`${this.baseUrl}/status`),
-                fetch(`${this.baseUrl}/positions`)
+            const [status, positions] = await Promise.all([
+                apiClient.get('/brokerage/status'),
+                apiClient.get('/brokerage/positions')
             ]);
-
-            if (!statusRes.ok || !positionsRes.ok) throw new Error('Failed to fetch brokerage data');
-
-            const status = await statusRes.json();
-            const positions = await positionsRes.json();
 
             // Transform backend data to frontend expected schema
             const transformedData = {
@@ -79,21 +75,16 @@ class BrokerageService {
 
     async executeOrder(symbol, side, qty) {
         try {
-            const response = await fetch(`${this.baseUrl}/order`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ symbol, side, qty, type: 'market' })
+            const result = await apiClient.post('/brokerage/order', { 
+                symbol, side, qty, type: 'market' 
             });
-            const result = await response.json();
-            if (response.ok) {
-                this.notify({ type: 'TRADE_FILL', data: { ...result, symbol, side, qty } });
-                await this.fetchUpdates(); // Fast refresh
-                return { success: true, ...result };
-            }
-            return { success: false, error: result.error || 'Execution rejected' };
+            
+            this.notify({ type: 'TRADE_FILL', data: { ...result, symbol, side, qty } });
+            await this.fetchUpdates(); // Fast refresh
+            return { success: true, ...result };
         } catch (error) {
             console.error('Order execution failed:', error);
-            return { success: false, error: 'Network error reaching execution gateway' };
+            return { success: false, error: error.response?.data?.error || 'Execution rejected' };
         }
     }
 

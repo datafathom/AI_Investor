@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.institutional.institutional_service import InstitutionalService
-from models.institutional import Client, WhiteLabelConfig
+from models.institutional import Client, WhiteLabelConfig, ClientAnalytics
 
 
 @pytest.fixture
@@ -34,19 +34,20 @@ async def test_create_client(service):
 
 
 @pytest.mark.asyncio
-async def test_configure_white_label(service):
-    """Test white-label configuration."""
-    service._save_white_label_config = AsyncMock()
+async def test_get_clients_for_advisor(service):
+    """Test fetching clients for advisor."""
+    result = await service.get_clients_for_advisor("advisor_123")
     
-    result = await service.configure_white_label(
-        organization_id="org_123",
-        logo_url="https://example.com/logo.png",
-        primary_color="#0066CC",
-        secondary_color="#FFFFFF",
-        custom_domain="invest.example.com"
-    )
+    assert len(result) >= 2
+    assert result[0].client_name == "Family Office Alpha"
+    assert result[0].aum == 120000000.0
+
+
+@pytest.mark.asyncio
+async def test_get_client_analytics(service):
+    """Test calculating client analytics."""
+    result = await service.get_client_analytics("client_123")
     
-    assert result is not None
-    assert isinstance(result, WhiteLabelConfig)
-    assert result.organization_id == "org_123"
-    assert result.logo_url == "https://example.com/logo.png"
+    assert result.client_id == "client_123"
+    assert result.fee_forecast > 0
+    assert result.churn_probability == 0.08

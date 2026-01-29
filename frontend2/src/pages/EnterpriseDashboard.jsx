@@ -6,7 +6,8 @@
  *          Displays team management, organizational structure, and shared portfolios.
  * 
  * INTEGRATION POINTS:
- *    - EnterpriseAPI: /api/v1/enterprise endpoints
+ *    - EnterpriseStore: Centralized state management
+ *    - EnterpriseAPI: /api/v1/enterprise endpoints (via Service)
  * 
  * FEATURES:
  *    - Team management
@@ -16,95 +17,50 @@
  * 
  * AUTHOR: AI Investor Team
  * CREATED: 2026-01-21
- * LAST_MODIFIED: 2026-01-21
+ * LAST_MODIFIED: 2026-01-28
  * ==============================================================================
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import useEnterpriseStore from '../stores/enterpriseStore';
 import './EnterpriseDashboard.css';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 const EnterpriseDashboard = () => {
-  const [teams, setTeams] = useState([]);
-  const [organizations, setOrganizations] = useState([]);
-  const [sharedPortfolios, setSharedPortfolios] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // Store State
+  const { 
+    teams, 
+    organizations, 
+    sharedPortfolios, 
+    isLoading, 
+    fetchTeams, 
+    fetchOrganizations, 
+    fetchSharedPortfolios,
+    createTeam: createTeamAction,
+    sharePortfolio: sharePortfolioAction
+  } = useEnterpriseStore();
+
   const [userId] = useState('user_1');
   const [newTeam, setNewTeam] = useState({ name: '', description: '' });
 
+  // Load Data on Mount
   useEffect(() => {
-    loadTeams();
-    loadOrganizations();
-    loadSharedPortfolios();
-  }, []);
+    fetchTeams(userId);
+    fetchOrganizations(userId);
+    fetchSharedPortfolios(userId);
+  }, [userId, fetchTeams, fetchOrganizations, fetchSharedPortfolios]);
 
-  const loadTeams = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/enterprise/teams`, {
-        params: { user_id: userId }
-      });
-      setTeams(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading teams:', error);
-    }
-  };
-
-  const loadOrganizations = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/enterprise/organizations`, {
-        params: { user_id: userId }
-      });
-      setOrganizations(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading organizations:', error);
-    }
-  };
-
-  const loadSharedPortfolios = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/enterprise/shared-portfolios`, {
-        params: { user_id: userId }
-      });
-      setSharedPortfolios(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading shared portfolios:', error);
-    }
-  };
-
-  const createTeam = async () => {
+  const handleCreateTeam = async () => {
     if (!newTeam.name) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/enterprise/team/create`, {
-        user_id: userId,
-        team_name: newTeam.name,
-        description: newTeam.description
-      });
+    
+    const success = await createTeamAction(userId, newTeam.name, newTeam.description);
+    if (success) {
       setNewTeam({ name: '', description: '' });
-      loadTeams();
-    } catch (error) {
-      console.error('Error creating team:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const sharePortfolio = async (portfolioId, teamId) => {
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/enterprise/portfolio/share`, {
-        portfolio_id: portfolioId,
-        team_id: teamId
-      });
-      loadSharedPortfolios();
-    } catch (error) {
-      console.error('Error sharing portfolio:', error);
-    } finally {
-      setLoading(false);
-    }
+  // NOTE: This function is currently unused in the UI but preserved for future wiring
+  const handleSharePortfolio = async (portfolioId, teamId) => {
+    await sharePortfolioAction(userId, portfolioId, teamId);
   };
 
   return (
@@ -133,8 +89,8 @@ const EnterpriseDashboard = () => {
               onChange={(e) => setNewTeam({ ...newTeam, description: e.target.value })}
               className="form-input"
             />
-            <button onClick={createTeam} disabled={loading} className="create-button">
-              Create Team
+            <button onClick={handleCreateTeam} disabled={isLoading} className="create-button">
+              {isLoading ? 'Creating...' : 'Create Team'}
             </button>
           </div>
         </div>
@@ -215,3 +171,4 @@ const EnterpriseDashboard = () => {
 };
 
 export default EnterpriseDashboard;
+

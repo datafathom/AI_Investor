@@ -13,7 +13,7 @@ const SupplyChainWidget = () => {
             try {
                 // For demo, we might need a token. 
                 // Assuming dev auto-login or session exists.
-                const token = localStorage.getItem('token'); 
+                const token = localStorage.getItem('widget_os_token'); 
                 const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
                 
                 const res = await fetch('/api/v1/system/supply-chain', { headers });

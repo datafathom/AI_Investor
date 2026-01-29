@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { HardDrive, Shield, RefreshCw, ExternalLink, Copy, Wallet } from 'lucide-react';
+import useWeb3Store from '../../stores/web3Store';
 import './CryptoWallet.css';
 
 /**
@@ -9,35 +10,42 @@ import './CryptoWallet.css';
  * with portfolio breakdown and security status.
  */
 const CryptoWalletDashboard = () => {
-    const [activeWallet, setActiveWallet] = useState('ledger');
+    const { portfolio, isLoading } = useWeb3Store();
+    const [activeWallet, setActiveWallet] = useState('main');
     const [isRefreshing, setIsRefreshing] = useState(false);
 
-    const wallets = {
-        ledger: {
-            name: 'Ledger Nano X',
-            address: '0x742d...f8a9',
+    // Derive wallets from portfolio data
+    const wallets = {};
+    if (portfolio?.wallets && Object.keys(portfolio.wallets).length > 0) {
+        Object.assign(wallets, portfolio.wallets);
+    } else if (portfolio?.assets) {
+        // Fallback: Treat entire portfolio as one wallet
+        wallets['main'] = {
+            name: 'Main Portfolio',
+            address: portfolio.address || '0x...',
             connected: true,
-            lastSync: '2 min ago',
-            holdings: [
-                { symbol: 'BTC', name: 'Bitcoin', amount: 1.25, value: 52500, change24h: 2.3 },
-                { symbol: 'ETH', name: 'Ethereum', amount: 15.8, value: 37500, change24h: -1.2 },
-                { symbol: 'SOL', name: 'Solana', amount: 450, value: 45000, change24h: 5.1 },
-            ]
-        },
-        trezor: {
-            name: 'Trezor Model T',
-            address: '0x8f3c...2b1e',
+            lastSync: 'Now',
+            holdings: portfolio.assets.map(a => ({
+                symbol: a.symbol,
+                name: a.name || a.symbol,
+                amount: a.amount,
+                value: a.value_usd || (a.amount * (a.price || 0)),
+                change24h: a.change_24h || 0
+            }))
+        };
+    } else {
+        // Loading or Empty State
+        wallets['main'] = {
+            name: 'Loading...',
+            address: '...',
             connected: false,
-            lastSync: '1 hour ago',
-            holdings: [
-                { symbol: 'BTC', name: 'Bitcoin', amount: 0.5, value: 21000, change24h: 2.3 },
-                { symbol: 'LINK', name: 'Chainlink', amount: 1500, value: 15000, change24h: -3.5 },
-            ]
-        }
-    };
+            lastSync: '...',
+            holdings: []
+        };
+    }
 
-    const currentWallet = wallets[activeWallet];
-    const totalValue = currentWallet.holdings.reduce((sum, h) => sum + h.value, 0);
+    const currentWallet = wallets[activeWallet] || wallets[Object.keys(wallets)[0]];
+    const totalValue = currentWallet?.holdings?.reduce((sum, h) => sum + h.value, 0) || 0;
 
     const handleRefresh = () => {
         setIsRefreshing(true);

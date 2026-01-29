@@ -6,7 +6,8 @@
  *          Displays ML training jobs, model versions, and deployment status.
  * 
  * INTEGRATION POINTS:
- *    - MLTrainingAPI: /api/v1/ml-training endpoints
+ *    - MLStore: Centralized state management
+ *    - MLTrainingAPI: /api/v1/ml-training endpoints (via Service)
  * 
  * FEATURES:
  *    - Training job management
@@ -16,95 +17,49 @@
  * 
  * AUTHOR: AI Investor Team
  * CREATED: 2026-01-21
- * LAST_MODIFIED: 2026-01-21
+ * LAST_MODIFIED: 2026-01-28
  * ==============================================================================
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import useMLStore from '../stores/mlStore';
 import './MLTrainingDashboard.css';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 const MLTrainingDashboard = () => {
-  const [trainingJobs, setTrainingJobs] = useState([]);
-  const [modelVersions, setModelVersions] = useState([]);
-  const [deployments, setDeployments] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // Store State
+  const { 
+    trainingJobs, 
+    modelVersions, 
+    deployments, 
+    isLoading, 
+    fetchTrainingJobs, 
+    fetchModelVersions, 
+    fetchDeployments,
+    startTrainingJob: startJobAction,
+    deployModel: deployModelAction
+  } = useMLStore();
+
   const [userId] = useState('user_1');
   const [newJob, setNewJob] = useState({ model_type: 'price_prediction', dataset: '' });
 
+  // Load Data on Mount
   useEffect(() => {
-    loadTrainingJobs();
-    loadModelVersions();
-    loadDeployments();
-  }, []);
+    fetchTrainingJobs(userId);
+    fetchModelVersions(userId);
+    fetchDeployments(userId);
+  }, [userId, fetchTrainingJobs, fetchModelVersions, fetchDeployments]);
 
-  const loadTrainingJobs = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/ml-training/jobs`, {
-        params: { user_id: userId }
-      });
-      setTrainingJobs(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading training jobs:', error);
-    }
-  };
-
-  const loadModelVersions = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/ml-training/models`, {
-        params: { user_id: userId }
-      });
-      setModelVersions(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading model versions:', error);
-    }
-  };
-
-  const loadDeployments = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/ml-training/deployments`, {
-        params: { user_id: userId }
-      });
-      setDeployments(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading deployments:', error);
-    }
-  };
-
-  const startTrainingJob = async () => {
+  const handleStartTrainingJob = async () => {
     if (!newJob.model_type || !newJob.dataset) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/ml-training/job/start`, {
-        user_id: userId,
-        model_type: newJob.model_type,
-        dataset: newJob.dataset
-      });
+    
+    const success = await startJobAction(userId, newJob.model_type, newJob.dataset);
+    if (success) {
       setNewJob({ model_type: 'price_prediction', dataset: '' });
-      loadTrainingJobs();
-    } catch (error) {
-      console.error('Error starting training job:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const deployModel = async (modelId) => {
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/ml-training/deploy`, {
-        model_id: modelId
-      });
-      loadDeployments();
-      loadModelVersions();
-    } catch (error) {
-      console.error('Error deploying model:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleDeployModel = async (modelId) => {
+    await deployModelAction(userId, modelId);
   };
 
   const getStatusColor = (status) => {
@@ -146,8 +101,8 @@ const MLTrainingDashboard = () => {
               onChange={(e) => setNewJob({ ...newJob, dataset: e.target.value })}
               className="form-input"
             />
-            <button onClick={startTrainingJob} disabled={loading} className="start-button">
-              Start Training
+            <button onClick={handleStartTrainingJob} disabled={isLoading} className="start-button">
+              {isLoading ? 'Starting...' : 'Start Training'}
             </button>
           </div>
         </div>
@@ -210,8 +165,8 @@ const MLTrainingDashboard = () => {
                   </div>
                   {model.status === 'ready' && (
                     <button
-                      onClick={() => deployModel(model.model_id)}
-                      disabled={loading}
+                      onClick={() => handleDeployModel(model.model_id)}
+                      disabled={isLoading}
                       className="deploy-button"
                     >
                       Deploy Model
@@ -256,3 +211,4 @@ const MLTrainingDashboard = () => {
 };
 
 export default MLTrainingDashboard;
+

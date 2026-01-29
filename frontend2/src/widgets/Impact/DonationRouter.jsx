@@ -34,11 +34,11 @@ const DonationRouter = () => {
             <div className="wealth-metrics">
                 <div className="metric-row">
                     <label>"Enough" Threshold</label>
-                    <span>${(enoughThreshold / 1000000).toFixed(2)}M</span>
+                    <span>${((enoughThreshold || 0) / 1000000).toFixed(2)}M</span>
                 </div>
                 <div className="metric-row text-right">
                     <label>Current Net Worth</label>
-                    <span className="text-white">${(currentNetWorth / 1000000).toFixed(3)}M</span>
+                    <span className="text-white">${((currentNetWorth || 0) / 1000000).toFixed(3)}M</span>
                 </div>
             </div>
 
@@ -47,13 +47,13 @@ const DonationRouter = () => {
                     <DollarSign size={16} className="text-green-500" />
                     <span className="text-sm text-gray-400">Distributable Alpha:</span>
                 </div>
-                <span className="amount">${excessAlpha.toLocaleString()}</span>
+                <span className="amount">${(excessAlpha || 0).toLocaleString()}</span>
             </div>
 
             <div className="allocation-pipeline">
                 <div className="pipeline-header">Allocation Pipeline</div>
                 <div className="pipeline-visual">
-                    {allocations.map((alloc, idx) => (
+                    {(allocations || []).map((alloc, idx) => (
                         <div 
                             key={idx} 
                             className="pipe-segment" 
@@ -77,10 +77,10 @@ const DonationRouter = () => {
                 <div className="font-semibold mb-2 text-xs uppercase text-gray-600 flex items-center gap-1">
                     <History size={10} /> Recent Activity
                 </div>
-                {donationHistory.length === 0 ? (
+                {(donationHistory || []).length === 0 ? (
                     <div className="text-center text-xs text-gray-600 py-2">No donations recorded yet.</div>
                 ) : (
-                    donationHistory.slice(0, 3).map((record) => (
+                    (donationHistory || []).slice(0, 3).map((record) => (
                         <div key={record.id} className="history-item">
                             <span>{new Date(record.date).toLocaleDateString()}</span>
                             <span className="text-green-400">+${record.total.toLocaleString()}</span>

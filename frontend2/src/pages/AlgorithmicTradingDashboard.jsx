@@ -21,21 +21,28 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './AlgorithmicTradingDashboard.css';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
+import useAlgoStore from '../stores/algoStore';
+import './AlgorithmicTradingDashboard.css';
 
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const AlgorithmicTradingDashboard = () => {
-  const [strategies, setStrategies] = useState([]);
-  const [selectedStrategy, setSelectedStrategy] = useState(null);
-  const [performance, setPerformance] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const {
+      strategies,
+      selectedStrategy,
+      performance,
+      isLoading,
+      fetchStrategies,
+      setSelectedStrategy,
+      fetchPerformance,
+      createStrategy,
+      deployStrategy,
+      pauseStrategy
+  } = useAlgoStore();
+
   const [userId] = useState('user_1');
   const [newStrategy, setNewStrategy] = useState({ name: '', description: '' });
 
@@ -63,82 +70,34 @@ const AlgorithmicTradingDashboard = () => {
   };
 
   useEffect(() => {
-    loadStrategies();
-  }, []);
+    fetchStrategies(userId);
+  }, [fetchStrategies, userId]);
 
   useEffect(() => {
     if (selectedStrategy) {
-      loadPerformance(selectedStrategy.strategy_id);
+      fetchPerformance(selectedStrategy.strategy_id);
     }
-  }, [selectedStrategy]);
+  }, [selectedStrategy, fetchPerformance]);
 
-  const loadStrategies = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/strategy/strategies`, {
-        params: { user_id: userId }
-      });
-      setStrategies(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading strategies:', error);
-    }
-  };
 
-  const loadPerformance = async (strategyId) => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/strategy/performance`, {
-        params: { strategy_id: strategyId }
-      });
-      setPerformance(res.data.data);
-    } catch (error) {
-      console.error('Error loading performance:', error);
-    }
-  };
-
-  const createStrategy = async () => {
+  const handleCreateStrategy = async () => {
     if (!newStrategy.name) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/strategy/create`, {
-        user_id: userId,
+    
+    await createStrategy(userId, {
         strategy_name: newStrategy.name,
         description: newStrategy.description,
         rules: []
-      });
-      setNewStrategy({ name: '', description: '' });
-      loadStrategies();
-    } catch (error) {
-      console.error('Error creating strategy:', error);
-    } finally {
-      setLoading(false);
-    }
+    });
+    
+    setNewStrategy({ name: '', description: '' });
   };
 
-  const deployStrategy = async (strategyId) => {
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/strategy/deploy`, {
-        strategy_id: strategyId
-      });
-      loadStrategies();
-    } catch (error) {
-      console.error('Error deploying strategy:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleDeployStrategy = async (strategyId) => {
+    await deployStrategy(strategyId, userId);
   };
 
-  const pauseStrategy = async (strategyId) => {
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/strategy/pause`, {
-        strategy_id: strategyId
-      });
-      loadStrategies();
-    } catch (error) {
-      console.error('Error pausing strategy:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handlePauseStrategy = async (strategyId) => {
+    await pauseStrategy(strategyId, userId);
   };
 
   return (
@@ -186,7 +145,7 @@ const AlgorithmicTradingDashboard = () => {
                 />
               </div>
               <div className="form-group" style={{ flex: '0 0 auto', justifyContent: 'flex-end' }}>
-                <button onClick={createStrategy} disabled={loading} className="create-button">
+                <button onClick={handleCreateStrategy} disabled={isLoading} className="create-button">
                   Create Strategy
                 </button>
               </div>
@@ -214,7 +173,7 @@ const AlgorithmicTradingDashboard = () => {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            pauseStrategy(strategy.strategy_id);
+                            handlePauseStrategy(strategy.strategy_id);
                           }}
                           className="pause-button"
                         >
@@ -224,7 +183,7 @@ const AlgorithmicTradingDashboard = () => {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            deployStrategy(strategy.strategy_id);
+                            handleDeployStrategy(strategy.strategy_id);
                           }}
                           className="deploy-button"
                         >

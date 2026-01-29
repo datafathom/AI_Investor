@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
+import useSystemHealthStore from '../stores/systemHealthStore';
 import KafkaHealth from '../widgets/System/KafkaHealth';
 import DatabaseGauges from '../widgets/System/DatabaseGauges';
 import AgentLoadBalancer from '../widgets/System/AgentLoadBalancer';
@@ -14,6 +15,15 @@ import { GlassCard } from '../components/Common';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const SystemHealthDashboard = () => {
+    const { 
+        kafkaHealth, 
+        postgresHealth, 
+        neo4jHealth, 
+        agentLoad, 
+        overallStatus, 
+        refreshHealth 
+    } = useSystemHealthStore();
+
     const DEFAULT_LAYOUT = {
         lg: [
             { i: 'stats', x: 0, y: 0, w: 12, h: 2 },
@@ -35,17 +45,23 @@ const SystemHealthDashboard = () => {
         }
     });
 
+    useEffect(() => {
+        refreshHealth();
+        const interval = setInterval(refreshHealth, 10000);
+        return () => clearInterval(interval);
+    }, [refreshHealth]);
+
     const onLayoutChange = (currentLayout, allLayouts) => {
         setLayouts(allLayouts);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
     };
 
-    // System health stats
+    // System health stats derived from store
     const systemStats = [
-        { label: 'Uptime', value: 99.99, suffix: '%', status: 'positive', sparklineData: [99.9, 99.95, 99.99, 99.99, 99.99] },
-        { label: 'Kafka Lag', value: 124, suffix: ' msgs', change: -42, status: 'positive' },
-        { label: 'DB Queries/s', value: 2420, change: 180, status: 'neutral' },
-        { label: 'Active Agents', value: 12, change: 2, status: 'positive' }
+        { label: 'Kafka Lag', value: kafkaHealth.lag, suffix: ' msgs', status: kafkaHealth.lag > 5000 ? 'negative' : 'positive' },
+        { label: 'PG Latency', value: postgresHealth.queryTime, suffix: ' ms', status: postgresHealth.queryTime > 100 ? 'negative' : 'positive' },
+        { label: 'Neo4j Nodes', value: neo4jHealth.nodes, change: 0, status: 'neutral' },
+        { label: 'Active Agents', value: agentLoad.length, change: 0, status: 'positive' }
     ];
 
     return (
@@ -55,7 +71,11 @@ const SystemHealthDashboard = () => {
                     <h1 className="text-3xl font-black text-white tracking-tight uppercase">
                         System Health & Telemetry
                     </h1>
-                    <Badge count="All Systems GO" variant="success" pulse />
+                    <Badge 
+                        count={overallStatus.toUpperCase()} 
+                        variant={overallStatus === 'healthy' ? 'success' : 'danger'} 
+                        pulse={overallStatus === 'healthy'} 
+                    />
                 </div>
                 <p className="text-zinc-500 mt-1">Infrastructure monitoring, agent status, and security posture.</p>
             </header>

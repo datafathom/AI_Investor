@@ -1,11 +1,44 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { motion, useDragControls } from 'framer-motion';
 import useWindowStore from '../../stores/windowStore';
 import ResizeHandles from './ResizeHandles';
+import useWindowSnapshot from '../../hooks/useWindowSnapshot';
 import './WindowWrapper.css';
 
+/**
+ * Sub-component to handle periodic snapshots for active windows
+ */
+const SnapshotEffect = React.memo(({ id, elementRef, active }) => {
+    const { captureSnapshot } = useWindowSnapshot();
+    
+    useEffect(() => {
+        if (!active) return;
+        
+        // Take an initial snapshot when window becomes active
+        captureSnapshot(id, elementRef.current);
+        
+        // Setup periodic snapshotting (every 60 seconds)
+        const interval = setInterval(() => {
+            captureSnapshot(id, elementRef.current);
+        }, 60000);
+        
+        return () => clearInterval(interval);
+    }, [id, active, captureSnapshot, elementRef]);
+    
+    return null;
+});
+
 const WindowWrapper = ({ id }) => {
-  const windowState = useWindowStore((state) => state.windows.find((w) => w.id === id));
+  // Use useShallow and granular selectors to prevent broad re-renders
+  const windowState = useWindowStore(useShallow((state) => 
+    state.windows.find((w) => w.id === id)
+  ));
+  
+  // Only re-render when THIS window's active status changes
+  const isActive = useWindowStore((state) => state.activeWindowId === id);
+  
+  // Select individual actions to ensure stability and avoid subscribing to the whole store
   const focusWindow = useWindowStore((state) => state.focusWindow);
   const closeWindow = useWindowStore((state) => state.closeWindow);
   const minimizeWindow = useWindowStore((state) => state.minimizeWindow);
@@ -14,11 +47,12 @@ const WindowWrapper = ({ id }) => {
   
   const windowRef = useRef(null);
   const dragControls = useDragControls();
+  const { captureSnapshot } = useWindowSnapshot();
 
-  // If window not found or minimized, don't render (Taskbar handles restoration)
+  // If window not found or minimized, don't render
   if (!windowState || windowState.isMinimized) return null;
 
-  const handlePointerDown = () => {
+  const handlePointerDown = (e) => {
     focusWindow(id);
   };
 
@@ -26,21 +60,18 @@ const WindowWrapper = ({ id }) => {
     dragControls.start(event);
   };
 
-  // Determine neon border color based on risk (mock implementation for now)
   const riskColor = windowState.risk === 'high' ? '#ff4757' : windowState.risk === 'medium' ? '#ffc107' : '#00ff88';
 
-  // Component to render inside
-  // In a real app, use a component registry logic here
   const InnerComponent = windowState.component;
 
   return (
     <motion.div
       ref={windowRef}
-      className={`window-wrapper ${windowState.id === useWindowStore.getState().activeWindowId ? 'active' : ''}`}
+      className={`window-wrapper ${isActive ? 'active' : ''}`}
       style={{
         zIndex: windowState.zIndex,
         width: windowState.isMaximized ? '100vw' : windowState.width,
-        height: windowState.isMaximized ? 'calc(100vh - 48px)' : windowState.height, // Subtract Taskbar height
+        height: windowState.isMaximized ? 'calc(100vh - 48px)' : windowState.height,
         x: windowState.isMaximized ? 0 : windowState.x,
         y: windowState.isMaximized ? 0 : windowState.y,
         '--window-neon-color': riskColor,
@@ -51,7 +82,7 @@ const WindowWrapper = ({ id }) => {
       drag={!windowState.isMaximized}
       dragControls={dragControls}
       dragMomentum={false}
-      dragListener={false} // Only drag from header
+      dragListener={false}
       onDragEnd={(e, info) => {
         if (!windowState.isMaximized) {
             updateWindow(id, { x: windowState.x + info.offset.x, y: windowState.y + info.offset.y });
@@ -63,7 +94,8 @@ const WindowWrapper = ({ id }) => {
       exit={{ scale: 0.9, opacity: 0 }}
       transition={{ duration: 0.15 }}
     >
-      {/* Header / Title Bar */}
+      <SnapshotEffect id={id} elementRef={windowRef} active={isActive} />
+      
       <div 
         className="window-header" 
         onPointerDown={startDrag}
@@ -71,20 +103,21 @@ const WindowWrapper = ({ id }) => {
       >
         <div className="window-controls">
           <button className="control-btn btn-close" onClick={(e) => { e.stopPropagation(); closeWindow(id); }} aria-label="Close" />
-          <button className="control-btn btn-minimize" onClick={(e) => { e.stopPropagation(); minimizeWindow(id); }} aria-label="Minimize" />
+          <button className="control-btn btn-minimize" onClick={async (e) => { 
+              e.stopPropagation(); 
+              await captureSnapshot(id, windowRef.current);
+              minimizeWindow(id); 
+          }} aria-label="Minimize" />
           <button className="control-btn btn-maximize" onClick={(e) => { e.stopPropagation(); toggleMaximize(id); }} aria-label="Maximize" />
         </div>
         <span className="window-title">{windowState.title}</span>
-        {/* Placeholder for toolbar actions */}
         <div style={{ width: 40 }}></div> 
       </div>
 
-      {/* Content */}
       <div className="window-content">
         {InnerComponent ? <InnerComponent {...windowState.props} /> : <div style={{padding: 20}}>Content Placeholder</div>}
       </div>
 
-      {/* Resize Handles (Only if not maximized) */}
       {!windowState.isMaximized && (
         <ResizeHandles />
       )}
@@ -92,4 +125,4 @@ const WindowWrapper = ({ id }) => {
   );
 };
 
-export default WindowWrapper;
+export default React.memo(WindowWrapper);

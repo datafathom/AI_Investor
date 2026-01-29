@@ -1,0 +1,7 @@
+{
+    "roles": {
+        "OWNER": {"description": "Full access to all accounts and values", "permissions": ["*"]},
+        "CFO": {"description": "Access to all valuations and reporting", "permissions": ["VIEW_VALUATION", "VIEW_REPORT", "MANAGE_BILL_PAY"]},
+        "ANALYST": {"description": "Access to performance % but no total dollars", "permissions": ["VIEW_PERC_PERFORMANCE", "VIEW_TRADE_LOGS"]}
+    }
+}

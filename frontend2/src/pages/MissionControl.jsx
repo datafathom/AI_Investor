@@ -9,15 +9,15 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 const MissionControl = () => {
     const DEFAULT_LAYOUT = {
         lg: [
-            { i: 'header', x: 0, y: 0, w: 8, h: 2 },
-            { i: 'threat', x: 8, y: 0, w: 4, h: 2 },
-            { i: 'allocation', x: 0, y: 2, w: 3, h: 8 },
-            { i: 'map', x: 3, y: 2, w: 6, h: 5 },
-            { i: 'logs', x: 3, y: 7, w: 6, h: 3 },
-            { i: 'risk', x: 9, y: 2, w: 3, h: 8 }
+            { i: 'header', x: 0, y: 0, w: 8, h: 3 },
+            { i: 'threat', x: 8, y: 0, w: 4, h: 3 },
+            { i: 'allocation', x: 0, y: 3, w: 3, h: 14 },
+            { i: 'map', x: 3, y: 3, w: 6, h: 9 },
+            { i: 'logs', x: 3, y: 12, w: 6, h: 5 },
+            { i: 'risk', x: 9, y: 3, w: 3, h: 14 }
         ]
     };
-    const STORAGE_KEY = 'layout_mission_control';
+    const STORAGE_KEY = 'layout_mission_control_v2'; // Bump version
 
     const [layouts, setLayouts] = useState(() => {
         try {
@@ -60,11 +60,11 @@ const MissionControl = () => {
                     onLayoutChange={onLayoutChange}
                     breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                     cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-                    rowHeight={80}
+                    rowHeight={40}
                     isDraggable={true}
                     isResizable={true}
                     draggableHandle=".glass-panel, h3"
-                    margin={[16, 16]}
+                    margin={[10, 10]}
                 >
                 {/* WIDGET: Mission Control Header */}
                 <div key="header">

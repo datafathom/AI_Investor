@@ -1,9 +1,4 @@
-/**
- * Permission Service
- * 
- * Handles permission checking and role-based access control.
- * Provides efficient permission checking with caching.
- */
+import apiClient from './apiClient';
 
 class PermissionService {
   constructor() {
@@ -30,17 +25,7 @@ class PermissionService {
 
     // Fetch from API
     try {
-      const response = await fetch(`/api/permissions/check`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, resource, action }),
-      });
-
-      if (!response.ok) {
-        return false;
-      }
-
-      const { hasPermission } = await response.json();
+      const { hasPermission } = await apiClient.post(`/permissions/check`, { userId, resource, action });
       
       // Cache result
       this.permissionCache.set(cacheKey, hasPermission);
@@ -94,12 +79,7 @@ class PermissionService {
     }
 
     try {
-      const response = await fetch(`/api/users/${userId}/roles`);
-      if (!response.ok) {
-        return false;
-      }
-
-      const roles = await response.json();
+      const roles = await apiClient.get(`/users/${userId}/roles`);
       const hasRole = roles.some(r => r.name === roleName);
       
       this.roleCache.set(cacheKey, hasRole);
@@ -117,13 +97,7 @@ class PermissionService {
    */
   async getUserPermissions(userId) {
     try {
-      const response = await fetch(`/api/users/${userId}/permissions`);
-      if (!response.ok) {
-        return [];
-      }
-
-      const permissions = await response.json();
-      return permissions;
+      return await apiClient.get(`/users/${userId}/permissions`);
     } catch (error) {
       console.error('Failed to get user permissions:', error);
       return [];

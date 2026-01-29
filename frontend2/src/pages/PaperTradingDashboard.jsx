@@ -21,21 +21,26 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './PaperTradingDashboard.css';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
+import usePaperTradingStore from '../stores/paperTradingStore';
+import './PaperTradingDashboard.css';
 
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const PaperTradingDashboard = () => {
-  const [virtualPortfolio, setVirtualPortfolio] = useState(null);
-  const [paperTrades, setPaperTrades] = useState([]);
-  const [backtestResults, setBacktestResults] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const {
+      virtualPortfolio,
+      paperTrades,
+      backtestResults,
+      isLoading,
+      fetchVirtualPortfolio,
+      fetchPaperTrades,
+      placePaperTrade,
+      runBacktest
+  } = usePaperTradingStore();
+
   const [userId] = useState('user_1');
   const [newTrade, setNewTrade] = useState({ symbol: '', quantity: '', order_type: 'market' });
 
@@ -64,67 +69,28 @@ const PaperTradingDashboard = () => {
   };
 
   useEffect(() => {
-    loadVirtualPortfolio();
-    loadPaperTrades();
-  }, []);
+    fetchVirtualPortfolio(userId);
+    fetchPaperTrades(userId);
+  }, [fetchVirtualPortfolio, fetchPaperTrades, userId]);
 
-  const loadVirtualPortfolio = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/paper-trading/portfolio`, {
-        params: { user_id: userId }
-      });
-      setVirtualPortfolio(res.data.data);
-    } catch (error) {
-      console.error('Error loading virtual portfolio:', error);
-    }
-  };
-
-  const loadPaperTrades = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/paper-trading/trades`, {
-        params: { user_id: userId, limit: 20 }
-      });
-      setPaperTrades(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading paper trades:', error);
-    }
-  };
-
-  const placePaperTrade = async () => {
+  const handlePlaceTrade = async () => {
     if (!newTrade.symbol || !newTrade.quantity) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/paper-trading/trade`, {
-        user_id: userId,
+    
+    await placePaperTrade(userId, {
         symbol: newTrade.symbol.toUpperCase(),
         quantity: parseInt(newTrade.quantity),
         order_type: newTrade.order_type
-      });
-      setNewTrade({ symbol: '', quantity: '', order_type: 'market' });
-      loadVirtualPortfolio();
-      loadPaperTrades();
-    } catch (error) {
-      console.error('Error placing paper trade:', error);
-    } finally {
-      setLoading(false);
-    }
+    });
+    
+    setNewTrade({ symbol: '', quantity: '', order_type: 'market' });
   };
 
-  const runBacktest = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.post(`${API_BASE}/api/v1/paper-trading/backtest`, {
-        user_id: userId,
+  const handleRunBacktest = async () => {
+    await runBacktest(userId, {
         start_date: '2024-01-01',
         end_date: '2024-12-31',
         initial_capital: 100000
-      });
-      setBacktestResults(res.data.data);
-    } catch (error) {
-      console.error('Error running backtest:', error);
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   return (
@@ -184,7 +150,7 @@ const PaperTradingDashboard = () => {
                 </select>
               </div>
               <div className="form-group" style={{ flex: '0 0 auto', justifyContent: 'flex-end' }}>
-                <button onClick={placePaperTrade} disabled={loading} className="trade-button">
+                <button onClick={handlePlaceTrade} disabled={isLoading} className="trade-button">
                   Place Trade
                 </button>
               </div>
@@ -260,8 +226,8 @@ const PaperTradingDashboard = () => {
           {/* Backtesting */}
           <div key="backtest" className="backtest-panel h-full">
             <h2>Backtesting</h2>
-            <button onClick={runBacktest} disabled={loading} className="backtest-button">
-              {loading ? 'Running...' : 'Run Backtest'}
+            <button onClick={handleRunBacktest} disabled={isLoading} className="backtest-button">
+              {isLoading ? 'Running...' : 'Run Backtest'}
             </button>
             {backtestResults && (
               <div className="backtest-results">

@@ -46,20 +46,26 @@ const StatCard = ({
   }, [value, hasAnimated]);
 
   const animateValue = (start, end, duration) => {
+    const numericEnd = typeof end === 'number' ? end : parseFloat(end);
+    if (isNaN(numericEnd)) {
+      setDisplayValue(end);
+      return;
+    }
+
     const startTime = performance.now();
     
     const update = (currentTime) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const easeOut = 1 - Math.pow(1 - progress, 3);
-      const current = start + (end - start) * easeOut;
+      const current = start + (numericEnd - start) * easeOut;
       
       setDisplayValue(current);
       
       if (progress < 1) {
         requestAnimationFrame(update);
       } else {
-        setDisplayValue(end);
+        setDisplayValue(numericEnd);
       }
     };
     

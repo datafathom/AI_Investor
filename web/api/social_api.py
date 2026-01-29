@@ -59,3 +59,22 @@ def analyze_ticker_sentiment(ticker: str):
     except (ValueError, KeyError, RuntimeError) as e:
         logger.error("Failed to analyze sentiment for %s: %s", ticker, e)
         return jsonify({"error": str(e)}), 500
+
+@social_bp.route('/sentiment/heatmap', methods=['GET'])
+def get_sentiment_heatmap():
+    """
+    Get sentiment heatmap data (aggregated by sector/topic).
+    """
+    # Mock data for demonstration
+    heatmap = [
+        {"id": "Technology", "value": 0.85, "count": 150, "color": "hsl(var(--success-h), 70%, 50%)"},
+        {"id": "Finance", "value": 0.45, "count": 120, "color": "hsl(var(--primary-h), 70%, 50%)"},
+        {"id": "Healthcare", "value": -0.25, "count": 80, "color": "hsl(var(--danger-h), 70%, 50%)"},
+        {"id": "Energy", "value": 0.15, "count": 60, "color": "hsl(var(--primary-h), 50%, 40%)"},
+        {"id": "Consumer", "value": 0.65, "count": 200, "color": "hsl(var(--success-h), 60%, 40%)"},
+        {"id": "Crypto", "value": 0.95, "count": 450, "color": "hsl(var(--accent-h), 80%, 60%)"},
+    ]
+    return jsonify({
+        "status": "success",
+        "data": heatmap
+    })

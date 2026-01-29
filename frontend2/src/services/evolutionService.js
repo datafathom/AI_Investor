@@ -8,9 +8,7 @@
  * ==============================================================================
  */
 
-import axios from 'axios';
-
-const API_BASE_URL = '/api/v1/evolution';
+import apiClient from './apiClient';
 
 export const evolutionService = {
     /**
@@ -18,8 +16,7 @@ export const evolutionService = {
      */
     async startEvolution() {
         try {
-            const response = await axios.post(`${API_BASE_URL}/start`);
-            return response.data;
+            return await apiClient.post('/evolution/start');
         } catch (error) {
             console.error('Error starting evolution:', error);
             throw error;
@@ -31,8 +28,7 @@ export const evolutionService = {
      */
     async getStatus() {
         try {
-            const response = await axios.get(`${API_BASE_URL}/status`);
-            return response.data;
+            return await apiClient.get('/evolution/status');
         } catch (error) {
             console.error('Error fetching evolution status:', error);
             throw error;

@@ -1,4 +1,4 @@
-
+import os
 import logging
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
@@ -24,6 +24,11 @@ class TracingService:
     def initialize(self, app=None):
         """Initializes OpenTelemetry tracing."""
         if self._is_initialized:
+            return
+
+        # Check if tracing is enabled
+        if os.getenv('ENABLE_TRACING', 'false').lower() != 'true':
+            logger.info("Tracing is disabled (ENABLE_TRACING != true)")
             return
 
         sm = get_secret_manager()

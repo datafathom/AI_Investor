@@ -1,18 +1,38 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import DonationRouter from '../widgets/Impact/DonationRouter';
 import ESGScores from '../widgets/Impact/ESGScores';
 import CarbonScatter from '../widgets/Impact/CarbonScatter';
-import { Leaf, Heart, ShieldCheck } from 'lucide-react';
+import { Leaf, Heart, ShieldCheck, Loader2 } from 'lucide-react';
+
+// Zustand Store for state management
+import useImpactStore from '../stores/impactStore';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const ImpactDashboard = () => {
+    const { 
+        esgScores, 
+        donationHistory, 
+        isLoading, 
+        fetchESGData, 
+        fetchCarbonData 
+    } = useImpactStore();
+
+    useEffect(() => {
+        fetchESGData();
+        fetchCarbonData();
+    }, [fetchESGData, fetchCarbonData]);
+
     const layout = [
         { i: 'donation', x: 0, y: 0, w: 4, h: 6 },
         { i: 'esg', x: 4, y: 0, w: 8, h: 4 },
         { i: 'carbon', x: 4, y: 4, w: 8, h: 4 }
     ];
+
+    // Derive badge values from store
+    const esgGrade = esgScores?.score?.grade || 'N/A';
+    const totalDonations = donationHistory?.reduce((sum, d) => sum + d.total, 0) || 0;
 
     return (
         <div className="impact-dashboard-page p-6 h-full overflow-y-auto bg-[#0a0a0a] text-white font-sans">
@@ -25,10 +45,10 @@ const ImpactDashboard = () => {
                 </div>
                 <div className="flex gap-2">
                      <span className="bg-green-500/10 text-green-400 px-3 py-1 rounded-full text-xs border border-green-500/20 flex items-center gap-2">
-                        <Heart size={12} fill="currentColor" /> Active Donor
+                        <Heart size={12} fill="currentColor" /> {totalDonations > 0 ? 'Active Donor' : 'Ready to Give'}
                      </span>
                      <span className="bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full text-xs border border-blue-500/20 flex items-center gap-2">
-                        <ShieldCheck size={12} /> ESG Grade A-
+                        <ShieldCheck size={12} /> ESG Grade {isLoading ? <Loader2 size={10} className="animate-spin" /> : esgGrade}
                      </span>
                 </div>
             </header>

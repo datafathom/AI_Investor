@@ -12,7 +12,7 @@ import useResearchStore from '../../stores/researchStore';
 import './ResearchPanel.css';
 
 const ResearchPanel = ({ mock = true }) => {
-    const { history, askQuestion, loading, error, clearHistory } = useResearchStore();
+    const { history, askQuestion, isLoading: loading, error, clearHistory } = useResearchStore();
     const [query, setQuery] = useState('');
 
     const handleSubmit = (e) => {

@@ -11,7 +11,7 @@ const SettlementDashboard = () => {
     const fetchBalances = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('widget_os_token');
             const res = await fetch('/api/v1/settlement/balances', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });

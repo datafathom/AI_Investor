@@ -20,7 +20,7 @@ EVENTS:
     - 'signal': Trading signals from agents
 ==============================================================================
 """
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, List
 from flask import Flask
 import logging
 import os
@@ -112,6 +112,29 @@ def _register_handlers(sio: 'SocketIO') -> None:
     def handle_ping():
         """Handle ping for latency measurement."""
         emit('pong', {'timestamp': _get_timestamp()})
+
+    @sio.on('update_mutation_rate')
+    def handle_mutation_rate(data: Dict[str, Any]):
+        """
+        Handle live mutation rate update from user.
+        Args: data: {'rate': 0.15}
+        """
+        rate = data.get('rate', 0.1)
+        logger.info(f"Mutation rate update requested: {rate}")
+        # In a real scenario, this would update the GeneticDistillery instance
+        # For now, we broadcast it back to confirm
+        emit('mutation_rate_changed', {'rate': rate}, room='evolution')
+
+    @sio.on('evolution_control')
+    def handle_evolution_control(data: Dict[str, Any]):
+        """
+        Handle evolution speed and pause/resume.
+        Args: data: {'command': 'pause' | 'resume' | 'speed', 'value': 2.0}
+        """
+        cmd = data.get('command')
+        val = data.get('value')
+        logger.info(f"Evolution control command: {cmd} (val: {val})")
+        emit('evolution_status_update', {'command': cmd, 'value': val}, room='evolution')
 
 
 def _get_timestamp() -> str:
@@ -246,25 +269,6 @@ class WebSocketBroadcaster:
         }
         return self._emit('alert', alert_data, room='alerts')
     
-    def broadcast_signal(
-        self,
-        signal_type: str,
-        symbol: str,
-        confidence: float,
-        source_agent: str
-    ) -> bool:
-        """
-        Broadcast trading signal.
-        
-        Args:
-            signal_type: Signal type ('BUY', 'SELL', 'HOLD').
-            symbol: Asset symbol.
-            confidence: Signal confidence (0.0 to 1.0).
-            source_agent: Agent that generated the signal.
-            
-        Returns:
-            True if broadcast succeeded.
-        """
         data = {
             'signal': signal_type,
             'symbol': symbol,
@@ -273,6 +277,26 @@ class WebSocketBroadcaster:
             'timestamp': _get_timestamp()
         }
         return self._emit('signal', data, room='signals')
+
+    def broadcast_gene_frequency(self, frequency_data: Dict[str, Any]) -> bool:
+        """
+        Broadcast gene prevalence trends for the current generation.
+        """
+        data = {
+            'frequencies': frequency_data,
+            'timestamp': _get_timestamp()
+        }
+        return self._emit('gene_frequency_update', data, room='evolution')
+
+    def broadcast_fitness_surface(self, surface_data: List[Dict[str, Any]]) -> bool:
+        """
+        Broadcast 3D surface plot data for the training terrain.
+        """
+        data = {
+            'surface': surface_data,
+            'timestamp': _get_timestamp()
+        }
+        return self._emit('fitness_surface_update', data, room='evolution')
 
 
 # Global broadcaster instance

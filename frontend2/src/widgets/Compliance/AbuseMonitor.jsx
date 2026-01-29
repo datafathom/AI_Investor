@@ -14,7 +14,7 @@ const AbuseMonitor = () => {
     }, [fetchSarAlerts]);
     
     // Filter for abuse-related types
-    const abuseAlerts = sarAlerts.filter(a => ['spoofing', 'layering', 'wash_trading'].includes(a.type));
+    const abuseAlerts = (sarAlerts || []).filter(a => ['spoofing', 'layering', 'wash_trading'].includes(a.type));
 
     const toggleAgentPause = (agentId) => {
         if (!pausedAgents[agentId]) {

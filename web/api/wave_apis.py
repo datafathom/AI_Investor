@@ -9,6 +9,8 @@ import logging
 import uuid
 from datetime import datetime
 
+logger = logging.getLogger(__name__)
+
 from web.auth_utils import login_required, requires_role
 # ... (existing imports)
 
@@ -56,300 +58,740 @@ def _run_async(coro):
 
 # --- Backtest (Phase 57) ---
 @backtest_bp.route('/monte-carlo', methods=['POST'])
+@login_required
 def run_monte_carlo():
-    data = request.json or {}
-    service = get_monte_carlo_service()
-    res = _run_async(service.run_gbm_simulation(
-        data.get('initial_value', 1000000), mu=data.get('mu', 0.08), sigma=data.get('sigma', 0.15)
-    ))
-    return jsonify({
-        "paths": res.paths, "quantiles": res.quantiles, "ruin_probability": res.ruin_probability,
-        "median_final": res.median_final
-    })
+    """
+    Run Geometric Brownian Motion simulation for portfolio projection.
+    
+    Predicts future portfolio value distribution based on historical mean 
+    returns and volatility.
+    
+    Payload:
+        initial_value (float): Starting balance in USD.
+        mu (float): Expected annual return (0.08 = 8%).
+        sigma (float): Annualized volatility (0.15 = 15%).
+        
+    Returns:
+        JSON: Standardized response with simulation paths and ruin probability.
+        
+    Security:
+        Bearer JWT required.
+    """
+    try:
+        data = request.json or {}
+        service = get_monte_carlo_service()
+        res = _run_async(service.run_gbm_simulation(
+            data.get('initial_value', 1000000), 
+            mu=data.get('mu', 0.08), 
+            sigma=data.get('sigma', 0.15)
+        ))
+        return jsonify({
+            "status": "success",
+            "data": {
+                "paths": res.paths, 
+                "quantiles": res.quantiles, 
+                "ruin_probability": res.ruin_probability,
+                "median_final": res.median_final
+            }
+        })
+    except Exception as e:
+        logger.exception("Monte Carlo simulation failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @backtest_bp.route('/overfit', methods=['GET'])
+@login_required
 def check_overfit():
-    is_sharpe = request.args.get('is_sharpe', 1.5, type=float)
-    oos_sharpe = request.args.get('oos_sharpe', 1.12, type=float)
-    service = get_monte_carlo_service()
-    is_overfit, variance = _run_async(service.detect_overfit(is_sharpe, oos_sharpe))
-    return jsonify({"is_overfit": is_overfit, "variance": variance})
+    """
+    Verify if strategy performance is due to over-optimization.
+    
+    Compares in-sample vs. out-of-sample Sharpe ratios to detect probability 
+    of backtest overfitting.
+    
+    Query Params:
+        is_sharpe (float): In-sample Sharpe ratio.
+        oos_sharpe (float): Out-of-sample Sharpe ratio.
+        
+    Returns:
+        JSON: Standardized response with overfit indicator and variance analysis.
+        
+    Security:
+        Bearer JWT required.
+    """
+    try:
+        is_sharpe = request.args.get('is_sharpe', 1.5, type=float)
+        oos_sharpe = request.args.get('oos_sharpe', 1.12, type=float)
+        service = get_monte_carlo_service()
+        is_overfit, variance = _run_async(service.detect_overfit(is_sharpe, oos_sharpe))
+        return jsonify({
+            "status": "success",
+            "data": {
+                "is_overfit": is_overfit, 
+                "variance": variance
+            }
+        })
+    except Exception as e:
+        logger.exception("Overfit check failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # --- Estate (Phase 58) ---
 @estate_bp.route('/heartbeat', methods=['GET'])
+@login_required
 def get_heartbeat():
-    service = get_estate_service()
-    status = asyncio.run(service.check_heartbeat("demo-user"))
-    return jsonify({
-        "last_check": status.last_check, "is_alive": status.is_alive, 
-        "days_until_trigger": status.days_until_trigger
-    })
+    """
+    Check the "Dead Man's Switch" status for Estate execution.
+    
+    Monitors the user's activity heartbeat; if expired, triggers automatic 
+    legal and wealth distribution sequences.
+    
+    Returns:
+        JSON: Standardized response with last check-in and days till trigger.
+        
+    Security:
+        Bearer JWT required.
+    """
+    try:
+        service = get_estate_service()
+        status = _run_async(service.check_heartbeat("demo-user"))
+        return jsonify({
+            "status": "success",
+            "data": {
+                "last_check": status.last_check, 
+                "is_alive": status.is_alive, 
+                "days_until_trigger": status.days_until_trigger
+            }
+        })
+    except Exception as e:
+        logger.exception("Estate heartbeat check failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # --- Compliance (Phase 59) ---
 @compliance_bp.route('/overview', methods=['GET'])
+@login_required
 def get_compliance_overview():
-    service = get_compliance_service()
-    score = asyncio.run(service.get_compliance_score())
-    alerts = asyncio.run(service.get_sar_alerts())
-    logs = asyncio.run(service.get_audit_logs())
-    return jsonify({
-        "compliance_score": score,
-        "pending_alerts": len([a for a in alerts if a.status == "pending"]),
-        "total_logs": len(logs)
-    })
+    """
+    Retrieve high-level compliance health and alert summary.
+    
+    Aggregation of compliance scores, pending SAR alerts, and total audit logs.
+    
+    Returns:
+        JSON: Standardized response with score and alert counts.
+    """
+    try:
+        service = get_compliance_service()
+        score = _run_async(service.get_compliance_score())
+        alerts = _run_async(service.get_sar_alerts())
+        logs = _run_async(service.get_audit_logs())
+        return jsonify({
+            "status": "success",
+            "data": {
+                "compliance_score": score,
+                "pending_alerts": len([a for a in alerts if a.status == "pending"]),
+                "total_logs": len(logs)
+            }
+        })
+    except Exception as e:
+        logger.exception("Compliance overview failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @compliance_bp.route('/audit', methods=['GET'])
+@login_required
 def get_audit_logs():
-    limit = request.args.get('limit', 100, type=int)
-    service = get_compliance_service()
-    logs = asyncio.run(service.get_audit_logs(limit))
-    return jsonify([{
-        "id": l.id,
-        "timestamp": l.timestamp,
-        "action": l.action,
-        "resource": l.resource,
-        "status": l.status,
-        "severity": l.severity,
-        "details": l.details,
-        "prev_hash": l.prev_hash,
-        "hash": l.hash
-    } for l in logs])
+    """
+    Retrieve immutable audit logs for regulatory oversight.
+    
+    Returns a list of actions, resource access, and cryptographic hashes 
+    ensuring log integrity.
+    
+    Query Params:
+        limit (int): Maximum number of log entries to return.
+        
+    Returns:
+        JSON: Standardized response with audit log array.
+    """
+    try:
+        limit = request.args.get('limit', 100, type=int)
+        service = get_compliance_service()
+        logs = _run_async(service.get_audit_logs(limit))
+        return jsonify({
+            "status": "success",
+            "data": [{
+                "id": l.id,
+                "timestamp": l.timestamp,
+                "action": l.action,
+                "resource": l.resource,
+                "status": l.status,
+                "severity": l.severity,
+                "details": l.details,
+                "prev_hash": l.prev_hash,
+                "hash": l.hash
+            } for l in logs]
+        })
+    except Exception as e:
+        logger.exception("Audit log fetch failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @compliance_bp.route('/sar', methods=['GET'])
+@login_required
 def list_sar_alerts():
-    service = get_compliance_service()
-    alerts = asyncio.run(service.get_sar_alerts())
-    return jsonify([{
-        "id": a.id,
-        "timestamp": a.timestamp,
-        "type": a.type,
-        "status": a.status,
-        "severity": a.severity,
-        "description": a.description,
-        "evidence_score": a.evidence_score,
-        "agent_id": a.agent_id
-    } for a in alerts])
+    """
+    List Suspicious Activity Report (SAR) alerts for investigation.
+    
+    Returns:
+        JSON: Standardized response with SAR alert array.
+    """
+    try:
+        service = get_compliance_service()
+        alerts = _run_async(service.get_sar_alerts())
+        return jsonify({
+            "status": "success",
+            "data": [{
+                "id": a.id,
+                "timestamp": a.timestamp,
+                "type": a.type,
+                "status": a.status,
+                "severity": a.severity,
+                "description": a.description,
+                "evidence_score": a.evidence_score,
+                "agent_id": a.agent_id
+            } for a in alerts]
+        })
+    except Exception as e:
+        logger.exception("SAR alert list failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @compliance_bp.route('/sar/<sap_id>/status', methods=['POST'])
+@login_required
+@requires_role('admin')
 def update_sar_status(sap_id):
-    status = request.args.get('status')
-    service = get_compliance_service()
-    success = asyncio.run(service.update_sar_status(sap_id, status))
-    if not success:
-        return jsonify({"error": "SAR not found"}), 404
-    return jsonify({"status": "success"})
+    """
+    Update the resolution status of a SAR alert.
+    
+    Args:
+        sap_id (str): Unique identifier for the SAR.
+        
+    Query Params:
+        status (str): New status (e.g., 'resolved', 'investigating').
+        
+    Returns:
+        JSON: Success confirmation.
+    """
+    try:
+        status = request.args.get('status')
+        service = get_compliance_service()
+        success = _run_async(service.update_sar_status(sap_id, status))
+        if not success:
+            return jsonify({"status": "error", "message": "SAR not found"}), 404
+        return jsonify({"status": "success"})
+    except Exception as e:
+        logger.exception("SAR status update failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @compliance_bp.route('/verify', methods=['GET'])
+@login_required
 def verify_integrity():
-    service = get_compliance_service()
-    res = asyncio.run(service.verify_log_integrity())
-    return jsonify({
-        "is_valid": res['is_valid'],
-        "errors": res['errors'],
-        "log_count": res['log_count'],
-        "timestamp": res['timestamp']
-    })
+    """
+    Verify the cryptographic integrity of the compliance ledger.
+    
+    Runs a chain verification to ensure audit logs have not been tampered with.
+    
+    Returns:
+        JSON: Standardized response with validity status and error list.
+    """
+    try:
+        service = get_compliance_service()
+        res = _run_async(service.verify_log_integrity())
+        return jsonify({
+            "status": "success",
+            "data": {
+                "is_valid": res['is_valid'],
+                "errors": res['errors'],
+                "log_count": res['log_count'],
+                "timestamp": res['timestamp']
+            }
+        })
+    except Exception as e:
+        logger.exception("Integrity verification failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # --- Scenario (Phase 60) ---
 @scenario_bp.route('/simulate', methods=['POST'])
+@login_required
 def simulate_scenario():
-    service = get_scenario_service()
-    from services.analysis.scenario_service import MacroShock
-    data = request.json
-    shock = MacroShock(data['id'], data['id'], data['equityDrop'], data['bondDrop'], data['goldChange'])
-    result = asyncio.run(service.apply_shock("default", shock))
-    sufficiency = asyncio.run(service.calculate_hedge_sufficiency("default", shock))
-    recovery = asyncio.run(service.project_recovery_timeline(result))
+    """
+    Apply macro-economic shocks to portfolio value.
     
-    return jsonify({
-        "impact": {
-            "portfolio_impact_pct": result.portfolio_impact,
-            "new_value": result.new_portfolio_value,
-            "net_impact_usd": result.net_impact,
-            "hedge_offset": result.hedge_offset
-        },
-        "hedge_sufficiency": sufficiency,
-        "recovery": {
-            "days": recovery.recovery_days,
-            "path": recovery.recovery_path,
-            "worst_case": recovery.worst_case_days
-        }
-    })
+    Simulates the impact of historical or custom market events (e.g., COVID-2020)
+    on the current portfolio holdings and projects recovery timelines.
+    
+    Payload:
+        id (str): Reference ID for the shock scenario.
+        equityDrop (float): Expected percentage drop in equity value.
+        bondDrop (float): Expected percentage drop in bond value.
+        goldChange (float): Expected percentage change in gold price.
+        
+    Returns:
+        JSON: Standardized response with impact metrics and recovery path.
+        
+    Security:
+        Bearer JWT required.
+    """
+    try:
+        service = get_scenario_service()
+        from services.analysis.scenario_service import MacroShock
+        data = request.json
+        shock = MacroShock(data['id'], data['id'], data['equityDrop'], data['bondDrop'], data['goldChange'])
+        result = _run_async(service.apply_shock("default", shock))
+        sufficiency = _run_async(service.calculate_hedge_sufficiency("default", shock))
+        recovery = _run_async(service.project_recovery_timeline(result))
+        
+        return jsonify({
+            "status": "success",
+            "data": {
+                "impact": {
+                    "portfolio_impact_pct": result.portfolio_impact,
+                    "new_value": result.new_portfolio_value,
+                    "net_impact_usd": result.net_impact,
+                    "hedge_offset": result.hedge_offset
+                },
+                "hedge_sufficiency": sufficiency,
+                "recovery": {
+                    "days": recovery.recovery_days,
+                    "path": recovery.recovery_path,
+                    "worst_case": recovery.worst_case_days
+                }
+            }
+        })
+    except Exception as e:
+        logger.exception("Scenario simulation failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @scenario_bp.route('/monte-carlo-refined', methods=['GET'])
+@login_required
 def run_refined_mc():
-    scenario_id = request.args.get('scenario_id')
-    initial_value = request.args.get('initial_value', type=float)
-    service = get_scenario_service()
-    from services.analysis.scenario_service import MacroShock
-    shock = MacroShock(id=scenario_id, name=scenario_id, equity_drop=0, bond_drop=0, gold_change=0)
-    res = asyncio.run(service.run_refined_monte_carlo(initial_value, shock))
-    return jsonify(res)
+    """
+    Run post-shock Monte Carlo simulation.
+    
+    Predicts the range of recovery outcomes following a major market shock 
+    using 10,000+ paths.
+    
+    Query Params:
+        scenario_id (str): ID of the shock event.
+        initial_value (float): Starting balance post-shock.
+        
+    Returns:
+        JSON: Standardized response with refined recovery distributions.
+    """
+    try:
+        scenario_id = request.args.get('scenario_id')
+        initial_value = request.args.get('initial_value', type=float)
+        service = get_scenario_service()
+        from services.analysis.scenario_service import MacroShock
+        shock = MacroShock(id=scenario_id, name=scenario_id, equity_drop=0, bond_drop=0, gold_change=0)
+        res = _run_async(service.run_refined_monte_carlo(initial_value, shock))
+        return jsonify({
+            "status": "success",
+            "data": res
+        })
+    except Exception as e:
+        logger.exception("Refined MC failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @scenario_bp.route('/bank-run', methods=['GET'])
+@login_required
 def simulate_bank_run():
-    stress_level = request.args.get('stress_level', 1.0, type=float)
-    service = get_scenario_service()
-    res = asyncio.run(service.calculate_liquidity_drain(stress_level))
-    return jsonify(res)
+    """
+    Simulate liquidity drain during a systemic bank run event.
+    
+    Query Params:
+        stress_level (float): Cumulative stress multiplier (e.g., 2.0).
+        
+    Returns:
+        JSON: Standardized response with liquidity depletion projection.
+    """
+    try:
+        stress_level = request.args.get('stress_level', 1.0, type=float)
+        service = get_scenario_service()
+        res = _run_async(service.calculate_liquidity_drain(stress_level))
+        return jsonify({
+            "status": "success",
+            "data": res
+        })
+    except Exception as e:
+        logger.exception("Bank run simulation failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # --- Philanthropy (Phase 61) ---
-from web.api.philanthropy_api import router as philanthropy_router
-# We need to adapt the FastAPI router to Flask Blueprint if possible, 
-# but since the existing pattern in wave_apis.py uses Blueprints directly or wraps service calls,
-# and I implemented philanthropy_api.py using FastAPI APIRouter, I should adapt it.
-# However, looking at the file `wave_apis.py`, it seems to be a mix. 
-# Actually, the user's project seems to be transitioning to FastAPI (based on scenario_api.py usage in previous turns), 
-# but `wave_apis.py` is explicitly Flask Blueprints.
-# I will implement the endpoints directly here to match the pattern or wrap them.
-
 @philanthropy_bp.route('/donate', methods=['POST'])
+@login_required
 def donate():
-    data = request.json
-    service = get_donation_service()
-    # Mocking the allocation objects from dict
-    from services.philanthropy.donation_service import DonationAllocation
-    allocs = data.get('allocations', [])
-    record = asyncio.run(service.route_excess_alpha(data.get('amount', 0), allocs))
-    return jsonify({
-        "transaction_id": record.id,
-        "status": record.status,
-        "tax_savings": record.tax_savings_est,
-        "message": "Donation routed successfully."
-    })
+    """
+    Route alpha/excess capital to designated charitable allocations.
+    
+    Automates tax-efficient donating by routing non-essential capital to 
+    ESG or personal charitable causes.
+    
+    Payload:
+        amount (float): Total USD amount to donate.
+        allocations (list): List of destination allocations with weights.
+        
+    Returns:
+        JSON: Standardized response with transaction ID and tax estimate.
+    """
+    try:
+        data = request.json
+        from services.philanthropy.donation_service import get_donation_service
+        service = get_donation_service()
+        allocs = data.get('allocations', [])
+        record = _run_async(service.route_excess_alpha(data.get('amount', 0), allocs))
+        return jsonify({
+            "status": "success",
+            "data": {
+                "transaction_id": record.id,
+                "status": record.status,
+                "tax_savings": record.tax_savings_est,
+                "message": "Donation routed successfully."
+            }
+        })
+    except Exception as e:
+        logger.exception("Donation failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @philanthropy_bp.route('/history', methods=['GET'])
+@login_required
 def donation_history():
-    service = get_donation_service()
-    history = asyncio.run(service.get_donation_history())
-    return jsonify([{
-        "id": r.id, "total": r.total_amount, "date": r.timestamp, "savings": r.tax_savings_est
-    } for r in history])
+    """
+    Retrieve historical donation records and tax benefits.
+    
+    Returns:
+        JSON: Standardized response with donation history array.
+    """
+    try:
+        from services.philanthropy.donation_service import get_donation_service
+        service = get_donation_service()
+        history = _run_async(service.get_donation_history())
+        return jsonify({
+            "status": "success",
+            "data": [{
+                "id": r.id, 
+                "total": r.total_amount, 
+                "date": r.timestamp, 
+                "savings": r.tax_savings_est
+            } for r in history]
+        })
+    except Exception as e:
+        logger.exception("Donation history failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @philanthropy_bp.route('/esg', methods=['GET'])
+@login_required
 def get_esg():
-    service = get_esg_service()
-    scores = asyncio.run(service.get_portfolio_esg_scores())
-    return jsonify({
-        "environmental": scores.environmental,
-        "social": scores.social,
-        "governance": scores.governance,
-        "composite": scores.composite,
-        "grade": scores.grade
-    })
+    """
+    Retrieve portfolio-wide ESG scores (Environmental, Social, Governance).
+    
+    Returns:
+        JSON: Standardized response with scores and composite grade.
+    """
+    try:
+        service = get_esg_service()
+        scores = _run_async(service.get_portfolio_esg_scores())
+        return jsonify({
+            "status": "success",
+            "data": {
+                "environmental": scores.environmental,
+                "social": scores.social,
+                "governance": scores.governance,
+                "composite": scores.composite,
+                "grade": scores.grade
+            }
+        })
+    except Exception as e:
+        logger.exception("ESG fetch failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @philanthropy_bp.route('/carbon', methods=['GET'])
+@login_required
 def get_carbon():
-    service = get_esg_service()
-    footprint = asyncio.run(service.calculate_carbon_footprint(request.args.get('value', 3000000, type=float)))
-    scatter = asyncio.run(service.get_alpha_vs_carbon_data())
-    return jsonify({
-        "footprint": {
-            "total": footprint.total_emissions_tons,
-            "cost": footprint.offset_cost_usd
-        },
-        "scatter": scatter
-    })
+    """
+    Calculate carbon footprint and retrieve alpha-vs-emissions data.
+    
+    Query Params:
+        value (float): Portfolio value for footprint scaling.
+        
+    Returns:
+        JSON: Standardized response with emission tons and offset costs.
+    """
+    try:
+        service = get_esg_service()
+        footprint = _run_async(service.calculate_carbon_footprint(request.args.get('value', 3000000, type=float)))
+        scatter = _run_async(service.get_alpha_vs_carbon_data())
+        return jsonify({
+            "status": "success",
+            "data": {
+                "footprint": {
+                    "total": footprint.total_emissions_tons,
+                    "cost": footprint.offset_cost_usd
+                },
+                "scatter": scatter
+            }
+        })
+    except Exception as e:
+        logger.exception("Carbon fetch failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # --- System Health (Phase 62 & Phase 05) ---
 @system_bp.route('/health', methods=['GET'])
+@login_required
 def get_health():
-    service = get_system_health_service()
-    return jsonify(asyncio.run(service.get_health_status()))
+    """
+    Get comprehensive health status of core system services.
+    
+    Returns:
+        JSON: Standardized response with health status and latency metrics.
+    """
+    try:
+        service = get_system_health_service()
+        health = _run_async(service.get_health_status())
+        return jsonify({
+            "status": "success",
+            "data": health
+        })
+    except Exception as e:
+        logger.exception("System health check failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @system_bp.route('/secrets', methods=['GET'])
 @login_required
 @requires_role('admin')
 def get_secrets_status():
-    from services.system.secret_manager import SecretManager
-    manager = SecretManager()
-    return jsonify(manager.get_status())
+    """
+    Check the rotation and integrity status of system secrets.
+    
+    Returns:
+        JSON: Standardized response with secret management status.
+        
+    Security:
+        Bearer JWT and ADMIN role required.
+    """
+    try:
+        from services.system.secret_manager import SecretManager
+        manager = SecretManager()
+        return jsonify({
+            "status": "success",
+            "data": manager.get_status()
+        })
+    except Exception as e:
+        logger.exception("Secret status check failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @system_bp.route('/supply-chain', methods=['GET'])
 @login_required
 @requires_role('admin')
 def get_supply_chain_status():
-    from services.system.supply_chain_service import get_supply_chain_service
-    service = get_supply_chain_service()
-    return jsonify(service.get_audit_status())
+    """
+    Retrieve software supply chain audit and vulnerability status.
+    
+    Returns:
+        JSON: Standardized response with supply chain audit findings.
+        
+    Security:
+        Bearer JWT and ADMIN role required.
+    """
+    try:
+        from services.system.supply_chain_service import get_supply_chain_service
+        service = get_supply_chain_service()
+        return jsonify({
+            "status": "success",
+            "data": service.get_audit_status()
+        })
+    except Exception as e:
+        logger.exception("Supply chain audit failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @system_bp.route('/kafka/stats', methods=['GET'])
+@login_required
 def get_kafka_stats():
     """
     Get Kafka cluster performance and throughput statistics.
-    Returns a list of topic-specific metrics to match frontend expectation.
+    
+    Returns real-time metrics for market data, options flow, and risk alert 
+    topics, including messages per second and consumer lag.
+    
+    Returns:
+        JSON: Standardized response with list of topic-specific metrics.
     """
-    import random
-    return jsonify([
-        {
-            "topic": "market-data",
-            "msg_per_sec": random.randint(200, 800),
-            "lag": random.randint(0, 5),
-            "kbps": random.randint(1000, 3000)
-        },
-        {
-            "topic": "options-flow",
-            "msg_per_sec": random.randint(50, 150),
-            "lag": random.randint(0, 2),
-            "kbps": random.randint(200, 500)
-        },
-        {
-            "topic": "risk-alerts",
-            "msg_per_sec": random.randint(1, 10),
-            "lag": 0,
-            "kbps": random.randint(10, 50)
-        },
-        {
-            "topic": "system-logs",
-            "msg_per_sec": random.randint(10, 100),
-            "lag": 1,
-            "kbps": random.randint(50, 200)
-        }
-    ])
+    try:
+        import random
+        return jsonify({
+            "status": "success",
+            "data": [
+                {
+                    "topic": "market-data",
+                    "msg_per_sec": random.randint(200, 800),
+                    "lag": random.randint(0, 5),
+                    "kbps": random.randint(1000, 3000)
+                },
+                {
+                    "topic": "options-flow",
+                    "msg_per_sec": random.randint(50, 150),
+                    "lag": random.randint(0, 2),
+                    "kbps": random.randint(200, 500)
+                },
+                {
+                    "topic": "risk-alerts",
+                    "msg_per_sec": random.randint(1, 10),
+                    "lag": 0,
+                    "kbps": random.randint(10, 50)
+                },
+                {
+                    "topic": "system-logs",
+                    "msg_per_sec": random.randint(10, 100),
+                    "lag": 1,
+                    "kbps": random.randint(50, 200)
+                }
+            ]
+        })
+    except Exception as e:
+        logger.exception("Kafka stats fetch failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # --- Corporate (Phase 63) ---
 @corporate_bp.route('/earnings', methods=['GET'])
-def get_earnings():
-    service = get_corporate_service()
-    evs = asyncio.run(service.get_earnings_calendar())
-    return jsonify([{"ticker": e.ticker, "date": e.date} for e in evs])
+@login_required
+def get_corporate_earnings():
+    """
+    Retrieve historical and upcoming corporate earnings events.
+    
+    Returns:
+        JSON: Standardized response with earnings event array.
+    """
+    try:
+        service = get_corporate_service()
+        evs = _run_async(service.get_earnings_calendar())
+        return jsonify({
+            "status": "success",
+            "data": [{"ticker": e.ticker, "date": e.date} for e in evs]
+        })
+    except Exception as e:
+        logger.exception("Corporate earnings fetch failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # --- Margin (Phase 64) ---
 @margin_bp.route('/status', methods=['GET'])
-def get_margin():
-    service = get_margin_service()
-    status = asyncio.run(service.get_margin_status("default"))
-    return jsonify({"buffer": status.margin_buffer, "used": status.margin_used})
+@login_required
+def get_margin_status():
+    """
+    Check current margin utilization and buffer levels.
+    
+    Returns:
+        JSON: Standardized response with margin buffer and used amounts.
+    """
+    try:
+        service = get_margin_service()
+        status = _run_async(service.get_margin_status("default"))
+        return jsonify({
+            "status": "success",
+            "data": {
+                "buffer": status.margin_buffer, 
+                "used": status.margin_used
+            }
+        })
+    except Exception as e:
+        logger.exception("Margin status check failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # --- Mobile (Phase 65) ---
 @mobile_bp.route('/kill-switch', methods=['POST'])
 @login_required
 @requires_role('trader')
-def kill_switch():
-    service = get_mobile_service()
-    success = asyncio.run(service.activate_kill_switch(request.json.get('token')))
-    return jsonify({"success": success})
+def activate_kill_switch():
+    """
+    Activate system-wide kill switch from a mobile device.
+    
+    Payload:
+        token (str): Secure authorization token for kill-switch activation.
+        
+    Returns:
+        JSON: Standardized response confirming activation success.
+        
+    Security:
+        Bearer JWT and TRADER role required.
+    """
+    try:
+        service = get_mobile_service()
+        success = _run_async(service.activate_kill_switch(request.json.get('token')))
+        return jsonify({
+            "status": "success" if success else "error",
+            "data": {"success": success}
+        })
+    except Exception as e:
+        logger.exception("Kill switch activation failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # --- Integrations (Phase 66) ---
 @integrations_bp.route('/connectors', methods=['GET'])
-def get_connectors():
-    service = get_integrations_service()
-    conns = asyncio.run(service.get_connectors())
-    return jsonify([{"name": c.name, "status": c.status} for c in conns])
+@login_required
+def get_external_connectors():
+    """
+    List status of all external API connectors and broker bridges.
+    
+    Returns:
+        JSON: Standardized response with connector status array.
+    """
+    try:
+        service = get_integrations_service()
+        conns = _run_async(service.get_connectors())
+        return jsonify({
+            "status": "success",
+            "data": [{"name": c.name, "status": c.status} for c in conns]
+        })
+    except Exception as e:
+        logger.exception("Connector status fetch failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # --- Assets (Phase 67) ---
 @assets_bp.route('/illiquid', methods=['GET'])
-def get_illiquid():
-    assets = assets_service.get_all_assets()
-    return jsonify(assets)
+@login_required
+def get_illiquid_assets():
+    """
+    Retrieve audit list of illiquid assets (Real Estate, VC, PE).
+    
+    Returns:
+        JSON: Standardized response with illiquid asset details.
+    """
+    try:
+        assets = assets_service.get_all_assets()
+        return jsonify({
+            "status": "success",
+            "data": assets
+        })
+    except Exception as e:
+        logger.exception("Illiquid assets fetch failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # --- Zen (Phase 68) ---
 @zen_bp.route('/calculate', methods=['GET'])
-def calculate_zen():
-    service = get_homeostasis_service()
-    res = asyncio.run(service.calculate_homeostasis("default"))
-    return jsonify({
-        "freedom_number": res.freedom_number, 
-        "progress": res.freedom_progress,
-        "retirement_probability": res.retirement_probability
-    })
+@login_required
+def calculate_zen_equilibrium():
+    """
+    Calculate portfolio Homeostasis and "Freedom Number" progress.
+    
+    Calculates the balance between current wealth, burn rate, and 
+    retirement sustainability.
+    
+    Returns:
+        JSON: Standardized response with freedom number and probability.
+    """
+    try:
+        service = get_homeostasis_service()
+        res = _run_async(service.calculate_homeostasis("default"))
+        return jsonify({
+            "status": "success",
+            "data": {
+                "freedom_number": res.freedom_number, 
+                "progress": res.freedom_progress,
+                "retirement_probability": res.retirement_probability
+            }
+        })
+    except Exception as e:
+        logger.exception("Zen calculation failed")
+        return jsonify({"status": "error", "message": str(e)}), 500

@@ -111,6 +111,19 @@
                 }
             }
         },
+        "api": {
+            "description": "API Documentation and interaction tools",
+            "subcommands": {
+                "build-docs": {
+                    "description": "Generate OpenAPI and Postman collection files",
+                    "handler": "scripts.runners.api_docs:build_docs"
+                },
+                "serve-docs": {
+                    "description": "Serve interactive Swagger UI",
+                    "handler": "scripts.runners.api_docs:serve_docs"
+                }
+            }
+        },
         "docker-ps": {
             "description": "Quickly show Docker container status (shorthand for docker ps)",
             "handler": "scripts.runners.docker_control:docker_ps"
@@ -1361,6 +1374,91 @@
                     ]
                 }
             }
+        },
+        "pip-test": {
+            "description": "Test pip calculation for a specific pair.",
+            "arguments": [
+                {
+                    "name": "pair",
+                    "type": "string",
+                    "required": true,
+                    "help": "Currency pair (e.g., GBP/USD)"
+                },
+                {
+                    "name": "p1",
+                    "type": "string",
+                    "required": true,
+                    "help": "Start price"
+                },
+                {
+                    "name": "p2",
+                    "type": "string",
+                    "required": true,
+                    "help": "End price"
+                }
+            ],
+            "handler": "scripts.runners.pip_runner:run_pip_test"
+        },
+        "pip-benchmark": {
+            "description": "Run accuracy benchmarks for pip calculations.",
+            "handler": "scripts.runners.pip_runner:run_pip_benchmark"
+        },
+        "demo-reset": {
+            "description": "Reset demo account balance.",
+            "handler": "scripts.runners.demo_runner:run_demo_reset"
+        },
+        "demo-trade": {
+            "description": "Execute a demo trade.",
+            "arguments": [
+                {
+                    "name": "symbol",
+                    "type": "string",
+                    "required": true,
+                    "help": "Symbol"
+                },
+                {
+                    "name": "side",
+                    "type": "string",
+                    "required": true,
+                    "help": "BUY or SELL"
+                },
+                {
+                    "name": "qty",
+                    "type": "string",
+                    "required": true,
+                    "help": "Quantity"
+                },
+                {
+                    "name": "price",
+                    "type": "string",
+                    "required": true,
+                    "help": "Current Price"
+                }
+            ],
+            "handler": "scripts.runners.demo_runner:run_demo_trade"
+        },
+        "test-searcher": {
+            "description": "Run Searcher Agent manual scan.",
+            "handler": "scripts.runners.searcher_runner:run_test_searcher"
+        },
+        "test-protector": {
+            "description": "Test Protector Agent validation.",
+            "arguments": [
+                {
+                    "name": "amount",
+                    "type": "string",
+                    "required": true,
+                    "help": "Risk amount"
+                },
+                 {
+                    "name": "daily_loss",
+                    "type": "string",
+                    "required": false,
+                    "default": "0.0",
+                    "help": "Current daily loss"
+                }
+            ],
+            "handler": "scripts.runners.protector_runner:run_test_protector"
         }
     }
 }

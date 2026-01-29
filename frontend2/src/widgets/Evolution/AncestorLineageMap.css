@@ -1,0 +1,56 @@
+.lineage-map-container {
+    padding: 24px;
+    background: rgba(15, 20, 30, 0.9);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 242, 255, 0.2);
+    overflow: hidden;
+    position: relative;
+    height: 400px;
+}
+
+.lineage-map-header {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 5;
+}
+
+.lineage-map-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: #00f2ff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.lineage-svg-container {
+    width: 100%;
+    height: 100%;
+}
+
+.node circle {
+    fill: #1a212c;
+    stroke: #00f2ff;
+    stroke-width: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.node:hover circle {
+    fill: #00f2ff;
+    stroke: #fff;
+    filter: drop-shadow(0 0 5px #00f2ff);
+}
+
+.node text {
+    font-size: 10px;
+    fill: #fff;
+    font-family: 'Inter', sans-serif;
+    pointer-events: none;
+}
+
+.link {
+    fill: none;
+    stroke: rgba(0, 242, 255, 0.2);
+    stroke-width: 1.5px;
+}

@@ -28,8 +28,25 @@ class Client(BaseModel):
     advisor_id: str
     client_name: str
     portfolio_ids: List[str] = []
+    aum: float = 0.0
+    risk_level: str = "Low"  # Low, Moderate, High
+    retention_score: float = 100.0
+    kyc_status: str = "Verified"  # Verified, Pending, Flagged
+    jurisdiction: str = "US"
+    funding_source: Optional[str] = None
+    strategy: str = "Aggressive AI"
     created_date: datetime
     updated_date: datetime
+
+
+class ClientAnalytics(BaseModel):
+    """Analytics for a specific client."""
+    client_id: str
+    fee_forecast: float
+    churn_probability: float
+    kyc_risk_score: float
+    rebalance_drift: float
+    last_updated: datetime
 
 
 class WhiteLabelConfig(BaseModel):

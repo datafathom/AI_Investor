@@ -54,8 +54,12 @@ class DatabaseManager:
     def get_pg_connection(self):
         """
         Get a Postgres connection from the pool.
-        Automatically sets the search_path based on the current tenant context.
+        Lazily initializes the pool if it's missing.
         """
+        if not self._pg_pool:
+            logger.info("Retrying PostgreSQL pool initialization...")
+            self._init_connections()
+            
         if not self._pg_pool:
             raise ConnectionError("PostgreSQL pool not initialized.")
 

@@ -53,7 +53,7 @@ from web.api.coinbase_crypto_api import coinbase_crypto_bp
 from web.api.communication_api import communication_bp
 from web.api.community_api import forum_bp
 from web.api.community_api import qa_bp
-from web.api.compliance_api import compliance_bp
+# from web.api.compliance_api import compliance_bp # REPLACED BY WAVE_APIS
 from web.api.credit_api import credit_bp
 from web.api.crypto_api import crypto_api_bp
 from web.api.dashboard_api import dashboard_bp
@@ -64,7 +64,7 @@ from web.api.documents_api import documents_bp
 from web.api.education_api import education_bp
 from web.api.email_api import email_api_bp
 from web.api.enterprise_api import enterprise_bp
-from web.api.estate_api import estate_bp
+# from web.api.estate_api import estate_bp # REPLACED BY WAVE_APIS
 from web.api.ethereum_api import ethereum_bp
 from web.api.evolution_api import evolution_bp
 from web.api.facebook_auth_api import facebook_auth_bp
@@ -73,6 +73,7 @@ from web.api.financial_planning_api import financial_planning_bp
 from web.api.fixed_income_api import fixed_income_bp
 from web.api.gmail_api import gmail_bp
 from web.api.google_auth_api import google_auth_bp
+from web.api.master_orchestrator_api import master_orchestrator_bp
 from web.api.health_api import health_bp
 from web.api.homeostasis_api import homeostasis_api
 from web.api.ibkr_api import ibkr_bp
@@ -118,12 +119,14 @@ from web.api.twilio_api import twilio_api_bp
 from web.api.venmo_api import venmo_bp
 from web.api.watchlist_api import alert_bp
 from web.api.watchlist_api import watchlist_bp
-from web.api.wave_apis import backtest_bp, corporate_bp, integrations_bp, margin_bp, mobile_bp, philanthropy_bp, scenario_bp, system_bp, zen_bp
+from web.api.wave_apis import backtest_bp, corporate_bp, integrations_bp, margin_bp, mobile_bp, philanthropy_bp, scenario_bp, system_bp, zen_bp, compliance_bp, estate_bp
 from web.api.web3_api import web3_bp
 from web.api.workspace_api import workspace_bp
 from web.api.youtube_api import youtube_bp
 from web.api.payment_transfer_api import payment_transfer_bp
 from web.api.scanner_api import scanner_bp
+from web.api.search_api import search_bp
+from web.api.system_telemetry_api import system_telemetry_bp
 from web.routes.market_routes import market_bp
 from web.routes.system_routes import system_bp as system_routes_bp
 # --- FINISHED CONSOLIDATION ---
@@ -245,9 +248,18 @@ def create_app() -> Flask:
             'service': 'ai-investor-backend'
         })
     
+    def safe_register(bp, **kwargs):
+        try:
+            name = kwargs.get('name', bp.name)
+            if name in app.blueprints:
+                print(f"[INFO] Blueprint '{name}' already registered, skipping.")
+                return
+            app.register_blueprint(bp, **kwargs)
+        except ValueError as e:
+            print(f"[ERROR] Failed to register blueprint '{bp.name}': {e}")
+
     # Enhanced health check endpoints
-    # from web.api.health_api import health_bp # ABSOLUTE STRIP
-    app.register_blueprint(health_bp)
+    safe_register(health_bp)
     
     @app.route('/api/v1/gap', methods=['GET'])
     def get_gap():
@@ -305,6 +317,7 @@ def create_app() -> Flask:
     
     # Register Blueprints
     app.register_blueprint(dashboard_bp)
+    app.register_blueprint(master_orchestrator_bp)
     app.register_blueprint(communication_bp)
     app.register_blueprint(politics_bp)
     app.register_blueprint(evolution_bp)
@@ -421,6 +434,9 @@ def create_app() -> Flask:
     app.register_blueprint(web3_bp, url_prefix='/api/v1/web3')
     # app.register_blueprint(tax_bp, url_prefix='/api/v1/tax') # REMOVED: Duplicate/Broken registration
 
+    from web.api.economics_api import economics_bp
+    app.register_blueprint(economics_bp)
+    
     app.register_blueprint(macro_bp, url_prefix='/api/v1/macro')
     
     # Initialize middleware
@@ -594,6 +610,8 @@ def create_app() -> Flask:
     
     # Phase 23: Payment Transfer API
     app.register_blueprint(payment_transfer_bp)
+    app.register_blueprint(search_bp)
+    app.register_blueprint(system_telemetry_bp)
     
     # Initialize Swagger/OpenAPI documentation
     try:
@@ -635,8 +653,11 @@ def create_app() -> Flask:
                 }
             }
         }
-        swagger = Swagger(app, config=swagger_config, template=swagger_template)
-        print("[OK] Swagger/OpenAPI documentation initialized")
+        if 'flasgger' not in app.blueprints:
+            swagger = Swagger(app, config=swagger_config, template=swagger_template)
+            print("[OK] Swagger/OpenAPI documentation initialized")
+        else:
+            print("[INFO] Swagger/OpenAPI already initialized")
     except ImportError:
         print("[WARN] Flasgger not installed. Install with: pip install flasgger")
     except Exception as e:
@@ -694,4 +715,4 @@ def create_app() -> Flask:
 if __name__ == '__main__':
     app, socketio = create_app()
     print("Backend with SocketIO on port 5050...")
-    socketio.run(app, host='127.0.0.1', port=5050, debug=True, allow_unsafe_werkzeug=True)
+    socketio.run(app, host='127.0.0.1', port=5050, debug=False, allow_unsafe_werkzeug=True)

@@ -1,5 +1,5 @@
-
 import React, { useEffect, useState, useRef, Suspense, lazy } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useColorPalette } from './hooks/useColorPalette';
 import { useWidgetLayout } from './hooks/useWidgetLayout';
 import { authService } from './utils/authService';
@@ -15,6 +15,7 @@ import './App.css';
 
 import WindowWrapper from './components/WindowManager/WindowWrapper';
 import useWindowStore from './stores/windowStore';
+import useTaskbarStore from './stores/taskbarStore';
 import Taskbar from './components/Taskbar/Taskbar';
 
 // Phase 5: Risk & Safety
@@ -39,6 +40,7 @@ import CommandPalette from './components/CommandPalette/CommandPalette';
 import BottomNav from './components/Navigation/BottomNav';
 import DashboardSkeleton from './components/Skeleton/DashboardSkeleton';
 import QuickActions from './components/Actions/QuickActions';
+import TimelineScrubber from './components/Timeline/TimelineScrubber';
 
 // Lazy load other pages
 const MissionControl = lazy(() => import('./pages/MissionControl'));
@@ -70,7 +72,6 @@ const MarginDashboard = lazy(() => import('./pages/MarginDashboard')); // Phase 
 const MobileDashboard = lazy(() => import('./pages/MobileDashboard')); // Phase 22
 const APIDashboard = lazy(() => import('./pages/APIDashboard')); // Phase 23
 const AssetsDashboard = lazy(() => import('./pages/AssetsDashboard')); // Phase 24
-const ZenMode = lazy(() => import('./pages/ZenMode')); // Phase 24 (Zen)
 const CashFlowDashboard = lazy(() => import('./pages/CashFlowDashboard')); // Phase 10
 const RoleOverview = lazy(() => import('./pages/RoleOverview'));
 const TenantDashboard = lazy(() => import('./pages/TenantDashboard'));
@@ -100,10 +101,14 @@ const AdvancedChartingDashboard = lazy(() => import('./pages/AdvancedChartingDas
 const AdvancedOrdersDashboard = lazy(() => import('./pages/AdvancedOrdersDashboard')); // Phase 13
 const EnterpriseDashboard = lazy(() => import('./pages/EnterpriseDashboard')); // Phase 31
 const InstitutionalToolsDashboard = lazy(() => import('./pages/InstitutionalToolsDashboard')); // Phase 33
+const MasterOrchestrator = lazy(() => import('./pages/MasterOrchestrator')); // Phase 200
+const SocialClassMaintenance = lazy(() => import('./pages/SocialClassMaintenance')); // Phase 197
+const ZenMode = lazy(() => import('./pages/ZenMode')); // Phase 24
 const MLTrainingDashboard = lazy(() => import('./pages/MLTrainingDashboard')); // Phase 27
 const IntegrationsDashboard = lazy(() => import('./pages/IntegrationsDashboard')); // Phase 28
 const DeveloperPlatformDashboard = lazy(() => import('./pages/DeveloperPlatformDashboard')); // Phase 29
 const MarketplaceDashboard = lazy(() => import('./pages/MarketplaceDashboard')); // Phase 30
+const EvolutionDashboard = lazy(() => import('./pages/EvolutionDashboard')); // Phase 4: Evolution Lab
 const TermsOfService = lazy(() => import('./pages/Legal/TermsOfService'));
 const PrivacyPolicy = lazy(() => import('./pages/Legal/PrivacyPolicy'));
 const OnboardingFlow = lazy(() => import('./components/Onboarding/OnboardingFlow'));
@@ -153,8 +158,22 @@ function AppContent() {
     '/architect/system',
     '/architect/api',
     '/mobile',
+    '/news/sentiment',
+    '/watchlists/alerts',
+    '/ai/predictions',
+    '/ai/assistant',
+    '/enterprise',
+    '/institutional',
+    '/ml/training',
+    '/integrations',
+    '/developer/platform',
+    '/marketplace',
+    '/legal/terms',
+    '/legal/privacy',
     '/workspace/autocoder',
-    '/workspace/vr'
+    '/workspace/vr',
+    '/orchestrator',
+    '/strategist/scm'
   ].includes(location.pathname);
   const {
     resetLayout,
@@ -163,6 +182,12 @@ function AppContent() {
     saveWorkspace,
     loadWorkspace,
   } = useWidgetLayout();
+
+  const { 
+    isKillMFAOpen, 
+    setKillMFAOpen, 
+    triggerKillSwitch 
+  } = useTaskbarStore();
   const [debugStates, setDebugStates] = useState({ forceLoading: false, forceError: false });
   const { isDark, toggleTheme } = useTheme();
   const [globalLock, setGlobalLock] = useState(false);
@@ -173,7 +198,6 @@ function AppContent() {
   const [isSystemFrozen, setIsSystemFrozen] = useState(false);
   const [riskModalOpen, setRiskModalOpen] = useState(false);
   const [pendingTrade, setPendingTrade] = useState(null);
-  const [showKillMFA, setShowKillMFA] = useState(false);
   
   // UI/UX Enhancement State
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
@@ -292,23 +316,191 @@ function AppContent() {
   const addWindow = useWindowStore((state) => state.addWindow);
   useEffect(() => {
       if (useWindowStore.getState().windows.length === 0) {
+          // System Status Window
           addWindow({
-              title: 'Phase 1: Window Manager Ready',
-              width: 500,
-              height: 400,
-              x: 150,
-              y: 150,
-              isMinimized: true,
+              title: 'System Status',
+              width: 400,
+              height: 300,
+              x: 100,
+              y: 100,
+              isMinimized: false,
+              risk: 'low',
               component: () => (
                   <div style={{padding: 20, color: 'white'}}>
-                      <h3>System Operational</h3>
+                      <h3>🟢 System Operational</h3>
                       <p>Window Manager: <strong>Active</strong></p>
                       <p>Taskbar: <strong>Active</strong></p>
-                      <p>Glassmorphism: <strong>Enabled</strong></p>
-                      <br/>
-                      <button onClick={() => addWindow({title: 'New Window', x: 200, y: 200})}>
-                          Spawn Another Window
-                      </button>
+                      <p>Agents Online: <strong>12/12</strong></p>
+                  </div>
+              )
+          });
+          
+          // Market Monitor Window
+          addWindow({
+              title: 'Market Monitor',
+              width: 500,
+              height: 400,
+              x: 550,
+              y: 120,
+              isMinimized: false,
+              risk: 'medium',
+              badgeCount: 3,
+              component: () => (
+                  <div style={{padding: 20, color: 'white'}}>
+                      <h3>📈 Market Overview</h3>
+                      <p>S&P 500: <span style={{color: '#00ff88'}}>+1.42%</span></p>
+                      <p>VIX: <span style={{color: '#ffc107'}}>13.42</span></p>
+                      <p>Active Alerts: <strong>3</strong></p>
+                  </div>
+              )
+          });
+          
+          // Agent Control Window (minimized)
+          addWindow({
+              title: 'Agent Control',
+              width: 450,
+              height: 350,
+              x: 200,
+              y: 200,
+              isMinimized: true,
+              risk: 'low',
+              component: () => (
+                  <div style={{padding: 20, color: 'white'}}>
+                      <h3>🤖 Agent Fleet</h3>
+                      <p>Running: 12 | Paused: 0</p>
+                  </div>
+              )
+          });
+          
+          // Risk Scanner Window
+          addWindow({
+              title: 'Risk Scanner',
+              width: 400,
+              height: 300,
+              x: 300,
+              y: 250,
+              isMinimized: true,
+              risk: 'high',
+              badgeCount: 2,
+              component: () => (
+                  <div style={{padding: 20, color: 'white'}}>
+                      <h3>⚠️ Risk Alerts</h3>
+                      <p style={{color: '#ff4757'}}>2 High Priority Alerts</p>
+                      <p>Portfolio VaR: -$24,500</p>
+                  </div>
+              )
+          });
+          
+          // Terminal Window (minimized)
+          addWindow({
+              title: 'Terminal',
+              width: 600,
+              height: 400,
+              x: 400,
+              y: 180,
+              isMinimized: true,
+              risk: 'low',
+              component: () => (
+                  <div style={{padding: 20, color: '#00ff88', fontFamily: 'monospace', background: '#0a0a0a'}}>
+                      <pre>$ system status --all{'\n'}[OK] Kafka: Connected{'\n'}[OK] Neo4j: Connected{'\n'}[OK] TimescaleDB: Connected{'\n'}{'>'} _</pre>
+                  </div>
+              )
+          });
+          
+          // Portfolio Overview Window
+          addWindow({
+              title: 'Portfolio',
+              width: 550,
+              height: 400,
+              x: 180,
+              y: 140,
+              isMinimized: true,
+              risk: 'low',
+              component: () => (
+                  <div style={{padding: 20, color: 'white'}}>
+                      <h3>💼 Portfolio Overview</h3>
+                      <p>Total Value: <span style={{color: '#00ff88'}}>$2,847,320</span></p>
+                      <p>Today's P&L: <span style={{color: '#00ff88'}}>+$12,450 (+0.44%)</span></p>
+                      <p>Positions: <strong>24</strong></p>
+                  </div>
+              )
+          });
+          
+          // News Feed Window
+          addWindow({
+              title: 'News Feed',
+              width: 450,
+              height: 500,
+              x: 750,
+              y: 100,
+              isMinimized: true,
+              risk: 'medium',
+              badgeCount: 7,
+              component: () => (
+                  <div style={{padding: 20, color: 'white'}}>
+                      <h3>📰 Breaking News</h3>
+                      <p style={{borderBottom: '1px solid #333', paddingBottom: 8}}>Fed signals rate pause...</p>
+                      <p style={{borderBottom: '1px solid #333', paddingBottom: 8}}>NVDA earnings beat...</p>
+                      <p>Crypto markets rally...</p>
+                  </div>
+              )
+          });
+          
+          // Strategy Lab Window
+          addWindow({
+              title: 'Strategy Lab',
+              width: 600,
+              height: 450,
+              x: 280,
+              y: 160,
+              isMinimized: true,
+              risk: 'low',
+              component: () => (
+                  <div style={{padding: 20, color: 'white'}}>
+                      <h3>🧬 Strategy Lab</h3>
+                      <p>Active Strategies: <strong>3</strong></p>
+                      <p>Backtesting: <span style={{color: '#00f2ff'}}>Momentum Alpha v2.1</span></p>
+                      <p>Win Rate: <span style={{color: '#00ff88'}}>67.4%</span></p>
+                  </div>
+              )
+          });
+          
+          // Analytics Dashboard Window
+          addWindow({
+              title: 'Analytics',
+              width: 500,
+              height: 380,
+              x: 600,
+              y: 200,
+              isMinimized: true,
+              risk: 'low',
+              component: () => (
+                  <div style={{padding: 20, color: 'white'}}>
+                      <h3>📊 Analytics</h3>
+                      <p>Sharpe Ratio: <strong>1.82</strong></p>
+                      <p>Max Drawdown: <span style={{color: '#ffc107'}}>-8.2%</span></p>
+                      <p>Alpha: <span style={{color: '#00ff88'}}>+4.1%</span></p>
+                  </div>
+              )
+          });
+          
+          // Watchlist Window
+          addWindow({
+              title: 'Watchlist',
+              width: 400,
+              height: 450,
+              x: 850,
+              y: 150,
+              isMinimized: true,
+              risk: 'medium',
+              badgeCount: 1,
+              component: () => (
+                  <div style={{padding: 20, color: 'white'}}>
+                      <h3>👁️ Watchlist</h3>
+                      <p>AAPL: <span style={{color: '#00ff88'}}>$189.42 ↑</span></p>
+                      <p>TSLA: <span style={{color: '#ff4757'}}>$241.05 ↓</span></p>
+                      <p>MSFT: <span style={{color: '#00ff88'}}>$378.91 ↑</span></p>
+                      <p>GOOGL: <span style={{color: '#ffc107'}}>$142.33 →</span></p>
                   </div>
               )
           });
@@ -352,6 +544,8 @@ function AppContent() {
       case 'role-corporate': navigate('/strategist/corporate'); break; // Phase 20
       case 'role-architect': navigate('/architect/system'); break; // Phase 19
       case 'role-api': navigate('/architect/api'); break; // Phase 23
+      case 'role-orchestrator': navigate('/orchestrator'); break; // Phase 200
+      case 'role-scm': navigate('/strategist/scm'); break; // Phase 197
       case 'show-tax': navigate('/portfolio/tax'); break; // Phase 9
       case 'show-crypto': navigate('/portfolio/crypto'); break; // Phase 8
       case 'show-fixed-income': navigate('/portfolio/fixed-income'); break; // Phase 7 (FixedIncomeDashboard)
@@ -560,7 +754,6 @@ function AppContent() {
                 <Route path="/strategist/corporate" element={<CorporateDashboard />} />
                 <Route path="/architect/system" element={<SystemHealthDashboard />} />
                 <Route path="/architect/api" element={<APIDashboard />} />
-                <Route path="/architect/system" element={<SystemHealthDashboard />} />
                 <Route path="/guardian/compliance/audit" element={<AuditDashboard />} />
                 <Route path="/guardian/scenarios" element={<ScenarioDashboard />} />
                 <Route path="/guardian/margin" element={<MarginDashboard />} />
@@ -579,6 +772,8 @@ function AppContent() {
                 <Route path="/assets" element={<AssetsDashboard />} />
                 <Route path="/portfolio/cash-flow" element={<CashFlowDashboard />} />
                 <Route path="/zen" element={<ZenMode />} />
+                <Route path="/orchestrator" element={<MasterOrchestrator />} />
+                <Route path="/strategist/scm" element={<SocialClassMaintenance />} />
                 <Route path="/tenant" element={<TenantDashboard />} />
                 {/* App Hardening & Improvements Routes */}
                 <Route path="/portfolio/advanced-analytics" element={<AdvancedPortfolioAnalytics />} />
@@ -607,6 +802,7 @@ function AppContent() {
                 <Route path="/integrations" element={<IntegrationsDashboard />} />
                 <Route path="/developer/platform" element={<DeveloperPlatformDashboard />} />
                 <Route path="/marketplace" element={<MarketplaceDashboard />} />
+                <Route path="/evolution" element={<EvolutionDashboard />} />
                 <Route path="/news/sentiment" element={<NewsSentimentDashboard />} />
                 <Route path="/watchlists/alerts" element={<WatchlistsAlertsDashboard />} />
                 <Route path="/ai/predictions" element={<AIPredictionsDashboard />} />
@@ -660,8 +856,8 @@ function AppContent() {
         />
 
         {/* Phase 1: Window Manager Layer */}
-        {useWindowStore((state) => state.windows).map((window) => (
-            <WindowWrapper key={window.id} id={window.id} />
+        {useWindowStore(useShallow((state) => state.windows.map(w => w.id))).map((id) => (
+            <WindowWrapper key={id} id={id} />
         ))}
         <Taskbar />
         
@@ -688,11 +884,13 @@ function AppContent() {
 
         {/* Phase 5: Global Safety Logic */}
         <MFAVerificationModal 
-            isOpen={showKillMFA}
-            onClose={() => setShowKillMFA(false)}
+            isOpen={isKillMFAOpen}
+            onClose={() => setKillMFAOpen(false)}
             actionName="Engagement of Global Kill Switch"
             onSuccess={async (mfa_code) => {
+                setKillMFAOpen(false);
                 setIsSystemFrozen(true);
+                triggerKillSwitch(); // Update taskbar store state to 'active'
                 try {
                     await fetch('/api/v1/risk/kill-switch', {
                         method: 'POST',
@@ -700,7 +898,7 @@ function AppContent() {
                         body: JSON.stringify({ 
                           action: 'engage', 
                           reason: 'User Kill Switch (MFA Verified)',
-                          mfa_code: mfa_code // Sent to backend
+                          mfa_code: mfa_code 
                         })
                     });
                     notify({ title: 'SYSTEM HALTED', body: 'Kill switch signal broadcasted', type: 'critical' });
@@ -709,8 +907,10 @@ function AppContent() {
                 }
             }}
         />
-        <KillSwitch onTrigger={() => setShowKillMFA(true)} />
         <FrozenOverlay isFrozen={isSystemFrozen} onUnlock={() => setIsSystemFrozen(false)} />
+        
+        {/* Sprint 6: Event Timeline Scrubber */}
+        <TimelineScrubber />
         <PreTradeRiskModal 
             isOpen={riskModalOpen} 
             onClose={() => setRiskModalOpen(false)}
@@ -718,7 +918,7 @@ function AppContent() {
             onConfirm={async () => {
                 setRiskModalOpen(false);
                 try {
-                    const token = localStorage.getItem('token');
+                    const token = localStorage.getItem('widget_os_token');
                     const response = await fetch('/api/v1/brokerage/order', {
                         method: 'POST',
                         headers: { 

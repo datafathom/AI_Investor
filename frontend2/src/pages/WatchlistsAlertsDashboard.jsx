@@ -22,95 +22,54 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
+import useWatchlistStore from '../stores/watchlistStore';
 import './WatchlistsAlertsDashboard.css';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 const WatchlistsAlertsDashboard = () => {
-  const [watchlists, setWatchlists] = useState([]);
-  const [alerts, setAlerts] = useState([]);
+  const {
+      watchlists,
+      alerts,
+      selectedWatchlist,
+      isLoading,
+      fetchWatchlists,
+      fetchAlerts,
+      createWatchlist,
+      addSymbolToWatchlist,
+      createAlert,
+      setSelectedWatchlist
+  } = useWatchlistStore();
+
   const [newWatchlistName, setNewWatchlistName] = useState('');
   const [newSymbol, setNewSymbol] = useState('');
-  const [selectedWatchlist, setSelectedWatchlist] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [userId] = useState('user_1');
 
   useEffect(() => {
-    loadWatchlists();
-    loadAlerts();
-  }, []);
+    fetchWatchlists(userId);
+    fetchAlerts(userId);
+  }, [fetchWatchlists, fetchAlerts, userId]);
 
-  const loadWatchlists = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/watchlist/user/${userId}`);
-      setWatchlists(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading watchlists:', error);
-    }
-  };
-
-  const loadAlerts = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/alert/user/${userId}`);
-      setAlerts(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading alerts:', error);
-    }
-  };
-
-  const createWatchlist = async () => {
+  const handleCreateWatchlist = async () => {
     if (!newWatchlistName) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/watchlist/create`, {
-        user_id: userId,
-        watchlist_name: newWatchlistName
-      });
-      setNewWatchlistName('');
-      loadWatchlists();
-    } catch (error) {
-      console.error('Error creating watchlist:', error);
-    } finally {
-      setLoading(false);
-    }
+    await createWatchlist(userId, newWatchlistName);
+    setNewWatchlistName('');
   };
 
-  const addSymbol = async (watchlistId) => {
+  const handleAddSymbol = async (watchlistId) => {
     if (!newSymbol) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/watchlist/${watchlistId}/add`, {
-        symbol: newSymbol.toUpperCase()
-      });
-      setNewSymbol('');
-      loadWatchlists();
-    } catch (error) {
-      console.error('Error adding symbol:', error);
-    } finally {
-      setLoading(false);
-    }
+    await addSymbolToWatchlist(watchlistId, newSymbol.toUpperCase(), userId);
+    setNewSymbol('');
   };
 
-  const createAlert = async () => {
+  const handleCreateAlert = async () => {
     if (!newSymbol) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/alert/create`, {
-        user_id: userId,
+    await createAlert(userId, {
         symbol: newSymbol.toUpperCase(),
         alert_type: 'price_above',
-        threshold: 100,
+        threshold: 100, // TODO: Make configurable
         notification_methods: ['email']
-      });
-      setNewSymbol('');
-      loadAlerts();
-    } catch (error) {
-      console.error('Error creating alert:', error);
-    } finally {
-      setLoading(false);
-    }
+    });
+    setNewSymbol('');
   };
 
   return (
@@ -133,7 +92,7 @@ const WatchlistsAlertsDashboard = () => {
               placeholder="New watchlist name"
               className="input-field"
             />
-            <button onClick={createWatchlist} disabled={loading}>
+            <button onClick={handleCreateWatchlist} disabled={isLoading}>
               Create
             </button>
           </div>
@@ -172,7 +131,7 @@ const WatchlistsAlertsDashboard = () => {
                   placeholder="Symbol (e.g., AAPL)"
                   className="input-field"
                 />
-                <button onClick={() => addSymbol(selectedWatchlist.watchlist_id)} disabled={loading}>
+                <button onClick={() => handleAddSymbol(selectedWatchlist.watchlist_id)} disabled={isLoading}>
                   Add
                 </button>
               </div>
@@ -192,7 +151,7 @@ const WatchlistsAlertsDashboard = () => {
               placeholder="Symbol for alert"
               className="input-field"
             />
-            <button onClick={createAlert} disabled={loading}>
+            <button onClick={handleCreateAlert} disabled={isLoading}>
               Create Alert
             </button>
           </div>

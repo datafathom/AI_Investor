@@ -1,0 +1,119 @@
+.timeline-scrubber-container {
+    display: flex;
+    flex-direction: column;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    height: 70px;
+    padding: 5px 20px;
+    user-select: none;
+    position: fixed;
+    bottom: 48px;
+    left: 0;
+    width: 100%;
+    z-index: 9998;
+}
+
+.timeline-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    height: 30px;
+}
+
+.control-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.control-btn:hover {
+    color: #fff;
+}
+
+.time-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: #00ff88;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.historical-label {
+    background: rgba(255, 165, 2, 0.2);
+    color: #ffa502;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 165, 2, 0.3);
+}
+
+.live-btn {
+    background: rgba(0, 255, 136, 0.1);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    color: #00ff88;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+}
+
+.live-btn:hover {
+    background: rgba(0, 255, 136, 0.2);
+}
+
+.timeline-viz {
+    height: 35px;
+    flex-grow: 1;
+}
+
+.axis-x line {
+    stroke: rgba(255, 255, 255, 0.05);
+}
+
+.axis-x path {
+    display: none;
+}
+
+.axis-x text {
+    fill: #64748b;
+    font-size: 9px;
+}
+
+.event-dot {
+    cursor: pointer;
+    transition: r 0.2s;
+}
+
+.event-dot:hover {
+    r: 5;
+}
+
+.event-dot.trade { fill: #00ff88; }
+.event-dot.news { fill: #38bdf8; }
+.event-dot.risk { fill: #ef4444; }
+
+.timeline-needle {
+    stroke: #ff4757;
+    stroke-width: 2px;
+    stroke-linecap: round;
+}
+
+.brush .selection {
+    fill: rgba(255, 255, 255, 0.1);
+    stroke: none;
+}
+
+.brush .handle {
+    fill: none;
+}

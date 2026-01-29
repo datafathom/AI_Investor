@@ -1,0 +1,31 @@
+.asset-allocation-wheel {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.asset-allocation-wheel:hover {
+    transform: translateY(-5px);
+    border-color: rgba(var(--primary-h), 0.3);
+    box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.5);
+}
+
+.asset-allocation-wheel-loading {
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1.5rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.875rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.asset-allocation-wheel circle {
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.asset-allocation-wheel .group:hover {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+}

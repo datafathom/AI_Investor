@@ -24,13 +24,13 @@ export default function AssetsDashboard() {
 
   const DEFAULT_LAYOUT = {
     lg: [
-      { i: 'stats', x: 0, y: 0, w: 12, h: 2 },
-      { i: 'manual_entry', x: 0, y: 2, w: 4, h: 6 },
-      { i: 'net_worth_gauges', x: 4, y: 2, w: 4, h: 6 },
-      { i: 'valuation_slider', x: 8, y: 2, w: 4, h: 6 },
+      { i: 'stats', x: 0, y: 0, w: 12, h: 3 },
+      { i: 'manual_entry', x: 0, y: 3, w: 4, h: 14 },
+      { i: 'net_worth_gauges', x: 4, y: 3, w: 4, h: 14 },
+      { i: 'valuation_slider', x: 8, y: 3, w: 4, h: 14 },
     ]
   };
-  const STORAGE_KEY = 'layout_assets_dashboard';
+  const STORAGE_KEY = 'layout_assets_dashboard_v2';
 
   const [layouts, setLayouts] = useState(() => {
      try {
@@ -71,11 +71,12 @@ export default function AssetsDashboard() {
           layouts={layouts}
           breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
           cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-          rowHeight={80}
+          rowHeight={40}
           draggableHandle=".glass-panel"
           onLayoutChange={onLayoutChange}
           isDraggable={true}
           isResizable={true}
+          margin={[10, 10]}
         >
           <div key="stats" style={{ display: 'flex', gap: '16px' }}>
             {assetStats.map((stat, idx) => (

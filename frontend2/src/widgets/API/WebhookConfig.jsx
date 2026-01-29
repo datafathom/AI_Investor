@@ -1,8 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Webhook, Send, Settings, Code } from 'lucide-react';
+import useAPIStore from '../../stores/apiStore';
 import './WebhookConfig.css';
 
 const WebhookConfig = () => {
+    const { 
+        webhooks, 
+        fetchWebhooks, 
+        testWebhook, 
+        loading 
+    } = useAPIStore();
+
+    useEffect(() => {
+        fetchWebhooks();
+    }, [fetchWebhooks]);
+
+    const handleTestWebhook = async (webhookId) => {
+        try {
+            const result = await testWebhook(webhookId);
+            alert(`Webhook Test Result: ${result.status || 'Success'}\n(Message: ${result.message || 'Sent successfully'})`);
+        } catch (error) {
+            alert(`Webhook Test Failed: ${error.message}`);
+        }
+    };
+
     return (
         <div className="webhook-config-widget">
             <div className="widget-header">
@@ -35,30 +56,36 @@ const WebhookConfig = () => {
             </div>
 
             <div className="integration-targets">
-                <div className="target-item">
-                    <div className="target-info">
-                        <span className="target-name">Slack #trading-alerts</span>
-                        <span className="target-url">https://hooks.slack.com/...</span>
+                {webhooks.length > 0 ? (
+                    webhooks.map((w, idx) => (
+                        <div key={idx} className="target-item">
+                            <div className="target-info">
+                                <span className="target-name">{w.name || w.url}</span>
+                                <span className="target-url">{w.url}</span>
+                            </div>
+                            <div className="target-actions">
+                                <button 
+                                    className="test-send" 
+                                    onClick={() => handleTestWebhook(w.id)}
+                                    disabled={loading}
+                                >
+                                    <Send size={12} /> Test
+                                </button>
+                                <div className={`toggle ${w.active ? 'active' : ''}`}>
+                                    {w.active ? 'ON' : 'OFF'}
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="p-4 text-center text-zinc-500 font-mono text-xs">
+                        {loading ? 'SYNCING WEBHOOK DATA...' : 'NO WEBHOOKS CONFIGURED'}
                     </div>
-                    <div className="target-actions">
-                        <button className="test-send"><Send size={12} /> Test</button>
-                        <div className="toggle active">ON</div>
-                    </div>
-                </div>
-                 <div className="target-item">
-                    <div className="target-info">
-                        <span className="target-name">Discord #general</span>
-                        <span className="target-url">https://discord.com/api/...</span>
-                    </div>
-                    <div className="target-actions">
-                        <button className="test-send"><Send size={12} /> Test</button>
-                        <div className="toggle">OFF</div>
-                    </div>
-                </div>
+                )}
             </div>
             
             <div className="response-log">
-                <span className="text-secondary">Last Test Response:</span> <span className="text-green-400">200 OK (14ms)</span>
+                <span className="text-secondary">System Health:</span> <span className="text-green-400">Webhook Engine Active</span>
             </div>
         </div>
     );

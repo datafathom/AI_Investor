@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-const API_BASE = 'http://localhost:5050/api/v1/web3';
+const API_BASE = '/api/v1/web3';
 
 const useWeb3Store = create((set, get) => ({
   // State

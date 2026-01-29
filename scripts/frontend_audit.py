@@ -1,302 +1,319 @@
+
+import os
+import time
+import json
+import requests
+import logging
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import time
-import os
-import json
+from webdriver_manager.chrome import ChromeDriverManager
 
-# Configuration
+# Setup logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+# Constants
 BASE_URL = "http://localhost:5173"
-SCREENSHOT_DIR = r"c:\Users\astir\Desktop\AI_Company\AI_Investor\screenshots\1_14_26"
-SUCCESS_DIR = os.path.join(SCREENSHOT_DIR, "success")
-FAIL_DIR = os.path.join(SCREENSHOT_DIR, "fail")
+API_URL = "http://localhost:5050"
+TIMESTAMP = datetime.now().strftime("%Y_%M_%D_%H%M%S").replace("/", "")
+EMAIL = f"audit_2026_01_27_{TIMESTAMP}@fathom.ai" # Follow the @fathom.ai protocol
+PASSWORD = "MockPassword123!"
+SCREENSHOT_DIR = "frontend2/screenshots/audit_2026_01_27"
+WAIT_TIME_STABLE = 7  # Seconds per page according to Audit_FrontEndPlan.md
 
-# Create directories clean
-os.makedirs(SUCCESS_DIR, exist_ok=True)
-os.makedirs(FAIL_DIR, exist_ok=True)
+# Routes to audit
+ROUTES = [
+    "/workspace/terminal",
+    "/workspace/mission-control",
+    "/analytics/political",
+    "/analytics/strategy",
+    "/workspace/debate",
+    "/workspace/autocoder",
+    "/workspace/vr",
+    "/analytics/options",
+    "/portfolio/backtest",
+    "/strategist/estate",
+    "/strategist/impact",
+    "/strategist/corporate",
+    "/architect/system",
+    "/architect/api",
+    "/guardian/compliance/audit",
+    "/guardian/scenarios",
+    "/guardian/margin",
+    "/mobile",
+    "/portfolio/brokerage",
+    "/workspace/auto-coder",
+    "/portfolio/attribution",
+    "/portfolio/fixed-income",
+    "/portfolio/crypto",
+    "/portfolio/tax",
+    "/observer/macro",
+    "/guardian/compliance",
+    "/strategist/currency",
+    "/scanner/global",
+    "/assets",
+    "/portfolio/cash-flow",
+    "/zen",
+    "/tenant",
+    "/portfolio/advanced-analytics",
+    "/portfolio/optimization",
+    "/portfolio/risk",
+    "/portfolio/tax-optimization",
+    "/planning/financial",
+    "/planning/retirement",
+    "/budgeting",
+    "/trading/options",
+    "/trading/paper",
+    "/trading/algorithmic",
+    "/planning/estate",
+    "/billing/payments",
+    "/credit/monitoring",
+    "/research/reports",
+    "/social/trading",
+    "/community/forums",
+    "/education",
+    "/charting/advanced",
+    "/trading/advanced-orders",
+    "/enterprise",
+    "/institutional",
+    "/ml/training",
+    "/integrations",
+    "/developer/platform",
+    "/marketplace",
+    "/news/sentiment",
+    "/watchlists/alerts",
+    "/ai/predictions",
+    "/ai/assistant",
+    "/legal/terms",
+    "/legal/privacy"
+]
 
-class RobustAuditor:
-    def __init__(self):
-        chrome_options = Options()
-        # chrome_options.add_argument("--headless") # Commented for visibility if needed
-        chrome_options.add_argument("--window-size=1920,1080")
-        chrome_options.add_argument("--disable-gpu")
+def setup_driver():
+    options = Options()
+    options.add_argument("--window-size=1920,1080")
+    # options.add_argument("--headless") # Useful for server runs
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=options)
+    return driver
+
+def register_via_ui(driver):
+    logger.info(f"Navigating to Homepage")
+    driver.get(BASE_URL)
+    time.sleep(15) # Give it time to show the modal
+    
+    try:
+        # Check if Modal is already    try:
+        logger.info("Detecting Login Modal")
+        # Wait up to 15s for auth modal
+        WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CLASS_NAME, "auth-modal")))
+        logger.info("Auth modal detected")#ch to Registration
+        logger.info("Switching to Registration mode")
+        toggle_reg = driver.find_element(By.CLASS_NAME, "switch-auth")
+        toggle_reg.click()
+        time.sleep(1)
         
-        service = Service(ChromeDriverManager().install())
-        self.driver = webdriver.Chrome(service=service, options=chrome_options)
-        self.wait = WebDriverWait(self.driver, 10)
-
-    def perform_real_auth(self):
-        """Standard Browser Verification Style: UI Register -> API Verify -> Session Detect -> UI Login UI."""
-        print("👤 Starting AUTHENTIC UI Auth Flow...")
-        self.driver.get(BASE_URL)
+        # 2. Fill Registration Form
+        logger.info(f"Filling Registration for: {EMAIL}")
+        email_input = driver.find_element(By.XPATH, "//input[@type='email']")
+        pass_input = driver.find_element(By.XPATH, "//input[@type='password']")
+        
+        email_input.send_keys(EMAIL)
+        pass_input.send_keys(PASSWORD)
+        
+        # 3. Submit
+        driver.find_element(By.CLASS_NAME, "auth-button").click()
+        logger.info("Registration submitted")
         time.sleep(3)
         
-        # Identity for today
-        today_str = time.strftime("%Y_%m_%d_%H%M%S")
-        test_email = f"audit_{today_str}@datafathom.biz"
-        test_pass = "AuditPass123!"
+    except Exception as e:
+        logger.error(f"Registration UI flow failed: {e}")
+        driver.save_screenshot(f"{SCREENSHOT_DIR}/fail/registration_ui_failure.png")
+        raise
 
-        try:
-            # 1. Open Registration mode
-            print(f"   - Opening Registration for: {test_email}")
-            switch_btn = self.wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "switch-auth")))
-            if "Sign Up" in switch_btn.text:
-                switch_btn.click()
-                time.sleep(1)
+def verify_email_api():
+    logger.info(f"Bypassing Email Verification per Protocol for {EMAIL}")
+    try:
+        resp = requests.get(f"{API_URL}/api/auth/verify-email?email={EMAIL}&token=mock_verify_token")
+        logger.info(f"Verification status: {resp.status_code}")
+    except Exception as e:
+        logger.error(f"Verification request failed: {e}")
 
-            # 2. Register
-            email_input = self.driver.find_element(By.CSS_SELECTOR, "input[type='email']")
-            pass_input = self.driver.find_element(By.CSS_SELECTOR, "input[type='password']")
-            submit_btn = self.driver.find_element(By.CLASS_NAME, "auth-button")
+def login_ui(driver):
+    logger.info("Ensuring Authenticated State")
+    driver.get(BASE_URL)
+    time.sleep(5)
+    
+    # Check if already logged in (look for 'Account' menu text or profile name)
+    try:
+        body_text = driver.find_element(By.TAG_NAME, "body").text
+        if "Logout" in body_text or "Signed in as" in body_text:
+            logger.info("Already logged in. Skipping UI login flow.")
+            return
+    except:
+        pass
 
-            email_input.send_keys(test_email)
-            pass_input.send_keys(test_pass)
-            submit_btn.click()
-            
-            print("   - Registration submitted. Waiting for backend sink...")
-            time.sleep(5) 
-            
-            # 3. Programmatic Email Verification (Backend Bypass)
-            print(f"   - VERIFYING account via API...")
-            import requests
-            verify_res = requests.get(f"http://localhost:5050/api/auth/verify-email?email={test_email}&token=mock_verify_token")
-            print(f"   - API Response: {verify_res.status_code}")
-            time.sleep(2)
+    logger.info("Not logged in. Proceeding with UI login.")
+    
+    try:
+        # If modal is not there, open it via Account (fallback)
+        if len(driver.find_elements(By.CLASS_NAME, "auth-modal")) == 0:
+            logger.info("Modal not found, attempting MenuBar Account -> Sign In")
+            account_menu = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//div[contains(@class, 'menu-item') and contains(text(), 'Account')]")))
+            account_menu.click()
+            signin_btn = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//div[contains(@class, 'menu-dropdown-item') and contains(text(), 'Sign In')]")))
+            signin_btn.click()
+        
+        # Ensure we are in Login mode
+        modal_header = driver.find_element(By.XPATH, "//div[contains(@class, 'modal-header')]//h2").text
+        if "Create Account" in modal_header:
+            logger.info("Switching to Login mode")
+            driver.find_element(By.CLASS_NAME, "switch-auth").click()
+            time.sleep(1)
 
-            # 4. Final Verification / Login
-            print("   - Refreshing to stabilize session...")
-            self.driver.get(BASE_URL)
-            time.sleep(5)
-            
-            # Note: App.jsx might auto-login here if registration was successful
-            modals = self.driver.find_elements(By.CLASS_NAME, "modal-overlay")
-            if not modals or not modals[0].is_displayed():
-                print("   - No login modal detected. Checking for App Shell...")
-                try:
-                    self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "app-shell")))
-                    print("   ✅ ALREADY LOGGED IN: Registration auto-logged us in.")
-                except:
-                    print("   ⚠️ App Shell not found and Modal not present. Forcing login trigger...")
-                    self.driver.get(f"{BASE_URL}/")
-                    time.sleep(3)
-            
-            # If still not logged in, perform manual login
-            modals = self.driver.find_elements(By.CLASS_NAME, "modal-overlay")
-            if modals and modals[0].is_displayed():
-                print("   - Performing manual UI Login...")
-                email_input = self.driver.find_element(By.CSS_SELECTOR, "input[type='email']")
-                pass_input = self.driver.find_element(By.CSS_SELECTOR, "input[type='password']")
-                submit_btn = self.driver.find_element(By.CLASS_NAME, "auth-button")
-                
-                email_input.clear()
-                email_input.send_keys(test_email)
-                pass_input.clear()
-                pass_input.send_keys(test_pass)
-                submit_btn.click()
-                self.wait.until_not(EC.presence_of_element_located((By.CLASS_NAME, "modal-overlay")))
+        # Fill Login
+        email_input = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, "//input[@type='email']")))
+        pass_input = driver.find_element(By.XPATH, "//input[@type='password']")
+        
+        email_input.send_keys(EMAIL)
+        pass_input.send_keys(PASSWORD)
+        
+        driver.find_element(By.CLASS_NAME, "auth-button").click()
+        
+        # Wait for Landing
+        WebDriverWait(driver, 20).until(EC.url_contains("/workspace"))
+        logger.info("Login Successful")
+    except Exception as e:
+        logger.error(f"Login UI flow failed: {e}")
+        driver.save_screenshot(f"{SCREENSHOT_DIR}/fail/login_ui_failure.png")
+        raise
+    
+    # Skip Onboarding via UI if visible
+    time.sleep(3)
+    skip_btns = driver.find_elements(By.XPATH, "//button[contains(text(), 'Skip') or contains(text(), 'Finish')]")
+    if skip_btns:
+        skip_btns[0].click()
+        logger.info("Onboarding Skipped via UI")
 
-            # 5. Final validation
-            self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "app-shell")))
-            print("   ✅ AUTHENTICATED: Registration, Verification, and Session Confirmed.")
-            
-            # Inject onboarding skip
-            self.driver.execute_script("localStorage.setItem('onboarding_completed', 'skipped');")
-            
-        except Exception as e:
-            print(f"   ❌ AUTHENTICATION CHAIN BROKE: {e}")
-            self.driver.save_screenshot(os.path.join(FAIL_DIR, "CRITICAL_AUTH_FAILURE.png"))
-            raise e
-
-    def verify_page_integrity(self, label):
-        """Checks for Gold Standard elements and common failures."""
-        try:
-            # Check for Login Modal - if visible, we are logged out
-            modals = self.driver.find_elements(By.CLASS_NAME, "modal-overlay")
-            if modals and modals[0].is_displayed():
-                return "FAIL_STUCK_ON_LOGIN", "The login modal is visible, preventing access to the dashboard content."
-            
-            # Look for App Shell
-            self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "app-shell")))
-            
-            # Content Check
-            body_text = self.driver.find_element(By.TAG_NAME, "body").text.lower()
-            if "not found" in body_text or "404" in body_text:
-                return "FAIL_404", "The page content contains 'Not Found' or '404' indicators, suggesting a broken route or missing data."
-            if "something went wrong" in body_text or "react-error" in body_text:
-                return "FAIL_REACT_CRASH", "A React error boundary or 'Something went wrong' message was detected in the UI."
-                
-            # Gold Standard Check
-            panels = self.driver.find_elements(By.CLASS_NAME, "glass-panel")
-            if not panels and "legal" not in self.driver.current_url:
-                return "FAIL_EMPTY_CONTENT", "The page loaded successfully but lacks any '.glass-panel' elements (Gold Standard UI requirement)."
-
-            return "SUCCESS", "Page meets all accessibility and Gold Standard UI criteria."
-        except Exception as e:
-            # Capture browser logs on failure
-            try:
-                logs = self.driver.get_log('browser')
-                log_file = os.path.join(FAIL_DIR, f"LOGS_{label.replace(' ', '_')}.json")
-                with open(log_file, "w") as f:
-                    json.dump(logs, f, indent=2)
-            except:
-                pass
-            
-            # Clean up error message for filename safety
-            err_msg = str(e).replace('\n', ' ')[:100].strip()
-            return f"FAIL_TIMEOUT", f"Verification timed out or failed with error: {err_msg}"
-
-    def audit_loop(self, map_data):
-        print("🚀 Starting ROBUST Audit...")
-        self.perform_real_auth()
-        time.sleep(2)
-
-        results = []
-        for category, submenus in map_data.items():
-            for submenu, items in submenus.items():
-                for label, path in items.items():
-                    print(f"🔍 Testing [{category}] > {label} @ {path}")
-                    
-                    try:
-                        self.driver.get(f"{BASE_URL}{path}")
-                        
-                        # Slow down for rendering (7s)
-                        time.sleep(7)
-                        
-                        status, description = self.verify_page_integrity(label)
-                        filename = f"{category}_{label.replace(' ', '_')}.png"
-                        
-                        if status == "SUCCESS":
-                            # 1. Initial Load Screenshot
-                            target_initial = os.path.join(SUCCESS_DIR, filename)
-                            self.driver.save_screenshot(target_initial)
-                            
-                            # 2. Scrolled Screenshot
-                            print(f"   - Scrolling for depth capture...")
-                            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                            time.sleep(2) # Wait for potential scroll animations/lazy loads
-                            target_scrolled = os.path.join(SUCCESS_DIR, filename.replace(".png", "_scrolled.png"))
-                            self.driver.save_screenshot(target_scrolled)
-                            
-                            print(f" ✅ Saved Success (Dual-Capture): {label}")
-                        else:
-                            target = os.path.join(FAIL_DIR, f"{status}_{filename}")
-                            self.driver.save_screenshot(target)
-                            print(f" ❌ Saved Failure [{status}]: {label} - {description}")
-                        
-                        results.append({
-                            "page": label, 
-                            "path": path, 
-                            "status": status,
-                            "description": description
-                        })
-                        
-                    except Exception as e:
-                        print(f" 🔥 Blocker on {label}: {e}")
-                        results.append({
-                            "page": label, 
-                            "status": "BLOCKER",
-                            "description": str(e)
-                        })
-
-        # Final Report
-        with open(os.path.join(SCREENSHOT_DIR, "Audit_Results.json"), "w") as f:
-            json.dump(results, f, indent=2)
-
-    def close(self):
-        self.driver.quit()
-
-AUDIT_MAP = {
-    "Routes": {
-        "CoreWorkspaces": {
-            "Terminal": "/workspace/terminal",
-            "MissionControl": "/workspace/mission-control",
-            "AutoCoderDashboard": "/workspace/autocoder",
-            "AutoCoderSandbox": "/workspace/auto-coder",
-            "VRCockpit": "/workspace/vr",
-            "Chat": "/chat"
-        },
-        "AnalysisLogic": {
-            "PoliticalAlpha": "/analytics/political",
-            "StrategyDistillery": "/analytics/strategy",
-            "OptionsAnalytics": "/analytics/options",
-            "BacktestExplorer": "/portfolio/backtest",
-            "DebateChamber": "/workspace/debate"
-        },
-        "PortfolioManagement": {
-            "VirtualBrokerage": "/portfolio/brokerage",
-            "GlobalScanner": "/scanner/global",
-            "Attribution": "/portfolio/attribution",
-            "FixedIncome": "/portfolio/fixed-income",
-            "Crypto": "/portfolio/crypto",
-            "TaxOptimization": "/portfolio/tax",
-            "Assets": "/assets",
-            "CashFlow": "/portfolio/cash-flow",
-            "Tenants": "/tenant",
-            "AdvancedAnalytics": "/portfolio/advanced-analytics",
-            "Optimization": "/portfolio/optimization",
-            "RiskManagement": "/portfolio/risk",
-            "TaxEnhanced": "/portfolio/tax-optimization"
-        },
-        "TradingExecution": {
-            "OptionsStrategy": "/trading/options",
-            "AdvancedOrders": "/trading/advanced-orders",
-            "PaperTrading": "/trading/paper",
-            "AlgorithmicTrading": "/trading/algorithmic"
-        },
-        "EnterpriseCompliance": {
-            "Enterprise": "/enterprise",
-            "Compliance": "/compliance",
-            "Institutional": "/institutional"
-        },
-        "AI_ML": {
-            "MLTraining": "/ml/training",
-            "AIPredictions": "/ai/predictions",
-            "AIAssistant": "/ai/assistant"
-        },
-        "Integrations": {
-            "Platform": "/integrations",
-            "Developer": "/developer/platform",
-            "Marketplace": "/marketplace"
-        },
-        "ModuleOverviews": {
-            "CoreWorkspaceOverview": "/workspace",
-            "AnalyticsOverview": "/analytics",
-            "PortfolioOverview": "/portfolio",
-            "AnalystOverview": "/analyst",
-            "GuardianOverview": "/guardian",
-            "StrategistOverview": "/strategist",
-            "ArchitectOverview": "/architect",
-            "ObserverOverview": "/observer",
-            "ScannerOverview": "/scanner"
-        }
-    },
-    "Account": {
-        "Settings": {
-            "Profile": "/settings"
-        }
-    },
-    "Help": {
-        "Legal": {
-            "Terms": "/legal/terms",
-            "Privacy": "/legal/privacy"
-        }
-    },
-    "Special": {
-        "Mode": {
-            "Mobile": "/mobile",
-            "Zen": "/zen"
+def check_overlap(driver):
+    """
+    Mathematical Overlap Detection (AABB)
+    """
+    script = """
+    const containers = Array.from(document.querySelectorAll('.widget-container, .glass-panel, .rounded-xl'));
+    const rects = containers.map(el => {
+        const r = el.getBoundingClientRect();
+        return { id: el.id || el.className, left: r.left, right: r.right, top: r.top, bottom: r.bottom };
+    });
+    
+    const overlaps = [];
+    for (let i = 0; i < rects.length; i++) {
+        for (let j = i + 1; j < rects.length; j++) {
+            const r1 = rects[i];
+            const r2 = rects[j];
+            if (r1.left < r2.right && r1.right > r2.left && r1.top < r2.bottom && r1.bottom > r2.top) {
+                overlaps.push({ a: r1.id, b: r2.id });
+            }
         }
     }
-}
+    return overlaps;
+    """
+    overlaps = driver.execute_script(script)
+    return overlaps
+
+def audit_page(driver, route):
+    safe_name = route.replace("/", "_").strip("_") or "home"
+    logger.info(f"AUDITING: {route}")
+    
+    driver.get(f"{BASE_URL}{route}")
+    
+    # Use WebDriverWait instead of harder sleep
+    try:
+        WebDriverWait(driver, WAIT_TIME_STABLE).until(EC.presence_of_element_located((By.CLASS_NAME, "institutional-os-container")))
+    except:
+        logger.warning(f"Timeout waiting for app-container on {route}")
+
+    # AGGRESSIVE ONBOARDING BYPASS
+    skip_selectors = [
+        "//button[contains(text(), 'Skip')]",
+        "//button[contains(text(), 'Finish')]",
+        "//button[contains(@class, 'skip')]",
+        "//div[contains(@class, 'onboarding')]//button"
+    ]
+    for selector in skip_selectors:
+        btns = driver.find_elements(By.XPATH, selector)
+        if btns:
+            try:
+                btns[0].click()
+                logger.info(f"Bypassed onboarding on {route}")
+                time.sleep(1) # Small fade time
+            except:
+                pass
+    
+    # Detection Markers
+    body_text = driver.find_element(By.TAG_NAME, "body").text
+    is_fail = any(err in body_text for err in ["404", "Not Found", "Application Error", "React Crash"])
+    
+    # Gold Standard Checks
+    has_os_bleed = len(driver.find_elements(By.CLASS_NAME, "os-bleed")) > 0
+    has_glass_header = len(driver.find_elements(By.CLASS_NAME, "glass-panel-header")) > 0
+    
+    # AABB Overlap Detection
+    overlaps = check_overlap(driver)
+    if overlaps:
+        logger.error(f"OVERLAP DETECTED on {route}: {overlaps}")
+        is_fail = True
+    
+    if not has_os_bleed:
+        logger.warning(f"MISSING .os-bleed on {route}")
+        
+    suffix = "fail" if is_fail else "success"
+    
+    # Robust Screenshots
+    driver.save_screenshot(f"{SCREENSHOT_DIR}/{suffix}/{safe_name}.png")
+    
+    # Capture Scrolled View
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    time.sleep(1)
+    driver.save_screenshot(f"{SCREENSHOT_DIR}/{suffix}/{safe_name}_scrolled.png")
+    
+    # Log Results
+    res = {
+        "route": route,
+        "status": suffix,
+        "os_bleed": has_os_bleed,
+        "glass_panel": has_glass_header,
+        "overlaps": overlaps
+    }
+    return res
+
+def main():
+    if not os.path.exists(f"{SCREENSHOT_DIR}/success"): os.makedirs(f"{SCREENSHOT_DIR}/success")
+    if not os.path.exists(f"{SCREENSHOT_DIR}/fail"): os.makedirs(f"{SCREENSHOT_DIR}/fail")
+    
+    driver = setup_driver()
+    results = []
+    try:
+        register_via_ui(driver)
+        verify_email_api()
+        login_ui(driver)
+        
+        for route in ROUTES:
+            try:
+                res = audit_page(driver, route)
+                results.append(res)
+            except Exception as e:
+                logger.error(f"Audit failed for {route}: {e}")
+                
+        with open(f"{SCREENSHOT_DIR}/audit_results.json", "w") as f:
+            json.dump(results, f, indent=2)
+            
+    finally:
+        driver.quit()
 
 if __name__ == "__main__":
-    auditor = RobustAuditor()
-    try:
-        auditor.audit_loop(AUDIT_MAP)
-    finally:
-        auditor.close()
+    main()

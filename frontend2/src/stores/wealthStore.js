@@ -69,6 +69,78 @@ export const useWealthStore = create((set, get) => ({
     }
   },
   
+  // Financial Planning State
+  goals: [],
+  recommendations: [],
+  retirementProjection: null,
+  withdrawalStrategy: null,
+
+  // Financial Planning Actions
+  fetchGoals: async (userId) => {
+    set({ isLoading: true });
+    try {
+        const response = await fetch(`/api/v1/financial-planning/goals?user_id=${userId}`);
+        const result = await response.json();
+        set({ goals: result.data || [], isLoading: false });
+    } catch (err) {
+        set({ error: err.message, isLoading: false });
+    }
+  },
+
+  createGoal: async (userId, goalData) => {
+    set({ isLoading: true });
+    try {
+        const response = await fetch('/api/v1/financial-planning/goals/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId, ...goalData })
+        });
+        if (!response.ok) throw new Error('Failed to create goal');
+        
+        // Refresh goals
+        await get().fetchGoals(userId);
+        set({ isLoading: false });
+    } catch (err) {
+        set({ error: err.message, isLoading: false });
+    }
+  },
+
+  fetchRecommendations: async (userId) => {
+    try {
+        const response = await fetch(`/api/v1/financial-planning/recommendations?user_id=${userId}`);
+        const result = await response.json();
+        set({ recommendations: result.data || [] });
+    } catch (err) {
+        console.error(err);
+    }
+  },
+
+  // Retirement Actions
+  runRetirementProjection: async (userId, params) => {
+      set({ isLoading: true });
+      try {
+          const response = await fetch('/api/v1/retirement/projection', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ user_id: userId, ...params })
+          });
+          const result = await response.json();
+          set({ retirementProjection: result.data, isLoading: false });
+      } catch (err) {
+          set({ error: err.message, isLoading: false });
+      }
+  },
+
+  fetchWithdrawalStrategy: async (userId) => {
+      try {
+          const response = await fetch(`/api/v1/retirement/withdrawal-strategy?user_id=${userId}`);
+          const result = await response.json();
+          set({ withdrawalStrategy: result.data });
+      } catch (err) {
+          console.error(err);
+      }
+  },
+
   // Computed Getters
   getTotalWealth: () => {
     const state = get();

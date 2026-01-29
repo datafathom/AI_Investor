@@ -1,93 +1,60 @@
 """
-==============================================================================
-AI Investor - Protector Agent
-==============================================================================
-PURPOSE:
-    Monitors VIX levels and portfolio drawdown to enforce the balancing loop.
-    Triggers "Bunker Mode" (capital preservation) when oscillations detected.
-
-SAFETY:
-    - Checks STOP_ALL_TRADING env var every second
-    - Triggers capital outflow to "Storage Homes" on VIX spike
-    - Implements Max Drawdown Halt (2% threshold)
-==============================================================================
+Protector Agent (The Warden).
+Final gatekeeper for all trades. Enforces risk protocols.
 """
-import os
-from typing import Any, Dict, Optional
+from typing import Dict, Any, Optional
 import logging
-
 from agents.base_agent import BaseAgent
+from services.risk_manager import RiskManager
+from services.warden.circuit_breaker import CircuitBreaker
 
 logger = logging.getLogger(__name__)
 
-
 class ProtectorAgent(BaseAgent):
     """
-    The Protector Agent - Guardian of the Set Point.
-    
-    Monitors market conditions and portfolio health to prevent
-    "Oscillations Hell" by triggering protective measures.
+    The Protector Agent (Warden).
+    Enforces the 'Prime Directive' of capital preservation.
     """
     
-    def __init__(self) -> None:
+    def __init__(self):
         super().__init__(name='ProtectorAgent')
-        self.max_drawdown_threshold = float(os.getenv('MAX_DRAWDOWN_PERCENT', '0.02'))
-        self.bunker_mode = False
-    
+        self.risk_manager = RiskManager()
+        self.circuit_breaker = CircuitBreaker()
+        
     def process_event(self, event: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
-        Process market events and check for danger signals.
-        
-        Args:
-            event: Market event containing VIX level or portfolio data.
-            
-        Returns:
-            Action command if protective measure needed.
+        Process order validation requests.
         """
-        # Global Kill Switch check
-        if os.getenv('STOP_ALL_TRADING', 'FALSE').upper() == 'TRUE':
-            logger.critical("KILL SWITCH ACTIVATED - Halting all operations")
-            return {'action': 'HALT_ALL', 'reason': 'Kill switch activated'}
-        
         event_type = event.get('type')
         
-        if event_type == 'VIX_UPDATE':
-            return self._handle_vix_update(event)
-        elif event_type == 'PORTFOLIO_UPDATE':
-            return self._handle_portfolio_update(event)
-        
-        return None
-    
-    def _handle_vix_update(self, event: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """Check VIX levels for volatility spikes."""
-        vix_level = event.get('vix_level', 0)
-        
-        # VIX > 30 is considered high volatility
-        if vix_level > 30:
-            logger.warning(f"VIX spike detected: {vix_level}")
-            self.bunker_mode = True
-            return {
-                'action': 'ENTER_BUNKER_MODE',
-                'reason': f'VIX at {vix_level}',
-                'strategy': 'Reduce exposure, increase hedges'
-            }
-        
-        return None
-    
-    def _handle_portfolio_update(self, event: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """Check portfolio for max drawdown breach."""
-        current_value = event.get('current_value', 0)
-        set_point = event.get('set_point', 0)
-        
-        if set_point > 0:
-            drawdown = (set_point - current_value) / set_point
+        if event_type == 'VALIDATE_ORDER':
+            return self._validate_order(event)
             
-            if drawdown >= self.max_drawdown_threshold:
-                logger.critical(f"MAX DRAWDOWN BREACH: {drawdown:.2%}")
-                return {
-                    'action': 'MAX_DRAWDOWN_HALT',
-                    'reason': f'Drawdown {drawdown:.2%} exceeds threshold',
-                    'drawdown': drawdown
-                }
-        
         return None
+
+    def _validate_order(self, event: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Validate an order against risk rules.
+        """
+        amount = event.get('amount', 0.0)
+        balance = event.get('balance', 100000.0)
+        daily_loss = event.get('daily_loss', 0.0)
+        
+        # 1. Check Circuit Breaker
+        if self.circuit_breaker.check_circuit(balance, daily_loss):
+            return {
+                "action": "REJECT",
+                "reason": "CIRCUIT_BREAKER_TRIPPED"
+            }
+            
+        # 2. Check 1% Rule
+        if not self.risk_manager.check_trade_risk(balance, amount):
+            return {
+                "action": "REJECT",
+                "reason": "RISK_EXCEEDS_1_PERCENT"
+            }
+            
+        return {
+            "action": "APPROVE",
+            "reason": "WITHIN_RISK_LIMITS"
+        }

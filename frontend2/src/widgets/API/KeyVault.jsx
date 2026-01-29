@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Key, Eye, EyeOff, Copy, ShieldCheck } from 'lucide-react';
+import useAPIStore from '../../stores/apiStore';
 import './KeyVault.css';
 
 const KeyVault = () => {
+    const { apiKeys, revokeApiKey } = useAPIStore();
     const [visibleKey, setVisibleKey] = useState(null);
 
     const toggleKey = (id) => {
@@ -11,7 +13,7 @@ const KeyVault = () => {
         } else {
             // Simulate auth challenge here
             setVisibleKey(id);
-            setTimeout(() => setVisibleKey(null), 5000); // Auto-hide
+            setTimeout(() => setVisibleKey(null), 10000); // Auto-hide
         }
     };
 
@@ -25,52 +27,38 @@ const KeyVault = () => {
             </div>
 
             <div className="keys-list">
-                <div className="key-item">
-                    <div className="key-meta">
-                        <span className="key-name">OpenAI GPT-4</span>
-                        <span className="expiry">Exp: 30 days</span>
-                    </div>
-                    <div className="key-val-row">
-                        <div className="key-input">
-                            {visibleKey === 'openai' ? 'sk-proj-89s7df987s9d8f7s9d8f' : 'sk-proj-••••••••••••••••••••'}
+                {apiKeys.length > 0 ? apiKeys.map((key) => (
+                    <div key={key.id} className="key-item">
+                        <div className="key-meta">
+                            <span className="key-name">{key.name}</span>
+                            <span className={`expiry ${new Date(key.expires) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) ? 'text-red-400' : ''}`}>
+                                Exp: {new Date(key.expires).toLocaleDateString()}
+                            </span>
                         </div>
-                        <button className="icon-btn" onClick={() => toggleKey('openai')}>
-                            {visibleKey === 'openai' ? <EyeOff size={14} /> : <Eye size={14} />}
-                        </button>
-                        <button className="icon-btn"><Copy size={14} /></button>
-                    </div>
-                </div>
-
-                 <div className="key-item">
-                    <div className="key-meta">
-                        <span className="key-name">Polygon.io Live</span>
-                         <span className="expiry text-red-400">Exp: 2 days</span>
-                    </div>
-                    <div className="key-val-row">
-                        <div className="key-input">
-                            {visibleKey === 'poly' ? 'pk_live_89s7df987s9d8f7s9d8f' : 'pk_live_••••••••••••••••••••'}
+                        <div className="key-val-row">
+                            <div className="key-input">
+                                {visibleKey === key.id ? key.val_masked.replace(/•/g, '') : key.val_masked}
+                            </div>
+                            <button className="icon-btn" onClick={() => toggleKey(key.id)}>
+                                {visibleKey === key.id ? <EyeOff size={14} /> : <Eye size={14} />}
+                            </button>
+                            <button className="icon-btn"><Copy size={14} /></button>
+                            <button className="icon-btn text-red-500 hover:bg-red-500/10" onClick={() => revokeApiKey(key.id)}>Revoke</button>
                         </div>
-                         <button className="icon-btn" onClick={() => toggleKey('poly')}>
-                            {visibleKey === 'poly' ? <EyeOff size={14} /> : <Eye size={14} />}
-                        </button>
-                        <button className="icon-btn"><Copy size={14} /></button>
                     </div>
-                </div>
+                )) : (
+                    <div className="p-4 text-center text-zinc-500 font-mono text-[10px] uppercase">
+                        No active API keys in vault
+                    </div>
+                )}
             </div>
 
             <div className="audit-log">
                 <h4>Access Audit Log</h4>
                 <div className="log-entry">
-                    <span className="ts">14:02:11</span>
-                    <span className="user">Admin</span>
-                    <span className="action text-green-400">REVEALED</span>
-                    <span className="resource">OpenAI GPT-4</span>
-                </div>
-                 <div className="log-entry">
-                    <span className="ts">10:45:00</span>
-                    <span className="user">System</span>
-                    <span className="action text-blue-400">ROTATED</span>
-                    <span className="resource">Polygon.io Live</span>
+                    <span className="ts">System</span>
+                    <span className="action text-green-400">ACTIVE</span>
+                    <span className="resource">Vault Synchronized</span>
                 </div>
             </div>
         </div>

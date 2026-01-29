@@ -28,6 +28,9 @@ class AppSettings:
         self.CHARITYNAV_APP_ID = os.getenv("CHARITYNAV_APP_ID")
         self.CHARITYNAV_APP_KEY = os.getenv("CHARITYNAV_APP_KEY")
         
+        # Infrastructure
+        self.KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "127.0.0.1:9092")
+        
         # Scaling
         self.WS_SCALE_ENABLED = os.getenv("WS_SCALE_ENABLED", "false").lower() == "true"
         self.REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")

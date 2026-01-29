@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Search, Command, ArrowRight, Home, PieChart, Shield, Cpu, 
   Activity, HardDrive, Globe, Layout, Settings, Moon, Sun,
-  Zap, TrendingUp, DollarSign, FileText
+  Zap, TrendingUp, DollarSign, FileText, Users, Bot, BarChart3
 } from 'lucide-react';
+import { searchService } from '../../services/searchService';
 import './CommandPalette.css';
 
 const COMMANDS = [
@@ -32,18 +33,65 @@ const COMMANDS = [
 const CommandPalette = ({ isOpen, onClose, onThemeToggle }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [serverResults, setServerResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
   const inputRef = useRef(null);
   const listRef = useRef(null);
   const navigate = useNavigate();
 
-  const filteredCommands = useMemo(() => {
-    if (!query) return COMMANDS;
-    const lowerQuery = query.toLowerCase();
-    return COMMANDS.filter(cmd => 
-      cmd.label.toLowerCase().includes(lowerQuery) ||
-      cmd.category.toLowerCase().includes(lowerQuery)
-    );
+  // Initial indexing
+  useEffect(() => {
+    if (isOpen) {
+      searchService.refreshIndex();
+    }
+  }, [isOpen]);
+
+  // Debounced server search
+  useEffect(() => {
+    if (query.length < 3) {
+      setServerResults([]);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      const results = await searchService.serverSearch(query);
+      setServerResults(results);
+      setIsSearching(false);
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, [query]);
+
+  const filteredCommands = useMemo(() => {
+    const lowerQuery = query.toLowerCase();
+    
+    // Command filtering
+    const cmds = query 
+      ? COMMANDS.filter(cmd => 
+          cmd.label.toLowerCase().includes(lowerQuery) ||
+          cmd.category.toLowerCase().includes(lowerQuery)
+        )
+      : COMMANDS;
+
+    // Dynamic filtering (Local Index)
+    const localResults = searchService.localSearch(query);
+    
+    // Group all together
+    const all = [...cmds];
+    
+    localResults.forEach(res => {
+        const icon = res.type === 'ticker' ? BarChart3 : res.type === 'agent' ? Bot : Users;
+        all.push({ ...res, icon, action: 'navigate', path: `/${res.type}/${res.id}` });
+    });
+
+    // Server results
+    serverResults.forEach(res => {
+        all.push({ ...res, icon: FileText, action: 'navigate', path: `/search/${res.id}` });
+    });
+
+    return all;
+  }, [query, serverResults]);
 
   // Group by category
   const groupedCommands = useMemo(() => {
@@ -98,12 +146,12 @@ const CommandPalette = ({ isOpen, onClose, onThemeToggle }) => {
     <div className="command-palette-overlay" onClick={onClose}>
       <div className="command-palette animate-scale-in" onClick={e => e.stopPropagation()}>
         <div className="command-palette__header">
-          <Search size={18} className="command-palette__search-icon" />
+          <Search size={18} className={`command-palette__search-icon ${isSearching ? 'animate-pulse' : ''}`} />
           <input
             ref={inputRef}
             type="text"
             className="command-palette__input"
-            placeholder="Search commands, pages, actions..."
+            placeholder="Search commands, symbols, agents (Type 3+ chars for deep search)..."
             value={query}
             onChange={e => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -134,7 +182,7 @@ const CommandPalette = ({ isOpen, onClose, onThemeToggle }) => {
             </div>
           ))}
           
-          {filteredCommands.length === 0 && (
+          {filteredCommands.length === 0 && !isSearching && (
             <div className="command-palette__empty">
               No results for "{query}"
             </div>

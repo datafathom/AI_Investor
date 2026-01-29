@@ -100,5 +100,10 @@ export const authService = {
         }
 
         return response;
+    },
+
+    setSession(token, user) {
+        localStorage.setItem('widget_os_token', token);
+        localStorage.setItem('widget_os_user', JSON.stringify(user));
     }
 };

@@ -15,7 +15,7 @@ const BeneficiaryMap = () => {
         fetchEstateData();
     }, [fetchEstateData]);
 
-    const totalAllocation = beneficiaries.reduce((sum, b) => sum + b.allocation_percent, 0);
+    const totalAllocation = (beneficiaries || []).reduce((sum, b) => sum + b.allocation_percent, 0);
 
     const handleAllocationChange = (id, val) => {
         const percent = Math.min(100, Math.max(0, parseInt(val) || 0));
@@ -29,7 +29,7 @@ const BeneficiaryMap = () => {
         ? (grossEstateValue - federalExemption) * 0.4 
         : 0;
 
-    if (isLoading && beneficiaries.length === 0) {
+    if (isLoading && (beneficiaries || []).length === 0) {
         return (
             <div className="beneficiary-map-widget loading">
                 <Loader2 className="animate-spin" />
@@ -48,7 +48,7 @@ const BeneficiaryMap = () => {
             </div>
 
             <div className="beneficiary-list">
-                {beneficiaries.map(ben => (
+                {(beneficiaries || []).map(ben => (
                     <div key={ben.id} className="beneficiary-node">
                         <div className="node-icon">
                             {ben.relationship === 'Trust' ? <FileText size={20} /> : <User size={20} />}

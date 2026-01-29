@@ -3,66 +3,154 @@ import flask
 from web.auth_utils import generate_token, login_required
 from services.communication.email_service import get_email_service
 from services.system.social_auth_service import get_social_auth_service
+import logging
+
+logger = logging.getLogger(__name__)
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
-    
-    social_service = get_social_auth_service()
-    user_data = social_service._get_user_by_email(email)
-    
-    if not user_data:
-         return jsonify({'error': 'Invalid credentials'}), 401
-         
-    # Mock Password Verification
-    stored_hash = user_data.get("password_hash")
-    provided_hash = f"mock_hash_{password[::-1]}"
-    
-    if stored_hash == provided_hash or (email == 'admin' and password == 'admin'):
-        token = generate_token(user_id=user_data["id"], role=user_data["role"])
-        return jsonify({
-            'token': token,
-            'user': {
-                'id': user_data["id"],
-                'username': user_data["username"],
-                'email': email,
-                'role': user_data["role"]
-            }
-        })
-    
-    return jsonify({'error': 'Invalid credentials'}), 401
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'Invalid JSON'}), 400
+            
+        email = data.get('email', '').strip()
+        password = data.get('password', '').strip()
+        
+        if not email or not password:
+            return jsonify({'error': 'Email and password required'}), 400
+            
+        social_service = get_social_auth_service()
+        user_data = None
+        
+        # 1. Combined Lookup (Username or Email)
+        try:
+            with social_service.db.pg_cursor() as cur:
+                cur.execute("""
+                    SELECT id, email, username, role, is_verified, password_hash, organization_id 
+                    FROM users WHERE username = %s OR LOWER(email) = LOWER(%s);
+                """, (email, email))
+                user = cur.fetchone()
+                if user:
+                    user_data = {
+                        "id": user[0], "email": user[1], "username": user[2],
+                        "role": user[3], "is_verified": user[4], "password_hash": user[5],
+                        "organization_id": user[6]
+                    }
+        except Exception as e:
+            logger.error(f"Login DB Error: {e}")
+            error_msg = str(e)
+            if "starting up" in error_msg.lower():
+                return jsonify({'error': 'Database is still starting up. Please try again in a few seconds.'}), 503
+            return jsonify({'error': 'Database connection failed'}), 500
+        
+        provided_hash = f"mock_hash_{password[::-1]}"
+        
+        # 2. Check Admin Hardcoded Fallback (Emergency access)
+        if email == 'admin' and password == 'admin':
+            if not user_data:
+                # Ensure DB is initialized
+                try:
+                    social_service._init_db()
+                    user_data = social_service._get_user_by_email('admin@example.com')
+                except:
+                    pass
+            
+            if user_data:
+                token = generate_token(user_id=user_data["id"], role=user_data["role"])
+                return jsonify({
+                    'token': token,
+                    'user': {
+                        'id': user_data["id"],
+                        'username': user_data["username"],
+                        'email': user_data["email"],
+                        'role': user_data["role"]
+                    }
+                })
+
+        # 3. Standard Password Verification
+        if user_data:
+            stored_hash = user_data.get("password_hash")
+            if stored_hash == provided_hash:
+                token = generate_token(user_id=user_data["id"], role=user_data["role"])
+                return jsonify({
+                    'token': token,
+                    'user': {
+                        'id': user_data["id"],
+                        'username': user_data["username"],
+                        'email': user_data["email"],
+                        'role': user_data["role"],
+                        'orgId': user_data.get("organization_id")
+                    }
+                })
+        
+        return jsonify({'error': 'Invalid credentials'}), 401
+
+    except Exception as e:
+        logger.exception(f"Unexpected error during login: {e}")
+        return jsonify({'error': 'Internal server error'}), 500
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
+    email = data.get('email', '').strip()
+    password = data.get('password', '').strip()
+    
+    if not email or not password:
+        return jsonify({'error': 'Email and password required'}), 400
     
     social_service = get_social_auth_service()
     existing_user = social_service._get_user_by_email(email)
     
     if not existing_user:
-        # Create user via SQL migration logic handled in callback/set_password
-        # For direct email registration, we use callback simulation logic:
-        # Using handle_callback with a faux provider 'email'
-        res = social_service.handle_callback(provider='email', code=f"email:{email}")
-        social_service.set_password(email, password)
-        user_record = social_service._get_user_by_email(email)
+        try:
+            res = social_service.handle_callback(provider='email', code=f"email:{email}")
+            
+            # Extract user record immediately
+            if 'user' in res and res['user']:
+                user_record = res['user']
+            else:
+                user_record = social_service._get_user_by_email(email)
+            
+            if not user_record:
+                logger.error(f"Failed to create user record for {email}")
+                return jsonify({'error': 'Failed to create user'}), 500
+
+            # CRITICAL: Verify password set success using ID
+            pwd_success = social_service.set_password(email, password, user_id=user_record['id'])
+            if not pwd_success:
+                logger.error(f"Failed to set password for {email} (ID: {user_record['id']})")
+                return jsonify({'error': 'Failed to set password'}), 500
+                
+        except Exception as e:
+            if "duplicate key" in str(e) or "UniqueViolation" in str(e):
+                return jsonify({'error': 'User already exists. Please log in.'}), 409
+            
+            logger.error(f"Registration failed for {email}: {e}")
+            return jsonify({'error': str(e)}), 500
     else:
         user_record = existing_user
 
+    # At this point, user_record is guaranteed to be defined if we haven't returned
+    # unless some logical branch was missed (which we check here for safety)
+    if 'user_record' not in locals() or not user_record:
+        return jsonify({'error': 'Internal registration error - record missing'}), 500
+
     # Send Verification Email
-    verification_url = f"http://localhost:5050/api/auth/verify-email?email={email}&token=mock_verify_token"
-    email_service = get_email_service()
-    email_service.send_transactional_email(
-        to=email,
-        template='email_verification',
-        context={'verification_url': verification_url}
-    )
+    try:
+        verification_url = f"http://localhost:5050/api/auth/verify-email?email={email}&token=mock_verify_token"
+        email_service = get_email_service()
+        email_service.send_transactional_email(
+            to=email,
+            template='email_verification',
+            context={'verification_url': verification_url}
+        )
+    except Exception as e:
+        logger.error(f"Failed to send verification email to {email}: {e}")
+        # We don't fail the whole registration if email fails in mock mode
+        pass
 
     return jsonify({
         'message': 'User registered successfully. Please check your email for verification.',

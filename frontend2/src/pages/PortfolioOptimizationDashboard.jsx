@@ -80,7 +80,7 @@ const PortfolioOptimizationDashboard = () => {
       // Note: Rebalancing history endpoint might need adding to analyticsService if used frequently
       // For now, using a generic fetch or adding to service
       const res = await fetch(`/api/v1/optimization/rebalancing-history?portfolio_id=${portfolioId}`, {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('widget_os_token')}` }
       });
       const data = await res.json();
       setRebalancingHistory(data.data || []);

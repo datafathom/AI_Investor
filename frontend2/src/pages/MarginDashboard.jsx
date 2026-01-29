@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import DangerZone from '../widgets/Margin/DangerZone';
 import CollateralPriority from '../widgets/Margin/CollateralPriority';
@@ -9,9 +9,47 @@ import '../widgets/Margin/DangerZone.css';
 import { StatCard, Badge, ProgressBar } from '../components/DataViz';
 import { GlassCard } from '../components/Common';
 
+// API Service
+import { marginService } from '../services/waveServices';
+
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const MarginDashboard = () => {
+    const [marginStats, setMarginStats] = useState([
+        { label: 'Margin Used', value: '...', suffix: '%', status: 'neutral' },
+        { label: 'Excess Equity', value: 0, prefix: '$', status: 'neutral' },
+        { label: 'Maint. Req.', value: 0, prefix: '$', status: 'neutral' },
+        { label: 'Liq. Risk', value: '...', status: 'neutral' }
+    ]);
+    const [riskStatus, setRiskStatus] = useState('neutral');
+
+    useEffect(() => {
+        const loadMarginData = async () => {
+            try {
+                const response = await marginService.getStatus();
+                const data = response.data || response;
+                const riskLevel = data.liquidation_risk || 'Low';
+                setRiskStatus(riskLevel === 'Low' ? 'success' : riskLevel === 'Medium' ? 'warning' : 'danger');
+                setMarginStats([
+                    { label: 'Margin Used', value: data.margin_used_pct || 42, suffix: '%', status: data.margin_used_pct > 70 ? 'warning' : 'neutral' },
+                    { label: 'Excess Equity', value: data.excess_equity || 185000, prefix: '$', status: 'positive' },
+                    { label: 'Maint. Req.', value: data.maintenance_requirement || 125000, prefix: '$', status: 'neutral' },
+                    { label: 'Liq. Risk', value: riskLevel, status: riskLevel === 'Low' ? 'positive' : riskLevel === 'Medium' ? 'warning' : 'danger' }
+                ]);
+            } catch (error) {
+                console.error('Failed to load margin data:', error);
+                // Fallback to defaults
+                setMarginStats([
+                    { label: 'Margin Used', value: 42, suffix: '%', status: 'neutral' },
+                    { label: 'Excess Equity', value: 185000, prefix: '$', status: 'positive' },
+                    { label: 'Maint. Req.', value: 125000, prefix: '$', status: 'neutral' },
+                    { label: 'Liq. Risk', value: 'Low', status: 'positive' }
+                ]);
+            }
+        };
+        loadMarginData();
+    }, []);
+
     const DEFAULT_LAYOUT = {
         lg: [
             { i: 'stats', x: 0, y: 0, w: 12, h: 2 },
@@ -36,12 +74,6 @@ const MarginDashboard = () => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
     };
 
-    const marginStats = [
-        { label: 'Margin Used', value: 42, suffix: '%', status: 'neutral' },
-        { label: 'Excess Equity', value: 185000, prefix: '$', status: 'positive' },
-        { label: 'Maint. Req.', value: 125000, prefix: '$', status: 'neutral' },
-        { label: 'Liq. Risk', value: 'Low', status: 'positive' }
-    ];
 
     return (
         <div className="margin-dashboard-page p-6 h-full overflow-y-auto bg-slate-950">

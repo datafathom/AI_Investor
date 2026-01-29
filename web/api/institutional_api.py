@@ -20,14 +20,17 @@ LAST_MODIFIED: 2026-01-21
 ==============================================================================
 """
 
+import math
+from typing import Dict, List, Optional
 from flask import Blueprint, jsonify, request
 import logging
+from web.auth_utils import login_required
 from services.institutional.institutional_service import get_institutional_service
 from services.institutional.professional_tools_service import get_professional_tools_service
 
 logger = logging.getLogger(__name__)
 
-institutional_bp = Blueprint('institutional', __name__, url_prefix='/api/institutional')
+institutional_bp = Blueprint('institutional', __name__, url_prefix='/api/v1/institutional')
 
 
 @institutional_bp.route('/client/create', methods=['POST'])
@@ -43,6 +46,9 @@ async def create_client():
         data = request.get_json() or {}
         advisor_id = data.get('advisor_id')
         client_name = data.get('client_name')
+        jurisdiction = data.get('jurisdiction', 'US')
+        funding_source = data.get('funding_source')
+        strategy = data.get('strategy', 'Aggressive AI')
         
         if not advisor_id or not client_name:
             return jsonify({
@@ -51,7 +57,13 @@ async def create_client():
             }), 400
         
         service = get_institutional_service()
-        client = await service.create_client(advisor_id, client_name)
+        client = await service.create_client(
+            advisor_id=advisor_id, 
+            client_name=client_name,
+            jurisdiction=jurisdiction,
+            funding_source=funding_source,
+            strategy=strategy
+        )
         
         return jsonify({
             'success': True,
@@ -115,6 +127,96 @@ async def configure_white_label():
             'success': False,
             'error': str(e)
         }), 500
+
+
+@institutional_bp.route('/clients', methods=['GET'])
+@login_required
+async def get_clients():
+    """Get all clients for the logged-in advisor."""
+    try:
+        # Assuming advisor_id is linked to the user_id in the auth session
+        from flask import g
+        advisor_id = g.user_id
+        
+        service = get_institutional_service()
+        clients = await service.get_clients_for_advisor(advisor_id)
+        
+        return jsonify({
+            'success': True,
+            'data': [c.dict() for c in clients]
+        })
+    except Exception as e:
+        logger.error(f"Error fetching clients: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@institutional_bp.route('/analytics/fees', methods=['GET'])
+@login_required
+async def get_fee_analytics():
+    """Get fee analytics for an advisor or specific client."""
+    try:
+        client_id = request.args.get('client_id')
+        service = get_institutional_service()
+        data = await service.get_revenue_forecast(client_id)
+        
+        return jsonify({
+            'success': True,
+            'data': data
+        })
+    except Exception as e:
+        logger.error(f"Error fetching fee analytics: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@institutional_bp.route('/analytics/risk/<client_id>', methods=['GET'])
+@login_required
+async def get_risk_analytics(client_id):
+    """Get risk analytics for a specific client."""
+    try:
+        service = get_institutional_service()
+        data = await service.get_client_risk_profile(client_id)
+        
+        return jsonify({
+            'success': True,
+            'data': data
+        })
+    except Exception as e:
+        logger.error(f"Error fetching risk analytics: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@institutional_bp.route('/analytics/signatures/<client_id>', methods=['GET'])
+@login_required
+async def get_signatures(client_id):
+    """Get signature status for a specific client."""
+    try:
+        service = get_institutional_service()
+        data = await service.get_signature_status(client_id)
+        
+        return jsonify({
+            'success': True,
+            'data': data
+        })
+    except Exception as e:
+        logger.error(f"Error fetching signatures: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@institutional_bp.route('/analytics/allocation/<client_id>', methods=['GET'])
+@login_required
+async def get_allocation(client_id):
+    """Get asset allocation for a specific client."""
+    try:
+        service = get_institutional_service()
+        data = await service.get_asset_allocation(client_id)
+        
+        return jsonify({
+            'success': True,
+            'data': data
+        })
+    except Exception as e:
+        logger.error(f"Error fetching allocation: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 
 @institutional_bp.route('/report/generate', methods=['POST'])

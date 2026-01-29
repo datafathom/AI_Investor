@@ -11,13 +11,16 @@ import useSMSStore from '../../stores/smsStore';
 import './SMSAlertSettings.css';
 
 const SMSAlertSettings = ({ mock = true }) => {
-    const { sendTestAlert, sending, lastResult, error } = useSMSStore();
+    const { 
+        sendTestAlert, 
+        updatePreferences, 
+        preferences, 
+        sending, 
+        lastResult, 
+        error 
+    } = useSMSStore();
+    
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [alertsEnabled, setAlertsEnabled] = useState({
-        priceSpikes: true,
-        tradeExecutions: true,
-        systemHealth: false
-    });
 
     const handleTest = async () => {
         if (!phoneNumber) return;
@@ -25,7 +28,8 @@ const SMSAlertSettings = ({ mock = true }) => {
     };
 
     const toggleAlert = (key) => {
-        setAlertsEnabled(prev => ({ ...prev, [key]: !prev[key] }));
+        const newPrefs = { ...preferences, [key]: !preferences[key] };
+        updatePreferences(phoneNumber, newPrefs, mock);
     };
 
     return (
@@ -48,9 +52,9 @@ const SMSAlertSettings = ({ mock = true }) => {
 
                 <div className="toggles-list">
                     <h4>Alert Triggers</h4>
-                    {Object.entries(alertsEnabled).map(([key, enabled]) => (
+                    {Object.entries(preferences).map(([key, enabled]) => (
                         <div key={key} className="toggle-row">
-                            <span>{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                            <span>{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</span>
                             <label className="switch">
                                 <input 
                                     type="checkbox" 

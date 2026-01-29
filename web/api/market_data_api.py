@@ -26,6 +26,7 @@ CREATED: 2026-01-21
 """
 
 from flask import Blueprint, jsonify, request
+from web.auth_utils import login_required, requires_role
 import logging
 import asyncio
 from datetime import datetime
@@ -92,15 +93,22 @@ def _build_error_response(error_code: str, message: str, vendor: str = None):
 def get_quote(symbol: str):
     """
     Retrieve real-time quote for a stock symbol.
-
+    
+    Fetches the latest price, volume, and daily change metrics for the given
+    equity symbol. Supports both live and mock data providers.
+    
     Args:
-        symbol: Stock ticker symbol (e.g., AAPL, MSFT)
-
+        symbol (str): Stock ticker symbol (e.g., AAPL, MSFT).
+        
     Query Params:
-        mock: If "true", return mock data (for testing)
-
+        mock (bool): If "true", return mock data instead of live vendor data.
+        
     Returns:
-        JSON with quote data including price, volume, change
+        JSON: Standardized response with price, volume, and market state.
+        
+    Errors:
+        400 (INVALID_SYMBOL): Symbol format is invalid.
+        404 (SYMBOL_NOT_FOUND): No data found for specified ticker.
     """
     try:
         # Validate symbol
@@ -129,6 +137,7 @@ def get_quote(symbol: str):
             )), 404
 
         return jsonify(_build_response({
+            "status": "success",
             "symbol": quote.symbol,
             "price": quote.price,
             "open": quote.open,
@@ -156,9 +165,19 @@ def get_quote(symbol: str):
 # =============================================================================
 
 @market_data_bp.route('/fear-greed', methods=['GET'])
+@login_required
 def get_fear_greed():
     """
     Get current market Fear & Greed index status.
+    
+    Aggregates data from market momentum, volatility, and safe-haven demand 
+    to provide a unified sentiment score.
+    
+    Returns:
+        JSON: Standardized response with score (0-100) and sentiment label.
+        
+    Security:
+        Bearer JWT required.
     """
     import random
     score = random.randint(30, 75) # Simulate moderate market sentiment
@@ -170,8 +189,9 @@ def get_fear_greed():
     elif score > 55: status = "GREED"
 
     return jsonify(_build_response({
+        "status": "success",
         "score": score,
-        "status": status,
+        "label": status,
         "timestamp": datetime.now().isoformat(),
         "components": {
             "market_momentum": random.randint(40, 60),
@@ -193,16 +213,23 @@ def get_fear_greed():
 def get_history(symbol: str):
     """
     Retrieve historical OHLCV data for a symbol.
-
+    
+    Returns a series of daily bars including open, high, low, close, volume, 
+    and adjusted close prices. Supports compact (100 days) and full history.
+    
     Args:
-        symbol: Stock ticker symbol
-
+        symbol (str): Stock ticker symbol.
+        
     Query Params:
-        period: Time period - "compact" (100 days) or "full" (20+ years)
-        adjusted: Include adjusted close - "true" or "false"
-
+        period (str): "compact" (last 100 days) or "full" (all available data).
+        adjusted (bool): Whether to return split/dividend adjusted prices.
+        
     Returns:
-        JSON array of historical bars
+        JSON: Standardized response with historical bar array.
+        
+    Errors:
+        400 (INVALID_SYMBOL): Symbol format is invalid.
+        404 (NO_DATA): No historical data found for symbol.
     """
     try:
         symbol = symbol.upper().strip()
@@ -227,7 +254,9 @@ def get_history(symbol: str):
             )), 404
 
         return jsonify(_build_response({
+            "status": "success",
             "symbol": symbol,
+            "count": len(bars),
             "bars": [
                 {
                     "timestamp": bar.timestamp.isoformat(),
@@ -241,8 +270,7 @@ def get_history(symbol: str):
                     "split_coefficient": bar.split_coefficient
                 }
                 for bar in bars
-            ],
-            "count": len(bars)
+            ]
         }))
 
     except Exception as e:
@@ -262,16 +290,23 @@ def get_history(symbol: str):
 def get_intraday(symbol: str):
     """
     Retrieve intraday OHLCV bars for a symbol.
-
+    
+    Fetches fine-grained price action at specified intervals (1min, 5min, etc.).
+    Useful for high-frequency analysis and day-trading signals.
+    
     Args:
-        symbol: Stock ticker symbol
-
+        symbol (str): Stock ticker symbol.
+        
     Query Params:
-        interval: Time interval - "1min", "5min", "15min", "30min", "60min"
-        outputsize: "compact" (100 bars) or "full" (all available)
-
+        interval (str): Time interval. Options: 1min, 5min, 15min, 30min, 60min.
+        outputsize (str): "compact" (100 bars) or "full" (all available intraday).
+        
     Returns:
-        JSON array of intraday bars
+        JSON: Standardized response with intraday bar array.
+        
+    Errors:
+        400 (INVALID_INTERVAL): Specified interval is not supported.
+        404 (NO_DATA): No intraday data found for symbol.
     """
     try:
         symbol = symbol.upper().strip()
@@ -314,8 +349,10 @@ def get_intraday(symbol: str):
             )), 404
 
         return jsonify(_build_response({
+            "status": "success",
             "symbol": symbol,
             "interval": interval_str,
+            "count": len(bars),
             "bars": [
                 {
                     "timestamp": bar.timestamp.isoformat(),
@@ -326,8 +363,7 @@ def get_intraday(symbol: str):
                     "volume": bar.volume
                 }
                 for bar in bars
-            ],
-            "count": len(bars)
+            ]
         }))
 
     except Exception as e:
@@ -344,9 +380,25 @@ def get_intraday(symbol: str):
 # =============================================================================
 
 @market_data_bp.route('/short-interest/<symbol>', methods=['GET'])
+@login_required
 def get_short_interest(symbol: str):
     """
     Retrieve short interest analysis for a symbol.
+    
+    Provides critical sentiment indicators including Short Interest Ratio, 
+    Days to Cover, and Relative Volume metrics from Quandl/FINRA data.
+    
+    Args:
+        symbol (str): Stock ticker symbol.
+        
+    Query Params:
+        mock (bool): If "true", uses mock data for testing.
+        
+    Returns:
+        JSON: Standardized response with short interest analysis model.
+        
+    Security:
+        Bearer JWT required.
     """
     try:
         symbol = symbol.upper().strip()
@@ -368,7 +420,10 @@ def get_short_interest(symbol: str):
                 "quandl"
             )), 404
 
-        return jsonify(_build_response(analysis.model_dump(), source="quandl"))
+        return jsonify(_build_response({
+            "status": "success",
+            "analysis": analysis.model_dump()
+        }, source="quandl"))
 
     except Exception as e:
         logger.error(f"Short interest fetch failed for {symbol}: {e}")
@@ -387,13 +442,19 @@ def get_short_interest(symbol: str):
 def get_earnings():
     """
     Retrieve upcoming earnings calendar.
-
+    
+    Returns a schedule of corporate earnings releases, including estimated 
+    earnings per share (EPS) and reporting currencies.
+    
     Query Params:
-        symbol: Filter by specific symbol (optional)
-        horizon: "3month", "6month", or "12month"
-
+        symbol (str): Optional ticker symbol to filter calendar.
+        horizon (str): Time lookahead. Options: 3month, 6month, 12month.
+        
     Returns:
-        JSON array of earnings entries
+        JSON: Standardized response with earnings event array.
+        
+    Errors:
+        400 (INVALID_HORIZON): Lookahead period is not supported.
     """
     try:
         symbol = request.args.get('symbol')
@@ -411,11 +472,14 @@ def get_earnings():
 
         if not earnings:
             return jsonify(_build_response({
+                "status": "success",
                 "earnings": [],
                 "count": 0
             }))
 
         return jsonify(_build_response({
+            "status": "success",
+            "count": len(earnings),
             "earnings": [
                 {
                     "symbol": e.symbol,
@@ -426,8 +490,7 @@ def get_earnings():
                     "currency": e.currency
                 }
                 for e in earnings
-            ],
-            "count": len(earnings)
+            ]
         }))
 
     except Exception as e:
@@ -447,9 +510,12 @@ def get_earnings():
 def get_health():
     """
     Get health status of market data sources.
-
+    
+    Monitors API quota usage and connectivity status for critical vendors 
+    like Alpha Vantage.
+    
     Returns:
-        JSON with status of each data source
+        JSON: Standardized response with provider health metrics.
     """
     try:
         # Check APIGovernor for usage stats
@@ -467,6 +533,8 @@ def get_health():
             remaining_minute = -1
 
         return jsonify(_build_response({
+            "status": "success",
+            "overall_status": "healthy" if remaining_daily > 0 else "degraded",
             "sources": [
                 {
                     "name": "Alpha Vantage",
@@ -476,8 +544,7 @@ def get_health():
                         "per_minute": max(0, remaining_minute)
                     }
                 }
-            ],
-            "overall_status": "healthy" if remaining_daily > 0 else "degraded"
+            ]
         }))
 
     except Exception as e:

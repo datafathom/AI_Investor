@@ -1,0 +1,27 @@
+python : Traceback (most recent call last):
+At line:1 char:47
++ ... ; $env:PYTHONPATH="."; python scripts/verify_phase_15.py 2>&1 | 
+Out-F ...
++                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call  
+   last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "C:\Users\astir\Desktop\AI_Company\AI_Investor\scripts\verify_phase
+_15.py", line 12, in <module>
+    from services.analysis.order_blocks import OrderBlockDetector
+  File "C:\Users\astir\Desktop\AI_Company\AI_Investor\services\analysis\__
+init__.py", line 7, in <module>
+    from services.analysis.fear_greed_service import 
+FearGreedIndexService, get_fear_greed_service
+  File "C:\Users\astir\Desktop\AI_Company\AI_Investor\services\analysis\fe
+ar_greed_service.py", line 28, in <module>
+    from services.data.google_trends import GoogleTrendsService
+  File "C:\Users\astir\Desktop\AI_Company\AI_Investor\services\data\google
+_trends.py", line 24, in <module>
+    from services.data.producer import MarketDataProducer
+  File "C:\Users\astir\Desktop\AI_Company\AI_Investor\services\data\produc
+er.py", line 12, in <module>
+    from kafka import KafkaProducer
+ImportError: cannot import name 'KafkaProducer' from 'kafka' 
+(C:\Users\astir\Desktop\AI_Company\AI_Investor\scripts\kafka\__init__.py)

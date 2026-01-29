@@ -60,6 +60,13 @@ const usePortfolioStore = create((set, get) => ({
   isLoading: false,
   error: null,
   lastUpdated: null,
+
+  // Demo Mode State
+  is_demo: true,
+  demo_balance: 100000.00,
+  live_balance: 0.00,
+  unrealized_pnl: 0.00,
+  equity: 100000.00,
   
   // Computed getters
   getTotalActiveReturn: () => {
@@ -98,8 +105,44 @@ const usePortfolioStore = create((set, get) => ({
     const { attribution } = get();
     return attribution?.regime_shifts ?? [];
   },
+
+  // Demo Mode Getters
+  getBalance: () => {
+      const { is_demo, demo_balance, live_balance } = get();
+      return is_demo ? demo_balance : live_balance;
+  },
+
+  getEquity: () => {
+    return get().equity;
+  },
+
+  getUnrealizedPnL: () => {
+    return get().unrealized_pnl;
+  },
   
   // Actions
+  toggleDemoMode: (confirm = false) => {
+    const { is_demo } = get();
+    if (!is_demo && !confirm) {
+      console.error("Live mode requires explicit confirmation.");
+      return;
+    }
+    const next_is_demo = !is_demo;
+    set({ 
+      is_demo: next_is_demo,
+      equity: next_is_demo ? get().demo_balance + get().unrealized_pnl : get().live_balance + get().unrealized_pnl
+    });
+  },
+
+  updateEquitySnapshot: (balance, pnl) => {
+    set({
+      demo_balance: get().is_demo ? balance : get().demo_balance,
+      live_balance: !get().is_demo ? balance : get().live_balance,
+      unrealized_pnl: pnl,
+      equity: balance + pnl,
+      lastUpdated: new Date().toISOString()
+    });
+  },
   fetchAttribution: async (portfolioId, benchmarkId, period) => {
     const startTime = performance.now();
     set({ isLoading: true, error: null });

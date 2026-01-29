@@ -11,7 +11,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 const TenantDashboard = () => {
     const DEFAULT_LAYOUT = {
         lg: [
-            { i: 'tenants', x: 0, y: 0, w: 12, h: 8 }
+            { i: 'tenants', x: 0, y: 0, w: 12, h: 14 }
         ]
     };
 
@@ -29,14 +29,14 @@ const TenantDashboard = () => {
 
     return (
         <div className="full-bleed-page tenant-dashboard">
-            <header className="tenant-header mb-8">
-                <div className="flex items-center gap-4">
-                    <div className="p-3 bg-zinc-800 rounded-xl border border-zinc-700">
-                        <Users size={32} className="text-zinc-100" />
+            <header className="tenant-header mb-4">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 bg-zinc-800 rounded-xl border border-zinc-700">
+                        <Users size={24} className="text-zinc-100" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold">Family Office Management</h1>
-                        <p className="text-zinc-500">Switch between family accounts and manage access.</p>
+                        <h1 className="text-2xl font-bold">Family Office Management</h1>
+                        <p className="text-zinc-500 text-xs">Switch between family accounts and manage access.</p>
                     </div>
                 </div>
             </header>
@@ -47,17 +47,17 @@ const TenantDashboard = () => {
                     layouts={DEFAULT_LAYOUT}
                     breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                     cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-                    rowHeight={80}
+                    rowHeight={40}
                     isDraggable={true}
                     isResizable={true}
                     draggableHandle=".tenant-card"
-                    margin={[16, 16]}
+                    margin={[10, 10]}
                 >
-                    <div key="tenants" className="flex flex-wrap gap-6">
+                    <div key="tenants" className="flex flex-wrap gap-4">
                         {tenants.map(tenant => (
                             <div
                                 key={tenant.id}
-                                className={`tenant-card glass-panel p-6 cursor-pointer transition-all hover:scale-105 ${activeTenant === tenant.id ? 'active ring-2 ring-blue-500 bg-blue-900/10' : 'bg-white/5 hover:bg-white/10'}`}
+                                className={`tenant-card glass-panel p-4 cursor-pointer transition-all hover:scale-105 ${activeTenant === tenant.id ? 'active ring-2 ring-blue-500 bg-blue-900/10' : 'bg-white/5 hover:bg-white/10'}`}
                                 onClick={() => switchTenant(tenant.id)}
                                 style={{ width: '300px', borderRadius: '16px' }}
                             >

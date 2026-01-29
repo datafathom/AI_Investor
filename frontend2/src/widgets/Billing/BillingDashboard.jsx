@@ -1,81 +1,70 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { CreditCard, Zap, Crown, Check, ArrowRight, Clock, ShieldCheck } from 'lucide-react';
+import useBillingStore from '../../stores/billingStore';
 import './BillingDashboard.css';
 
 const BillingDashboard = () => {
-    const [status, setStatus] = useState(null);
-    const [loading, setLoading] = useState(false);
-
-    const fetchStatus = async () => {
-        setLoading(true);
-        try {
-            const token = localStorage.getItem('token');
-            const res = await fetch('/api/v1/billing/subscription-status', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = await res.json();
-            setStatus(data);
-        } catch (e) {
-            console.error("Failed to fetch billing status", e);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleUpgrade = async (tier) => {
-        try {
-            const token = localStorage.getItem('token');
-            const res = await fetch('/api/v1/billing/create-checkout-session', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
-                },
-                body: JSON.stringify({ tier })
-            });
-            const data = await res.json();
-            if (data.url) {
-                // In a real app, window.location.href = data.url;
-                // For demo, we just alert
-                alert(`Redirecting to Stripe Checkout for ${tier.toUpperCase()} tier...\n(Simulated URL: ${data.url})`);
-            }
-        } catch (e) {
-            console.error("Checkout failed", e);
-        }
-    };
+    const { 
+        subscription, 
+        fetchSubscription, 
+        createCheckout, 
+        loading 
+    } = useBillingStore();
 
     useEffect(() => {
-        fetchStatus();
-    }, []);
+        fetchSubscription(true); // Default to mock for now
+    }, [fetchSubscription]);
+
+    const handleUpgrade = async (tier) => {
+        // Map UI tiers to backend plan IDs - based on Billing.jsx
+        const planMap = {
+            'free': 'price_free_tier',
+            'pro': 'price_pro_monthly',
+            'institutional': 'price_ent_monthly'
+        };
+        const planId = planMap[tier.toLowerCase()] || tier;
+        const url = await createCheckout(planId, true);
+        if (url) {
+            alert(`Redirecting to Checkout for ${tier.toUpperCase()} tier...\n(Simulated URL: ${url})`);
+        }
+    };
+
+    const currentTier = subscription?.plan?.id === 'price_ent_monthly' ? 'INSTITUTIONAL' : 
+                      subscription?.plan?.id === 'price_pro_monthly' ? 'PRO' : 'FREE';
 
     const tiers = [
         {
             name: 'Free',
             price: '$0',
+            id: 'price_free_tier',
             icon: <Clock size={24} className="text-gray-400" />,
             features: ['Basic Market Scanner', 'Tutorial Mode', 'Community Support'],
             button: 'Current Plan',
-            current: status?.tier === 'FREE'
+            current: currentTier === 'FREE'
         },
         {
             name: 'Pro',
-            price: '$49',
+            price: '$29',
+            id: 'price_pro_monthly',
             icon: <Zap size={24} className="text-amber-400" />,
             features: ['Live Execution Router', 'Sentiment Analysis', 'Custom Risk Models', 'Priority Support'],
             button: 'Upgrade to Pro',
-            current: status?.tier === 'PRO',
+            current: currentTier === 'PRO',
             highlight: true
         },
         {
             name: 'Institutional',
-            price: '$499',
+            price: '$99',
+            id: 'price_ent_monthly',
             icon: <Crown size={24} className="text-purple-400" />,
             features: ['FIX Protocol Adapter', 'Multi-user Workspaces', 'On-prem Deployment', '24/7 Concierge'],
             button: 'Contact Sales',
-            current: status?.tier === 'INSTITUTIONAL'
+            current: currentTier === 'INSTITUTIONAL'
         }
     ];
+
+    if (loading && !subscription) return <div className="billing-dashboard-widget p-8 text-center text-zinc-500 font-mono">LOADING BILLING ENGINE...</div>;
 
     return (
         <div className="billing-dashboard-widget">
@@ -118,9 +107,9 @@ const BillingDashboard = () => {
             <div className="billing-footer">
                 <div className="payment-method">
                     <CreditCard size={18} />
-                    <span>No payment method on file</span>
+                    <span>{subscription?.status === 'active' ? 'Stripe Connected' : 'No payment method on file'}</span>
                 </div>
-                <button className="manage-btn">Manage Portal</button>
+                <button className="manage-btn" onClick={() => window.open('https://billing.stripe.com/p/session/test_123')}>Manage Portal</button>
             </div>
         </div>
     );

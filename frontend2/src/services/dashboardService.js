@@ -1,5 +1,4 @@
-
-import { apiClient as api } from '../utils/apiClient';
+import api from '../services/apiClient';
 
 export const dashboardService = {
     /**
@@ -8,7 +7,7 @@ export const dashboardService = {
     getAllocation: async (fearIndex = 50) => {
         try {
             const response = await api.get(`/dashboard/allocation?fear_index=${fearIndex}`);
-            return response.data;
+            return response;
         } catch (error) {
             console.error("Failed to fetch allocation", error);
             return null;
@@ -21,7 +20,7 @@ export const dashboardService = {
     getRiskStatus: async () => {
         try {
             const response = await api.get('/dashboard/risk');
-            return response.data;
+            return response;
         } catch (error) {
             console.error("Failed to fetch risk status", error);
             return null;
@@ -34,7 +33,7 @@ export const dashboardService = {
     getExecutionStatus: async () => {
         try {
             const response = await api.get('/dashboard/execution');
-            return response.data;
+            return response;
         } catch (error) {
             console.error("Failed to fetch execution status", error);
             return null;

@@ -20,15 +20,17 @@ from typing import Dict, List, Any
 from kafka.admin import KafkaAdminClient
 import logging
 import random
+from config.environment_manager import get_settings
 
 class KafkaMonitorService:
     """
     Service for monitoring Kafka Cluster health and statistics.
     """
     
-    def __init__(self, bootstrap_servers="localhost:9092"):
+    def __init__(self, bootstrap_servers=None):
         """Initialize with bootstrap servers."""
-        self.bootstrap_servers = bootstrap_servers
+        settings = get_settings()
+        self.bootstrap_servers = bootstrap_servers or settings.KAFKA_BOOTSTRAP_SERVERS or "127.0.0.1:9092"
         self.logger = logging.getLogger("KafkaMonitor")
         self._admin_client = None
 
@@ -38,7 +40,10 @@ class KafkaMonitorService:
             try:
                 self._admin_client = KafkaAdminClient(
                     bootstrap_servers=self.bootstrap_servers,
-                    client_id='backend-monitor'
+                    client_id='backend-monitor',
+                    request_timeout_ms=1000,
+                    reconnect_backoff_ms=500,
+                    reconnect_backoff_max_ms=1000
                 )
             except Exception as e:
                 self.logger.error(f"Failed to connect to Kafka: {e}")

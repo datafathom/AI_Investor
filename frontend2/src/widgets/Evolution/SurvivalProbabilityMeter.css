@@ -1,0 +1,84 @@
+.survival-meter-container {
+    padding: 24px;
+    background: rgba(15, 20, 30, 0.9);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 242, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+}
+
+.survival-meter-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: #00f2ff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.gauge-wrapper {
+    position: relative;
+    width: 200px;
+    height: 100px;
+    overflow: hidden;
+}
+
+.gauge-background {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: conic-gradient(
+        #ff3e3e 0deg 60deg,
+        #ffcc3e 60deg 120deg,
+        #3eff8b 120deg 180deg,
+        transparent 180deg
+    );
+    transform: rotate(-90deg);
+}
+
+.gauge-needle {
+    position: absolute;
+    bottom: 0;
+    left: 100px;
+    width: 4px;
+    height: 90px;
+    background: #fff;
+    transform-origin: bottom center;
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.gauge-center {
+    position: absolute;
+    bottom: -10px;
+    left: 90px;
+    width: 20px;
+    height: 20px;
+    background: #1a212c;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+.probability-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #fff;
+    margin-top: -10px;
+}
+
+.mc-stats {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'Inter', monospace;
+}
+
+.mc-status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: rgba(0, 242, 255, 0.1);
+  color: #00f2ff;
+  font-size: 0.75rem;
+  margin-top: 8px;
+}

@@ -86,8 +86,8 @@ const KafkaStreamMonitor = ({ hideHeader = false }) => {
             )}
 
             <div className="throughput-grid">
-                {Array.isArray(stats) && stats.map(s => (
-                    <div key={s.topic} className="stat-card">
+                {Array.isArray(stats) && stats.map((s, index) => (
+                    <div key={s.topic || index} className="stat-card">
                         <span className="sc-topic">{s.topic}</span>
                         <div className="sc-metrics">
                             <span className="sc-val">{s.msg_per_sec} m/s</span>

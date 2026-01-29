@@ -15,13 +15,32 @@ from services.security.system_health_service import (
 )
 
 from services.system.secret_manager import get_secret_manager
+from services.auth.totp_service import get_totp_service
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/v1/system", tags=["System"])
 
-@router.get("/secrets")
-async def get_secrets_status():
+
+class SecretAccessRequest(BaseModel):
+    """Sprint 6: Request model for secrets access requiring MFA."""
+    mfa_code: str
+
+
+@router.post("/secrets")
+async def get_secrets_status(request: SecretAccessRequest):
+    """
+    Sprint 6: Get system secrets status - requires 2FA verification.
+    Critical security endpoint protected by TOTP MFA.
+    """
+    # Verify MFA code
+    totp_service = get_totp_service()
+    # In production, fetch user's MFA secret from DB
+    is_valid = totp_service.verify_code("DEMO_SECRET", request.mfa_code)
+    
+    if not is_valid:
+        raise HTTPException(status_code=401, detail="Invalid MFA code")
+    
     sm = get_secret_manager()
     status = sm.get_status()
     return {
@@ -33,7 +52,8 @@ async def get_secrets_status():
             "rate_limiter": "Active",
             "waf_rules": "Core v1"
         },
-        "missing_critical_keys": []
+        "missing_critical_keys": [],
+        "mfa_verified": True
     }
 
 @router.get("/health")

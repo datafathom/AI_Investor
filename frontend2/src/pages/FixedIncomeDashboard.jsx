@@ -22,13 +22,13 @@ const FixedIncomeDashboard = () => {
 
     const DEFAULT_LAYOUT = {
         lg: [
-            { i: 'stats', x: 0, y: 0, w: 12, h: 2 },
-            { i: 'ladder', x: 0, y: 2, w: 5, h: 5 },
-            { i: 'gauges', x: 5, y: 2, w: 7, h: 2 },
-            { i: 'curve', x: 5, y: 4, w: 7, h: 3 }
+            { i: 'stats', x: 0, y: 0, w: 12, h: 3 },
+            { i: 'ladder', x: 0, y: 3, w: 5, h: 12 },
+            { i: 'gauges', x: 5, y: 3, w: 7, h: 4 },
+            { i: 'curve', x: 5, y: 7, w: 7, h: 8 }
         ]
     };
-    const STORAGE_KEY = 'layout_fixed_income_dashboard';
+    const STORAGE_KEY = 'layout_fixed_income_dashboard_v2';
 
     const [layouts, setLayouts] = React.useState(() => {
         try {
@@ -70,9 +70,10 @@ const FixedIncomeDashboard = () => {
                     onLayoutChange={onLayoutChange}
                     breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                     cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-                    rowHeight={80}
+                    rowHeight={40}
                     isDraggable={true}
                     isResizable={true}
+                    margin={[10, 10]}
                 >
                     <div key="stats" style={{ display: 'flex', gap: '16px' }}>
                         {bondStats.map((stat, idx) => (

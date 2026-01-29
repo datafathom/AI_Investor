@@ -32,12 +32,12 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 const AdvancedRiskDashboard = () => {
   const DEFAULT_LAYOUT = {
     lg: [
-      { i: 'metrics', x: 0, y: 0, w: 12, h: 6 },
-      { i: 'stress', x: 0, y: 6, w: 6, h: 8 },
-      { i: 'monte_carlo', x: 6, y: 6, w: 6, h: 8 }
+      { i: 'metrics', x: 0, y: 0, w: 12, h: 10 },
+      { i: 'stress', x: 0, y: 10, w: 6, h: 14 },
+      { i: 'monte_carlo', x: 6, y: 10, w: 6, h: 14 }
     ]
   };
-  const STORAGE_KEY = 'layout_advanced_risk_dashboard';
+  const STORAGE_KEY = 'layout_advanced_risk_dashboard_v2';
 
   const [layouts, setLayouts] = useState(() => {
      try {
@@ -118,11 +118,11 @@ const AdvancedRiskDashboard = () => {
           onLayoutChange={onLayoutChange}
           breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
           cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-          rowHeight={80}
+          rowHeight={40}
           isDraggable={true}
           isResizable={true}
           draggableHandle="h2"
-          margin={[16, 16]}
+          margin={[10, 10]}
         >
           {/* ... (widgets remain the same) ... */}
           <div key="metrics">

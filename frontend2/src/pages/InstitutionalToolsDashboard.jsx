@@ -1,209 +1,185 @@
-/**
- * ==============================================================================
- * FILE: frontend2/src/pages/InstitutionalToolsDashboard.jsx
- * ROLE: Institutional Tools Dashboard
- * PURPOSE: Phase 33 - Institutional & Professional Tools
- *          Displays multi-client management, white-labeling, and professional analytics.
- * 
- * INTEGRATION POINTS:
- *    - InstitutionalAPI: /api/v1/institutional endpoints
- * 
- * FEATURES:
- *    - Multi-client management
- *    - White-label configuration
- *    - Professional analytics
- *    - Custom reporting
- * 
- * AUTHOR: AI Investor Team
- * CREATED: 2026-01-21
- * LAST_MODIFIED: 2026-01-21
- * ==============================================================================
- */
-
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './InstitutionalToolsDashboard.css';
+import { Network, Activity, Users, Shield, Layout, Settings, PlusCircle } from 'lucide-react';
+import { Responsive, WidthProvider } from 'react-grid-layout';
+import { PortfolioTreeMap, SentimentHeatmap, StatCard } from '../components/DataViz';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
+// Institutional Components
+import OnboardingWizard from '../components/Institutional/OnboardingWizard';
+import useInstitutionalStore from '../stores/institutionalStore';
+
+// Institutional Widgets
+import FeeRevenueForecast from '../widgets/Institutional/FeeRevenueForecast';
+import ClientRetentionAI from '../widgets/Institutional/ClientRetentionAI';
+import DocSignaturePulse from '../widgets/Institutional/DocSignaturePulse';
+import AssetAllocationWheel from '../widgets/Institutional/AssetAllocationWheel';
+import AdvisorCommissionTracker from '../widgets/Institutional/AdvisorCommissionTracker';
+import KycRiskGauge from '../widgets/Institutional/KycRiskGauge';
+
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const InstitutionalToolsDashboard = () => {
-  const [clients, setClients] = useState([]);
-  const [whiteLabelConfig, setWhiteLabelConfig] = useState(null);
-  const [professionalAnalytics, setProfessionalAnalytics] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [userId] = useState('user_1');
-  const [newClient, setNewClient] = useState({ name: '', email: '' });
+    const { clients, analytics, fetchClients, fetchClientAnalytics, onboardingStep, setOnboardingStep } = useInstitutionalStore();
+    const [selectedClientId, setSelectedClientId] = useState(null);
+    const [showOnboarding, setShowOnboarding] = useState(false);
 
-  useEffect(() => {
-    loadClients();
-    loadWhiteLabelConfig();
-    loadProfessionalAnalytics();
-  }, []);
+    useEffect(() => {
+        fetchClients();
+    }, [fetchClients]);
 
-  const loadClients = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/institutional/clients`, {
-        params: { user_id: userId }
-      });
-      setClients(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading clients:', error);
+    useEffect(() => {
+        if (clients.length > 0 && !selectedClientId) {
+            setSelectedClientId(clients[0].client_id);
+        }
+    }, [clients, selectedClientId]);
+
+    useEffect(() => {
+        if (selectedClientId) {
+            fetchClientAnalytics(selectedClientId);
+        }
+    }, [selectedClientId, fetchClientAnalytics]);
+
+    const DEFAULT_LAYOUT = {
+        lg: [
+            { i: 'header', x: 0, y: 0, w: 12, h: 3 },
+            { i: 'clients', x: 0, y: 3, w: 3, h: 8 },
+            { i: 'fee-forecast', x: 3, y: 3, w: 3, h: 8 },
+            { i: 'retention-ai', x: 6, y: 3, w: 3, h: 8 },
+            { i: 'risk-gauge', x: 9, y: 3, w: 3, h: 8 },
+            { i: 'allocation', x: 0, y: 11, w: 4, h: 8 },
+            { i: 'commission', x: 4, y: 11, w: 4, h: 8 },
+            { i: 'doc-pulse', x: 8, y: 11, w: 4, h: 8 },
+        ]
+    };
+
+    const activeAnalytics = selectedClientId ? analytics[selectedClientId] : null;
+    const activeClient = clients.find(c => c.client_id === selectedClientId);
+
+    if (showOnboarding) {
+        return (
+            <div className="min-h-screen p-12 bg-slate-950 flex flex-col items-center justify-center">
+                <button 
+                    onClick={() => setShowOnboarding(false)}
+                    className="absolute top-8 left-8 text-slate-500 hover:text-white font-bold flex items-center gap-2"
+                >
+                    <Layout size={16} /> BACK TO DASHBOARD
+                </button>
+                <OnboardingWizard />
+            </div>
+        );
     }
-  };
 
-  const loadWhiteLabelConfig = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/institutional/white-label`, {
-        params: { user_id: userId }
-      });
-      setWhiteLabelConfig(res.data.data);
-    } catch (error) {
-      console.error('Error loading white-label config:', error);
-    }
-  };
-
-  const loadProfessionalAnalytics = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/institutional/analytics`, {
-        params: { user_id: userId }
-      });
-      setProfessionalAnalytics(res.data.data);
-    } catch (error) {
-      console.error('Error loading professional analytics:', error);
-    }
-  };
-
-  const createClient = async () => {
-    if (!newClient.name || !newClient.email) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/institutional/client/create`, {
-        user_id: userId,
-        client_name: newClient.name,
-        client_email: newClient.email
-      });
-      setNewClient({ name: '', email: '' });
-      loadClients();
-    } catch (error) {
-      console.error('Error creating client:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="institutional-tools-dashboard">
-      <div className="dashboard-header">
-        <h1>Institutional & Professional Tools</h1>
-        <p className="subtitle">Phase 33: Institutional & Professional Tools</p>
-      </div>
-
-      <div className="dashboard-content">
-        {/* Create Client */}
-        <div className="create-client-panel">
-          <h2>Add Client</h2>
-          <div className="client-form">
-            <input
-              type="text"
-              placeholder="Client Name"
-              value={newClient.name}
-              onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
-              className="form-input"
-            />
-            <input
-              type="email"
-              placeholder="Client Email"
-              value={newClient.email}
-              onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
-              className="form-input"
-            />
-            <button onClick={createClient} disabled={loading} className="create-button">
-              Add Client
-            </button>
-          </div>
-        </div>
-
-        {/* Clients */}
-        <div className="clients-panel">
-          <h2>Client Accounts</h2>
-          {clients.length > 0 ? (
-            <div className="clients-list">
-              {clients.map((client) => (
-                <div key={client.client_id} className="client-card">
-                  <div className="client-header">
-                    <h3>{client.client_name}</h3>
-                    <span className={`client-status ${client.status}`}>{client.status}</span>
-                  </div>
-                  <div className="client-details">
-                    <span>Email: {client.client_email}</span>
-                    <span>Portfolios: {client.portfolio_count || 0}</span>
-                    <span>Total AUM: ${client.total_aum?.toLocaleString() || '0'}</span>
-                  </div>
+    return (
+        <div className="institutional-dashboard min-h-screen p-6 bg-slate-950 font-sans text-slate-200">
+            <ResponsiveGridLayout
+                className="layout"
+                layouts={DEFAULT_LAYOUT}
+                breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                rowHeight={60}
+                draggableHandle=".drag-handle"
+            >
+                {/* Header Section */}
+                <div key="header" className="glass-premium p-6 rounded-2xl flex items-center justify-between border border-white/5 drag-handle cursor-move overflow-hidden relative">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent via-primary to-success opacity-50" />
+                    <div className="flex items-center gap-6">
+                        <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/30 shadow-[0_0_20px_rgba(var(--primary-h),0.3)]">
+                            <Shield size={32} className="text-primary" />
+                        </div>
+                        <div>
+                            <h1 className="text-3xl font-black tracking-tighter text-white">
+                                INSTITUTIONAL <span className="text-primary-light">ORCHESTRATOR</span>
+                            </h1>
+                            <div className="flex items-center gap-4 mt-1">
+                                <span className="flex items-center gap-1 text-xs font-bold text-success">
+                                    <div className="w-2 h-2 rounded-full bg-success animate-pulse" /> SYSTEM NOMINAL
+                                </span>
+                                <span className="text-xs text-slate-500 font-mono uppercase tracking-widest">Ver: 2.5.0-ADVISOR</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex gap-4">
+                        <StatCard 
+                            label="Portfolio AUM" 
+                            value={`$${(clients.reduce((sum, c) => sum + c.aum, 0)/1000000).toFixed(0)}M`} 
+                            trend="+4.2%" 
+                            trendUp={true} 
+                            small 
+                        />
+                        <button 
+                            onClick={() => setShowOnboarding(true)}
+                            className="bg-primary hover:bg-primary-light text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(var(--primary-h),0.3)]"
+                        >
+                            <PlusCircle size={18} /> NEW CLIENT
+                        </button>
+                    </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="no-data">No clients added yet</div>
-          )}
-        </div>
 
-        {/* White-Label Configuration */}
-        {whiteLabelConfig && (
-          <div className="white-label-panel">
-            <h2>White-Label Configuration</h2>
-            <div className="config-details">
-              <div className="config-item">
-                <span className="label">Brand Name:</span>
-                <span className="value">{whiteLabelConfig.brand_name || 'Default'}</span>
-              </div>
-              <div className="config-item">
-                <span className="label">Primary Color:</span>
-                <span className="value" style={{ color: whiteLabelConfig.primary_color || '#00d4ff' }}>
-                  {whiteLabelConfig.primary_color || '#00d4ff'}
-                </span>
-              </div>
-              <div className="config-item">
-                <span className="label">Logo URL:</span>
-                <span className="value">{whiteLabelConfig.logo_url || 'Not set'}</span>
-              </div>
-              <div className="config-item">
-                <span className="label">Custom Domain:</span>
-                <span className="value">{whiteLabelConfig.custom_domain || 'Not configured'}</span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Professional Analytics */}
-        {professionalAnalytics && (
-          <div className="analytics-panel">
-            <h2>Professional Analytics</h2>
-            <div className="analytics-metrics">
-              <div className="metric-card">
-                <div className="metric-label">Total Clients</div>
-                <div className="metric-value">{professionalAnalytics.total_clients || 0}</div>
-              </div>
-              <div className="metric-card">
-                <div className="metric-label">Total AUM</div>
-                <div className="metric-value">
-                  ${(professionalAnalytics.total_aum || 0).toLocaleString()}
+                {/* Clients Panel */}
+                <div key="clients" className="glass-premium p-4 rounded-2xl border border-white/5 overflow-hidden flex flex-col">
+                    <h3 className="text-sm font-bold mb-4 flex items-center gap-2 text-primary-light uppercase tracking-widest">
+                        <Users size={16} /> Client Roster
+                    </h3>
+                    <div className="flex-1 overflow-y-auto space-y-2 pr-2">
+                        {clients.map(client => (
+                            <div 
+                                key={client.client_id} 
+                                onClick={() => setSelectedClientId(client.client_id)}
+                                className={`p-4 rounded-xl border transition-all cursor-pointer ${
+                                    selectedClientId === client.client_id 
+                                    ? 'bg-primary/10 border-primary/40' 
+                                    : 'bg-white/5 border-white/5 hover:bg-white/10'
+                                }`}
+                            >
+                                <div className="flex justify-between items-start mb-1">
+                                    <span className="font-bold text-white text-sm">{client.client_name}</span>
+                                    <span className={`text-[8px] px-1.5 py-0.5 rounded-full font-bold uppercase ${
+                                        client.risk_level === 'Low' ? 'bg-success/20 text-success' :
+                                        client.risk_level === 'Moderate' ? 'bg-primary/20 text-primary' :
+                                        'bg-danger/20 text-danger'
+                                    }`}>
+                                        {client.risk_level}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between items-end">
+                                    <span className="text-lg font-mono text-slate-300 font-black">${(client.aum/1000000).toFixed(1)}M</span>
+                                    <span className="text-[10px] text-slate-500">{client.kyc_status}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
-              </div>
-              <div className="metric-card">
-                <div className="metric-label">Active Portfolios</div>
-                <div className="metric-value">{professionalAnalytics.active_portfolios || 0}</div>
-              </div>
-              <div className="metric-card">
-                <div className="metric-label">API Calls (30d)</div>
-                <div className="metric-value">{professionalAnalytics.api_calls_30d || 0}</div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+
+                {/* Analytical Widgets */}
+                <div key="fee-forecast">
+                    <FeeRevenueForecast aum={activeClient?.aum} />
+                </div>
+
+                <div key="retention-ai">
+                    <ClientRetentionAI score={activeClient?.retention_score} />
+                </div>
+
+                <div key="risk-gauge">
+                    <KycRiskGauge status={activeClient?.kyc_status} />
+                </div>
+
+                {/* Lower Row Widgets */}
+                <div key="allocation">
+                    <AssetAllocationWheel />
+                </div>
+
+                <div key="commission">
+                    <AdvisorCommissionTracker />
+                </div>
+
+                <div key="doc-pulse">
+                    <DocSignaturePulse />
+                </div>
+
+            </ResponsiveGridLayout>
+        </div>
+    );
 };
 
 export default InstitutionalToolsDashboard;

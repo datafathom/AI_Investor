@@ -6,7 +6,8 @@
  *          Displays trader leaderboard, follow/unfollow, and copy trading settings.
  * 
  * INTEGRATION POINTS:
- *    - SocialTradingAPI: /api/v1/social-trading endpoints
+ *    - SocialStore: Centralized state management
+ *    - SocialTradingAPI: /api/v1/social-trading endpoints (via Service)
  * 
  * FEATURES:
  *    - Trader discovery
@@ -16,93 +17,44 @@
  * 
  * AUTHOR: AI Investor Team
  * CREATED: 2026-01-21
- * LAST_MODIFIED: 2026-01-21
+ * LAST_MODIFIED: 2026-01-28
  * ==============================================================================
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import useSocialStore from '../stores/socialStore';
 import './SocialTradingDashboard.css';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 const SocialTradingDashboard = () => {
-  const [leaderboard, setLeaderboard] = useState([]);
-  const [followedTraders, setFollowedTraders] = useState([]);
-  const [copyTrades, setCopyTrades] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // Store State
+  const { 
+    leaderboard, 
+    followedTraders, 
+    copyTrades, 
+    isLoading, 
+    fetchLeaderboard, 
+    fetchFollowedTraders, 
+    fetchCopyTrades,
+    followTrader: followTraderAction,
+    startCopyTrading: startCopyTradeAction
+  } = useSocialStore();
+
   const [userId] = useState('user_1');
 
+  // Load Data on Mount
   useEffect(() => {
-    loadLeaderboard();
-    loadFollowedTraders();
-    loadCopyTrades();
-  }, []);
+    fetchLeaderboard();
+    fetchFollowedTraders(userId);
+    fetchCopyTrades(userId);
+  }, [userId, fetchLeaderboard, fetchFollowedTraders, fetchCopyTrades]);
 
-  const loadLeaderboard = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/social-trading/leaderboard`, {
-        params: { limit: 20 }
-      });
-      setLeaderboard(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading leaderboard:', error);
-    }
+  const handleFollowTrader = async (traderId) => {
+    await followTraderAction(userId, traderId);
   };
 
-  const loadFollowedTraders = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/social-trading/following`, {
-        params: { user_id: userId }
-      });
-      setFollowedTraders(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading followed traders:', error);
-    }
-  };
-
-  const loadCopyTrades = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/social-trading/copy-trades`, {
-        params: { user_id: userId }
-      });
-      setCopyTrades(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading copy trades:', error);
-    }
-  };
-
-  const followTrader = async (traderId) => {
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/social-trading/follow`, {
-        user_id: userId,
-        trader_id: traderId
-      });
-      loadFollowedTraders();
-      loadLeaderboard();
-    } catch (error) {
-      console.error('Error following trader:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const startCopyTrading = async (traderId) => {
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/social-trading/copy-trading/start`, {
-        user_id: userId,
-        trader_id: traderId,
-        allocation_percent: 10
-      });
-      loadCopyTrades();
-    } catch (error) {
-      console.error('Error starting copy trading:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleStartCopyTrading = async (traderId) => {
+    // Hardcoded allocation for now, could be dynamic in UI
+    await startCopyTradeAction(userId, traderId, 10);
   };
 
   const getReturnColor = (returnPercent) => {
@@ -141,15 +93,15 @@ const SocialTradingDashboard = () => {
                   </div>
                   <div className="trader-actions">
                     <button
-                      onClick={() => followTrader(trader.trader_id)}
-                      disabled={loading}
+                      onClick={() => handleFollowTrader(trader.trader_id)}
+                      disabled={isLoading}
                       className="follow-button"
                     >
                       Follow
                     </button>
                     <button
-                      onClick={() => startCopyTrading(trader.trader_id)}
-                      disabled={loading}
+                      onClick={() => handleStartCopyTrading(trader.trader_id)}
+                      disabled={isLoading}
                       className="copy-button"
                     >
                       Copy Trade

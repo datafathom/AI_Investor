@@ -89,8 +89,16 @@ const MENU_ITEMS = [
         ],
       },
       {
+        label: "The Orchestrator",
+        submenu: [
+          { label: "Master Graph", action: "role-orchestrator" },
+          { label: "System Reflexivity", action: "role-orchestrator" },
+        ],
+      },
+      {
         label: "The Strategist",
         submenu: [
+          { label: "Social Class Maintenance", action: "role-scm" },
           { label: "Currency & Cash", action: "role-strategist" },
           { label: "Estate Planning", action: "role-estate" },
           { label: "Philanthropy & Impact", action: "role-impact" },

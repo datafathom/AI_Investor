@@ -1,0 +1,95 @@
+.splicing-resolver-container {
+    padding: 24px;
+    background: rgba(15, 20, 30, 0.9);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 242, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.splicing-resolver-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: #00f2ff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.diff-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.diff-header {
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8rem;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.diff-row {
+    display: contents;
+}
+
+.diff-cell {
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    border: 1px solid transparent;
+}
+
+.diff-cell.conflict {
+    border-color: rgba(255, 62, 62, 0.3);
+    background: rgba(255, 62, 62, 0.05);
+}
+
+.diff-cell.resolved {
+    border-color: rgba(62, 255, 139, 0.3);
+    background: rgba(62, 255, 139, 0.05);
+    color: #3eff8b;
+}
+
+.gene-name {
+    font-family: 'Inter', monospace;
+    font-size: 0.75rem;
+    color: #00f2ff;
+}
+
+.splicing-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 10px;
+    background: #00f2ff;
+    border: none;
+    color: #0a0f19;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    background: #00d4ff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 242, 255, 0.3);
+}
+
+.action-btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}

@@ -24,42 +24,44 @@ const KYCPortal = () => {
         fetchVerificationStatus();
     }, []);
 
-    // Use store data or legacy fallback
+    // Use store data
     const displayDocuments = documents.length > 0 ? documents.map(d => ({
         id: d.id,
-        type: d.type || d.document_type,
+        type: d.type || d.document_type || 'Document',
         status: d.status,
         encrypted: true
-    })) : [
-        { id: 1, type: 'Government ID', status: 'pending', encrypted: true },
-        { id: 2, type: 'Proof of Address', status: 'pending', encrypted: true },
-        { id: 3, type: 'Accredited Investor', status: 'pending', encrypted: false },
-    ];
+    })) : [];
 
     const getStatusIcon = (status) => {
-        switch (status) {
-            case 'approved': return <Check size={14} className="status-approved" />;
+        switch (status?.toLowerCase()) {
+            case 'approved':
+            case 'verified': return <Check size={14} className="status-approved" />;
             case 'rejected': return <X size={14} className="status-rejected" />;
-            case 'in_review': return <Clock size={14} className="status-review" />;
+            case 'in_review':
+            case 'pending': return <Clock size={14} className="status-review" />;
             default: return <AlertTriangle size={14} className="status-pending" />;
         }
     };
 
     const getStatusLabel = (status) => {
-        switch (status) {
-            case 'approved': return 'Approved';
+        switch (status?.toLowerCase()) {
+            case 'approved':
+            case 'verified': return 'Verified';
             case 'rejected': return 'Rejected';
             case 'in_review': return 'In Review';
-            default: return 'Pending';
+            case 'pending': return 'Pending';
+            default: return 'Unknown';
         }
     };
 
     const handleUpload = (docType) => {
-        // Mock upload - in real app, encrypt client-side before upload
-        console.log(`Uploading ${docType} with AES-256 encryption...`);
+        // In a real app, this would trigger a file picker and then call uploadDocument(file, docType)
+        console.log(`Triggering upload for ${docType}...`);
     };
 
-    const overallProgress = displayDocuments.filter(d => d.status === 'approved' || d.status === 'verified').length / displayDocuments.length * 100;
+    const overallProgress = displayDocuments.length > 0 
+        ? (displayDocuments.filter(d => ['approved', 'verified'].includes(d.status?.toLowerCase())).length / displayDocuments.length * 100)
+        : 0;
 
     return (
         <div className="kyc-portal">
@@ -69,7 +71,9 @@ const KYCPortal = () => {
                 </div>
                 <div className="header-text">
                     <h3>Identity Verification</h3>
-                    <span className="subtitle">AES-256 Encrypted</span>
+                    <span className="subtitle">
+                        {verificationStatus?.level ? `${verificationStatus.level.toUpperCase()} LEVEL` : 'AES-256 Encrypted'}
+                    </span>
                 </div>
             </div>
 
@@ -81,7 +85,7 @@ const KYCPortal = () => {
             </div>
 
             <div className="documents-list">
-                {displayDocuments.map((doc) => (
+                {displayDocuments.length > 0 ? displayDocuments.map((doc) => (
                     <div key={doc.id} className={`document-row ${doc.status}`}>
                         <div className="doc-icon">
                             <FileText size={16} />
@@ -96,13 +100,17 @@ const KYCPortal = () => {
                         {doc.encrypted && (
                             <span className="encrypted-badge">Encrypted</span>
                         )}
-                        {doc.status === 'pending' && (
+                        {['pending', 'rejected'].includes(doc.status?.toLowerCase()) && (
                             <button className="upload-btn" onClick={() => handleUpload(doc.type)}>
                                 <Upload size={14} /> Upload
                             </button>
                         )}
                     </div>
-                ))}
+                )) : (
+                    <div className="p-4 text-center text-zinc-500 font-mono text-[10px] uppercase">
+                        No documents required or found
+                    </div>
+                )}
             </div>
 
             <div className="verification-actions">

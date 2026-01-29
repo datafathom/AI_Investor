@@ -6,7 +6,8 @@
  *          Displays research reports, report generation, and templates.
  * 
  * INTEGRATION POINTS:
- *    - ResearchAPI: /api/v1/research endpoints
+ *    - ResearchStore: Centralized state management
+ *    - ResearchAPI: /api/v1/research endpoints (via Service)
  * 
  * FEATURES:
  *    - Research report listing
@@ -16,24 +17,28 @@
  * 
  * AUTHOR: AI Investor Team
  * CREATED: 2026-01-21
- * LAST_MODIFIED: 2026-01-21
+ * LAST_MODIFIED: 2026-01-28
  * ==============================================================================
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import useResearchStore from '../stores/researchStore';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import './ResearchReportsDashboard.css';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 const ResearchReportsDashboard = () => {
-  const [reports, setReports] = useState([]);
-  const [templates, setTemplates] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // Store State
+  const { 
+    reports, 
+    templates, 
+    isLoading, 
+    fetchReports, 
+    fetchTemplates, 
+    generateReport: generateReportAction
+  } = useResearchStore();
+
   const [userId] = useState('user_1');
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [reportParams, setReportParams] = useState({ title: '', format: 'pdf' });
@@ -61,48 +66,25 @@ const ResearchReportsDashboard = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
   };
 
-  const loadReports = React.useCallback(async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/research/reports`, {
-        params: { user_id: userId }
-      });
-      setReports(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading reports:', error);
-    }
-  }, [userId]);
-
-  const loadTemplates = React.useCallback(async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/research/templates`);
-      setTemplates(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading templates:', error);
-    }
-  }, []);
-
+  // Load Data on Mount
   useEffect(() => {
-    loadReports();
-    loadTemplates();
-  }, [loadReports, loadTemplates]);
+    fetchReports(userId);
+    fetchTemplates();
+  }, [userId, fetchReports, fetchTemplates]);
 
-  const generateReport = async () => {
+  const handleGenerateReport = async () => {
     if (!selectedTemplate || !reportParams.title) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/research/generate`, {
-        user_id: userId,
-        template_id: selectedTemplate,
-        report_title: reportParams.title,
-        format: reportParams.format
-      });
-      loadReports();
+    
+    const success = await generateReportAction(
+      userId, 
+      selectedTemplate, 
+      reportParams.title, 
+      reportParams.format
+    );
+
+    if (success) {
       setReportParams({ title: '', format: 'pdf' });
       setSelectedTemplate(null);
-    } catch (error) {
-      console.error('Error generating report:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -169,11 +151,11 @@ const ResearchReportsDashboard = () => {
               </div>
               <div className="form-group" style={{ flex: '0 0 auto', justifyContent: 'flex-end' }}>
                 <button 
-                  onClick={generateReport} 
-                  disabled={loading || !selectedTemplate} 
+                  onClick={handleGenerateReport} 
+                  disabled={isLoading || !selectedTemplate} 
                   className="generate-button"
                 >
-                  {loading ? 'Generating...' : 'Generate Report'}
+                  {isLoading ? 'Generating...' : 'Generate Report'}
                 </button>
               </div>
             </div>
@@ -235,3 +217,4 @@ const ResearchReportsDashboard = () => {
 };
 
 export default ResearchReportsDashboard;
+

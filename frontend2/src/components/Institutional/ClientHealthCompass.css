@@ -1,0 +1,41 @@
+.client-health-compass {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.client-health-compass:hover {
+    transform: translateY(-5px);
+    border-color: rgba(var(--primary-h), 0.3);
+    box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.5);
+}
+
+.client-health-compass-loading {
+    height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1.5rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.875rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.client-health-compass .risk-metric {
+    position: relative;
+}
+
+.client-health-compass .risk-metric .bg-primary {
+    background: linear-gradient(90deg, var(--primary), #3b82f6);
+    box-shadow: 0 0 10px rgba(var(--primary-h), 0.3);
+}
+
+.client-health-compass .risk-metric .bg-warning {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+}
+
+.client-health-compass .risk-metric .bg-success {
+    background: linear-gradient(90deg, #10b981, #34d399);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}

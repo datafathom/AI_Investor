@@ -21,7 +21,7 @@ const FearGreedWidget = () => {
                 // For MVP without backend running perfectly on same port/proxy yet, mock if fetch fails?
                 // Or try fetch.
                 const res = await fetch('http://localhost:5050/api/v1/market/fear-greed', {
-                     headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                     headers: { 'Authorization': `Bearer ${localStorage.getItem('widget_os_token')}` }
                 });
                 
                 if (res.ok) {
@@ -47,7 +47,7 @@ const FearGreedWidget = () => {
         };
 
         fetchData();
-        const interval = setInterval(fetchData, 60000); // Update every minute
+        const interval = setInterval(fetchData, 120000); // Update every 2 minutes (increased from 1 minute)
         return () => clearInterval(interval);
     }, []);
 

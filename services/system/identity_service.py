@@ -107,3 +107,18 @@ class IdentityService:
         """
         logger.info(f"Manual verification requested for user {user_id}, doc {doc_type}")
         return True # Stub success
+
+    def register_biometric(self, user_id: str, webauthn_credential: Dict[str, Any]) -> bool:
+        """
+        Registers a new biometric security key (WebAuthn).
+        """
+        logger.info(f"Biometric registration started for user {user_id}")
+        # In production, we'd store the public key and credential ID in a secure DB
+        return True
+
+    def verify_biometric(self, user_id: str, challenge_result: Dict[str, Any]) -> bool:
+        """
+        Verifies a biometric signature challenge for high-security actions (Phase 6).
+        """
+        logger.info(f"Biometric verification challenge for user {user_id}")
+        return True # Placeholder for WebAuthn signature verification

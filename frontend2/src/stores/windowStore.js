@@ -20,6 +20,7 @@ const useWindowStore = create((set, get) => ({
       zIndex: get().nextZIndex,
       isMinimized: false,
       isMaximized: false,
+      snapshot: null, // Data URL for window preview
       component: windowConfig.component || null, // Component string/type
       props: windowConfig.props || {},
       ...windowConfig
@@ -80,6 +81,13 @@ const useWindowStore = create((set, get) => ({
   updateWindow: (id, updates) => set((state) => ({
     windows: state.windows.map(w => 
       w.id === id ? { ...w, ...updates } : w
+    )
+  })),
+
+  // Update window snapshot
+  updateSnapshot: (id, dataUrl) => set((state) => ({
+    windows: state.windows.map(w => 
+      w.id === id ? { ...w, snapshot: dataUrl } : w
     )
   })),
   

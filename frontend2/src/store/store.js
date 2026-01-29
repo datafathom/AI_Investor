@@ -26,13 +26,19 @@ export const useStore = create(
       // User state
       user: null,
       setUser: (user) => set({ user }),
+      isAdmin: () => get().user?.role === 'admin' || get().user?.role === 'super_admin',
+      isAdvisor: () => get().user?.role === 'advisor',
 
       // UI state
       uiState: {
         sidebarOpen: true,
         theme: 'light',
         notifications: [],
+        isLoading: false,
       },
+      setLoading: (isLoading) => set((state) => ({
+        uiState: { ...state.uiState, isLoading }
+      })),
       setUIState: (updates) => set((state) => ({
         uiState: { ...state.uiState, ...updates },
       })),
@@ -101,6 +107,7 @@ export const useStore = create(
           sidebarOpen: true,
           theme: 'light',
           notifications: [],
+          isLoading: false,
         },
         userPreferences: {
           theme: 'light',

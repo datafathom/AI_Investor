@@ -53,11 +53,11 @@ const ESGScores = () => {
             <div className="karma-score-bar">
                 <div className="karma-label">
                     <span>Portfolio Karma</span>
-                    <strong>{karma_score} / 100</strong>
+                    <strong>{karma_score || 0} / 100</strong>
                 </div>
                 <div className="karma-stars">
-                    {'★'.repeat(Math.round(karma_score / 20))}
-                    <span className="opacity-30">{'★'.repeat(5 - Math.round(karma_score / 20))}</span>
+                    {'★'.repeat(Math.round((karma_score || 0) / 20))}
+                    <span className="opacity-30">{'★'.repeat(5 - Math.round((karma_score || 0) / 20))}</span>
                 </div>
             </div>
 

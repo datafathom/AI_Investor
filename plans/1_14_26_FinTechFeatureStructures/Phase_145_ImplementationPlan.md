@@ -1,6 +1,6 @@
 # Phase 145: Dynasty Trust Multi-Generational Payout Engine
 
-> **Status**: `[ ]` Not Started  
+> **Status**: `[x]` Completed  
 > **Last Updated**: 2026-01-25  
 > **Owner**: Estate Planning Team
 
@@ -17,7 +17,7 @@
 
 ## 🎯 Sub-Deliverables
 
-### 145.1 Perpetual Payout Estate Tax Bypass Logic `[ ]`
+### 145.1 Perpetual Payout Estate Tax Bypass Logic `[x]`
 
 **Acceptance Criteria**: Ensure assets grow outside the taxable estate of future generations. Payouts are "Income Only" or "HEMS" (Health, Education, Maintenance, Support) to prevent assets from becoming part of a beneficiary's taxable estate.
 
@@ -45,12 +45,12 @@ class DynastyPayoutEngine:
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Payout Engine | `services/estate/dynasty_payout.py` | `[ ]` |
-| HEMS Validator | `services/compliance/hems_validator.py` | `[ ]` |
+| Payout Engine | `services/estate/dynasty_payout.py` | `[x]` |
+| HEMS Validator | `services/compliance/hems_validator.py` | `[x]` |
 
 ---
 
-### 145.2 Inter-Generational Transfer GST Ledger `[ ]`
+### 145.2 Inter-Generational Transfer GST Ledger `[x]`
 
 **Acceptance Criteria**: Trace the allocation of the GST Tax Exemption (currently ~$13.6M) to ensuring the trust remains "GST Exempt" (Zero Inclusion Ratio).
 
@@ -80,12 +80,12 @@ CREATE TABLE gst_exemption_ledger (
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Migration | `migrations/145_gst_ledger.sql` | `[ ]` |
-| GST Calculator | `services/tax/gst_calculator.py` | `[ ]` |
+| Migration | `migrations/145_gst_ledger.sql` | `[x]` |
+| GST Calculator | `services/tax/gst_calculator.py` | `[x]` |
 
 ---
 
-### 145.3 Neo4j Heir Payout History Graph `[ ]`
+### 145.3 Neo4j Heir Payout History Graph `[x]`
 
 **Acceptance Criteria**: Graph visualization of payouts across generations to track "equality" (e.g., per stirpes vs. per capita) and ensure fairness over decades.
 
@@ -99,40 +99,40 @@ CREATE TABLE gst_exemption_ledger (
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Generation Graph | `services/neo4j/generation_graph.py` | `[ ]` |
-| Fairness Monitor | `services/estate/fairness_monitor.py` | `[ ]` |
+| Generation Graph | `services/neo4j/generation_graph.py` | `[x]` |
+| Fairness Monitor | `services/estate/fairness_monitor.py` | `[x]` |
 
 #### Frontend Implementation
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Family Tree Payouts | `frontend2/src/components/Estate/FamilyTreePayouts.jsx` | `[ ]` |
+| Family Tree Payouts | `frontend2/src/components/Estate/FamilyTreePayouts.jsx` | `[x]` |
 
 ---
 
-### 145.4 Trust Owns Assets Perpetual Service `[ ]`
+### 145.4 Trust Owns Assets Perpetual Service `[x]`
 
 **Acceptance Criteria**: Service validating that assets are *never* retitled into an individual's name, preventing a "step-up in basis" miss or estate inclusion error.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Retitle Blocker | `services/custody/retitle_blocker.py` | `[ ]` |
+| Retitle Blocker | `services/custody/retitle_blocker.py` | `[x]` |
 
 ---
 
-### 145.5 Tax Savings Dynasty Simulator `[ ]`
+### 145.5 Tax Savings Dynasty Simulator `[x]`
 
 **Acceptance Criteria**: Simulator showing the compounding difference between a Dynasty Trust (0% estate tax at each generation) vs. outright inheritance (40% tax every generation).
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Compounding Sim | `services/simulation/dynasty_sim.py` | `[ ]` |
+| Compounding Sim | `services/simulation/dynasty_sim.py` | `[x]` |
 
 #### Frontend Implementation
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Legacy Calculator | `frontend2/src/components/Simulator/LegacyCalculator.jsx` | `[ ]` |
+| Legacy Calculator | `frontend2/src/components/Simulator/LegacyCalculator.jsx` | `[x]` |
 
 ---
 
@@ -144,8 +144,8 @@ CREATE TABLE gst_exemption_ledger (
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `python cli.py dynasty status` | Show exemption status | `[ ]` |
-| `python cli.py dynasty simulate <years>` | Run tax savings sim | `[ ]` |
+| `python cli.py dynasty status` | Show exemption status | `[x]` |
+| `python cli.py dynasty simulate <years>` | Run tax savings sim | `[x]` |
 
 ---
 

@@ -19,6 +19,15 @@ const BrokerageAccount = () => {
     const [summary, setSummary] = useState(brokerageService.getAccountSummary());
     const [equityData, setEquityData] = useState(generateMockEquity());
 
+    useEffect(() => {
+        const unsubscribe = brokerageService.subscribe((event) => {
+            if (event.type === 'MARKET_UPDATE' || event.type === 'INIT') {
+                setSummary(event.data);
+            }
+        });
+        return () => unsubscribe();
+    }, []);
+
     const formatCurrency = (val) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency', currency: 'USD', minimumFractionDigits: 2

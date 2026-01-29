@@ -90,22 +90,14 @@ class SyncService {
    * Execute a single action
    */
   async _executeAction(action) {
-    const { type, endpoint, method = 'POST', data } = action;
+    const { endpoint, method = 'POST', data } = action;
+    const lowerMethod = method.toLowerCase();
 
-    const response = await fetch(endpoint, {
-      method,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      },
-      body: data ? JSON.stringify(data) : undefined,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Sync failed: ${response.statusText}`);
+    if (lowerMethod === 'get') {
+      return apiClient.get(endpoint, { params: data });
     }
-
-    return response.json();
+    
+    return apiClient[lowerMethod](endpoint, data);
   }
 
   /**

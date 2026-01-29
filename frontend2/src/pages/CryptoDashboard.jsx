@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import WalletDashboard from '../widgets/Crypto/CryptoWalletDashboard';
 import LPTracker from '../widgets/Crypto/LPPositionTracker';
@@ -10,9 +10,27 @@ import '../widgets/Crypto/CryptoWallet.css';
 import StatCard from '../components/DataViz/StatCard';
 import GlassCard from '../components/Common/GlassCard';
 
+// Store
+import useWeb3Store from '../stores/web3Store';
+
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const CryptoDashboard = () => {
+    const { 
+        portfolio, 
+        gasMetrics, 
+        lpPositions, 
+        fetchPortfolio, 
+        fetchGasMetrics, 
+        fetchLPPositions 
+    } = useWeb3Store();
+
+    useEffect(() => {
+        fetchPortfolio('current');
+        fetchGasMetrics('ethereum');
+        fetchLPPositions('current');
+    }, [fetchPortfolio, fetchGasMetrics, fetchLPPositions]);
+
     const DEFAULT_LAYOUT = {
         lg: [
             { i: 'stats', x: 0, y: 0, w: 12, h: 2 },
@@ -38,12 +56,41 @@ const CryptoDashboard = () => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
     };
 
-    // Mock data for StatCards
+    // Derived Data
+    const ethGas = gasMetrics?.ethereum?.average || 0;
+    const totalVal = portfolio?.total_value || 0;
+    const ethBal = portfolio?.assets?.find(a => a.symbol === 'ETH')?.amount || 0;
+    
     const cryptoStats = [
-        { label: 'Total Value', value: 142850, prefix: '$', change: 2840, status: 'positive', sparklineData: [140, 138, 142, 145, 141, 143] },
-        { label: 'ETH Balance', value: 24.5, suffix: ' ETH', change: 0.8, status: 'positive', sparklineData: [23, 24, 23.5, 24.2, 24.5] },
-        { label: 'Gas (Gwei)', value: 28, suffix: ' gwei', change: -12, status: 'positive', sparklineData: [45, 38, 32, 28, 30, 28] },
-        { label: 'Active LPs', value: 6, change: 1, status: 'neutral', sparklineData: [5, 5, 5, 6, 6, 6] },
+        { 
+            label: 'Total Value', 
+            value: totalVal, 
+            prefix: '$', 
+            change: portfolio?.change_24h || 0, 
+            status: (portfolio?.change_24h || 0) >= 0 ? 'positive' : 'negative', 
+            sparklineData: [140, 138, 142, 145, 141, 143] // Keep mock sparkline for now
+        },
+        { 
+            label: 'ETH Balance', 
+            value: ethBal, 
+            suffix: ' ETH', 
+            status: 'neutral', 
+            sparklineData: [23, 24, 23.5, 24.2, 24.5] 
+        },
+        { 
+            label: 'Gas (Gwei)', 
+            value: ethGas, 
+            suffix: ' gwei', 
+            change: 0, 
+            status: ethGas < 20 ? 'positive' : 'negative', 
+            sparklineData: [45, 38, 32, 28, 30, 28] 
+        },
+        { 
+            label: 'Active LPs', 
+            value: lpPositions?.length || 0, 
+            status: 'neutral', 
+            sparklineData: [5, 5, 5, 6, 6, 6] 
+        },
     ];
 
     return (

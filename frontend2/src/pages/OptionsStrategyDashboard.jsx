@@ -25,8 +25,9 @@
  * ==============================================================================
  */
 
+
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import useOptionsStore from '../stores/optionsStore';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -34,16 +35,19 @@ import './OptionsStrategyDashboard.css';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 const OptionsStrategyDashboard = () => {
-  const [strategy, setStrategy] = useState(null);
-  const [greeks, setGreeks] = useState(null);
-  const [optionsChain, setOptionsChain] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [selectedSymbol, setSelectedSymbol] = useState('AAPL');
-  const [strategyType, setStrategyType] = useState('covered_call');
+  const {
+      strategy,
+      greeks,
+      optionsChain,
+      isLoading,
+      selectedSymbol,
+      strategyType,
+      setSelectedSymbol,
+      setStrategyType,
+      fetchOptionsChain,
+      buildStrategy
+  } = useOptionsStore();
 
   const DEFAULT_LAYOUT = {
     lg: [
@@ -76,42 +80,12 @@ const OptionsStrategyDashboard = () => {
     window.location.reload();
   };
 
-  const loadOptionsChain = React.useCallback(async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/options/chain`, {
-        params: { symbol: selectedSymbol }
-      });
-      setOptionsChain(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading options chain:', error);
-    }
-  }, [selectedSymbol]);
-
   useEffect(() => {
-    loadOptionsChain();
-  }, [loadOptionsChain]);
+    fetchOptionsChain(selectedSymbol);
+  }, [fetchOptionsChain, selectedSymbol]);
 
-  const buildStrategy = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.post(`${API_BASE}/api/v1/options/strategy/build`, {
-        symbol: selectedSymbol,
-        strategy_type: strategyType,
-        legs: []
-      });
-      setStrategy(res.data.data);
-      
-      if (res.data.data.strategy_id) {
-        const greeksRes = await axios.post(`${API_BASE}/api/v1/options/strategy/analyze`, {
-          strategy_id: res.data.data.strategy_id
-        });
-        setGreeks(greeksRes.data.data);
-      }
-    } catch (error) {
-      console.error('Error building strategy:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleBuildStrategy = async () => {
+    await buildStrategy(selectedSymbol, strategyType, []);
   };
 
   return (
@@ -178,8 +152,8 @@ const OptionsStrategyDashboard = () => {
                                 <option value="butterfly">Butterfly</option>
                             </select>
                         </div>
-                        <button onClick={buildStrategy} disabled={loading} className="p-2 px-6 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-lg transition-all active:scale-95 disabled:opacity-50">
-                            {loading ? 'Building...' : 'Build Strategy'}
+                        <button onClick={handleBuildStrategy} disabled={isLoading} className="p-2 px-6 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-lg transition-all active:scale-95 disabled:opacity-50">
+                            {isLoading ? 'Building...' : 'Build Strategy'}
                         </button>
                     </div>
                 </div>

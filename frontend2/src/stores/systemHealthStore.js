@@ -3,6 +3,7 @@
  * Phase 62: Manages Kafka, Postgres, Neo4j health and agent load balancing.
  */
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useSystemHealthStore = create((set, get) => ({
     // State
@@ -26,9 +27,8 @@ const useSystemHealthStore = create((set, get) => ({
     refreshHealth: async () => {
         const { setKafkaHealth, setPostgresHealth, setNeo4jHealth, setAgentLoad, setOverallStatus, setError } = get();
         try {
-            const response = await fetch('/api/v1/system/health');
-            if (!response.ok) throw new Error('Health check failed');
-            const data = await response.json();
+            const response = await apiClient.get('/system/health');
+            const data = response.data;
             if (data.kafka) setKafkaHealth(data.kafka);
             if (data.postgres) setPostgresHealth(data.postgres);
             if (data.neo4j) setNeo4jHealth(data.neo4j);
@@ -45,7 +45,7 @@ const useSystemHealthStore = create((set, get) => ({
     // Async: Restart consumer
     restartConsumer: async (consumerId) => {
         try {
-            await fetch(`/api/v1/system/kafka/restart/${consumerId}`, { method: 'POST' });
+            await apiClient.post(`/system/kafka/restart/${consumerId}`);
         } catch (error) {
             console.error('Consumer restart failed:', error);
         }

@@ -55,10 +55,10 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                     <div className="input-group">
                         <label>Email Address</label>
                         <input
-                            type="email"
+                            type="text"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter your email"
+                            placeholder="Enter your email or username"
                             required
                         />
                     </div>

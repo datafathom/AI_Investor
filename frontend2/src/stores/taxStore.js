@@ -8,7 +8,7 @@
 
 import { create } from 'zustand';
 
-const useTaxStore = create((set) => ({
+export const useTaxStore = create((set) => ({
     report: null,
     loading: false,
     error: null,

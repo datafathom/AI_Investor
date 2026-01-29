@@ -22,44 +22,36 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
+import useNewsStore from '../stores/newsStore';
 import './NewsSentimentDashboard.css';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 const NewsSentimentDashboard = () => {
-  const [articles, setArticles] = useState([]);
-  const [sentiment, setSentiment] = useState(null);
+  const {
+      headlines,
+      analyzedTopics,
+      loading,
+      fetchHeadlines,
+      analyzeTopic
+  } = useNewsStore();
+
   const [selectedSymbol, setSelectedSymbol] = useState('AAPL');
-  const [loading, setLoading] = useState(false);
+  
+  // Derived state for the selected symbol's sentiment
+  const sentiment = analyzedTopics[selectedSymbol.toLowerCase()] || null;
+  const isHeadlinesLoading = loading.headlines;
 
   useEffect(() => {
-    loadTrendingNews();
-    loadSentiment(selectedSymbol);
-  }, [selectedSymbol]);
-
-  const loadTrendingNews = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get(`${API_BASE}/api/news/trending`, {
-        params: { limit: 20 }
-      });
-      setArticles(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading news:', error);
-    } finally {
-      setLoading(false);
+    fetchHeadlines();
+    if (selectedSymbol) {
+        analyzeTopic(selectedSymbol);
     }
-  };
+  }, [fetchHeadlines, analyzeTopic]); // Initial load
 
-  const loadSentiment = async (symbol) => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/news/sentiment/${symbol}`);
-      setSentiment(res.data.data);
-    } catch (error) {
-      console.error('Error loading sentiment:', error);
-    }
+  const handleAnalyze = () => {
+      if (selectedSymbol) {
+          analyzeTopic(selectedSymbol);
+      }
   };
 
   const getSentimentColor = (score) => {
@@ -89,7 +81,7 @@ const NewsSentimentDashboard = () => {
               placeholder="Enter symbol"
               className="symbol-input"
             />
-            <button onClick={() => loadSentiment(selectedSymbol)}>Analyze</button>
+            <button onClick={handleAnalyze}>Analyze</button>
           </div>
           
           {sentiment && (
@@ -123,11 +115,11 @@ const NewsSentimentDashboard = () => {
         {/* News Feed */}
         <div className="news-feed">
           <h2>Trending News</h2>
-          {loading ? (
+          {isHeadlinesLoading ? (
             <div className="loading">Loading news...</div>
-          ) : articles.length > 0 ? (
+          ) : headlines.length > 0 ? (
             <div className="articles-list">
-              {articles.map((article, idx) => (
+              {headlines.map((article, idx) => (
                 <div key={idx} className="article-card">
                   <div className="article-header">
                     <span className="article-source">{article.source}</span>

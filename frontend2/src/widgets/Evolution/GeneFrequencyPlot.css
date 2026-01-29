@@ -1,0 +1,52 @@
+.gene-frequency-container {
+    padding: 24px;
+    background: rgba(15, 20, 30, 0.9);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 242, 255, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    color: #fff;
+}
+
+.gene-frequency-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.gene-frequency-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #00f2ff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.gene-frequency-legend {
+    display: flex;
+    gap: 16px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+    stroke: rgba(255, 255, 255, 0.1);
+}
+
+.recharts-text {
+    fill: rgba(255, 255, 255, 0.5) !important;
+    font-size: 12px;
+}

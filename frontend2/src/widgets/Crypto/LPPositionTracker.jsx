@@ -1,5 +1,6 @@
-import React from 'react';
-import { TrendingDown, Droplet, AlertTriangle } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { TrendingDown, Droplet, AlertTriangle, Loader2 } from 'lucide-react';
+import useWeb3Store from '../../stores/web3Store';
 import './LPTracker.css';
 
 /**
@@ -8,41 +9,18 @@ import './LPTracker.css';
  * Tracks liquidity provider positions with impermanent loss visualization.
  */
 const LPPositionTracker = () => {
-    const positions = [
-        {
-            id: 1,
-            pool: 'ETH/USDC',
-            protocol: 'Uniswap V3',
-            liquidity: 15000,
-            depositValue: 14200,
-            currentValue: 13850,
-            impermanentLoss: -2.46,
-            fees: 320,
-            apr: 18.5,
-        },
-        {
-            id: 2,
-            pool: 'SOL/USDT',
-            protocol: 'Raydium',
-            liquidity: 8500,
-            depositValue: 8000,
-            currentValue: 8200,
-            impermanentLoss: -1.12,
-            fees: 180,
-            apr: 24.2,
-        },
-        {
-            id: 3,
-            pool: 'WBTC/ETH',
-            protocol: 'Curve',
-            liquidity: 25000,
-            depositValue: 24500,
-            currentValue: 23800,
-            impermanentLoss: -3.85,
-            fees: 520,
-            apr: 12.8,
-        },
-    ];
+    const { lpPositions, fetchLPPositions, isLoading } = useWeb3Store();
+
+    useEffect(() => {
+        // Fetch LP positions for current user
+        fetchLPPositions('current');
+    }, [fetchLPPositions]);
+
+    const positions = lpPositions || [];
+
+    if (isLoading && positions.length === 0) {
+        return <div className="p-4 flex items-center justify-center text-zinc-500"><Loader2 className="animate-spin mr-2"/> Loading LP Data...</div>;
+    }
 
     const totalLiquidity = positions.reduce((sum, p) => sum + p.liquidity, 0);
     const totalFees = positions.reduce((sum, p) => sum + p.fees, 0);

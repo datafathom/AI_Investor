@@ -28,13 +28,13 @@ const PortfolioAttribution = () => {
 
     const DEFAULT_LAYOUT = {
         lg: [
-            { i: 'stats', x: 0, y: 0, w: 12, h: 2 },
-            { i: 'sector', x: 0, y: 2, w: 6, h: 4 },
-            { i: 'heatmap', x: 6, y: 2, w: 6, h: 4 },
-            { i: 'strength', x: 0, y: 6, w: 12, h: 4 }
+            { i: 'stats', x: 0, y: 0, w: 12, h: 3 },
+            { i: 'sector', x: 0, y: 3, w: 6, h: 9 },
+            { i: 'heatmap', x: 6, y: 3, w: 6, h: 9 },
+            { i: 'strength', x: 0, y: 12, w: 12, h: 10 }
         ]
     };
-    const STORAGE_KEY = 'layout_attribution_dashboard';
+    const STORAGE_KEY = 'layout_attribution_dashboard_v2';
 
     const [layouts, setLayouts] = React.useState(() => {
         try {
@@ -105,9 +105,10 @@ const PortfolioAttribution = () => {
                     onLayoutChange={onLayoutChange}
                     breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                     cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-                    rowHeight={80}
+                    rowHeight={40}
                     isDraggable={true}
                     isResizable={true}
+                    margin={[10, 10]}
                 >
                     {/* Stats Row */}
                     <div key="stats" style={{ display: 'flex', gap: '16px' }}>

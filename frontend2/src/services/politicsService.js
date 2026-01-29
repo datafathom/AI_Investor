@@ -1,9 +1,4 @@
-/**
- * Political Alpha Service
- * Handles fetching congressional disclosures and political alpha scores.
- */
-
-const API_BASE_URL = '/api/v1/politics';
+import apiClient from './apiClient';
 
 export const politicsService = {
     /**
@@ -11,9 +6,7 @@ export const politicsService = {
      */
     async getDisclosures() {
         try {
-            const response = await fetch(`${API_BASE_URL}/disclosures`);
-            if (!response.ok) throw new Error('Failed to fetch disclosures');
-            return await response.json();
+            return await apiClient.get('/politics/disclosures');
         } catch (error) {
             console.error('Error in politicsService.getDisclosures:', error);
             throw error;
@@ -26,9 +19,7 @@ export const politicsService = {
      */
     async getAlphaScore(ticker) {
         try {
-            const response = await fetch(`${API_BASE_URL}/alpha/${ticker}`);
-            if (!response.ok) throw new Error(`Failed to fetch alpha for ${ticker}`);
-            return await response.json();
+            return await apiClient.get(`/politics/alpha/${ticker}`);
         } catch (error) {
             console.error(`Error in politicsService.getAlphaScore for ${ticker}:`, error);
             throw error;

@@ -1,71 +1,64 @@
 import React from 'react';
 import { Server, Activity, AlertTriangle, RefreshCw } from 'lucide-react';
+import useSystemHealthStore from '../../stores/systemHealthStore';
 import './KafkaHealth.css';
 
 const KafkaHealth = () => {
+    const { kafkaHealth, restartConsumer } = useSystemHealthStore();
+
     return (
         <div className="kafka-health-widget">
             <div className="widget-header">
                 <h3><Server size={18} className="text-orange-500" /> Kafka Cluster Health</h3>
                 <div className="cluster-status">
-                    <span className="dot online"></span>
-                    <span className="status-text">HEALTHY</span>
+                    <span className={`dot ${kafkaHealth.status === 'healthy' ? 'online' : 'offline'}`}></span>
+                    <span className="status-text">{kafkaHealth.status.toUpperCase()}</span>
                 </div>
             </div>
 
             <div className="metrics-grid">
                 <div className="metric-box">
-                    <span className="label">Total Brokers</span>
-                    <span className="val">3</span>
+                    <span className="label">Topics</span>
+                    <span className="val">{kafkaHealth.topics?.length || 0}</span>
                 </div>
                 <div className="metric-box">
-                    <span className="label">Msg/Sec In</span>
-                    <span className="val">4,281</span>
+                    <span className="label">Msg/Sec</span>
+                    <span className="val">{kafkaHealth.messagesPerSecond?.toLocaleString()}</span>
                 </div>
                 <div className="metric-box">
-                    <span className="label">Under-Replicated</span>
-                    <span className="val good">0</span>
+                    <span className="label">Total Lag</span>
+                    <span className="val ${kafkaHealth.lag > 5000 ? 'bad' : 'good'}">{kafkaHealth.lag?.toLocaleString()}</span>
                 </div>
             </div>
 
             <div className="topic-throughput">
                 <h4>Topic Throughput (Msg/Sec)</h4>
-                <div className="topic-row">
-                    <span className="topic-name">market-data.ticks</span>
-                    <div className="bar-container">
-                        <div className="bar-fill" style={{ width: '85%' }}></div>
+                {kafkaHealth.topics?.map((topic, idx) => (
+                    <div key={idx} className="topic-row">
+                        <span className="topic-name">{topic.name}</span>
+                        <div className="bar-container">
+                            <div className="bar-fill" style={{ width: `${Math.min(topic.throughput / 100, 100)}%` }}></div>
+                        </div>
+                        <span className="throughput">{topic.throughput}</span>
                     </div>
-                    <span className="throughput">2,400</span>
-                </div>
-                <div className="topic-row">
-                    <span className="topic-name">agent.signals</span>
-                    <div className="bar-container">
-                        <div className="bar-fill" style={{ width: '45%' }}></div>
-                    </div>
-                    <span className="throughput">850</span>
-                </div>
-                <div className="topic-row">
-                    <span className="topic-name">system.logs</span>
-                    <div className="bar-container">
-                        <div className="bar-fill" style={{ width: '60%' }}></div>
-                    </div>
-                    <span className="throughput">1,031</span>
-                </div>
+                ))}
             </div>
 
-            <div className="consumer-lag-alert">
-                <div className="alert-header">
-                    <AlertTriangle size={14} className="text-red-500" />
-                    <span>Consumer Group Lag Alert</span>
+            {kafkaHealth.lag > 1000 && (
+                <div className="consumer-lag-alert">
+                    <div className="alert-header">
+                        <AlertTriangle size={14} className="text-red-500" />
+                        <span>High Consumer Group Lag</span>
+                    </div>
+                    <div className="lag-details">
+                        <span className="group-name">Main Analytics Consumer</span>
+                        <span className="lag-count">Lag: {kafkaHealth.lag.toLocaleString()} msgs</span>
+                    </div>
+                    <button className="restart-btn" onClick={() => restartConsumer('analytics-1')}>
+                        <RefreshCw size={12} /> Restart Consumer
+                    </button>
                 </div>
-                <div className="lag-details">
-                    <span className="group-name">analytics-engine-pro-1</span>
-                    <span className="lag-count">Lag: 4,200 msgs</span>
-                </div>
-                <button className="restart-btn">
-                    <RefreshCw size={12} /> Restart Consumer
-                </button>
-            </div>
+            )}
         </div>
     );
 };

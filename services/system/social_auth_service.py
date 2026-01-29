@@ -22,6 +22,7 @@ class SocialAuthService:
     def _init_service(self) -> None:
         self.logger = logging.getLogger(__name__)
         self.db = get_database_manager()
+        self._init_db()
 
     def _init_db(self, cur=None) -> None:
         """Ensures auth tables exist in Postgres and schema is up-to-date."""
@@ -50,6 +51,7 @@ class SocialAuthService:
             self._ensure_column(cur, "users", "role", "VARCHAR(50) DEFAULT 'trader'")
             self._ensure_column(cur, "users", "is_verified", "BOOLEAN DEFAULT FALSE")
             self._ensure_column(cur, "users", "password_hash", "TEXT")
+            self._ensure_column(cur, "users", "organization_id", "INTEGER")
 
             # Handle Legacy 'password' column (Drop NOT NULL if it exists)
             cur.execute("""
@@ -81,7 +83,7 @@ class SocialAuthService:
                  cur.execute("""
                     INSERT INTO users (email, username, role, is_verified, password_hash)
                     VALUES (%s, %s, %s, %s, %s);
-                """, ('admin@example.com', 'admin', 'admin', True, 'mock_hash_admin'))
+                """, ('admin@example.com', 'admin', 'admin', True, 'mock_hash_nimda'))
                 
             self.logger.info("SocialAuthService database schema synchronized.")
         except Exception as e:
@@ -101,18 +103,22 @@ class SocialAuthService:
             cur.execute(f"ALTER TABLE {table} ADD COLUMN {column} {type_def};")
 
     def _get_user_by_email(self, email: str) -> Optional[Dict[str, Any]]:
-        """Helper to fetch user data from DB."""
+        """Helper to fetch user data from DB (case-insensitive)."""
+        if not email:
+            return None
+        email = email.strip().lower()
         try:
             with self.db.pg_cursor() as cur:
                 cur.execute("""
-                    SELECT id, email, username, role, is_verified, password_hash 
-                    FROM users WHERE email = %s;
+                    SELECT id, email, username, role, is_verified, password_hash, organization_id 
+                    FROM users WHERE LOWER(email) = %s;
                 """, (email,))
                 user = cur.fetchone()
                 if user:
                     return {
                         "id": user[0], "email": user[1], "username": user[2],
-                        "role": user[3], "is_verified": user[4], "password_hash": user[5]
+                        "role": user[3], "is_verified": user[4], "password_hash": user[5],
+                        "organization_id": user[6]
                     }
         except Exception as e:
             self.logger.error("Error fetching user %s: %s", email, e)
@@ -135,6 +141,8 @@ class SocialAuthService:
             vendor_email = code.split(':')[1]
         else:
             vendor_email = f"user_{mock_id}@example.com"
+        
+        vendor_email = vendor_email.strip().lower()
         
         # Metadata from vendor (Simulated)
         vendor_metadata = {
@@ -194,26 +202,49 @@ class SocialAuthService:
                 "email": vendor_email,
                 "role": user_data["role"],
                 "is_verified": user_data["is_verified"],
+                "organization_id": user_data.get("organization_id"),
                 "has_password": user_data["password_hash"] is not None
             },
             "new_user": not user_data
         }
 
-    def set_password(self, email: str, password: str) -> bool:
+    def _get_user_by_id(self, user_id: int) -> Optional[Dict[str, Any]]:
+        """Helper to fetch user data from DB by ID."""
+        try:
+            with self.db.pg_cursor() as cur:
+                cur.execute("""
+                    SELECT id, email, username, role, is_verified, password_hash, organization_id 
+                    FROM users WHERE id = %s;
+                """, (user_id,))
+                user = cur.fetchone()
+                if user:
+                    return {
+                        "id": user[0], "email": user[1], "username": user[2],
+                        "role": user[3], "is_verified": user[4], "password_hash": user[5],
+                        "organization_id": user[6]
+                    }
+        except Exception as e:
+            self.logger.error("Error fetching user %s: %s", user_id, e)
+        return None
+
+    def set_password(self, email: str, password: str, user_id: int = None) -> bool:
         """Sets or updates password for a user."""
+        if user_id:
+             try:
+                password_hash = f"mock_hash_{password[::-1]}"
+                with self.db.pg_cursor() as cur:
+                    cur.execute("UPDATE users SET password_hash = %s WHERE id = %s;", (password_hash, user_id))
+                self.logger.info("Password set for user ID: %s", user_id)
+                return True
+             except Exception as e:
+                self.logger.error("Failed to set password for ID %s: %s", user_id, e)
+                return False
+
         user = self._get_user_by_email(email)
         if not user:
             return False
         
-        password_hash = f"mock_hash_{password[::-1]}"
-        try:
-            with self.db.pg_cursor() as cur:
-                cur.execute("UPDATE users SET password_hash = %s WHERE email = %s;", (password_hash, email))
-            self.logger.info("Password set for user: %s", email)
-            return True
-        except Exception as e:
-            self.logger.error("Failed to set password for %s: %s", email, e)
-            return False
+        return self.set_password(email, password, user_id=user["id"])
 
     def verify_email(self, email: str) -> bool:
         """Marks a user as email-verified."""

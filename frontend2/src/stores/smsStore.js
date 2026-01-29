@@ -12,6 +12,11 @@ const useSMSStore = create((set) => ({
     sending: false,
     lastResult: null,
     error: null,
+    preferences: {
+        priceSpikes: true,
+        tradeExecutions: true,
+        systemHealth: false
+    },
 
     sendTestAlert: async (phoneNumber, mock = true) => {
         set({ sending: true, lastResult: null, error: null });
@@ -30,6 +35,19 @@ const useSMSStore = create((set) => ({
         } catch (error) {
             console.error('SMS send failed:', error);
             set({ error: error.message, sending: false });
+        }
+    },
+
+    updatePreferences: async (phoneNumber, prefs, mock = true) => {
+        try {
+             await fetch(`/api/v1/notifications/twilio/subscribe?mock=${mock}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: phoneNumber, preferences: prefs })
+            });
+            set({ preferences: prefs });
+        } catch (error) {
+            console.error('Update SMS preferences failed:', error);
         }
     }
 }));

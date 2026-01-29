@@ -21,94 +21,41 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import useBillingStore from '../stores/billingStore';
 import './BillPaymentDashboard.css';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 const BillPaymentDashboard = () => {
-  const [bills, setBills] = useState([]);
-  const [upcomingBills, setUpcomingBills] = useState([]);
-  const [paymentHistory, setPaymentHistory] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const { 
+    bills, 
+    upcomingBills, 
+    paymentHistory, 
+    fetchBills, 
+    addBill, 
+    schedulePayment, 
+    loading 
+  } = useBillingStore();
+
   const [userId] = useState('user_1');
   const [newBill, setNewBill] = useState({ payee: '', amount: '', due_date: '', is_recurring: false });
 
   useEffect(() => {
-    loadBills();
-    loadUpcomingBills();
-    loadPaymentHistory();
-  }, []);
+    fetchBills(userId);
+  }, [fetchBills, userId]);
 
-  const loadBills = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/billing/bills`, {
-        params: { user_id: userId }
-      });
-      setBills(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading bills:', error);
-    }
-  };
-
-  const loadUpcomingBills = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/billing/upcoming`, {
-        params: { user_id: userId }
-      });
-      setUpcomingBills(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading upcoming bills:', error);
-    }
-  };
-
-  const loadPaymentHistory = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/billing/history`, {
-        params: { user_id: userId, limit: 20 }
-      });
-      setPaymentHistory(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading payment history:', error);
-    }
-  };
-
-  const addBill = async () => {
+  const handleAddBill = async () => {
     if (!newBill.payee || !newBill.amount || !newBill.due_date) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/billing/bill/add`, {
-        user_id: userId,
-        payee: newBill.payee,
-        amount: parseFloat(newBill.amount),
-        due_date: newBill.due_date,
-        is_recurring: newBill.is_recurring
-      });
-      setNewBill({ payee: '', amount: '', due_date: '', is_recurring: false });
-      loadBills();
-      loadUpcomingBills();
-    } catch (error) {
-      console.error('Error adding bill:', error);
-    } finally {
-      setLoading(false);
-    }
+    await addBill({
+      user_id: userId,
+      payee: newBill.payee,
+      amount: parseFloat(newBill.amount),
+      due_date: newBill.due_date,
+      is_recurring: newBill.is_recurring
+    });
+    setNewBill({ payee: '', amount: '', due_date: '', is_recurring: false });
   };
 
-  const schedulePayment = async (billId) => {
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/billing/payment/schedule`, {
-        bill_id: billId,
-        payment_date: new Date().toISOString().split('T')[0]
-      });
-      loadBills();
-      loadPaymentHistory();
-    } catch (error) {
-      console.error('Error scheduling payment:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleSchedulePayment = async (billId) => {
+    await schedulePayment(billId, userId);
   };
 
   const getDaysUntilDue = (dueDate) => {
@@ -171,8 +118,8 @@ const BillPaymentDashboard = () => {
                 </label>
               </div>
               <div className="form-group" style={{ justifyContent: 'flex-end', flex: '0 0 auto' }}>
-                <button onClick={addBill} disabled={loading} className="add-button">
-                  Add Bill
+                <button onClick={handleAddBill} disabled={loading} className="add-button">
+                  {loading ? 'Adding...' : 'Add Bill'}
                 </button>
               </div>
             </div>
@@ -202,10 +149,11 @@ const BillPaymentDashboard = () => {
                         </div>
                       </div>
                       <button
-                        onClick={() => schedulePayment(bill.bill_id)}
+                        onClick={() => handleSchedulePayment(bill.bill_id)}
+                        disabled={loading}
                         className="pay-button"
                       >
-                        Schedule Payment
+                        {loading ? 'Processing...' : 'Schedule Payment'}
                       </button>
                     </div>
                   );

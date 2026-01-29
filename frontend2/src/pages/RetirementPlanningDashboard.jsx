@@ -20,17 +20,20 @@
  * ==============================================================================
  */
 
+
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useWealthStore } from '../stores/wealthStore';
 import './RetirementPlanningDashboard.css';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 const RetirementPlanningDashboard = () => {
-  const [projection, setProjection] = useState(null);
-  const [withdrawalStrategy, setWithdrawalStrategy] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { 
+    retirementProjection: projection, 
+    withdrawalStrategy, 
+    isLoading, 
+    runRetirementProjection, 
+    fetchWithdrawalStrategy 
+  } = useWealthStore();
+
   const [userId] = useState('user_1');
   const [projectionParams, setProjectionParams] = useState({
     current_age: 35,
@@ -41,37 +44,17 @@ const RetirementPlanningDashboard = () => {
   });
 
   useEffect(() => {
-    loadWithdrawalStrategy();
-  }, []);
+    fetchWithdrawalStrategy(userId);
+  }, [fetchWithdrawalStrategy, userId]);
 
-  const loadWithdrawalStrategy = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/retirement/withdrawal-strategy`, {
-        params: { user_id: userId }
-      });
-      setWithdrawalStrategy(res.data.data);
-    } catch (error) {
-      console.error('Error loading withdrawal strategy:', error);
-    }
-  };
-
-  const runProjection = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.post(`${API_BASE}/api/v1/retirement/projection`, {
-        user_id: userId,
+  const handleRunProjection = () => {
+    runRetirementProjection(userId, {
         current_age: projectionParams.current_age,
         retirement_age: projectionParams.retirement_age,
         current_savings: projectionParams.current_savings,
         monthly_contribution: projectionParams.monthly_contribution,
         expected_return: projectionParams.expected_return
-      });
-      setProjection(res.data.data);
-    } catch (error) {
-      console.error('Error running projection:', error);
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   return (
@@ -134,8 +117,8 @@ const RetirementPlanningDashboard = () => {
                 />
               </div>
             </div>
-            <button onClick={runProjection} disabled={loading} className="run-button">
-              {loading ? 'Calculating...' : 'Run Projection'}
+            <button onClick={handleRunProjection} disabled={isLoading} className="run-button">
+              {isLoading ? 'Calculating...' : 'Run Projection'}
             </button>
           </div>
 

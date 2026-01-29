@@ -4,15 +4,22 @@
     left: 0;
     width: 100%;
     height: 48px;
-    background: rgba(13, 17, 23, 0.85); /* Slightly more opaque than windows */
+    background: rgba(13, 17, 23, 0.95);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
+    justify-content: space-between;
     align-items: center;
     padding: 0 10px;
     z-index: 9999;
     box-shadow: 0 -4px 10px rgba(0,0,0,0.3);
+}
+
+.taskbar-left-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }
 
 .taskbar-start-button {
@@ -21,31 +28,62 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 10px;
     cursor: pointer;
     border-radius: 4px;
     transition: background 0.2s;
 }
 
-.taskbar-start-button:hover {
+.taskbar-start-button:hover,
+.taskbar-start-button.active {
     background: rgba(255, 255, 255, 0.1);
 }
 
 .start-icon {
     font-size: 24px;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+}
+
+.workspace-switcher {
+    display: flex;
+    gap: 8px;
+    padding: 0 10px;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    height: 24px;
+    align-items: center;
+}
+
+.ws-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #475569;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.ws-dot:hover {
+    background-color: #94a3b8;
+}
+
+.ws-dot.active {
+    width: 24px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #3b82f6, #06b6d4);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
 }
 
 .taskbar-apps {
-    flex-grow: 1;
+    flex: 1;
     display: flex;
     gap: 8px;
     height: 100%;
     align-items: center;
+    padding-left: 20px;
 }
 
 /* Icons */
 .taskbar-icon {
-    width: 40px; /* Or variable width for label? Requirements said Icon-based, plans implied icons. */
+    width: 40px;
     height: 40px;
     border-radius: 6px;
     background: rgba(255, 255, 255, 0.05);
@@ -65,17 +103,12 @@
 .taskbar-icon.active {
     background: rgba(255, 255, 255, 0.2);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid #06b6d4;
 }
 
-.taskbar-icon.active::after {
-    content: '';
-    position: absolute;
-    bottom: -4px; /* Align with bottom edge */
-    left: 10px;
-    right: 10px;
-    height: 3px;
-    background: var(--window-neon-color, #00ff88);
-    border-radius: 2px;
+.taskbar-icon.minimized {
+    opacity: 0.6;
+    border-bottom: 2px solid #64748b;
 }
 
 .icon-label {
@@ -91,34 +124,284 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    /* Pulse animation handled by JS/CSS class if needed */
 }
 
 /* Tooltip */
 .icon-tooltip {
     position: absolute;
-    bottom: 50px;
+    bottom: 55px; /* Moved up slightly */
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(0,0,0,0.9);
-    padding: 4px 8px;
-    border-radius: 4px;
+    background: rgba(15, 23, 42, 0.95);
+    padding: 6px 10px;
+    border-radius: 6px;
     font-size: 12px;
     white-space: nowrap;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.2s;
     border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    z-index: 10000;
 }
 
 .taskbar-icon:hover .icon-tooltip {
     opacity: 1;
 }
 
-/* Tray */
+.taskbar-right-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.system-meters {
+    display: flex;
+    gap: 12px;
+    margin-right: 10px;
+}
+
+.meter-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(15, 23, 42, 0.5);
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
 .taskbar-tray {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin-left: 10px;
+}
+
+.tray-date {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 11px;
     color: #94a3b8;
-    font-family: monospace;
-    font-size: 14px;
+    line-height: 1.2;
+}
+
+.tray-clock {
+    font-size: 13px;
+    color: #e2e8f0;
+    font-weight: 600;
+}
+
+/* Hover Preview */
+.hover-preview {
+    position: absolute;
+    bottom: 55px; /* Above taskbar */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 120px;
+    background: rgba(30, 41, 59, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    padding: 8px;
+    z-index: 10000;
+    pointer-events: none;
+    animation: fadeIn 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 4px;
+}
+
+.preview-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #e2e8f0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.preview-status {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #00ff88;
+}
+
+.preview-status.high { background: #ff4757; }
+.preview-status.medium { background: #ffc107; }
+
+.preview-snapshot {
+    flex: 1;
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    padding: 8px;
+}
+
+
+.fake-window-content {
+    display: flex;
+    gap: 4px;
+    height: 100%;
+    opacity: 0.6;
+}
+
+.fake-sidebar {
+    width: 20%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}
+
+.fake-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.fake-row {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    width: 100%;
+}
+
+.fake-row.short {
+    width: 60%;
+}
+
+.fake-chart {
+    flex: 1;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+    border-radius: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+/* Add a sine wave look to fake chart */
+.fake-chart::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    right: 2px;
+    height: 50%;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20' preserveAspectRatio='none'%3E%3Cpath d='M0 10 Q 25 20 50 10 T 100 10' stroke='cyan' fill='none' stroke-width='2'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    opacity: 0.5;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(10px) scale(0.95); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+/* Notification Badge */
+.taskbar-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 16px;
+    height: 16px;
+    background: #ff4757;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 2px solid rgba(13, 17, 23, 0.95);
+    animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Preview Close Button */
+.preview-close-btn {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: none;
+    background: rgba(255, 71, 87, 0.2);
+    color: #ff4757;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.preview-close-btn:hover {
+    background: #ff4757;
+    color: white;
+}
+
+/* Fake Nav Items in Preview */
+.fake-nav-item {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    margin-bottom: 2px;
+}
+
+.fake-nav-item.active {
+    background: rgba(0, 242, 255, 0.4);
+}
+
+/* Chart Glow Effect */
+.chart-glow {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30%;
+    background: linear-gradient(180deg, transparent 0%, rgba(0, 242, 255, 0.1) 100%);
+    border-radius: 0 0 2px 2px;
+}
+
+/* Preview Footer */
+.preview-footer {
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 6px;
+}
+
+.status-badge {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-badge.low {
+    background: rgba(0, 255, 136, 0.15);
+    color: #00ff88;
+}
+
+.status-badge.medium {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ffc107;
+}
+
+.status-badge.high {
+    background: rgba(255, 71, 87, 0.15);
+    color: #ff4757;
 }
