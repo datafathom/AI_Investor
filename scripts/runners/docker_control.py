@@ -31,7 +31,8 @@ def docker_up(build: bool = False):
         pass # Ignore exit from docker_down if it succeeds
         
     try:
-        cmd = ['docker-compose', '-f', compose_file, 'up', '-d', '--remove-orphans']
+        # We use the 'full' profile by default to maintain backward compatibility with local Dev mode
+        cmd = ['docker-compose', '-f', compose_file, '--profile', 'full', 'up', '-d', '--remove-orphans']
         if build:
             cmd.append('--build')
             

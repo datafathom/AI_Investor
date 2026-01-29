@@ -124,6 +124,79 @@
                 }
             }
         },
+        "infra": {
+            "description": "Infrastructure and LAN distribution management",
+            "subcommands": {
+                "cert-generate": {
+                    "description": "Generate SSL certificates for LAN IP or Service",
+                    "flags": [
+                        {
+                            "name": "ip",
+                            "type": "string",
+                            "default": "",
+                            "help": "Target LAN IP"
+                        },
+                        {
+                            "name": "service",
+                            "type": "string",
+                            "default": "",
+                            "help": "Target service (pulls IP from .env)"
+                        }
+                    ],
+                    "handler": "scripts.runners.cert_runner:generate_certs"
+                },
+                "set-lan-ip": {
+                    "description": "Configure .env with global LAN Box IP mapping",
+                    "arguments": [
+                        {
+                            "name": "ip",
+                            "type": "string",
+                            "required": true,
+                            "help": "IP address of the LAN Box"
+                        }
+                    ],
+                    "handler": "scripts.runners.cert_runner:set_lan_ip"
+                },
+                "set-host": {
+                    "description": "Configure .env for a specific service host",
+                    "arguments": [
+                        {
+                            "name": "service",
+                            "type": "string",
+                            "required": true,
+                            "help": "Service name (e.g. postgres, neo4j)"
+                        },
+                        {
+                            "name": "ip",
+                            "type": "string",
+                            "required": true,
+                            "help": "Host IP for the service"
+                        }
+                    ],
+                    "handler": "scripts.runners.cert_runner:set_host"
+                },
+                "init-node": {
+                    "description": "Bootstrap a new node in the distributed cluster",
+                    "arguments": [
+                        {
+                            "name": "ip",
+                            "type": "string",
+                            "required": true,
+                            "help": "IP address of this node"
+                        }
+                    ],
+                    "flags": [
+                        {
+                            "name": "roles",
+                            "type": "string",
+                            "default": "full",
+                            "help": "Service roles to run (e.g. database, graph, full)"
+                        }
+                    ],
+                    "handler": "scripts.runners.cert_runner:init_node"
+                }
+            }
+        },
         "docker-ps": {
             "description": "Quickly show Docker container status (shorthand for docker ps)",
             "handler": "scripts.runners.docker_control:docker_ps"

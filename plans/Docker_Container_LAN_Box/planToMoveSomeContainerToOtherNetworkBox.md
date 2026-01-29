@@ -20,7 +20,7 @@ Based on memory limits in `infra/docker-compose.yml`:
 ### A. IP Binding Abstraction
 Modify the `docker-compose.yml` to use a variable for port binding.
 - **Local Mode**: Binds to `127.0.0.1` (Default Security).
-- **LAN Mode**: Binds to `0.0.0.0` (Exposed to LAN).
+- **LAN Mode**: Binds to the **Static LAN IP** of the machine (Prevents exposure on other interfaces).
 
 ### B. Connection String Orchestration
 The `.env` file will toggle between `localhost` and the `LAN_BOX_IP`.
@@ -32,7 +32,8 @@ The `.env` file will toggle between `localhost` and the `LAN_BOX_IP`.
 2. Clone only the `infra/` directory and `data/` placeholders.
 3. In the `.env` file on the **LAN Box**, set:
    ```bash
-   DOCKER_BIND_IP=0.0.0.0
+   # SECURITY: DO NOT USE 0.0.0.0
+   DOCKER_BIND_IP=192.168.1.XX  # Match this machine's static LAN IP
    ```
 4. Run the containers:
    ```bash
@@ -66,7 +67,13 @@ The `.env` file will toggle between `localhost` and the `LAN_BOX_IP`.
 > Use **Docker Profiles** to easily toggle services.
 > `docker-compose --profile local-only up` vs `docker-compose --profile distributed up`.
 
-## 5. Verification Plan
+## 5. Security Mitigations (REQUIRED)
+1. **Specific Binding**: Never use `0.0.0.0`. Bind to the dedicated LAN IP.
+2. **Strong Passwords**: Rotate all database passwords from defaults.
+3. **Firewall Verification**: Use `nc -zv [IP] [PORT]` from an device outside the LAN to ensure ports aren't leaking to the internet.
+4. **Isolations**: Use a wired connection or WPA3-encrypted Wi-Fi to prevent local sniffing.
+
+## 6. Verification Plan
 1. **Ping Test**: Ensure Laptop can reach LAN Box IP.
 2. **Port Check**: Use `Test-NetConnection -ComputerName [IP] -Port 5432` to verify DB visibility.
 3. **Application Logs**: Verify the backend connects to the remote Kafka/Neo4j without timeouts.

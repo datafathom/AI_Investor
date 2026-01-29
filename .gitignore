@@ -53,3 +53,6 @@ yarn-error.log*
 
 # Docker
 .docker
+
+# Certificates
+infra/certs/
