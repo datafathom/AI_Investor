@@ -9,7 +9,7 @@ data/
 # Environment & Secrets
 .env
 .env.*
-!.env.example
+!.env.template
 venv/
 ENV/
 env/
