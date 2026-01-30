@@ -101,6 +101,8 @@ def init_node(ip: str, roles: str = "full"):
     print(f"Certificates generated for: {ip}")
     print(f"\nTo start services on this node, run:")
     print(f"docker compose -f infra/docker-compose.yml --profile {roles} up -d")
+    print(f"or")
+    print(f"python cli.py docker up --profile {roles}")
 
 def _get_ip_from_env(service: str) -> str:
     """Helper to resolve IP from .env for a service."""
