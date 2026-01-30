@@ -31,7 +31,7 @@ def docker_up(profile: str = "full", build: bool = False):
         pass # Ignore exit from docker_down if it succeeds
         
     try:
-        cmd = ['docker-compose', '-f', compose_file, '--profile', profile, 'up', '-d', '--remove-orphans']
+        cmd = ['docker', 'compose', '-f', compose_file, '--profile', profile, 'up', '-d', '--remove-orphans']
         if build:
             cmd.append('--build')
             
@@ -57,7 +57,7 @@ def docker_down(volumes: bool = False):
     compose_file = _get_compose_file()
     
     print("🛑 Stopping Docker containers...")
-    cmd = ['docker-compose', '-f', compose_file, 'down']
+    cmd = ['docker', 'compose', '-f', compose_file, 'down']
     if volumes:
         print("🕯️  Pruning volumes for a clean slate...")
         cmd.append('-v')
@@ -98,7 +98,7 @@ def docker_logs(service: str = "", follow: bool = True):
     """
     compose_file = _get_compose_file()
     
-    cmd = ['docker-compose', '-f', compose_file, 'logs']
+    cmd = ['docker', 'compose', '-f', compose_file, 'logs']
     if follow:
         cmd.append('-f')
     if service:

@@ -162,7 +162,7 @@ typing-inspection==0.4.2
 typing_extensions==4.15.0
 tzdata==2025.3
 update-checker==0.18.0
-urllib3==2.6.3
+urllib3==1.26.20
 uvicorn==0.40.0
 web3==7.14.0
 websocket-client==1.9.0
