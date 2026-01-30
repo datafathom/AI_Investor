@@ -1,0 +1,148 @@
+name: ai_investor
+services:
+  kafka:
+    profiles:
+      - streaming
+      - full
+    depends_on:
+      zookeeper:
+        condition: service_started
+        required: true
+    deploy:
+      resources:
+        limits:
+          memory: "419430400"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_BROKER_ID: "1"
+      KAFKA_HEAP_OPTS: -Xmx300m -Xms300m
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    image: confluentinc/cp-kafka:7.4.0
+    networks:
+      investor-network: null
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 9092
+        published: "9092"
+        protocol: tcp
+  neo4j:
+    profiles:
+      - graph
+      - full
+    deploy:
+      resources:
+        limits:
+          memory: "536870912"
+    environment:
+      NEO4J_AUTH: neo4j/investor_password
+      NEO4J_dbms_connector_bolt_tls_level: OPTIONAL
+      NEO4J_dbms_memory_heap_initial__size: 256m
+      NEO4J_dbms_memory_heap_max__size: 256m
+      NEO4J_dbms_memory_pagecache_size: 128m
+      NEO4J_dbms_ssl_policy_bolt_enabled: "false"
+      NEO4J_server_config_strict__validation_enabled: "false"
+    image: neo4j:5.12.0
+    networks:
+      investor-network: null
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 7474
+        published: "7474"
+        protocol: tcp
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 7687
+        published: "7687"
+        protocol: tcp
+    restart: always
+    volumes:
+      - type: bind
+        source: /home/x1st/Projects/AI_Company/AI_Investor/data/neo4j
+        target: /data
+        bind: {}
+  postgres:
+    profiles:
+      - database
+      - storage
+      - full
+    command:
+      - postgres
+    deploy:
+      resources:
+        limits:
+          memory: "209715200"
+    environment:
+      POSTGRES_DB: investor_db
+      POSTGRES_PASSWORD: investor_password
+      POSTGRES_USER: investor_user
+    image: timescale/timescaledb:latest-pg15
+    networks:
+      investor-network: null
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 5432
+        published: "5432"
+        protocol: tcp
+    restart: always
+    volumes:
+      - type: bind
+        source: /home/x1st/Projects/AI_Company/AI_Investor/data/postgres
+        target: /var/lib/postgresql/data
+        bind: {}
+      - type: bind
+        source: /home/x1st/Projects/AI_Company/AI_Investor/infra/certs/server.crt
+        target: /var/lib/postgresql/server.crt
+        read_only: true
+        bind: {}
+      - type: bind
+        source: /home/x1st/Projects/AI_Company/AI_Investor/infra/certs/server.key
+        target: /var/lib/postgresql/server.key
+        read_only: true
+        bind: {}
+  redis:
+    profiles:
+      - cache
+      - full
+    command:
+      - redis-server
+      - --requirepass
+      - 84zMsasS0WfXGGVFU6t7vLd9
+    deploy:
+      resources:
+        limits:
+          memory: "104857600"
+    image: redis:7-alpine
+    networks:
+      investor-network: null
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 6379
+        published: "6379"
+        protocol: tcp
+    restart: always
+  zookeeper:
+    profiles:
+      - streaming
+      - full
+    deploy:
+      resources:
+        limits:
+          memory: "314572800"
+    environment:
+      KAFKA_HEAP_OPTS: -Xmx256m -Xms256m
+      ZOOKEEPER_CLIENT_PORT: "2181"
+      ZOOKEEPER_TICK_TIME: "2000"
+    image: confluentinc/cp-zookeeper:7.4.0
+    networks:
+      investor-network: null
+networks:
+  investor-network:
+    name: ai_investor_investor-network
+    driver: bridge

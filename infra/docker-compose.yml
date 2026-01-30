@@ -34,7 +34,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://${DOCKER_BIND_IP:-localhost}:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -45,7 +45,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 400M
+          memory: 400MB
     networks:
       - investor-network
 
@@ -69,12 +69,12 @@ services:
       - ../data/postgres:/var/lib/postgresql/data
       - ./certs/server.crt:/var/lib/postgresql/server.crt:ro
       - ./certs/server.key:/var/lib/postgresql/server.key:ro
-    command: 
+    command:
       - "postgres"
     deploy:
       resources:
         limits:
-          memory: 200M
+          memory: 200MB
     networks:
       - investor-network
   # ---------------------------------------------------------------------------
