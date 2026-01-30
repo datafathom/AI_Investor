@@ -60,6 +60,23 @@
             "description": "Light Dev Mode: Backend + Frontend ONLY (For 2-Node setups).",
             "handler": "scripts.runners.dev_runner:start_dev_no_db"
         },
+        "speedtest": {
+            "description": "Speed test for remote services.",
+            "subcommands": {
+                "remote": {
+                    "description": "Run speed test on a remote service.",
+                    "arguments": [
+                        {
+                            "name": "service",
+                            "type": "string",
+                            "required": true,
+                            "help": "Service to test (postgres, kafka, neo4j, redis)"
+                        }
+                    ],
+                    "handler": "scripts.runners.speed_test_runner:run_speed_test"
+                }
+            }
+        },
         "verify-pipeline": {
             "description": "Run End-to-End verification of the Data->Signal->Trade pipeline.",
             "handler": "scripts.runners.system_control:verify_pipeline"
