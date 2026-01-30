@@ -2,8 +2,8 @@
 -- Tracks daily Treasury yields for risk calculations
 
 CREATE TABLE IF NOT EXISTS risk_free_rates (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    rate_date DATE NOT NULL UNIQUE,
+    id UUID DEFAULT gen_random_uuid(),
+    rate_date DATE NOT NULL, -- Removed UNIQUE
     
     -- Yields (as decimals, e.g. 0.045 for 4.5%)
     yield_3mo DECIMAL(6, 4),
@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS risk_free_rates (
     is_inverted_10y_2y BOOLEAN GENERATED ALWAYS AS (yield_10yr < yield_2yr) STORED,
     
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (id, rate_date)
 );
 
 -- Hypertable if TimescaleDB

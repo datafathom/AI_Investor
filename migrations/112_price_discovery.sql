@@ -2,7 +2,7 @@
 -- Tracks delays in market price adjustment attributed to passive dominance
 
 CREATE TABLE IF NOT EXISTS price_discovery_delays (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID DEFAULT gen_random_uuid(),
     event_timestamp TIMESTAMPTZ NOT NULL,
     ticker VARCHAR(10) NOT NULL,
     
@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS price_discovery_delays (
     attributed_to_passive BOOLEAN,
     correlation_score DECIMAL(5, 4),
     
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (id, event_timestamp)
 );
 
 -- Check if TimescaleDB extension is available

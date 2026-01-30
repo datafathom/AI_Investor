@@ -2,7 +2,7 @@
 -- Immutable ledger with SHA-256 hashing for audit integrity
 
 CREATE TABLE IF NOT EXISTS platform_ledger (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID DEFAULT gen_random_uuid(),
     entry_timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     
     -- Transaction Details
@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS platform_ledger (
     -- Immutability Hash
     previous_hash VARCHAR(64),
     entry_hash VARCHAR(64) NOT NULL,
-    hash_verified BOOLEAN DEFAULT FALSE
+    hash_verified BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY (id, entry_timestamp)
 );
 
 -- Check if TimescaleDB extension is available

@@ -2,7 +2,7 @@
 -- Tracks liquid cash vs monthly expenses
 
 CREATE TABLE IF NOT EXISTS emergency_fund_status (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL, -- Assuming users table exists from previous phases
     
     -- Cash Reserves
@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS emergency_fund_status (
     
     -- Metadata
     last_calculated TIMESTAMPTZ DEFAULT NOW(),
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (id, last_calculated)
 );
 
 -- Convert to hypertable for time-series analysis of liquidity

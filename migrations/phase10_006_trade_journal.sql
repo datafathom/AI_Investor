@@ -4,7 +4,7 @@
 CREATE TABLE IF NOT EXISTS trade_journal (
     id BIGSERIAL,
     timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    trade_id UUID NOT NULL UNIQUE,
+    trade_id UUID NOT NULL,
     
     -- Trade Details
     symbol VARCHAR(20) NOT NULL,
@@ -35,7 +35,8 @@ CREATE TABLE IF NOT EXISTS trade_journal (
     is_demo BOOLEAN NOT NULL DEFAULT TRUE,
     hash_sha256 VARCHAR(64),
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (trade_id, timestamp)
 );
 
 -- Convert to hypertable for TimescaleDB optimization

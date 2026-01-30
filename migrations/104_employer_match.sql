@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS employer_match_config (
 );
 
 CREATE TABLE IF NOT EXISTS contribution_history (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,
     account_id UUID NOT NULL,
     contribution_date DATE NOT NULL,
@@ -50,7 +50,8 @@ CREATE TABLE IF NOT EXISTS contribution_history (
     annual_limit DECIMAL(20, 2),           -- IRS limit for year
     remaining_room DECIMAL(20, 2),
     
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (id, contribution_date)
 );
 
 -- Check if TimescaleDB extension is available before creating hypertable

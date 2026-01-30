@@ -2,7 +2,7 @@
 -- Tracks overconcentration in cap-weighted indices
 
 CREATE TABLE IF NOT EXISTS index_concentration_snapshots (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID DEFAULT gen_random_uuid(),
     snapshot_timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     index_ticker VARCHAR(20) NOT NULL,
     
@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS index_concentration_snapshots (
     concentration_level VARCHAR(20), -- NORMAL, ELEVATED, HIGH, CRITICAL
     threshold_breached BOOLEAN DEFAULT FALSE,
     
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (id, snapshot_timestamp)
 );
 
 -- Check if TimescaleDB extension is available

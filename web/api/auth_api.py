@@ -49,7 +49,7 @@ def login():
         provided_hash = f"mock_hash_{password[::-1]}"
         
         # 2. Check Admin Hardcoded Fallback (Emergency access)
-        if email == 'admin' and password == 'admin':
+        if email == 'admin' and password == 'makeMoney':
             if not user_data:
                 # Ensure DB is initialized
                 try:

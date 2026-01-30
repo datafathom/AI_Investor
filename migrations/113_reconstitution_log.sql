@@ -2,7 +2,7 @@
 -- Tracks stocks entering indices due to relegation (poor performance)
 
 CREATE TABLE IF NOT EXISTS index_reconstitution_log (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID DEFAULT gen_random_uuid(),
     ticker VARCHAR(10) NOT NULL,
     reconstitution_date DATE NOT NULL,
     old_index VARCHAR(100),
@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS index_reconstitution_log (
     event_type VARCHAR(20) NOT NULL, -- PROMOTION, RELEGATION
     market_cap_at_event DECIMAL(20, 2),
     performance_prev_12m DECIMAL(8, 6),
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (id, reconstitution_date)
 );
 
 -- Check if TimescaleDB extension is available

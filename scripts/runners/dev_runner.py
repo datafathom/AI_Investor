@@ -71,23 +71,24 @@ def stream_output(process, prefix):
     except Exception:
         pass
 
-def start_dev_mode():
+def start_dev_mode(check_infra=True):
     """Main Entry Point for Dev Mode."""
     print("Starting AI Investor DEV MODE (Hot Reload)...")
     
     # 1. Check Infra
-    print("Checking Infrastructure...")
-    # Very basic check: Is Docker Postgres running?
-    # Ideally reuse scripts/runners/docker_control.py but we keep it simple here.
-    # We assume 'python cli.py start-infra' was run or we run it now?
-    # Let's try to verify ports.
-    if not check_port(5432) or not check_port(9092) or not check_port(6379): # Postgres, Kafka, Redis
-        print("Warning: Infrastructure ports not open. Attempting to start Docker containers...")
-        try:
-            subprocess.run([sys.executable, "cli.py", "docker", "up"], check=True)
-        except subprocess.CalledProcessError:
-            print("Error: Failed to start infrastructure. Please run 'python cli.py docker up' manually.")
-            return
+    if check_infra:
+        print("Checking Infrastructure...")
+        # Very basic check: Is Docker Postgres running?
+        # Ideally reuse scripts/runners/docker_control.py but we keep it simple here.
+        # We assume 'python cli.py start-infra' was run or we run it now?
+        # Let's try to verify ports.
+        if not check_port(5432) or not check_port(9092) or not check_port(6379): # Postgres, Kafka, Redis
+            print("Warning: Infrastructure ports not open. Attempting to start Docker containers...")
+            try:
+                subprocess.run([sys.executable, "cli.py", "docker", "up"], check=True)
+            except subprocess.CalledProcessError:
+                print("Error: Failed to start infrastructure. Please run 'python cli.py docker up' manually.")
+                return
 
     # 2. Cleanup Ports
     kill_port(BACKEND_PORT)
@@ -177,3 +178,26 @@ def start_dev_mode():
         kill_proc_tree(backend_proc.pid)
         kill_proc_tree(frontend_proc.pid)
         print("Bye!")
+
+def start_dev_full():
+    """Starts Docker infrastructure AND the development environment."""
+    print("🚀 Starting FULL DEV stack (Docker + Backend + Frontend)...")
+    try:
+        # Force Docker Up
+        subprocess.run([sys.executable, "cli.py", "docker", "up", "--profile", "full"], check=True)
+    except subprocess.CalledProcessError:
+        print("❌ Error starting Docker infrastructure.")
+        return
+
+    # Proceed with standard checks (which will pass since we just started it)
+    start_dev_mode()
+
+def start_dev_no_db():
+    """Starts development environment WITHOUT checking infrastructure."""
+    print("⚡ Starting LIGHT DEV stack (Backend + Frontend ONLY)...")
+    print("   Assuming infrastructure is running elsewhere (2-Node Mode).")
+    
+    # We monkey-patch the check_port to always return True for this run
+    # OR we just copy the logic but skip the infra check. 
+    # Let's refactor start_dev_mode to accept a 'check_infra' arg.
+    start_dev_mode(check_infra=False)

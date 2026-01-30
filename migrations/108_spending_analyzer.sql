@@ -2,7 +2,7 @@
 -- Tracks categorized monthly spending and peer group benchmarks
 
 CREATE TABLE IF NOT EXISTS spending_categories (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,
     month DATE NOT NULL,
     
@@ -34,7 +34,8 @@ CREATE TABLE IF NOT EXISTS spending_categories (
     ) STORED,
     savings_rate DECIMAL(8, 6),
     
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (id, month)
 );
 
 -- Check if TimescaleDB extension is available before creating hypertable

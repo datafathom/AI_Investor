@@ -2,7 +2,7 @@
 -- Tracks portfolio peak-to-trough declines for risk analysis
 
 CREATE TABLE IF NOT EXISTS drawdown_events (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID DEFAULT gen_random_uuid(),
     portfolio_id UUID NOT NULL,
     
     -- Drawdown Details
@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS drawdown_events (
     -- Classification
     severity VARCHAR(20), -- MINOR (<5%), MODERATE (5-10%), SEVERE (>10%)
     
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (id, peak_date)
 );
 
 -- Check if TimescaleDB extension is available

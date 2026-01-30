@@ -41,7 +41,7 @@ class MigrationRunner:
                     description TEXT
                 )
             """)
-            self.db.pg_conn.commit()
+
     
     def get_applied_migrations(self) -> List[str]:
         """Get list of applied migration versions."""
@@ -53,6 +53,8 @@ class MigrationRunner:
         """Get list of pending migration files."""
         applied = set(self.get_applied_migrations())
         migrations = sorted(MIGRATIONS_DIR.glob("*.sql"))
+        # Exclude rollback files
+        migrations = [m for m in migrations if not m.name.endswith('_rollback.sql') and not m.name.endswith('rollback.sql')]
         return [m for m in migrations if m.stem not in applied]
     
     def apply_migration(self, migration_file: Path) -> bool:
@@ -64,18 +66,17 @@ class MigrationRunner:
             with open(migration_file, 'r') as f:
                 sql = f.read()
             
-            # Execute migration
+            # Execute migration and record it in a single transaction
             with self.db.pg_cursor() as cur:
                 cur.execute(sql)
-                self.db.pg_conn.commit()
+                # self.db.pg_conn.commit() # Removed as per instruction
             
-            # Record migration
-            with self.db.pg_cursor() as cur:
+                # Record migration
                 cur.execute("""
                     INSERT INTO schema_migrations (version, description)
                     VALUES (%s, %s)
                 """, (migration_file.stem, migration_file.name))
-                self.db.pg_conn.commit()
+                # self.db.pg_conn.commit() # Removed as per instruction
             
             print(f"✅ Migration applied: {migration_file.name}")
             return True
@@ -83,8 +84,8 @@ class MigrationRunner:
         except Exception as e:
             print(f"❌ Migration failed: {migration_file.name}")
             print(f"   Error: {e}")
-            self.db.pg_conn.rollback()
             return False
+
     
     def migrate_up(self, target_version: Optional[str] = None) -> bool:
         """Apply all pending migrations."""
@@ -130,19 +131,18 @@ class MigrationRunner:
             
             with self.db.pg_cursor() as cur:
                 cur.execute(sql)
-                self.db.pg_conn.commit()
+
             
             # Remove migration record
             with self.db.pg_cursor() as cur:
                 cur.execute("DELETE FROM schema_migrations WHERE version = %s", (target_version,))
-                self.db.pg_conn.commit()
+
             
             print(f"✅ Rollback completed: {target_version}")
             return True
             
         except Exception as e:
             print(f"❌ Rollback failed: {e}")
-            self.db.pg_conn.rollback()
             return False
     
     def status(self):

@@ -49,8 +49,16 @@
             "handler": "scripts.runners.system_control:run_demo_mode"
         },
         "dev": {
-            "description": "Developer Mode: Hot-Reload for Backend & Frontend (Fast Iteration).",
+            "description": "Developer Mode: Hot-Reload for Backend & Frontend (Auto-check local infra).",
             "handler": "scripts.runners.dev_runner:start_dev_mode"
+        },
+        "dev-full": {
+            "description": "Full Dev Mode: Starts Docker Containers + Backend + Frontend locally.",
+            "handler": "scripts.runners.dev_runner:start_dev_full"
+        },
+        "dev-no-db": {
+            "description": "Light Dev Mode: Backend + Frontend ONLY (For 2-Node setups).",
+            "handler": "scripts.runners.dev_runner:start_dev_no_db"
         },
         "verify-pipeline": {
             "description": "Run End-to-End verification of the Data->Signal->Trade pipeline.",

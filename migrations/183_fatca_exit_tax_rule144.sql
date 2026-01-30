@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS fatca_foreign_assets (
 
 CREATE TABLE IF NOT EXISTS rule144_volume_limits (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    ticker VARCHAR(10) PRIMARY KEY, -- Unique per stock
+    ticker VARCHAR(10) UNIQUE NOT NULL, -- Unique per stock
     shares_outstanding BIGINT,
     avg_weekly_vol_4wk BIGINT,
     last_updated_at TIMESTAMPTZ DEFAULT NOW()

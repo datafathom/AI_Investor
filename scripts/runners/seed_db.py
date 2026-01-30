@@ -27,10 +27,11 @@ def run_seed_db():
         # For now, inserting a placeholder.
         
         # Check if users table exists first
-        cur.execute("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'users');")
-        table_exists = cur.fetchone()[0]
-        
-        if not table_exists:
+        # Check if users table exists by trying to access it
+        try:
+            cur.execute("SELECT 1 FROM users LIMIT 1;")
+        except psycopg2.errors.UndefinedTable:
+            conn.rollback() # Reset transaction state
             print("WARN 'users' table not found. Has the backend migration run?")
             print("   Please ensure the backend has started at least once to create tables.")
             return
@@ -43,14 +44,20 @@ def run_seed_db():
             print("   Creating Admin user ('admin')...")
             try:
                 cur.execute("""
-                    INSERT INTO users (username, password, created_at)
-                    VALUES ('admin', 'password123', NOW());
+                    INSERT INTO users (username, password_hash, created_at, role, is_verified)
+                    VALUES ('admin', 'mock_hash_yenoMekam', NOW(), 'admin', TRUE);
                 """)
                 print("   OK Admin user created.")
             except Exception as e:
                 print(f"   ERROR Failed to insert admin user: {e}")
         else:
-            print("   OK Admin user already exists.")
+            print("   Admin user exists. Updating password to ensure consistency...")
+            try:
+                cur.execute("""
+                    UPDATE users SET password_hash = 'mock_hash_yenoMekam' WHERE username = 'admin';
+                """)
+            except Exception as e:
+                print(f"   WARN Failed to update admin password: {e}")
 
         conn.close()
         print("OK Database seeding complete.")

@@ -2,7 +2,7 @@
 -- Stores daily snapshots of risk-adjusted performance ratios
 
 CREATE TABLE IF NOT EXISTS risk_metrics_history (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID DEFAULT gen_random_uuid(),
     portfolio_id UUID NOT NULL,
     metric_date DATE NOT NULL,
     
@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS risk_metrics_history (
     max_drawdown DECIMAL(10, 6),
     beta DECIMAL(10, 6),
     
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (id, metric_date)
 );
 
 -- Hypertable if TimescaleDB

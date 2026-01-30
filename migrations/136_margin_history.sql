@@ -2,7 +2,7 @@
 -- Tracks borrowing, collateral, and interest costs over time
 
 CREATE TABLE IF NOT EXISTS margin_history (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID DEFAULT gen_random_uuid(),
     account_id UUID NOT NULL,
     log_date DATE NOT NULL,
     
@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS margin_history (
     interest_rate_apr DECIMAL(6, 4),
     daily_interest_cost DECIMAL(12, 2),
     
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (id, log_date)
 );
 
 -- Check if TimescaleDB extension is available

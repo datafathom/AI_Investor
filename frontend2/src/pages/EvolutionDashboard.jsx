@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import FitnessSurface3D from '../widgets/Evolution/FitnessSurface3D';
 import LineageMap from '../widgets/Evolution/LineageMap';
 import { useNotifications } from '../hooks/useNotifications';

@@ -2,7 +2,7 @@
 -- Tracks principal vs earnings for tax-advantaged 529 plans
 
 CREATE TABLE IF NOT EXISTS education_plan_ledger (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID DEFAULT gen_random_uuid(),
     plan_id UUID NOT NULL,
     transaction_date DATE NOT NULL,
     transaction_type VARCHAR(20) NOT NULL, -- CONTRIBUTION, DISTRIBUTION, EARNINGS
@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS education_plan_ledger (
     expense_category VARCHAR(50), -- TUITION, ROOM_BOARD, BOOKS, COMPUTER, STUDENT_LOAN
     
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (id, transaction_date)
 );
 
 -- Hypertable if TimescaleDB

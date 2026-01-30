@@ -54,15 +54,17 @@ class SocialAuthService:
             self._ensure_column(cur, "users", "organization_id", "INTEGER")
 
             # Handle Legacy 'password' column (Drop NOT NULL if it exists)
+            # Handle 'password_hash' column nullability
             cur.execute("""
                 SELECT EXISTS (
                     SELECT FROM information_schema.columns 
-                    WHERE table_name = 'users' AND column_name = 'password'
+                    WHERE table_name = 'users' AND column_name = 'password_hash'
+                    AND is_nullable = 'NO'
                 );
             """)
             if cur.fetchone()[0]:
-                self.logger.info("Migrating schema: making legacy 'password' column nullable")
-                cur.execute("ALTER TABLE users ALTER COLUMN password DROP NOT NULL;")
+                self.logger.info("Migrating schema: making 'password_hash' column nullable")
+                cur.execute("ALTER TABLE users ALTER COLUMN password_hash DROP NOT NULL;")
 
             # 2. Linked Accounts Table
             cur.execute("""
