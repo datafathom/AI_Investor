@@ -1,0 +1,47 @@
+# Stabilization Cycle I: Specialized Assets & Agents
+
+## Goal
+Stabilize the "Alternative" and "Agentic" layers of the platform. This cycle covers complex asset classes (Crypto, PE, VC, Real Estate, Options) and the autonomous agents managing them.
+
+## Objectives
+1.  **Audit**: Run tests for Crypto, Agents, Specialist Assets, and Options.
+2.  **Fix**: Resolve failures, focusing on:
+    - Web3/Blockchain mock connectivity.
+    - Agent state management and orchestration.
+    - Valuation logic for illiquid assets (PE/VC/Real Estate).
+3.  **Verify**: Ensure 100% pass rate.
+
+## Scope
+
+### Group I1: Digital Assets & Agents
+- `services/crypto/`
+- `tests/crypto/`
+- `services/agents/`
+- `tests/agents/`
+
+### Group I2: Private & Alternative Assets
+- `services/real_estate/`
+- `tests/real_estate/`
+- `services/pe/` (Private Equity)
+- `tests/pe/`
+- `services/vc/` (Venture Capital)
+- `tests/vc/`
+- `services/alternative/`
+- `tests/alternative/`
+
+### Group I3: Derivatives
+- `services/options/`
+- `tests/options/`
+
+## Strategy
+1.  **Initial Audit**:
+    - Run `pytest tests/crypto/ tests/agents/ tests/real_estate/ tests/pe/ tests/vc/ tests/alternative/ tests/options/`
+2.  **Analysis**:
+    - Expect mocked "smart contract" failures in Crypto.
+    - Expect "Agent not responding" or state timeout issues in Agents.
+3.  **Remediation**:
+    - Standardize async definitions for Agent orchestration.
+    - Ensure complex asset valuations handle 0/None gracefully.
+
+## Verification
+- Run the full "Group I" suite.

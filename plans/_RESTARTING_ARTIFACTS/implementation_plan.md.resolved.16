@@ -1,0 +1,74 @@
+# Implementation Plan - [x] Cycle M: Trading & Strategy Stabilization
+- [x] Cycle N: Advanced Portfolio & Risk Analytics
+- [ ] Cycle O: Market Data & Indicators
+
+---
+
+## Cycle O: Market Data & Indicators
+
+### [Market Data API]
+#### [MODIFY] [test_market_data_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_market_data_api.py)
+- Update [Quote](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/models/market_data.py#7-21) and [OHLCV](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/models/market_data.py#22-33) mocks to match Pydantic V2 fields (e.g., ensure `timestamp` is present).
+- Standardize fixture names to [app](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_billing_api.py#13-20) and [client](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_advanced_risk_api.py#17-21).
+- Remove `async` from test methods.
+
+### [News & Sentiment API]
+#### [MODIFY] [test_news_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_news_api.py)
+- Correct model imports: [SentimentAnalysis](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/models/ai_predictions.py#71-81) -> [NewsSentiment](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/models/news.py#50-61).
+- Update [NewsArticle](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/models/news.py#35-48) and [NewsSentiment](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/models/news.py#50-61) mocks with all required fields (e.g., `published_date`, `content`, `source`, `relevance_score`, `bullish_count`, `bearish_count`, `neutral_count`, `confidence`, `last_updated`).
+- Remove `async` from test methods.
+
+### [Charting & Technical Analysis API]
+#### [MODIFY] [test_charting_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_charting_api.py)
+- Standardize mocks for [get_chart_data](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_charting_api.py#45-62), `calculate_indicators`, `recognize_patterns`, and `generate_signals`.
+- Remove `async` from test methods.
+
+### [Macro Data API]
+#### [MODIFY] [test_macro_data_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_macro_data_api.py)
+- Verify and fix API route prefixes (check if `/api/v1/macro-data` or `/api/macro-data` is correct).
+- Update FRED service mocks for [get_regime](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_macro_data_api.py#41-48), [get_yield_curve](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_macro_data_api.py#50-57), etc.
+- Remove `async` from test methods.
+
+### [Research & Reports API]
+#### [MODIFY] [test_research_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_research_api.py)
+- Update [ResearchReport](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/models/research.py#44-58) mock with all required fields (e.g., `content`, `sections`, `charts`, [data](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/integration/integration_service.py#45-79), `created_date`, `updated_date`).
+- Remove `async` from test methods.
+
+## Proposed Changes
+
+### 1. Paper Trading API
+#### [MODIFY] [test_paper_trading_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_paper_trading_api.py)
+- Update imports from `models.trading` to `models.paper_trading`.
+- Remove `@pytest.mark.asyncio` and `async` keywords from synchronous test functions.
+- (Wait, checking if they are actually async in the API first).
+
+### 2. Strategy API
+#### [MODIFY] [test_strategy_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_strategy_api.py)
+- Change import `from models.strategy import Strategy` to `from models.strategy import TradingStrategy`.
+- Update [test_start_strategy_success](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_strategy_api.py#110-130) and [test_get_strategy_performance_success](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_strategy_api.py#151-174) to include all required Pydantic fields.
+- Remove incorrect `async` markers.
+
+### 3. Backtest & Margin APIs
+#### [MODIFY] [test_backtest_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_backtest_api.py)
+#### [MODIFY] [test_margin_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_margin_api.py)
+- Replace `response.get_json()` with `response.json()` as these tests use FastAPI's `TestClient`.
+
+### 4. Options API
+#### [MODIFY] [test_options_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_options_api.py)
+- Update `PnLAnalysis` import to [StrategyPnL](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/models/options.py#82-91).
+- Populate missing fields in [OptionsStrategy](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/models/options.py#48-60) and [StrategyAnalysis](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/models/options.py#93-100) mocks.
+- Fix async/sync markers.
+
+### 5. Scenario API
+#### [MODIFY] [test_scenario_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_scenario_api.py)
+- Update [ScenarioResult](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/analysis/scenario_service.py#21-29) mock instantiation to include `scenario_id` and `positions_affected`.
+- Replace `response.get_json()` with `response.json()`.
+
+## Verification Plan
+
+### Automated Tests
+Run the Cycle M test suite:
+```powershell
+python -m pytest tests/api/test_paper_trading_api.py tests/api/test_strategy_api.py tests/api/test_backtest_api.py tests/api/test_options_api.py tests/api/test_margin_api.py tests/api/test_scenario_api.py -vv
+```
+Target: 100% Pass Rate.

@@ -1,0 +1,37 @@
+# Recovered Phases 196-200 Walkthrough
+
+We have successfully recovered and finalized the implementation for Phases 196-200. This work bridges the gap between the existing backend services and the user-facing CLI/UI.
+
+## Accomplishments
+
+### Phase 196: Rule 144 & Anomaly Detection
+- **Implemented:** [scan_anomalies](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/scripts/runners/rule144_runner.py#53-80) and [check_bots](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/scripts/runners/rule144_runner.py#81-108) handlers in [rule144_runner.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/scripts/runners/rule144_runner.py).
+- **Integrated:** `AnomalyDetectorService` and `BotMonitorService` are now accessible via CLI.
+- **Command:** `python cli.py rule144 scan-anomalies`
+
+### Phase 197: Social Class Maintenance (SCM)
+- **Implemented:** [calc_clew](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/scripts/runners/sfo_runner.py#85-104) and [check_dilution](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/scripts/runners/sfo_runner.py#105-125) handlers in [sfo_runner.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/scripts/runners/sfo_runner.py).
+- **Integrated:** `ClewIndexService` and `DilutionTracker` for dynastic wealth modeling.
+- **Command:** `python cli.py sfo calc-clew`
+
+### Phase 198: Bear Market Defensive Protocol
+- **Created:** [defense_runner.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/scripts/runners/defense_runner.py) to handle regime detection and manual overrides.
+- **Integrated:** `RegimeDetector` and `DefensiveProtocol`.
+- **Command:** `python cli.py defense status`
+
+### Phase 199: Automated Fundamental Research
+- **Created:** [research_runner.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/scripts/runners/research_runner.py) for automated due diligence.
+- **Integrated:** `FilingAnalyzer` (Mocked for speed) and `DCFEngine`.
+- **Command:** `python cli.py research analyze --ticker AAPL`
+
+### Phase 200: AI Wealth Orchestrator
+- **Created:** [orchestrator_runner.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/scripts/runners/orchestrator_runner.py) to manage the central AI loop.
+- **Integrated:** `MasterGraph` and `MasterObjectiveOptimizer`.
+- **Command:** `python cli.py orch boot`
+
+## Verification
+All commands have been registered in [cli_configuration.json](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/config/cli_configuration.json) and linked to their respective runner scripts. Frontend routes for these phases (e.g., `/orchestrator`, `/strategist/scm`, `/sentinel/strategy`) were verified in [App.jsx](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/frontend2/src/App.jsx).
+
+## Next Steps
+- Run `python cli.py orch boot` to initialize the full system.
+- Navigate to `/orchestrator` in the frontend to visualize the master graph.

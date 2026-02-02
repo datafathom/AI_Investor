@@ -1,0 +1,39 @@
+# Stabilization Cycle G: Core System & Infrastructure
+
+## Goal
+Stabilize the Core System, Infrastructure, Security, and Reporting layers. This cycle covers the foundational services and cross-cutting concerns.
+
+## Objectives
+1.  **Audit**: Run tests for System, Security, Reporting, and Monitoring groups.
+2.  **Fix**: Resolve failures, focusing on:
+    - Infrastructure mocks (Cache, Kafka, Neo4j).
+    - UTC datetime standardization.
+    - Pydantic models for core entities.
+3.  **Verify**: Ensure 100% pass rate.
+
+## Scope
+
+### Group G1: Infrastructure (System & Monitoring)
+- `services/system/` (Cache, Logging, Tracing, Alerts)
+- `tests/system/`
+- `services/monitoring/`
+- `tests/monitoring/`
+
+### Group G2: Security & Business Logic (Security & Reporting)
+- `services/security/` (KYC, Compliance)
+- `tests/security/`
+- `services/reporting/`
+- `tests/reporting/`
+
+## Strategy
+1.  **Initial Audit**:
+    - Run `pytest tests/system/ tests/security/ tests/reporting/ tests/monitoring/`
+2.  **Analysis**:
+    - `tests/system` is large (23 files). Expect mix of infrastructure and business logic errors.
+    - Check for `Mock` objects not being awaited or returning invalid types.
+3.  **Remediation**:
+    - Prioritize `system` fixes as they are dependencies for others.
+    - Standardize Pydantic v2 usage.
+
+## Verification
+- Run the full "Group G" suite.

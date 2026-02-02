@@ -1,0 +1,32 @@
+# Cycle L: Financial & Order Service API Stabilization
+
+Stabilize API endpoint tests for Advanced Orders, Estate Planning, Billing, and Credit Monitoring services to achieve 100% pass rate across these financial components.
+
+## Proposed Changes
+
+### Advanced Orders API Tests
+- [MODIFY] [test_advanced_orders_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_advanced_orders_api.py)
+  - Populate missing required fields in `TrailingStopOrder`, `BracketOrder`, and `ConditionalOrder` mocks.
+  - Remove `@pytest.mark.asyncio` and convert to synchronous test calls to fix `AsyncToSync` errors.
+
+### Estate Planning API Tests
+- [MODIFY] [test_estate_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_estate_api.py)
+  - Fix `Trust`, `Will`, and `Beneficiary` mock validation.
+  - Resolve `AsyncToSync` runtime errors.
+
+### Billing & Payments API Tests
+- [MODIFY] [test_billing_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_billing_api.py)
+  - Fix `Invoice`, `Subscription`, and `PaymentMethod` mock validation.
+  - Resolve `AsyncToSync` runtime errors.
+
+### Credit Monitoring API Tests
+- [MODIFY] [test_credit_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_credit_api.py)
+  - Fix `CreditReport`, `CreditScore`, and `CreditAlert` mock validation.
+  - Resolve `AsyncToSync` runtime errors.
+
+## Verification Plan
+
+### Automated Tests
+- Run `pytest tests/api/test_advanced_orders_api.py tests/api/test_estate_api.py tests/api/test_billing_api.py tests/api/test_credit_api.py`
+- Target: All Passed (100% success rate)
+- Ensure zero deprecation warnings for `utcnow()` and [dict()](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/ai_predictions/prediction_engine.py#45-104).

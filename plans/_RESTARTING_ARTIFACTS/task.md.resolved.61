@@ -1,0 +1,26 @@
+# Task: Cycle K - API Coverage Stabilization
+
+## Core Objectives
+- [/] Stabilize AI Assistant API Tests
+    - [ ] Fix [Conversation](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/models/ai_assistant.py#43-51) model validation in [test_ai_assistant_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_ai_assistant_api.py)
+    - [ ] Fix [ConversationMessage](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/models/ai_assistant.py#33-41) model validation
+    - [ ] Fix [Recommendation](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/models/ai_assistant.py#64-74) model validation
+    - [ ] Resolve `AsyncToSync` runtime errors
+- [/] Stabilize AI Predictions API Tests
+    - [ ] Fix [PricePrediction](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/models/ai_predictions.py#34-44) model validation in [test_ai_predictions_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/api/test_ai_predictions_api.py)
+    - [ ] Fix [TrendPrediction](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/models/ai_predictions.py#46-55) model validation
+    - [ ] Fix [MarketRegime](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/models/ai_predictions.py#57-69) model validation
+    - [ ] Resolve `AsyncToSync` runtime errors
+- [/] Stabilize Integration API Tests
+    - [ ] Fix `test_sync_integration_success` 415/500 error
+    - [ ] Ensure all Integration API routes are covered
+- [ ] Final Verification
+    - [ ] AI Assistant API tests: 100% Pass
+    - [ ] AI Predictions API tests: 100% Pass
+    - [ ] Integration API tests: 100% Pass
+
+---
+## Completed Cycles
+- [x] Cycle J: AI, Auth & Core Integration Stabilization
+
+**Status: IN PROGRESS 🚧**

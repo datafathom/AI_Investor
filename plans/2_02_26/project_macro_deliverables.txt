@@ -1,0 +1,39 @@
+***  macro deliverable for the project
+
+1.1    i want a full list of every single page route for the frontend app..   each with the summary of their content in nice JSON format..
+[
+    {
+        pageTitle: "pageTitle", 
+        pageDescription: "Short summary of content and functionality of this page,
+        pageUrl: "http://localhost:5173"
+    },
+    ...
+]
+store the full frontend routes in file plans/2_02_26/artifacts/FrontendPages.json
+
+1.2    similar to what you did for rendering the   plans/2_02_26/artifacts/FrontendPages.json   i want you to create a list of all api routes in the backend app    in json format
+save this in file : plans/2_02_26/artifacts/api_routes.json   except here we want extra key/value pairs to fully understand that route,   
+available options and params to the api endpoint ,    the http method ,    the expected request body ,    the expected response body ,    any error codes and what they mean ,    any authentication required ,    any rate limiting ,    any caching ,    any other relevant information
+store this in file : plans/2_02_26/artifacts/api_routes.json
+
+
+
+2. create document showing any and all mock responses for non testing code, store this list of files using mock api response in in the artifacts/ folder
+we want to be absolutly clear on what responses from the backend are mock-data   store this in json format with verbose key/value pairs for each existing mock..
+store this in file : plans/2_02_26/artifacts/MockResponses_needImplemenetation.json  
+
+3. create a list of all vendor apis needed for the project,    store this in json format with verbose key/value pairs for each existing mock..
+store this in file : plans/2_02_26/artifacts/Vendor_API_Needed.json  
+
+4.  For any agent that we build,   their prompt should be stored in a separate file in the agents/prompts/ folder,   not hardcoded in the agent file
+the prompts/ folder should be organized using same subfolder structure as the agents/ folder  so it is easy to match a agent code to the corresponding tests
+
+
+X. I want you to clean up the testing,    all backend tests should be in the PROJECTROOT/tests/   folder in root...   in their logical subfolder such as agents/ or billing/
+i do not want any python tests outside of the projectroot/tests/<relevant subfolder>
+ this is a big migration in the codebase, so be careful and do not break anything   i want every time you move any test to confirm it stil passes 
+
+also I do not want any tests named for the phase they implemented it it should be relevant to the folder structure of this project
+such as agents  or service   or whatever relevant test name,   but  we ARE NOT testing some buildphase all tests should be named and also show up same way in the cli.py --help and cli.py tests --help
+
+

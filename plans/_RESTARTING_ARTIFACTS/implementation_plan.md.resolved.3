@@ -1,0 +1,41 @@
+# Stabilization Cycle C: Execution & Market Services
+
+## Goal
+Stabilize the Execution, Market, Market Data, and Trading component groups by resolving all test failures and errors. These components are critical for the real-time operation of the AI Investor platform.
+
+## Objectives
+1.  **Audit**: Run existing tests to establish a baseline of failures.
+2.  **Fix**: Resolve Pydantic validation errors, mock inconsistencies, and logic bugs.
+3.  **Verify**: Ensure 100% pass rate for the targeted test groups.
+
+## Scope
+
+### Group C1: Execution
+- `services/execution/`
+- `tests/execution/`
+
+### Group C2: Market & Market Data
+- `services/market/`
+- `services/market_data/`
+- `tests/market/`
+- `tests/market_data/`
+
+### Group C3: Trading
+- `services/trading/`
+- `tests/trading/`
+
+## Strategy
+1.  **Initial Audit Run**: Execute `pytest` on all four directories to capture the full failure logs.
+2.  **Component-wise Repair**:
+    - Start with **Execution** (likely core dependnecy).
+    - Move to **Market** (data providers).
+    - Finish with **Trading** (complex logic depending on others).
+3.  **Common Issues**:
+    - Pydantic V2 migrations.
+    - Async/Sync mock mismatches.
+    - Missing service dependencies (Singleton pattern).
+    - `utcnow` deprecations (System-wide rule).
+
+## Verification
+- Run individual test files during fixes.
+- Run the full "Group C" suite to confirm integration.

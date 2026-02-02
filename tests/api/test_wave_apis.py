@@ -63,8 +63,9 @@ def test_backtest_monte_carlo_success(client):
         
         assert response.status_code == 200
         data = response.get_json()
-        assert 'paths' in data
-        assert 'ruin_probability' in data
+        assert data['status'] == 'success'
+        assert 'paths' in data['data']
+        assert 'ruin_probability' in data['data']
 
 
 def test_estate_heartbeat_success(client):
@@ -75,7 +76,8 @@ def test_estate_heartbeat_success(client):
         mock_status = HeartbeatStatus(
             last_check='2024-01-01',
             is_alive=True,
-            days_until_trigger=365
+            days_until_trigger=365,
+            trigger_date='2025-01-01'
         )
         service.check_heartbeat.return_value = mock_status
         mock.return_value = service
@@ -84,8 +86,9 @@ def test_estate_heartbeat_success(client):
         
         assert response.status_code == 200
         data = response.get_json()
-        assert 'is_alive' in data
-        assert 'days_until_trigger' in data
+        assert data['status'] == 'success'
+        assert 'is_alive' in data['data']
+        assert 'days_until_trigger' in data['data']
 
 
 def test_compliance_overview_success(client):
@@ -101,5 +104,6 @@ def test_compliance_overview_success(client):
         
         assert response.status_code == 200
         data = response.get_json()
-        assert 'compliance_score' in data
-        assert 'pending_alerts' in data
+        assert data['status'] == 'success'
+        assert 'compliance_score' in data['data']
+        assert 'pending_alerts' in data['data']

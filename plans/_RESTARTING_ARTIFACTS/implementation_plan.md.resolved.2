@@ -1,0 +1,37 @@
+# Phase B: Planning Services Stabilization Plan
+
+## Goal Description
+Stabilize the "Planning" component group (Phases 7-12) by resolving 21 initial test failures/errors. This involves fixing unit tests for Goals, Retirement, Estate, and Budgeting services, likely addressing Pydantic validation errors and async/sync mocking mismatches similar to Group A.
+
+## User Review Required
+> [!NOTE]
+> No breaking API changes expected. Focus is on test correctness and service robustness.
+
+## Proposed Changes
+
+### Planning Service
+#### [MODIFY] [test_financial_planning_service.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/planning/test_financial_planning_service.py)
+- **Problem**: Likely Pydantic validation errors or async mock issues.
+- **Fix**: Update mock return values to match Pydantic models (use `.model_dump()`), ensure correct `AsyncMock` vs `Mock` usage.
+
+### Retirement Service
+#### [MODIFY] [test_retirement_projection_service.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/retirement/test_retirement_projection_service.py)
+- **Problem**: Similar validation/mocking issues.
+- **Fix**: Align test data with updated `RetirementGoal` and `ProjectionResult` schemas.
+
+### Estate Service
+#### [MODIFY] [test_estate_planning_service.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/estate/test_estate_planning_service.py) (Hypothetical)
+- **Problem**: Verify existence and fix if failing.
+- **Fix**: Standardize mocks.
+
+## Verification Plan
+
+### Automated Tests
+Run the specific test suite for Planning services:
+```bash
+./venv/Scripts/activate; python -m pytest tests/planning/ tests/retirement/ tests/estate/ tests/budgeting/ -vv
+```
+
+### Success Criteria
+- [ ] Reduce failing tests from 21 to 0.
+- [ ] Ensure no new "Never awaited" warnings are introduced.

@@ -1,0 +1,27 @@
+# Task: Cycle L - Financial & Order Service API Stabilization
+
+## Core Objectives
+- [/] Stabilize Advanced Orders API Tests
+    - [ ] Fix `TrailingStopOrder` and `BracketOrder` mock validation
+    - [ ] Resolve `AsyncToSync` runtime errors
+- [/] Stabilize Estate Planning API Tests
+    - [ ] Fix `Trust` and `Will` model validation
+    - [ ] Resolve `AsyncToSync` runtime errors
+- [/] Stabilize Billing & Payments API Tests
+    - [ ] Fix `Invoice` and `Subscription` model validation
+    - [ ] Resolve `AsyncToSync` runtime errors
+- [/] Stabilize Credit Monitoring API Tests
+    - [ ] Fix `CreditReport` and `CreditAlert` model validation
+    - [ ] Resolve `AsyncToSync` runtime errors
+- [ ] Final Verification
+    - [ ] Advanced Orders API tests: 100% Pass
+    - [ ] Estate API tests: 100% Pass
+    - [ ] Billing API tests: 100% Pass
+    - [ ] Credit API tests: 100% Pass
+
+---
+## Completed Cycles
+- [x] Cycle K: API Coverage Stabilization (AI & Integration)
+- [x] Cycle J: AI, Auth & Core Integration Stabilization
+
+**Status: IN PROGRESS 🚧**

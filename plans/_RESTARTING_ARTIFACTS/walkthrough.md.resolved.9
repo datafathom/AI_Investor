@@ -1,0 +1,64 @@
+# Walkthrough: Cycle J Stabilization
+
+Cycle J centered on stabilizing the **AI Services**, **Integration Framework**, and **Core System Integration** components. This walkthrough documents the key fixes and implementations that enabled an "All Green" status across all targeted test suites.
+
+## 1. AI Services Stabilization
+
+### ML & Assistant Services
+Fixed critical mock and import issues in the ML service and fully implemented the conversation history logic for the AI Assistant.
+
+- **ML Service**: Resolved `SyntaxError` in [openai_client.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/ai/openai_client.py) and missing imports in [aws_secret_manager.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/system/aws_secret_manager.py). Refactored [ModelDeploymentService](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/ml/model_deployment_service.py#35-128) to include missing lifecycle methods ([rollback_model](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/ml/model_deployment_service.py#94-113), [_collect_metrics](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/ml/model_deployment_service.py#114-123)).
+- **Assistant Service**: Implemented [get_conversation_history](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/ai_assistant/assistant_service.py#142-154) and fixed test instantiation issues where `conversation_id` was missing.
+
+### Learning & Predictions Services
+Enhanced the learning engine and prediction analytics with missing logic and improved caching strategies.
+
+- **Learning Service**: Implemented user preference updates and recommendation generation logic.
+- **Predictions Service**: 
+    - Implemented cache-first pricing predictions in [PredictionEngine](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/ai_predictions/prediction_engine.py#36-154).
+    - Added [analyze_sentiment](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/ai_predictions/ai_analytics_service.py#46-75) and market regime analysis to [AIAnalyticsService](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/ai_predictions/ai_analytics_service.py#36-160).
+    - Resolved a critical discrepancy between synchronous cache calls and asynchronous mocks in tests.
+
+## 2. Integration & Core Stabilization
+
+### Integration Framework & Service
+Resolved `AttributeError` by implementing missing methods required by the integration test suite.
+
+- **Framework**: Added [get_supported_apps](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/integration/integration_framework.py#45-48) to expose defined integration connectors.
+- **Service**: Implemented [get_sync_status](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/integration/integration_service.py#80-83) and a dedicated [_get_sync_job](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/integration/integration_service.py#84-91) helper to satisfy both the API and the test requirements.
+
+### Database Migration System
+Fixed a fundamental path handling issue in [MigrationManager](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/scripts/database/migration_manager.py#19-296) where `Path` objects were being returned as strings, breaking subsequent `.exists()` and `.read_text()` calls in tests.
+
+## 3. API & Flask Integration
+
+Stabilized the Legal and Onboarding APIs by resolving Flask specific testing issues.
+
+- **Route Standardization**: Fixed 404 errors in Onboarding tests by adding missing `/api/v1` prefixes to routes in [onboarding_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/web/api/onboarding_api.py).
+- **Mocking & Context**: 
+    - Resolved `AttributeError` for the `g` proxy by moving imports from local function scopes to the module level in [legal_api.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/web/api/legal_api.py).
+    - Fixed `RuntimeError: Working outside of application context` by implementing [app_context](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/integration/test_onboarding_flow.py#28-33) fixtures in the integration tests.
+
+## 4. Verification Results
+
+All stabilized services now pass their respective test suites with 100% success rate (excluding environment-specific skips for AWS).
+
+| Component | Test Suite | Results | Status |
+|-----------|------------|---------|--------|
+| ML Service | [test_model_deployment_service.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/ml/test_model_deployment_service.py) | 8 Passed | ✅ |
+| Assistant | [test_assistant_service.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/ai_assistant/test_assistant_service.py) | 5 Passed | ✅ |
+| Learning | [test_learning_service.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/ai_assistant/test_learning_service.py) | 4 Passed | ✅ |
+| Predictions | [test_prediction_engine.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/ai_predictions/test_prediction_engine.py) | 13 Passed | ✅ |
+| Analytics | [test_ai_analytics_service.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/tests/ai_predictions/test_ai_analytics_service.py) | 4 Passed | ✅ |
+| Integration | `tests/integration/` | 35 Passed, 2 Skipped | ✅ |
+
+### Final Integration Test Run
+```text
+tests/integration/test_integration_framework.py PASSED
+tests/integration/test_integration_service.py PASSED
+tests/integration/test_legal_acceptance_flow.py PASSED
+tests/integration/test_migration_system.py PASSED
+tests/integration/test_onboarding_flow.py PASSED
+tests/integration/test_secrets_management.py PASSED
+================= 35 passed, 2 skipped in 1.02s ==================
+```

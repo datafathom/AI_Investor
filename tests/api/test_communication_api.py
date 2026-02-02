@@ -39,7 +39,8 @@ def mock_notification_manager():
     """Mock NotificationManager."""
     with patch('web.api.communication_api.get_notification_manager') as mock:
         manager = MagicMock()
-        manager.send_alert.return_value = {'status': 'sent', 'channel': 'email'}
+        manager.send_alert.return_value = None
+        manager.history = [{'channels': ['email']}]
         mock.return_value = manager
         yield manager
 

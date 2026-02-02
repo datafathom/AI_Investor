@@ -15,7 +15,7 @@ from services.security.system_health_service import (
 )
 
 from services.system.secret_manager import get_secret_manager
-from services.auth.totp_service import get_totp_service
+from services.system.totp_service import get_totp_service
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +78,7 @@ async def get_kafka_lag(
 ):
     health = await service.get_health_status()
     kafka = health.get("kafka")
-    return kafka.details if kafka else {"error": "Not available"}
+    return kafka.get('details') if kafka else {"error": "Not available"}
 
 
 class FrontendErrorLog(BaseModel):

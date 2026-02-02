@@ -31,8 +31,18 @@ logger = logging.getLogger(__name__)
 compliance_bp = Blueprint('compliance', __name__, url_prefix='/api/compliance')
 
 
+import asyncio
+
+def _run_async(coro):
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    return loop.run_until_complete(coro)
+
 @compliance_bp.route('/check', methods=['POST'])
-async def check_compliance():
+def check_compliance():
     """
     Check transaction for compliance violations.
     
@@ -52,11 +62,11 @@ async def check_compliance():
             }), 400
         
         engine = get_compliance_engine()
-        violations = await engine.check_compliance(user_id, transaction)
+        violations = _run_async(engine.check_compliance(user_id, transaction))
         
         return jsonify({
             'success': True,
-            'data': [v.dict() for v in violations]
+            'data': [v.model_dump(mode='json') for v in violations]
         })
         
     except Exception as e:
@@ -68,7 +78,7 @@ async def check_compliance():
 
 
 @compliance_bp.route('/report/generate', methods=['POST'])
-async def generate_report():
+def generate_report():
     """
     Generate compliance report.
     
@@ -92,16 +102,16 @@ async def generate_report():
             }), 400
         
         service = get_reporting_service()
-        report = await service.generate_compliance_report(
+        report = _run_async(service.generate_compliance_report(
             user_id=user_id,
             report_type=report_type,
             period_start=period_start,
             period_end=period_end
-        )
+        ))
         
         return jsonify({
             'success': True,
-            'data': report.dict()
+            'data': report.model_dump(mode='json')
         })
         
     except Exception as e:
@@ -113,7 +123,7 @@ async def generate_report():
 
 
 @compliance_bp.route('/violations/<user_id>', methods=['GET'])
-async def get_violations(user_id: str):
+def get_violations(user_id: str):
     """
     Get compliance violations for user.
     """
