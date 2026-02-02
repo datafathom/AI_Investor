@@ -1,4 +1,5 @@
 import React from 'react';
+import apiClient from '../../services/apiClient';
 import { Landmark, CreditCard, Wallet, Facebook, Github } from 'lucide-react';
 import './SocialLoginButtons.css';
 
@@ -19,13 +20,11 @@ const SocialLoginButtons = ({ onAuthSuccess }) => {
         // Google OAuth uses proper OAuth flow
         if (providerId === 'google') {
             try {
-                const response = await fetch('/api/v1/auth/google/login?redirect=true');
-                if (response.ok) {
-                    const data = await response.json();
-                    // Redirect to Google OAuth page
-                    window.location.href = data.authorization_url;
-                    return;
-                }
+                const response = await apiClient.get('/auth/google/login?redirect=true');
+                const data = response.data;
+                // Redirect to Google OAuth page
+                window.location.href = data.authorization_url;
+                return;
             } catch (err) {
                 console.error("Google Auth Initiation Failed", err);
             }
@@ -34,16 +33,12 @@ const SocialLoginButtons = ({ onAuthSuccess }) => {
         // Other providers use mock flow for now
         setTimeout(async () => {
             try {
-                const response = await fetch(`/api/auth/social/callback/${providerId}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code: `mock_code_${Math.random().toString(36).substr(2, 5)}` })
+                const response = await apiClient.post(`/auth/social/callback/${providerId}`, { 
+                    code: `mock_code_${Math.random().toString(36).substr(2, 5)}`
                 });
                 
-                if (response.ok) {
-                    const data = await response.json();
-                    onAuthSuccess(data);
-                }
+                const data = response.data;
+                onAuthSuccess(data);
             } catch (err) {
                 console.error("Social Auth Failed", err);
             }

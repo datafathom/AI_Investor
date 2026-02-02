@@ -25,7 +25,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from models.estate import (
     EstatePlan, Beneficiary, BeneficiaryType
@@ -74,10 +74,10 @@ class EstatePlanningService:
         beneficiary_objects = []
         for ben_data in beneficiaries:
             beneficiary = Beneficiary(
-                beneficiary_id=f"ben_{user_id}_{datetime.utcnow().timestamp()}",
+                beneficiary_id=f"ben_{user_id}_{datetime.now(timezone.utc).timestamp()}",
                 user_id=user_id,
-                created_date=datetime.utcnow(),
-                updated_date=datetime.utcnow(),
+                created_date=datetime.now(timezone.utc),
+                updated_date=datetime.now(timezone.utc),
                 **ben_data
             )
             beneficiary_objects.append(beneficiary)
@@ -95,19 +95,19 @@ class EstatePlanningService:
         estimated_estate_tax = await self._calculate_estate_tax(total_estate_value)
         
         plan = EstatePlan(
-            plan_id=f"estate_{user_id}_{datetime.utcnow().timestamp()}",
+            plan_id=f"estate_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             total_estate_value=total_estate_value,
             beneficiaries=beneficiary_objects,
             trust_accounts=trust_accounts or [],
             estimated_estate_tax=estimated_estate_tax,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Cache plan
         cache_key = f"estate_plan:{user_id}"
-        self.cache_service.set(cache_key, plan.dict(), ttl=86400)
+        self.cache_service.set(cache_key, plan.model_dump(), ttl=86400)
         
         return plan
     
@@ -143,7 +143,7 @@ class EstatePlanningService:
             if hasattr(beneficiary, key):
                 setattr(beneficiary, key, value)
         
-        beneficiary.updated_date = datetime.utcnow()
+        beneficiary.updated_date = datetime.now(timezone.utc)
         
         # Recalculate allocations
         total_allocation = sum(b.allocation_percentage for b in plan.beneficiaries)
@@ -210,16 +210,22 @@ class EstatePlanningService:
         tax_calc = await self.calculate_estate_tax(estate_value)
         return tax_calc['estate_tax']
     
+    async def get_estate_plan_by_user(self, user_id: str) -> Optional[EstatePlan]:
+        """Get estate plan for user."""
+        cache_key = f"estate_plan:{user_id}"
+        plan_data = self.cache_service.get(cache_key)
+        if not plan_data:
+            return None
+        return EstatePlan(**plan_data)
+
     async def _get_estate_plan(self, plan_id: str) -> Optional[EstatePlan]:
         """Get estate plan from cache."""
-        # Extract user_id from plan_id or search all plans
-        # Simplified: search cache
-        return None  # Would implement proper lookup
+        return None
     
     async def _save_estate_plan(self, plan: EstatePlan):
         """Save estate plan to cache."""
         cache_key = f"estate_plan:{plan.user_id}"
-        self.cache_service.set(cache_key, plan.dict(), ttl=86400)
+        self.cache_service.set(cache_key, plan.model_dump(), ttl=86400)
 
 
 # Singleton instance

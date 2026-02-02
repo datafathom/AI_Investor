@@ -7,6 +7,7 @@
  */
 
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useMerchantStore = create((set) => ({
     stats: null,
@@ -17,10 +18,8 @@ const useMerchantStore = create((set) => ({
     fetchStats: async (mock = true) => {
         set({ loading: true, error: null });
         try {
-            const response = await fetch(`/api/v1/merchant/square/stats?mock=${mock}`);
-            if (!response.ok) throw new Error('Failed to fetch merchant stats');
-            const data = await response.json();
-            set({ stats: data, loading: false });
+            const response = await apiClient.get('/merchant/square/stats', { params: { mock } });
+            set({ stats: response.data, loading: false });
         } catch (error) {
             console.error('Fetch stats failed:', error);
             set({ error: error.message, loading: false });
@@ -30,10 +29,8 @@ const useMerchantStore = create((set) => ({
     fetchCatalog: async (mock = true) => {
         set({ loading: true, error: null });
         try {
-            const response = await fetch(`/api/v1/merchant/square/catalog?mock=${mock}`);
-            if (!response.ok) throw new Error('Failed to fetch catalog');
-            const data = await response.json();
-            set({ catalog: data, loading: false });
+            const response = await apiClient.get('/merchant/square/catalog', { params: { mock } });
+            set({ catalog: response.data, loading: false });
         } catch (error) {
             console.error('Fetch catalog failed:', error);
             set({ error: error.message, loading: false });

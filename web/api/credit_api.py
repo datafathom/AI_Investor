@@ -66,7 +66,7 @@ async def track_credit_score():
         
         return jsonify({
             'success': True,
-            'data': credit_score.dict()
+            'data': credit_score.model_dump()
         })
         
     except Exception as e:
@@ -93,7 +93,7 @@ async def get_credit_history(user_id: str):
         
         return jsonify({
             'success': True,
-            'data': [h.dict() for h in history]
+            'data': [h.model_dump() for h in history]
         })
         
     except Exception as e:
@@ -137,7 +137,7 @@ async def get_recommendations(user_id: str):
         
         return jsonify({
             'success': True,
-            'data': [r.dict() for r in recommendations]
+            'data': [r.model_dump() for r in recommendations]
         })
         
     except Exception as e:
@@ -178,7 +178,7 @@ async def simulate_improvement(user_id: str):
         
         return jsonify({
             'success': True,
-            'data': projection.dict()
+            'data': projection.model_dump()
         })
         
     except Exception as e:

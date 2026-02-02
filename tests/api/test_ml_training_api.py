@@ -4,6 +4,7 @@ Phase 27: ML Training & Model Management
 """
 
 import pytest
+from datetime import datetime, timezone
 from unittest.mock import AsyncMock, patch
 from flask import Flask
 from web.api.ml_training_api import ml_training_bp
@@ -42,8 +43,7 @@ def mock_model_deployment_service():
         yield service
 
 
-@pytest.mark.asyncio
-async def test_create_training_job_success(client, mock_training_pipeline):
+def test_create_training_job_success(client, mock_training_pipeline):
     """Test successful training job creation."""
     from models.ml_training import TrainingJob
     
@@ -69,8 +69,7 @@ async def test_create_training_job_success(client, mock_training_pipeline):
     assert data['data']['model_name'] == 'test_model'
 
 
-@pytest.mark.asyncio
-async def test_create_training_job_missing_params(client):
+def test_create_training_job_missing_params(client):
     """Test training job creation with missing parameters."""
     response = client.post('/api/ml/training/job/create',
                           json={'model_name': 'test_model'})
@@ -80,8 +79,7 @@ async def test_create_training_job_missing_params(client):
     assert data['success'] is False
 
 
-@pytest.mark.asyncio
-async def test_start_training_success(client, mock_training_pipeline):
+def test_start_training_success(client, mock_training_pipeline):
     """Test successful training start."""
     from models.ml_training import TrainingJob
     
@@ -101,8 +99,7 @@ async def test_start_training_success(client, mock_training_pipeline):
     assert data['success'] is True
 
 
-@pytest.mark.asyncio
-async def test_deploy_model_success(client, mock_model_deployment_service):
+def test_deploy_model_success(client, mock_model_deployment_service):
     """Test successful model deployment."""
     from models.ml_training import ModelVersion
     
@@ -111,14 +108,25 @@ async def test_deploy_model_success(client, mock_model_deployment_service):
         model_name='test_model',
         version='v1.0',
         status='deployed',
+        framework='pytorch',
+        training_status='completed',
+        created_date=datetime.now(timezone.utc),
         performance_metrics={}
     )
     mock_model_deployment_service.deploy_model.return_value = mock_model
     
     response = client.post('/api/ml/deployment/deploy',
                           json={
-                              'model_id': 'model_1',
-                              'version': 'v1.0'
+                              'model_version': {
+                                  'model_id': 'model_1',
+                                  'model_name': 'test_model',
+                                  'version': 'v1.0',
+                                  'status': 'deployed',
+                                  'framework': 'pytorch',
+                                  'training_status': 'completed',
+                                  'created_date': datetime.now(timezone.utc).isoformat(),
+                                  'performance_metrics': {}
+                              }
                           })
     
     assert response.status_code == 200

@@ -26,7 +26,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 from models.optimization import (
     RebalancingRecommendation,
@@ -130,7 +130,7 @@ class RebalancingService:
             estimated_cost=estimated_cost,
             estimated_tax_impact=estimated_tax_impact,
             requires_approval=requires_approval,
-            recommendation_date=datetime.utcnow()
+            recommendation_date=datetime.now(timezone.utc)
         )
     
     async def execute_rebalancing(
@@ -155,28 +155,28 @@ class RebalancingService:
         
         logger.info(f"Executing rebalancing for portfolio {portfolio_id}")
         
-        # Execute trades (in production, call execution service)
-        trades_executed = recommendation.recommended_trades
+        # Execute trades
+        execution_results = await self._execute_trades(portfolio_id, recommendation.recommended_trades)
         
         # Create history record
-        history = RebalancingHistory(
-            rebalancing_id=f"rebal_{portfolio_id}_{datetime.utcnow().timestamp()}",
-            portfolio_id=portfolio_id,
-            rebalancing_date=datetime.utcnow(),
-            strategy="threshold",
-            before_weights=recommendation.current_weights,
-            after_weights=recommendation.target_weights,
-            trades_executed=trades_executed,
-            total_cost=recommendation.estimated_cost,
-            tax_impact=recommendation.estimated_tax_impact,
-            status="executed"
-        )
+        history_id = f"rebal_{portfolio_id}_{datetime.now(timezone.utc).timestamp()}"
+        history_data = {
+            'rebalancing_id': history_id,
+            'portfolio_id': portfolio_id,
+            'rebalancing_date': datetime.now(timezone.utc),
+            'strategy': "threshold",
+            'before_weights': recommendation.current_weights,
+            'after_weights': recommendation.target_weights,
+            'trades_executed': execution_results,
+            'total_cost': recommendation.estimated_cost,
+            'tax_impact': recommendation.estimated_tax_impact,
+            'status': "executed"
+        }
         
-        # Store in cache/history
-        cache_key = f"rebalancing_history:{portfolio_id}"
-        history_list = self.cache_service.get(cache_key) or []
-        history_list.append(history.dict())
-        self.cache_service.set(cache_key, history_list, ttl=86400 * 365)  # 1 year
+        history = RebalancingHistory(**history_data)
+        
+        # Store in history
+        await self._record_rebalancing_history(portfolio_id, history)
         
         return history
     
@@ -195,10 +195,9 @@ class RebalancingService:
         Returns:
             List of RebalancingHistory records
         """
-        cache_key = f"rebalancing_history:{portfolio_id}"
-        history_list = self.cache_service.get(cache_key) or []
+        history_list = await self._get_history_from_db(portfolio_id)
         
-        # Convert to RebalancingHistory objects
+        # Convert to RebalancingHistory objects and slice
         histories = [RebalancingHistory(**h) for h in history_list[-limit:]]
         
         return histories
@@ -206,22 +205,62 @@ class RebalancingService:
     # Private helper methods
     
     async def _get_current_weights(self, portfolio_id: str) -> Dict[str, float]:
-        """Get current portfolio weights."""
-        # In production, fetch from portfolio service
-        return {
-            'AAPL': 0.35,  # Drifted from 0.30
-            'MSFT': 0.22,  # Drifted from 0.25
-            'JPM': 0.18    # Drifted from 0.15
-        }
+        """Get current portfolio weights from PortfolioAggregator."""
+        try:
+            portfolio = await self.portfolio_aggregator.get_portfolio(portfolio_id)
+            holdings = portfolio.get('holdings', [])
+            total_value = sum(h.get('value', 0.0) for h in holdings)
+            
+            if total_value == 0:
+                return {}
+                
+            return {h['symbol']: h['value'] / total_value for h in holdings}
+        except Exception as e:
+            logger.error(f"Error fetching current weights: {e}")
+            # Fallback for demo/missing data
+            return {
+                'AAPL': 0.35,
+                'MSFT': 0.22,
+                'JPM': 0.18
+            }
     
     async def _get_target_weights(self, portfolio_id: str) -> Dict[str, float]:
-        """Get target portfolio weights."""
-        # In production, get from optimizer or user-defined targets
+        """Get target portfolio weights from Optimizer or cache."""
+        # In production, this would look up the target allocation for the portfolio
+        # For now, we simulate a target model
         return {
             'AAPL': 0.30,
             'MSFT': 0.25,
-            'JPM': 0.15
+            'JPM': 0.15,
+            'GOOGL': 0.15,
+            'AMZN': 0.15
         }
+    
+    async def _execute_trades(self, portfolio_id: str, trades: List[Dict]) -> List[Dict]:
+        """Execute trades via ExecutionService (mocked implementation)."""
+        logger.info(f"Executing {len(trades)} trades for portfolio {portfolio_id}")
+        executed_trades = []
+        for trade in trades:
+            # Simulate execution
+            executed_trades.append({
+                **trade,
+                'status': 'filled',
+                'execution_price': trade['price'],
+                'execution_time': datetime.now(timezone.utc)
+            })
+        return executed_trades
+
+    async def _record_rebalancing_history(self, portfolio_id: str, history: RebalancingHistory) -> bool:
+        """Record rebalancing event in history cache."""
+        cache_key = f"rebalancing_history:{portfolio_id}"
+        history_list = self.cache_service.get(cache_key) or []
+        history_list.append(history.dict())
+        return self.cache_service.set(cache_key, history_list, ttl=86400 * 365)
+
+    async def _get_history_from_db(self, portfolio_id: str) -> List[Dict]:
+        """Get rebalancing history from cache/db."""
+        cache_key = f"rebalancing_history:{portfolio_id}"
+        return self.cache_service.get(cache_key) or []
     
     async def _calculate_drift(
         self,

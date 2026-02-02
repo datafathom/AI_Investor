@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import { Shield, RefreshCw, Key, ArrowRight, CheckCircle, XCircle, Info } from 'lucide-react';
 import './BrokerageConnectivityWidget.css';
 
@@ -11,12 +12,9 @@ const BrokerageConnectivityWidget = () => {
     const fetchStatus = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('widget_os_token');
-            const res = await fetch('/api/v1/brokerage/status', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = await res.json();
-            setStatus(data);
+        try {
+            const response = await apiClient.get('/brokerage/status');
+            setStatus(response.data);
         } catch (e) {
             console.error("Failed to fetch brokerage status", e);
         } finally {
@@ -27,14 +25,9 @@ const BrokerageConnectivityWidget = () => {
     const handleConnect = async () => {
         setConnecting(true);
         try {
-            const token = localStorage.getItem('token');
-            const res = await fetch('/api/v1/brokerage/connect', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (res.ok) {
-                setTimeout(fetchStatus, 1000); // Wait for simulation to "propagate"
-            }
+        try {
+            await apiClient.post('/brokerage/connect');
+            setTimeout(fetchStatus, 1000); // Wait for simulation to "propagate"
         } catch (e) {
             console.error("Connection failed", e);
         } finally {

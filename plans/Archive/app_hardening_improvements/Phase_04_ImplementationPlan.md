@@ -9,6 +9,34 @@
 
 ---
 
+# Audit & Hardening: App Improvements (Phases 1-33)
+
+This plan focuses on stabilizing and verifying the "App Hardening & Improvements" cycle (Phases 1-33), ensuring full E2E integration, 100% test coverage, and removing mock data dependencies.
+
+## Proposed Changes
+
+### [Group A & B: Analytics & Planning]
+
+#### [MODIFY] [rebalancing_service.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/optimization/rebalancing_service.py)
+- Refactor to include helper methods `_execute_trades` and `_record_rebalancing_history` for better testability and modularity.
+- Replace mock weights with real data calls to `PortfolioAggregator`.
+
+#### [MODIFY] [performance_attribution_service.py](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/analytics/performance_attribution_service.py)
+- Replace `_get_portfolio_data` mock block with real integration to `PortfolioAggregator`.
+- Remove simplified benchmark return mocks.
+
+## Verification Plan
+
+### Automated Tests
+- Run `pytest tests/analytics/ tests/optimization/ tests/risk/ tests/tax/` to ensure all 33-phase backend components are passing.
+- Achieve 100% code coverage for core services using `pytest-cov`.
+
+### Manual Verification (E2E)
+- Verify `AdvancedPortfolioAnalytics.jsx` loads and displays real data from the API.
+- Verify `PortfolioOptimizationDashboard.jsx` generates and executes real rebalancing recommendations.
+
+---
+
 ## Phase Overview
 
 Implement intelligent tax-loss harvesting to minimize tax liability while maintaining portfolio objectives. This phase builds on existing tax harvesting infrastructure to add advanced optimization, lot selection, and comprehensive tax impact analysis.

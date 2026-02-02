@@ -24,7 +24,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 from models.compliance import ComplianceReport
 from services.compliance.compliance_engine import get_compliance_engine
@@ -68,19 +68,33 @@ class ReportingService:
         violations = []  # Would fetch from database
         
         report = ComplianceReport(
-            report_id=f"report_{user_id}_{datetime.utcnow().timestamp()}",
+            report_id=f"report_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             report_type=report_type,
             period_start=period_start,
             period_end=period_end,
             violations=violations,
-            generated_date=datetime.utcnow()
+            generated_date=datetime.now(timezone.utc)
         )
         
         # Save report
         await self._save_report(report)
         
         return report
+
+    async def generate_regulatory_filing(
+        self,
+        user_id: str,
+        filing_type: str,
+        period_end: datetime
+    ) -> Dict[str, str]:
+        """Generate regulatory filing."""
+        return {
+            "filing_id": f"filing_{filing_type}_{period_end.isoformat()}",
+            "status": "generated",
+            "content": f"Content for {filing_type}",
+            "user_id": user_id
+        }
     
     async def _save_report(self, report: ComplianceReport):
         """Save report to cache."""

@@ -3,6 +3,7 @@
  * Phase 67: Manages real estate, art, private equity entries and valuations.
  */
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useAssetsStore = create((set, get) => ({
     // State
@@ -37,8 +38,8 @@ const useAssetsStore = create((set, get) => ({
     // Async: Fetch assets
     fetchAssets: async () => {
         try {
-            const response = await fetch('/api/v1/assets/illiquid');
-            const data = await response.json();
+            const response = await apiClient.get('/assets/illiquid');
+            const data = response.data;
             const total = (data.assets || []).reduce((sum, a) => sum + (a.currentValue || 0), 0);
             set({ illiquidAssets: data.assets || [], totalIlliquidValue: total });
         } catch (error) {
@@ -50,12 +51,19 @@ const useAssetsStore = create((set, get) => ({
     saveAsset: async (asset) => {
         const { addAsset, updateAsset, setError } = get();
         try {
-            const response = await fetch('/api/v1/assets/illiquid', {
-                method: asset.id ? 'PUT' : 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(asset)
-            });
-            const data = await response.json();
+            let response;
+            if (asset.id) {
+                response = await apiClient.put('/assets/illiquid', asset); // Assuming PUT for update if supported, typically would use POST or specific ID endpoint
+            } else {
+                response = await apiClient.post('/assets/illiquid', asset);
+            }
+            
+            // Note: The original code used POST/PUT to same endpoint based on logic, but apiClient handles methods.
+            // If the backend expects PUT for updates, we use put. 
+            // However, typical REST would be PUT /assets/illiquid/:id. 
+            // The previous code did: method: asset.id ? 'PUT' : 'POST' to /api/v1/assets/illiquid
+            
+            const data = response.data;
             if (asset.id) updateAsset(asset.id, data.asset);
             else addAsset(data.asset);
         } catch (error) {

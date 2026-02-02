@@ -41,6 +41,39 @@ class LearningService:
         """Initialize service with dependencies."""
         self.cache_service = get_cache_service()
         
+    async def update_user_preferences(
+        self,
+        user_id: str,
+        preferences: Dict[str, str]
+    ) -> List[UserPreference]:
+        """
+        Update user preferences.
+        
+        Args:
+            user_id: User identifier
+            preferences: Dict of category to value
+            
+        Returns:
+            List of updated UserPreference objects
+        """
+        logger.info(f"Updating preferences for user {user_id}")
+        
+        updated_prefs = []
+        for category, value in preferences.items():
+            pref = UserPreference(
+                preference_id=f"pref_{user_id}_{category}",
+                user_id=user_id,
+                category=category,
+                value=value,
+                confidence=1.0,
+                learned_date=datetime.utcnow(),
+                updated_date=datetime.utcnow()
+            )
+            updated_prefs.append(pref)
+            await self._save_preferences(pref)
+            
+        return updated_prefs
+    
     async def get_user_preferences(
         self,
         user_id: str
@@ -60,6 +93,10 @@ class LearningService:
             {"category": "risk_tolerance", "value": "moderate", "confidence": 0.8},
             {"category": "investment_style", "value": "growth", "confidence": 0.7}
         ]
+        
+    async def get_recommendations(self, user_id: str) -> List[Recommendation]:
+        """Alias for generate_recommendations to match test suite."""
+        return await self.generate_recommendations(user_id)
     
     async def learn_from_interaction(
         self,
@@ -121,6 +158,11 @@ class LearningService:
         """Save recommendation to cache."""
         cache_key = f"recommendation:{recommendation.recommendation_id}"
         self.cache_service.set(cache_key, recommendation.dict(), ttl=86400 * 30)
+        
+    async def _save_preferences(self, preference: UserPreference):
+        """Save preference to cache."""
+        cache_key = f"preference:{preference.user_id}:{preference.category}"
+        self.cache_service.set(cache_key, preference.dict(), ttl=86400 * 365)
 
 
 # Singleton instance

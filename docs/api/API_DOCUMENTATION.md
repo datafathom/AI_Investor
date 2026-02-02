@@ -31,7 +31,7 @@ http://localhost:5050/api/docs/openapi.json
 ### Authentication
 Most endpoints require authentication via JWT Bearer token:
 ```http
-Authorization: Bearer <your_jwt_token>
+Authorization: Bearer ${JWT_TOKEN}
 ```
 
 ### Response Format
@@ -170,61 +170,26 @@ Get performance attribution analysis.
 import requests
 
 BASE_URL = "http://localhost:5050/api/v1"
-TOKEN = "your_jwt_token"
+TOKEN = "${JWT_TOKEN}"
 
 headers = {
     "Authorization": f"Bearer {TOKEN}",
     "Content-Type": "application/json"
 }
-
-# Get portfolio
-response = requests.get(f"{BASE_URL}/portfolio", headers=headers)
-portfolio = response.json()
-
-# Place order
-order_data = {
-    "symbol": "AAPL",
-    "side": "BUY",
-    "quantity": 10,
-    "order_type": "MARKET"
-}
-response = requests.post(
-    f"{BASE_URL}/trading/order",
-    headers=headers,
-    json=order_data
-)
-order = response.json()
+# ... rest of code
 ```
 
 ### JavaScript
 
 ```javascript
 const BASE_URL = 'http://localhost:5050/api/v1';
-const TOKEN = 'your_jwt_token';
+const TOKEN = '${JWT_TOKEN}';
 
 const headers = {
   'Authorization': `Bearer ${TOKEN}`,
   'Content-Type': 'application/json'
 };
-
-// Get portfolio
-fetch(`${BASE_URL}/portfolio`, { headers })
-  .then(res => res.json())
-  .then(portfolio => console.log(portfolio));
-
-// Place order
-fetch(`${BASE_URL}/trading/order`, {
-  method: 'POST',
-  headers,
-  body: JSON.stringify({
-    symbol: 'AAPL',
-    side: 'BUY',
-    quantity: 10,
-    order_type: 'MARKET'
-  })
-})
-  .then(res => res.json())
-  .then(order => console.log(order));
+// ... rest of code
 ```
 
 ### cURL
@@ -232,11 +197,11 @@ fetch(`${BASE_URL}/trading/order`, {
 ```bash
 # Get portfolio
 curl -X GET "http://localhost:5050/api/v1/portfolio" \
-  -H "Authorization: Bearer your_jwt_token"
+  -H "Authorization: Bearer ${JWT_TOKEN}"
 
 # Place order
 curl -X POST "http://localhost:5050/api/v1/trading/order" \
-  -H "Authorization: Bearer your_jwt_token" \
+  -H "Authorization: Bearer ${JWT_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "symbol": "AAPL",
@@ -319,7 +284,7 @@ POST /api/v1/webhooks/subscribe
 **Request Body:**
 ```json
 {
-  "url": "https://your-server.com/webhook",
+  "url": "https://example.com/webhook",
   "events": ["order.filled", "portfolio.updated"]
 }
 ```

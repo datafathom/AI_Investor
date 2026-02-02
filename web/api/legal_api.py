@@ -3,7 +3,7 @@ Legal Documents API
 Complete legal document management with database integration
 """
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, g
 from datetime import datetime
 import logging
 from typing import Optional, Dict, List
@@ -137,7 +137,6 @@ def accept_documents():
         JSON response with acceptance records
     """
     from web.auth_utils import login_required
-    from flask import g
     
     data = request.get_json()
     document_ids = data.get('documents', [])
@@ -202,7 +201,6 @@ def get_acceptance_status():
         JSON response with acceptance status
     """
     from web.auth_utils import login_required
-    from flask import g
     
     user_id = getattr(g, 'user_id', None)
     
@@ -250,7 +248,6 @@ def get_acceptance_history():
         JSON response with acceptance history
     """
     from web.auth_utils import login_required
-    from flask import g
     
     user_id = getattr(g, 'user_id', None)
     
@@ -288,7 +285,6 @@ def check_document_updates():
         JSON response with update status
     """
     from web.auth_utils import login_required
-    from flask import g
     
     user_id = getattr(g, 'user_id', None)
     

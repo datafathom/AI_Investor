@@ -15,6 +15,7 @@
  */
 
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 /**
  * @typedef {'pending'|'verified'|'rejected'|'expired'} DocumentStatus
@@ -226,15 +227,8 @@ const useKYCStore = create((set, get) => ({
         setError(null);
         
         try {
-            const response = await fetch('/api/v1/kyc/status');
-            
-            if (!response.ok) {
-                throw new Error(`Failed to fetch verification status: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            setVerificationStatus(data);
-            
+            const response = await apiClient.get('/kyc/status');
+            setVerificationStatus(response.data);
         } catch (error) {
             console.error('Error fetching verification status:', error);
             setError(error.message);
@@ -253,15 +247,8 @@ const useKYCStore = create((set, get) => ({
         setError(null);
         
         try {
-            const response = await fetch('/api/v1/kyc/documents');
-            
-            if (!response.ok) {
-                throw new Error(`Failed to fetch documents: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            setDocuments(data.documents || []);
-            
+            const response = await apiClient.get('/kyc/documents');
+            setDocuments(response.data.documents || []);
         } catch (error) {
             console.error('Error fetching documents:', error);
             setError(error.message);
@@ -280,15 +267,8 @@ const useKYCStore = create((set, get) => ({
         setError(null);
         
         try {
-            const response = await fetch('/api/v1/kyc/filings/calendar');
-            
-            if (!response.ok) {
-                throw new Error(`Failed to fetch filing deadlines: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            setFilingDeadlines(data.deadlines || []);
-            
+            const response = await apiClient.get('/kyc/filings/calendar');
+            setFilingDeadlines(response.data.deadlines || []);
         } catch (error) {
             console.error('Error fetching filing deadlines:', error);
             setError(error.message);
@@ -314,17 +294,13 @@ const useKYCStore = create((set, get) => ({
             formData.append('file', file);
             formData.append('document_type', documentType);
             
-            const response = await fetch('/api/v1/kyc/documents/upload', {
-                method: 'POST',
-                body: formData
+            const response = await apiClient.post('/kyc/documents/upload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
             });
             
-            if (!response.ok) {
-                throw new Error(`Failed to upload document: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            addDocument(data.document);
+            addDocument(response.data.document);
             setUploadProgress(file.name, 100);
             
             // Clear progress after delay
@@ -350,15 +326,12 @@ const useKYCStore = create((set, get) => ({
         setError(null);
         
         try {
-            const response = await fetch(`/api/v1/kyc/filings/13f/${portfolioId}/export`);
-            
-            if (!response.ok) {
-                throw new Error(`Failed to export 13F: ${response.status}`);
-            }
+            const response = await apiClient.get(`/kyc/filings/13f/${portfolioId}/export`, {
+                responseType: 'blob'
+            });
             
             // Trigger download
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
+            const url = window.URL.createObjectURL(response.data);
             const a = document.createElement('a');
             a.href = url;
             a.download = `13F_${portfolioId}_${new Date().toISOString().split('T')[0]}.xml`;

@@ -6,6 +6,7 @@ Phase 9: Estate Planning & Inheritance Simulation
 import pytest
 from unittest.mock import AsyncMock, patch
 from flask import Flask
+from datetime import datetime, timezone
 from web.api.estate_api import estate_bp
 
 
@@ -42,23 +43,30 @@ def mock_inheritance_simulator():
         yield simulator
 
 
-@pytest.mark.asyncio
-async def test_create_estate_plan_success(client, mock_estate_planning_service):
+def test_create_estate_plan_success(client, mock_estate_planning_service):
     """Test successful estate plan creation."""
     from models.estate import EstatePlan
     
     mock_plan = EstatePlan(
         plan_id='plan_1',
         user_id='user_1',
+        total_estate_value=1000000.0,
         beneficiaries=[],
-        total_estate_value=1000000.0
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     mock_estate_planning_service.create_estate_plan.return_value = mock_plan
+    
+    beneficiary = {
+        'name': 'John Doe',
+        'relationship': 'child',
+        'allocation_percentage': 50.0
+    }
     
     response = client.post('/api/estate/plan/create',
                           json={
                               'user_id': 'user_1',
-                              'beneficiaries': []
+                              'beneficiaries': [beneficiary]
                           })
     
     assert response.status_code == 200
@@ -66,8 +74,7 @@ async def test_create_estate_plan_success(client, mock_estate_planning_service):
     assert data['success'] is True
 
 
-@pytest.mark.asyncio
-async def test_create_estate_plan_missing_params(client):
+def test_create_estate_plan_missing_params(client):
     """Test estate plan creation with missing parameters."""
     response = client.post('/api/estate/plan/create', json={'user_id': 'user_1'})
     
@@ -76,18 +83,19 @@ async def test_create_estate_plan_missing_params(client):
     assert data['success'] is False
 
 
-@pytest.mark.asyncio
-async def test_get_estate_plan_success(client, mock_estate_planning_service):
+def test_get_estate_plan_success(client, mock_estate_planning_service):
     """Test successful estate plan retrieval."""
     from models.estate import EstatePlan
     
     mock_plan = EstatePlan(
         plan_id='plan_1',
         user_id='user_1',
+        total_estate_value=1000000.0,
         beneficiaries=[],
-        total_estate_value=1000000.0
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
-    mock_estate_planning_service.get_estate_plan.return_value = mock_plan
+    mock_estate_planning_service.get_estate_plan_by_user.return_value = mock_plan
     
     response = client.get('/api/estate/plan/user_1')
     
@@ -96,17 +104,15 @@ async def test_get_estate_plan_success(client, mock_estate_planning_service):
     assert data['success'] is True
 
 
-@pytest.mark.asyncio
-async def test_calculate_estate_tax_success(client, mock_estate_planning_service):
+def test_calculate_estate_tax_success(client, mock_estate_planning_service):
     """Test successful estate tax calculation."""
-    from models.estate import EstateTaxCalculation
-    
-    mock_calculation = EstateTaxCalculation(
-        plan_id='plan_1',
-        total_estate_value=1000000.0,
-        taxable_amount=500000.0,
-        estimated_tax=200000.0
-    )
+    # Service returns a dictionary for tax calculation
+    mock_calculation = {
+        'estate_value': 1000000.0,
+        'exemption': 12000000.0,
+        'taxable_estate': 0.0,
+        'estate_tax': 0.0
+    }
     mock_estate_planning_service.calculate_estate_tax.return_value = mock_calculation
     
     response = client.post('/api/estate/tax/calculate',

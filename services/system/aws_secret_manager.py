@@ -5,7 +5,7 @@ Complete AWS Secrets Manager implementation
 
 import os
 import logging
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +15,8 @@ try:
     from botocore.exceptions import ClientError
     BOTO3_AVAILABLE = True
 except ImportError:
+    boto3 = None
+    ClientError = Exception
     BOTO3_AVAILABLE = False
     logger.warning("boto3 not available. Install with: pip install boto3")
 

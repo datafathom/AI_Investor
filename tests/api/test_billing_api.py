@@ -6,7 +6,7 @@ Phase 11: Bill Payment Automation
 import pytest
 from unittest.mock import AsyncMock, patch
 from flask import Flask
-from datetime import datetime
+from datetime import datetime, timezone
 from web.api.billing_api import billing_bp
 
 
@@ -43,8 +43,7 @@ def mock_payment_reminder_service():
         yield service
 
 
-@pytest.mark.asyncio
-async def test_create_bill_success(client, mock_bill_payment_service):
+def test_create_bill_success(client, mock_bill_payment_service):
     """Test successful bill creation."""
     from models.billing import Bill
     
@@ -55,7 +54,9 @@ async def test_create_bill_success(client, mock_bill_payment_service):
         merchant='Utility Company',
         amount=150.0,
         due_date=datetime(2024, 12, 31),
-        recurrence='monthly'
+        recurrence='monthly',
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     mock_bill_payment_service.create_bill.return_value = mock_bill
     
@@ -75,8 +76,7 @@ async def test_create_bill_success(client, mock_bill_payment_service):
     assert data['data']['bill_name'] == 'Electric Bill'
 
 
-@pytest.mark.asyncio
-async def test_create_bill_missing_params(client):
+def test_create_bill_missing_params(client):
     """Test bill creation with missing parameters."""
     response = client.post('/api/billing/bill/create',
                           json={'user_id': 'user_1', 'bill_name': 'Test'})
@@ -86,8 +86,7 @@ async def test_create_bill_missing_params(client):
     assert data['success'] is False
 
 
-@pytest.mark.asyncio
-async def test_get_upcoming_bills_success(client, mock_bill_payment_service):
+def test_get_upcoming_bills_success(client, mock_bill_payment_service):
     """Test successful upcoming bills retrieval."""
     from models.billing import Bill
     
@@ -99,7 +98,9 @@ async def test_get_upcoming_bills_success(client, mock_bill_payment_service):
             merchant='Utility Company',
             amount=150.0,
             due_date=datetime(2024, 12, 31),
-            recurrence='monthly'
+            recurrence='monthly',
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
     ]
     mock_bill_payment_service.get_upcoming_bills.return_value = mock_bills
@@ -112,16 +113,15 @@ async def test_get_upcoming_bills_success(client, mock_bill_payment_service):
     assert len(data['data']) == 1
 
 
-@pytest.mark.asyncio
-async def test_create_reminder_success(client, mock_payment_reminder_service):
+def test_create_reminder_success(client, mock_payment_reminder_service):
     """Test successful reminder creation."""
     from models.billing import PaymentReminder
     
     mock_reminder = PaymentReminder(
         reminder_id='reminder_1',
-        user_id='user_1',
         bill_id='bill_1',
-        reminder_days_before=3
+        reminder_date=datetime.now(timezone.utc),
+        reminder_type='upcoming'
     )
     mock_payment_reminder_service.create_reminder.return_value = mock_reminder
     

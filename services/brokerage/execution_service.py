@@ -47,7 +47,7 @@ class ExecutionService:
         # 3. Routing to Brokerage
         logger.info(f"Routing {side} order for {qty} {symbol}...")
         
-        if self._brokerage._is_simulated:
+        if self._brokerage.is_simulated:
             return {
                 "status": "FILLED",
                 "order_id": f"sim_ord_{datetime.now().timestamp()}",

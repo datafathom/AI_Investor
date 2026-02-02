@@ -1,4 +1,10 @@
 import pytest
+import sys
+from unittest.mock import MagicMock
+
+# Mock alpaca_trade_api before importing service
+sys.modules["alpaca_trade_api"] = MagicMock()
+
 from services.brokerage.brokerage_service import get_brokerage_service
 
 def test_brokerage_service_singleton():

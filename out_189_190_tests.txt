@@ -1,0 +1,17 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.1, pytest-7.4.0, pluggy-1.6.0 -- C:\Users\astir\Desktop\AI_Company\AI_Investor\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\astir\Desktop\AI_Company\AI_Investor
+configfile: pytest.ini
+plugins: anyio-4.12.1, asyncio-0.21.1, base-url-2.1.0
+asyncio: mode=Mode.AUTO
+collecting ... collected 6 items
+
+tests/trading/test_hedging.py::test_recommend_hedge PASSED               [ 16%]
+tests/trading/test_hedging.py::test_calculate_tax_shield PASSED          [ 33%]
+tests/market_data/test_forced_sellers.py::test_monitor_passive_flow PASSED [ 50%]
+tests/market_data/test_forced_sellers.py::test_detect_liquidity_trap PASSED [ 66%]
+tests/neo4j/test_flow_graph.py::test_map_passive_inflow PASSED           [ 83%]
+tests/neo4j/test_flow_graph.py::test_query_structural_risk PASSED        [100%]
+
+============================== 6 passed in 6.40s ==============================

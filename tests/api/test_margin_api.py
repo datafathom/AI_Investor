@@ -55,7 +55,7 @@ def test_get_margin_status_success(client, mock_margin_service):
     response = client.get('/api/v1/margin/status?portfolio_id=portfolio_1')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert 'buffer' in data
     assert 'used' in data
     assert 'available' in data
@@ -67,6 +67,6 @@ def test_generate_deleverage_plan_success(client, mock_margin_service):
                           json={'target_buffer': 15000.0})
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert 'status' in data
     assert 'plan' in data

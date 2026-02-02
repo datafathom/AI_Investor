@@ -6,9 +6,26 @@ from services.risk.risk_monitor import get_risk_monitor
 from services.risk.circuit_breaker import get_circuit_breaker
 from services.analysis.fear_greed_service import get_fear_greed_service
 from services.system.totp_service import get_totp_service
+from services.strategies.regime_detector import RegimeDetector
 
 logger = logging.getLogger(__name__)
 risk_bp = Blueprint('risk_api', __name__)
+
+@risk_bp.route('/regime', methods=['GET'])
+def get_market_regime():
+    """Get current market regime (Bull/Bear/Transition)."""
+    try:
+        detector = RegimeDetector()
+        ticker = request.args.get('ticker', 'SPY')
+        result = detector.detect_current_regime(ticker)
+        
+        return jsonify({
+            "status": "success",
+            "data": result
+        })
+    except Exception as e:
+        logger.error(f"Regime detection failed: {e}")
+        return jsonify({"error": str(e)}), 500
 
 @risk_bp.route('/status', methods=['GET'])
 @login_required
@@ -85,3 +102,23 @@ def risk_preview():
     )
     
     return jsonify(analysis)
+
+
+@risk_bp.route('/impact', methods=['POST'])
+def get_order_impact():
+    """
+    Sprint 6: Order impact simulation (Margin/Greeks).
+    """
+    data = request.json
+    if not data or not all(k in data for k in ('symbol', 'side', 'quantity', 'price')):
+        return jsonify({"error": "Missing trade details"}), 400
+        
+    monitor = get_risk_monitor()
+    impact = monitor.simulate_order_impact(
+        symbol=data['symbol'],
+        side=data['side'],
+        quantity=float(data['quantity']),
+        price=float(data['price'])
+    )
+    
+    return jsonify({"success": True, "data": impact})

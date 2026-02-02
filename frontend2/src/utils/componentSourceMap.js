@@ -7,6 +7,7 @@
 
 export const COMPONENT_SOURCE_MAP = {
   'api': `import React, { useState, useEffect } from 'react';
+import apiClient from './services/apiClient';
 
 export default function ApiIntegration() {
   const [data, setData] = useState(null);
@@ -17,10 +18,9 @@ export default function ApiIntegration() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/example');
-      if (!response.ok) throw new Error('Failed to fetch');
-      const json = await response.json();
-      setData(json);
+    try {
+      const response = await apiClient.get('/example');
+      setData(response.data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -247,7 +247,8 @@ const pingServer = async () => {
   setStatus('pinging');
   const start = Date.now();
   try {
-    await fetch('/api/health');
+  try {
+    await apiClient.get('/health');
     const latency = Date.now() - start;
     setStatus(\`Success: \${latency}ms\`);
   } catch (err) {
@@ -260,8 +261,8 @@ const pingServer = async () => {
 useEffect(() => {
   const checkStatus = async () => {
     try {
-      const res = await fetch('/api/health');
-      setServerStatus(res.ok ? 'online' : 'offline');
+      const res = await apiClient.get('/health');
+      setServerStatus('online');
     } catch {
       setServerStatus('offline');
     }

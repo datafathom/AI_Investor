@@ -234,7 +234,3 @@ const AIAssistantDashboard = () => {
 };
 
 export default AIAssistantDashboard;
-  );
-};
-
-export default AIAssistantDashboard;

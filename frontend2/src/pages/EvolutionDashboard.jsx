@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import apiClient from '../services/apiClient';
 import FitnessSurface3D from '../widgets/Evolution/FitnessSurface3D';
 import LineageMap from '../widgets/Evolution/LineageMap';
 import { useNotifications } from '../hooks/useNotifications';
@@ -17,14 +18,11 @@ const EvolutionDashboard = () => {
         const initLab = async () => {
             try {
                 // Initialize Evolution Engine (Distillery)
-                const startRes = await fetch('/api/v1/evolution/start', { 
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-                });
-                if (startRes.ok) {
-                    setStatus('online');
-                    const data = await startRes.json();
-                    setStats(data);
+                const startRes = await apiClient.post('/evolution/start');
+                
+                setStatus('online');
+                const data = startRes.data;
+                setStats(data);
                     // Map history to visualization if possible, or keep mock for demo
                     // data.history might be complex, relying on mock for surface 3d for now
                     setLabData(prev => ({ ...prev, fitnessLandscape: generateMockLandscape() }));
@@ -47,21 +45,14 @@ const EvolutionDashboard = () => {
         const p2 = { id: 'agent_beta', genes: { rsi_period: 21, rsi_buy: 25, rsi_sell: 75, stop_loss: 0.08 } };
 
         try {
-            const res = await fetch('/api/v1/evolution/splice', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}` 
-                },
-                body: JSON.stringify({ 
-                    parent1_id: p1.id, 
-                    parent2_id: p2.id,
-                    parent1_genes: p1.genes,
-                    parent2_genes: p2.genes
-                })
+            const res = await apiClient.post('/evolution/splice', { 
+                parent1_id: p1.id, 
+                parent2_id: p2.id,
+                parent1_genes: p1.genes,
+                parent2_genes: p2.genes
             });
             
-            const result = await res.json();
+            const result = res.data;
             if (result.status === 'success') {
                 notify({ title: 'SPLICING SUCCESS', body: `Created Hybrid Genome`, type: 'success' });
                 setLabData(prev => ({ 

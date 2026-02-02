@@ -5,10 +5,15 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import axios from 'axios';
+import apiClient from '../../src/services/apiClient';
 import PortfolioOptimizationDashboard from '../../src/pages/PortfolioOptimizationDashboard';
 
-vi.mock('axios');
+vi.mock('../../src/services/apiClient', () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+  },
+}));
 
 describe('PortfolioOptimizationDashboard', () => {
   beforeEach(() => {
@@ -16,13 +21,11 @@ describe('PortfolioOptimizationDashboard', () => {
   });
 
   it('should render dashboard', async () => {
-    axios.get.mockResolvedValue({ data: { data: {} } });
+    apiClient.get.mockResolvedValue({ data: { data: [] } });
     
     render(<PortfolioOptimizationDashboard />);
     
-    await waitFor(() => {
-      expect(screen.getByText(/Portfolio Optimization/i)).toBeInTheDocument();
-    });
+    expect(await screen.findByRole('heading', { name: /Portfolio Optimization/i, level: 1 })).toBeInTheDocument();
   });
 
   it('should display optimization parameters', async () => {
@@ -31,12 +34,10 @@ describe('PortfolioOptimizationDashboard', () => {
       optimized_weights: { AAPL: 0.4, MSFT: 0.6 }
     };
 
-    axios.get.mockResolvedValue({ data: { data: mockData } });
+    apiClient.get.mockResolvedValue({ data: { data: mockData } });
 
     render(<PortfolioOptimizationDashboard />);
 
-    await waitFor(() => {
-      expect(screen.getByText(/Portfolio Optimization/i)).toBeInTheDocument();
-    });
+    expect(await screen.findByRole('heading', { name: /Portfolio Optimization/i, level: 1 })).toBeInTheDocument();
   });
 });

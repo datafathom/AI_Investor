@@ -25,3 +25,19 @@ class PPLIEligibilityGate:
             "accreditation_level": "QUALIFIED_PURCHASER" if is_qp else "RETAIL",
             "next_steps": ["PROCEED_TO_ILIT_SETUP"] if is_qp else ["UPGRADE_WEALTH_STRATEGY", "RETAIL_WRAPPERS_ONLY"]
         }
+
+    def check_mec_status(self, premium_paid: float, seven_pay_limit: float) -> Dict[str, Any]:
+        """
+        Phase 168.3: 7-Pay Test. If premiums > limit, it's a MEC.
+        """
+        is_mec = premium_paid > seven_pay_limit
+        
+        if is_mec:
+            logger.warning("COMPLIANCE_ALERT: MEC status triggered. Loans will be taxable.")
+            
+        return {
+            "is_mec": is_mec,
+            "status": "MEC" if is_mec else "NON_MEC",
+            "loan_tax_advantage": not is_mec,
+            "headroom": max(0.0, seven_pay_limit - premium_paid)
+        }

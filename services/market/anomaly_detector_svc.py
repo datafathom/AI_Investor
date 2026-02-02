@@ -1,5 +1,6 @@
 import logging
 import numpy as np
+import yfinance as yf
 from decimal import Decimal
 from typing import List, Dict, Any
 
@@ -23,6 +24,50 @@ class AnomalyDetectorService:
         self._initialized = True
         logger.info("AnomalyDetectorService initialized")
 
+    def scan_watchlist(self, tickers: List[str]) -> Dict[str, Any]:
+        """
+        Scans a list of tickers for anomalies using live data.
+        """
+        logger.info(f"AnomalyDetector: Scanning {len(tickers)} tickers...")
+        results = {}
+        
+        try:
+            # Batch download for speed
+            data = yf.download(tickers, period="1mo", interval="1d", progress=False)
+            
+            # Handle single ticker case (pandas DataFrame structure differences)
+            if len(tickers) == 1:
+                # If only one ticker, data columns are just Open, Close etc. not MultiIndex
+                # Actually newer yfinance might still be MultiIndex? Let's handle generic case safest way: iterate tickers
+                pass
+                
+        except Exception as e:
+            logger.error(f"Failed to download batch data: {e}")
+            # Fallback to individual
+            pass
+
+        for ticker in tickers:
+            try:
+                hist = yf.Ticker(ticker).history(period="1mo")
+                if hist.empty:
+                    results[ticker] = {"is_anomalous": False, "status": "NO_DATA"}
+                    continue
+                    
+                closes = hist['Close'].tolist()
+                volumes = hist['Volume'].tolist()
+                
+                analysis = self.detect_price_volume_divergence(closes, volumes, ticker)
+                analysis['is_anomalous'] = analysis.get('divergence_score', 0) > 50
+                analysis['score'] = analysis.get('divergence_score', 0)
+                
+                results[ticker] = analysis
+                
+            except Exception as e:
+                logger.error(f"Error scanning {ticker}: {e}")
+                results[ticker] = {"is_anomalous": False, "error": str(e)}
+                
+        return results
+
     def detect_price_volume_divergence(
         self, 
         price_series: List[float], 
@@ -34,7 +79,7 @@ class AnomalyDetectorService:
         Price UP + Volume UP = Confirmation (Safe).
         """
         if len(price_series) != len(volume_series) or len(price_series) < 5:
-            return {"status": "INSUFFICIENT_DATA"}
+            return {"status": "INSUFFICIENT_DATA", "divergence_score": 0}
 
         # Calculate trends
         price_change = (price_series[-1] - price_series[0]) / price_series[0]

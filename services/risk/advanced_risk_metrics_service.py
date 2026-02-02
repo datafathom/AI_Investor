@@ -26,7 +26,7 @@ LAST_MODIFIED: 2026-01-21
 
 import logging
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 import numpy as np
 import pandas as pd
 from scipy import stats
@@ -120,6 +120,37 @@ class AdvancedRiskMetricsService:
         
         return result
     
+    def calculate_hidden_volatility_score(
+        self, 
+        reported_vol: float, 
+        valuation_gap_pct: float, 
+        liquidity_lockup_years: int
+    ) -> Dict[str, Any]:
+        """
+        Phase 181.5: Hidden Volatility Score.
+        Calculates 'True' volatility by unsmoothing reported private asset returns.
+        
+        Formula: True Vol = Reported Vol * (1 + Gap %) * (1 + log10(Lockup Years + 1))
+        """
+        import math
+        
+        gap_penalty = 1.0 + valuation_gap_pct
+        lockup_penalty = 1.0 + math.log10(liquidity_lockup_years + 1)
+        
+        true_vol = reported_vol * gap_penalty * lockup_penalty
+        risk_score = min(100, (true_vol / 0.50) * 100) # Norm to 50% vol being max risk
+        
+        logger.info(f"RISK_LOG: Hidden Volatility Score calculated. Reported: {reported_vol:.1%}, True: {true_vol:.1%}")
+        
+        return {
+            "reported_volatility": reported_vol,
+            "true_volatility": round(true_vol, 4),
+            "valuation_gap_pct": valuation_gap_pct,
+            "liquidity_lockup_years": liquidity_lockup_years,
+            "hidden_vol_score": round(risk_score, 2),
+            "status": "DANGER" if risk_score > 70 else "MONITOR"
+        }
+    
     async def _calculate_var(
         self,
         returns: np.ndarray,
@@ -133,8 +164,8 @@ class AdvancedRiskMetricsService:
         elif method == "parametric":
             mean = np.mean(returns)
             std = np.std(returns)
-            var_95 = -(mean + stats.norm.ppf(0.95) * std)
-            var_99 = -(mean + stats.norm.ppf(0.99) * std)
+            var_95 = -(mean + stats.norm.ppf(1 - 0.95) * std)
+            var_99 = -(mean + stats.norm.ppf(1 - 0.99) * std)
         else:  # monte_carlo
             # Use Monte Carlo simulation
             var_95 = -np.percentile(returns, 5)

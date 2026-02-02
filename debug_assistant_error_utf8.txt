@@ -1,0 +1,46 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.1, pytest-7.4.0, pluggy-1.6.0 -- C:\Users\astir\Desktop\AI_Company\AI_Investor\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\astir\Desktop\AI_Company\AI_Investor
+configfile: pytest.ini
+plugins: anyio-4.12.1, asyncio-0.21.1, base-url-2.1.0
+asyncio: mode=Mode.AUTO
+collecting ... collected 1 item
+
+tests/ai_assistant/test_assistant_service.py::test_send_message FAILED   [100%]
+
+================================== FAILURES ===================================
+______________________________ test_send_message ______________________________
+tests\ai_assistant\test_assistant_service.py:52: in test_send_message
+    result = await service.send_message(
+        conversation = Conversation(conversation_id='conv_123', user_id='user_123', title=None, messages=[ConversationMessage(message_id='msg_conv_123_1770042258.436779', conversation_id='conv_123', role=<MessageRole.USER: 'user'>, content='What should I invest in?', timestamp=datetime.datetime(2026, 2, 2, 9, 24, 18, 436806), metadata={})], created_date=datetime.datetime(2026, 2, 2, 9, 24, 18, 436249), updated_date=datetime.datetime(2026, 2, 2, 9, 24, 18, 436260))
+        service    = <services.ai_assistant.assistant_service.AssistantService object at 0x0000025B18885940>
+services\ai_assistant\assistant_service.py:110: in send_message
+    preferences = await self.learning_service.get_user_preferences(conversation.user_id)
+E   TypeError: object MagicMock can't be used in 'await' expression
+        conversation = Conversation(conversation_id='conv_123', user_id='user_123', title=None, messages=[ConversationMessage(message_id='msg_conv_123_1770042258.436779', conversation_id='conv_123', role=<MessageRole.USER: 'user'>, content='What should I invest in?', timestamp=datetime.datetime(2026, 2, 2, 9, 24, 18, 436806), metadata={})], created_date=datetime.datetime(2026, 2, 2, 9, 24, 18, 436249), updated_date=datetime.datetime(2026, 2, 2, 9, 24, 18, 436260))
+        conversation_id = 'conv_123'
+        self       = <services.ai_assistant.assistant_service.AssistantService object at 0x0000025B18885940>
+        user_message = 'What should I invest in?'
+        user_msg   = ConversationMessage(message_id='msg_conv_123_1770042258.436779', conversation_id='conv_123', role=<MessageRole.USER: 'user'>, content='What should I invest in?', timestamp=datetime.datetime(2026, 2, 2, 9, 24, 18, 436806), metadata={})
+============================== warnings summary ===============================
+tests/ai_assistant/test_assistant_service.py::test_send_message
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\ai_assistant\test_assistant_service.py:44: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    created_date=datetime.utcnow(),
+
+tests/ai_assistant/test_assistant_service.py::test_send_message
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\ai_assistant\test_assistant_service.py:45: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    updated_date=datetime.utcnow()
+
+tests/ai_assistant/test_assistant_service.py::test_send_message
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_assistant\assistant_service.py:101: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    message_id=f"msg_{conversation_id}_{datetime.utcnow().timestamp()}",
+
+tests/ai_assistant/test_assistant_service.py::test_send_message
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_assistant\assistant_service.py:105: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/ai_assistant/test_assistant_service.py::test_send_message - Type...
+======================== 1 failed, 4 warnings in 0.44s ========================

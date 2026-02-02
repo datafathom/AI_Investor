@@ -79,7 +79,7 @@ async def create_bill():
         
         return jsonify({
             'success': True,
-            'data': bill.dict()
+            'data': bill.model_dump()
         })
         
     except Exception as e:
@@ -106,7 +106,7 @@ async def get_upcoming_bills(user_id: str):
         
         return jsonify({
             'success': True,
-            'data': [b.dict() for b in bills]
+            'data': [b.model_dump() for b in bills]
         })
         
     except Exception as e:
@@ -150,7 +150,7 @@ async def schedule_payment():
         
         return jsonify({
             'success': True,
-            'data': payment.dict()
+            'data': payment.model_dump()
         })
         
     except Exception as e:
@@ -177,7 +177,7 @@ async def get_payment_history(user_id: str):
         
         return jsonify({
             'success': True,
-            'data': [h.dict() for h in history]
+            'data': [h.model_dump() for h in history]
         })
         
     except Exception as e:
@@ -216,7 +216,7 @@ async def create_reminder():
         
         return jsonify({
             'success': True,
-            'data': reminder.dict()
+            'data': reminder.model_dump()
         })
         
     except Exception as e:
@@ -238,7 +238,7 @@ async def send_reminders(user_id: str):
         
         return jsonify({
             'success': True,
-            'data': [r.dict() for r in reminders]
+            'data': [r.model_dump() for r in reminders]
         })
         
     except Exception as e:

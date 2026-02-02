@@ -1,4 +1,4 @@
-import { authService } from './authService';
+import apiClient from './apiClient';
 
 class AssistantService {
     constructor() {
@@ -10,13 +10,8 @@ class AssistantService {
      */
     async createConversation(userId = 'user_1', title = 'Investment Assistant Chat') {
         try {
-            const response = await authService.authenticatedFetch(`${this.baseUrl}/conversation/create`, {
-                method: 'POST',
-                body: JSON.stringify({ user_id: userId, title })
-            });
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.message || 'Failed to create conversation');
-            return data.data;
+            const response = await apiClient.post(`${this.baseUrl}/conversation/create`, { user_id: userId, title });
+            return response.data.data;
         } catch (error) {
             console.error('Assistant Service Error [createConversation]:', error);
             throw error;
@@ -28,13 +23,8 @@ class AssistantService {
      */
     async sendMessage(conversationId, message) {
         try {
-            const response = await authService.authenticatedFetch(`${this.baseUrl}/conversation/${conversationId}/message`, {
-                method: 'POST',
-                body: JSON.stringify({ message })
-            });
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.message || 'Failed to send message');
-            return data.data;
+            const response = await apiClient.post(`${this.baseUrl}/conversation/${conversationId}/message`, { message });
+            return response.data.data;
         } catch (error) {
             console.error('Assistant Service Error [sendMessage]:', error);
             throw error;
@@ -46,10 +36,8 @@ class AssistantService {
      */
     async getRecommendations(userId = 'user_1') {
         try {
-            const response = await authService.authenticatedFetch(`${this.baseUrl}/recommendations/${userId}`);
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.message || 'Failed to load recommendations');
-            return data.data || [];
+            const response = await apiClient.get(`${this.baseUrl}/recommendations/${userId}`);
+            return response.data.data || [];
         } catch (error) {
             console.error('Assistant Service Error [getRecommendations]:', error);
             throw error;

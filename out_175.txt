@@ -1,0 +1,29 @@
+INFO:services.mfo.concierge_srv:ConciergeService initialized
+INFO:services.mfo.concierge_srv:POSTGRES_LOG: INSERT INTO concierge_tickets (family_id, request_type, request_summary, status) VALUES ('3e3b94ef-4c68-4bdb-967c-4b6b96f99482', 'TRAVEL', 'Book private jet to Aspen URGENT', 'OPEN')
+INFO:services.mfo.spend_aggregator:MFO_LOG: Aggregated spend for NetJets: $1,050,000.00. Discount: 15.0%
+INFO:services.neo4j.expert_network:ExpertNetworkGraph initialized
+INFO:services.neo4j.expert_network:NEO4J_LOG: MERGE (ex:EXPERT {name: 'Dr. Smith', domain: 'Cybersecurity', rating: 4.9})
+WARNING:services.compliance.fee_tier_check:COMPLIANCE_LOG: Fee leakage detected on SPY-PF. 6bps above institutional floor.
+
+============================================================
+       PHASE 175: MFO CONCIERGE LAYER RE-VERIFICATION
+============================================================
+
+[*] Testing ConciergeService...
+    Ticket: REQ-002, Priority: VIP
+
+[*] Testing MFOSpendAggregator...
+    Discount: 15.0% (Expected: 15.0%)
+
+[*] Testing ExpertNetworkGraph...
+
+[*] Testing MFOEducationPortal...
+    Courses Available: 3
+
+[*] Testing FeeTierValidator...
+    Fee Status: RENEGOTIATION_REQUIRED (Leakage: 6 bps)
+
+============================================================
+               PHASE 175 VERIFICATION COMPLETE
+============================================================
+

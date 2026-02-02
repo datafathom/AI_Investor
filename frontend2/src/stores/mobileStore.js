@@ -3,6 +3,7 @@
  * Phase 65: Manages biometric kill switch, trade authorization, and haptic alerts.
  */
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useMobileStore = create((set, get) => ({
     // State
@@ -29,12 +30,7 @@ const useMobileStore = create((set, get) => ({
     activateKillSwitch: async (biometricToken) => {
         const { setKillSwitchActive, setError } = get();
         try {
-            const response = await fetch('/api/v1/mobile/kill-switch', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ biometric_token: biometricToken })
-            });
-            if (!response.ok) throw new Error('Kill switch activation failed');
+            await apiClient.post('/mobile/kill-switch', { biometric_token: biometricToken });
             setKillSwitchActive(true);
         } catch (error) {
             console.error('Kill switch error:', error);
@@ -46,11 +42,7 @@ const useMobileStore = create((set, get) => ({
     authorizeTrade: async (authId, approve) => {
         const { removePendingAuth, setError } = get();
         try {
-            await fetch(`/api/v1/mobile/authorize/${authId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ approve })
-            });
+            await apiClient.post(`/mobile/authorize/${authId}`, { approve });
             removePendingAuth(authId);
         } catch (error) {
             console.error('Trade auth error:', error);

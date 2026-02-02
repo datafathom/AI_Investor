@@ -3,6 +3,7 @@
  * Phase 64: Manages margin buffer, liquidation distance, and de-leveraging.
  */
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useMarginStore = create((set, get) => ({
     // State
@@ -28,8 +29,8 @@ const useMarginStore = create((set, get) => ({
     // Async: Fetch margin data
     fetchMarginData: async () => {
         try {
-            const response = await fetch('/api/v1/margin/status');
-            const data = await response.json();
+            const response = await apiClient.get('/margin/status');
+            const data = response.data;
             set({
                 marginBuffer: data.buffer || 0,
                 marginUsed: data.used || 0,
@@ -46,13 +47,8 @@ const useMarginStore = create((set, get) => ({
     generateDeleveragePlan: async (targetBuffer) => {
         const { setDeleveragePlan, setError } = get();
         try {
-            const response = await fetch('/api/v1/margin/deleverage', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ target_buffer: targetBuffer })
-            });
-            const data = await response.json();
-            setDeleveragePlan(data.plan);
+            const response = await apiClient.post('/margin/deleverage', { target_buffer: targetBuffer });
+            setDeleveragePlan(response.data.plan);
         } catch (error) {
             console.error('Deleverage plan failed:', error);
             setError(error.message);

@@ -3,113 +3,68 @@
  * FILE: frontend2/src/pages/CommunityForumsDashboard.jsx
  * ROLE: Community Forums Dashboard
  * PURPOSE: Phase 20 - Community Forums & Discussion
- *          Displays forum threads, replies, and expert Q&A.
  * 
  * INTEGRATION POINTS:
- *    - CommunityAPI: /api/v1/community endpoints
- * 
- * FEATURES:
- *    - Forum thread management
- *    - Replies and upvoting
- *    - Expert Q&A
- *    - Moderation
+ *    - CommunityStore: Uses apiClient for all API calls (User Rule 6)
  * 
  * AUTHOR: AI Investor Team
  * CREATED: 2026-01-21
- * LAST_MODIFIED: 2026-01-21
+ * LAST_MODIFIED: 2026-01-30
  * ==============================================================================
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import useCommunityStore from '../stores/communityStore';
 import './CommunityForumsDashboard.css';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 const CommunityForumsDashboard = () => {
-  const [threads, setThreads] = useState([]);
+  const userId = 'user_1'; // TODO: Get from authStore
+  
+  const {
+    threads,
+    expertQuestions,
+    loading,
+    fetchThreads,
+    fetchExpertQuestions,
+    createThread,
+    replyToThread,
+    upvoteThread
+  } = useCommunityStore();
+
   const [selectedThread, setSelectedThread] = useState(null);
-  const [expertQuestions, setExpertQuestions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [userId] = useState('user_1');
   const [newThread, setNewThread] = useState({ title: '', content: '', category: 'general' });
   const [newReply, setNewReply] = useState('');
 
   useEffect(() => {
-    loadThreads();
-    loadExpertQuestions();
-  }, []);
+    fetchThreads();
+    fetchExpertQuestions(userId);
+  }, [fetchThreads, fetchExpertQuestions]);
 
-  const loadThreads = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/community/threads`, {
-        params: { limit: 20 }
-      });
-      setThreads(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading threads:', error);
-    }
-  };
-
-  const loadExpertQuestions = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/community/expert/questions`, {
-        params: { user_id: userId }
-      });
-      setExpertQuestions(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading expert questions:', error);
-    }
-  };
-
-  const createThread = async () => {
+  const handleCreateThread = async () => {
     if (!newThread.title || !newThread.content) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/community/thread/create`, {
-        user_id: userId,
-        title: newThread.title,
-        content: newThread.content,
-        category: newThread.category
-      });
+    const success = await createThread({
+      user_id: userId,
+      title: newThread.title,
+      content: newThread.content,
+      category: newThread.category
+    });
+    if (success) {
       setNewThread({ title: '', content: '', category: 'general' });
-      loadThreads();
-    } catch (error) {
-      console.error('Error creating thread:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const addReply = async (threadId) => {
+  const handleAddReply = async (threadId) => {
     if (!newReply) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/community/thread/${threadId}/reply`, {
-        user_id: userId,
-        content: newReply
-      });
+    const success = await replyToThread(threadId, { user_id: userId, content: newReply });
+    if (success) {
       setNewReply('');
-      if (selectedThread?.thread_id === threadId) {
-        loadThreads();
-      }
-    } catch (error) {
-      console.error('Error adding reply:', error);
-    } finally {
-      setLoading(false);
+      fetchThreads();
     }
   };
 
-  const upvoteThread = async (threadId) => {
-    try {
-      await axios.post(`${API_BASE}/api/v1/community/thread/${threadId}/upvote`, {
-        user_id: userId
-      });
-      loadThreads();
-    } catch (error) {
-      console.error('Error upvoting thread:', error);
-    }
+  const handleUpvote = async (threadId) => {
+    await upvoteThread(threadId, userId);
+    fetchThreads();
   };
 
   return (
@@ -148,7 +103,7 @@ const CommunityForumsDashboard = () => {
               className="form-textarea"
               rows="4"
             />
-            <button onClick={createThread} disabled={loading} className="create-button">
+            <button onClick={handleCreateThread} disabled={loading} className="create-button">
               Create Thread
             </button>
           </div>
@@ -175,10 +130,7 @@ const CommunityForumsDashboard = () => {
                     <span>{thread.reply_count || 0} replies</span>
                     <span>{thread.upvotes || 0} upvotes</span>
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        upvoteThread(thread.thread_id);
-                      }}
+                      onClick={(e) => { e.stopPropagation(); handleUpvote(thread.thread_id); }}
                       className="upvote-button"
                     >
                       ↑
@@ -206,9 +158,7 @@ const CommunityForumsDashboard = () => {
                   <div key={idx} className="reply-card">
                     <div className="reply-header">
                       <span className="reply-author">{reply.author_name || 'Anonymous'}</span>
-                      <span className="reply-date">
-                        {new Date(reply.created_date).toLocaleDateString()}
-                      </span>
+                      <span className="reply-date">{new Date(reply.created_date).toLocaleDateString()}</span>
                     </div>
                     <p className="reply-content">{reply.content}</p>
                   </div>
@@ -224,7 +174,7 @@ const CommunityForumsDashboard = () => {
                 rows="3"
               />
               <button
-                onClick={() => addReply(selectedThread.thread_id)}
+                onClick={() => handleAddReply(selectedThread.thread_id)}
                 disabled={loading || !newReply}
                 className="reply-button"
               >

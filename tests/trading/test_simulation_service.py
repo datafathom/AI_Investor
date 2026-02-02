@@ -4,7 +4,7 @@ Comprehensive test coverage for historical replay and backtesting
 """
 
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.trading.simulation_service import SimulationService
 from models.paper_trading import SimulationResult
@@ -24,8 +24,8 @@ async def test_run_historical_simulation(service):
     mock_portfolio = Mock(portfolio_id="sim_portfolio")
     service.paper_trading.create_virtual_portfolio = AsyncMock(return_value=mock_portfolio)
     service._simulate_strategy = AsyncMock(return_value=[
-        {'symbol': 'AAPL', 'action': 'buy', 'quantity': 100, 'price': 150.0, 'date': datetime(2024, 1, 1)},
-        {'symbol': 'AAPL', 'action': 'sell', 'quantity': 100, 'price': 160.0, 'date': datetime(2024, 6, 1)},
+        {'symbol': 'AAPL', 'action': 'buy', 'quantity': 100, 'price': 150.0, 'date': datetime(2024, 1, 1, tzinfo=timezone.utc)},
+        {'symbol': 'AAPL', 'action': 'sell', 'quantity': 100, 'price': 160.0, 'date': datetime(2024, 6, 1, tzinfo=timezone.utc)},
     ])
     service.paper_trading.get_portfolio_performance = AsyncMock(return_value={
         'total_return': 6.67,
@@ -36,8 +36,8 @@ async def test_run_historical_simulation(service):
     service._calculate_win_rate = AsyncMock(return_value=0.6)
     service._save_simulation = AsyncMock()
     
-    start_date = datetime(2024, 1, 1)
-    end_date = datetime(2024, 12, 31)
+    start_date = datetime(2024, 1, 1, tzinfo=timezone.utc)
+    end_date = datetime(2024, 12, 31, tzinfo=timezone.utc)
     
     result = await service.run_historical_simulation(
         strategy_name="Test Strategy",
@@ -73,8 +73,8 @@ async def test_run_historical_simulation_with_config(service):
     
     result = await service.run_historical_simulation(
         strategy_name="Test Strategy",
-        start_date=datetime(2024, 1, 1),
-        end_date=datetime(2024, 12, 31),
+        start_date=datetime(2024, 1, 1, tzinfo=timezone.utc),
+        end_date=datetime(2024, 12, 31, tzinfo=timezone.utc),
         initial_capital=100000.0,
         strategy_config=config
     )
@@ -117,8 +117,8 @@ async def test_compare_simulations(service):
         SimulationResult(
             simulation_id="sim_1",
             strategy_name="Strategy 1",
-            start_date=datetime(2024, 1, 1),
-            end_date=datetime(2024, 12, 31),
+            start_date=datetime(2024, 1, 1, tzinfo=timezone.utc),
+            end_date=datetime(2024, 12, 31, tzinfo=timezone.utc),
             initial_capital=100000.0,
             final_capital=110000.0,
             total_return=0.10,
@@ -129,8 +129,8 @@ async def test_compare_simulations(service):
         SimulationResult(
             simulation_id="sim_2",
             strategy_name="Strategy 2",
-            start_date=datetime(2024, 1, 1),
-            end_date=datetime(2024, 12, 31),
+            start_date=datetime(2024, 1, 1, tzinfo=timezone.utc),
+            end_date=datetime(2024, 12, 31, tzinfo=timezone.utc),
             initial_capital=100000.0,
             final_capital=115000.0,
             total_return=0.15,
@@ -155,6 +155,6 @@ async def test_run_historical_simulation_error_handling(service):
     with pytest.raises(Exception):
         await service.run_historical_simulation(
             strategy_name="Error Strategy",
-            start_date=datetime(2024, 1, 1),
-            end_date=datetime(2024, 12, 31)
+            start_date=datetime(2024, 1, 1, tzinfo=timezone.utc),
+            end_date=datetime(2024, 12, 31, tzinfo=timezone.utc)
         )

@@ -87,3 +87,14 @@ class StrategyPerformance(BaseModel):
     sharpe_ratio: float
     max_drawdown: float
     current_status: StrategyStatus
+
+
+class StrategyDrift(BaseModel):
+    """Model drift metrics for live strategies."""
+    strategy_id: str
+    drift_score: float  # 0 to 1
+    pnl_divergence: float
+    vol_divergence: float
+    status: str  # "nominal", "warning", "critical"
+    last_updated: datetime
+    metrics: Dict[str, Any] = {}

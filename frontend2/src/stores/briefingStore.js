@@ -7,6 +7,7 @@
  */
 
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useBriefingStore = create((set) => ({
     briefing: null,
@@ -16,14 +17,10 @@ const useBriefingStore = create((set) => ({
     fetchBriefing: async (mock = true) => {
         set({ loading: true, error: null });
         try {
-            const url = `/api/v1/ai/briefing/daily?mock=${mock}`;
-            const response = await fetch(url);
+            const response = await apiClient.get('/ai/briefing/daily', { params: { mock } });
             
-            if (!response.ok) throw new Error('Failed to fetch daily briefing');
-            
-            const data = await response.json();
             set({ 
-                briefing: data,
+                briefing: response.data,
                 loading: false 
             });
         } catch (error) {

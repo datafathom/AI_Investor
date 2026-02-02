@@ -13,8 +13,7 @@
  */
 
 import { create } from 'zustand';
-
-const API_BASE = 'http://localhost:5050/api/v1/attribution';
+import apiClient from '../services/apiClient';
 
 /**
  * @typedef {Object} SectorAttribution
@@ -143,38 +142,31 @@ const usePortfolioStore = create((set, get) => ({
       lastUpdated: new Date().toISOString()
     });
   },
+
   fetchAttribution: async (portfolioId, benchmarkId, period) => {
     const startTime = performance.now();
     set({ isLoading: true, error: null });
     
     try {
-      const params = new URLSearchParams({
-        benchmark: benchmarkId || get().selectedBenchmark,
-        start: period?.start || '2025-01-01',
-        end: period?.end || '2025-12-31'
+      const response = await apiClient.get(`/attribution/${portfolioId || get().selectedPortfolio}`, {
+        params: {
+          benchmark: benchmarkId || get().selectedBenchmark,
+          start: period?.start || '2025-01-01',
+          end: period?.end || '2025-12-31'
+        }
       });
       
-      const response = await fetch(
-        `${API_BASE}/${portfolioId || get().selectedPortfolio}?${params}`
-      );
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch attribution: ${response.status}`);
-      }
-      
-      const result = await response.json();
-      
-      if (result.success) {
+      if (response.data.success) {
         const hydrationTime = performance.now() - startTime;
         console.log(`Attribution state hydrated in ${hydrationTime.toFixed(2)}ms`);
         
         set({
-          attribution: result.data,
+          attribution: response.data.data,
           isLoading: false,
           lastUpdated: new Date().toISOString()
         });
       } else {
-        throw new Error(result.error);
+        throw new Error(response.data.error);
       }
     } catch (error) {
       console.error('Attribution fetch error:', error);
@@ -184,11 +176,9 @@ const usePortfolioStore = create((set, get) => ({
   
   fetchBenchmarks: async () => {
     try {
-      const response = await fetch(`${API_BASE}/benchmarks`);
-      const result = await response.json();
-      
-      if (result.success) {
-        set({ benchmarks: result.data });
+      const response = await apiClient.get('/attribution/benchmarks');
+      if (response.data.success) {
+        set({ benchmarks: response.data.data });
       }
     } catch (error) {
       console.error('Benchmarks fetch error:', error);

@@ -15,43 +15,7 @@
  */
 
 import { create } from 'zustand';
-
-/**
- * @typedef {Object} CurrencyBalance
- * @property {string} currency
- * @property {number} amount
- * @property {number} amountUSD
- * @property {number} interestRate
- */
-
-/**
- * @typedef {Object} FXRate
- * @property {string} pair
- * @property {string} base
- * @property {string} quote
- * @property {number} rate
- * @property {number} change24h
- * @property {number} spread
- * @property {string} updatedAt
- */
-
-/**
- * @typedef {Object} SweepSuggestion
- * @property {string} id
- * @property {string} fromCurrency
- * @property {string} toVehicle
- * @property {number} amount
- * @property {number} projectedYield
- * @property {string} risk
- */
-
-/**
- * @typedef {Object} RepoRate
- * @property {string} region
- * @property {string} name
- * @property {number} rate
- * @property {number} change
- */
+import apiClient from '../services/apiClient';
 
 const useCashStore = create((set, get) => ({
     // ─────────────────────────────────────────────────────────────────────────
@@ -131,8 +95,10 @@ const useCashStore = create((set, get) => ({
                 )
             };
         }
+        const newBalances = [...state.balances, { currency, amount, amountUSD, interestRate: 0 }];
         return {
-            balances: [...state.balances, { currency, amount, amountUSD, interestRate: 0 }]
+            balances: newBalances,
+            totalValueUSD: newBalances.reduce((sum, b) => sum + b.amountUSD, 0)
         };
     }),
     
@@ -274,13 +240,8 @@ const useCashStore = create((set, get) => ({
         setError(null);
         
         try {
-            const response = await fetch('/api/v1/cash/dashboard');
-            
-            if (!response.ok) {
-                throw new Error(`Failed to fetch cash data: ${response.status}`);
-            }
-            
-            const data = await response.json();
+            const response = await apiClient.get('/cash/dashboard');
+            const data = response.data?.data || response.data || {};
             
             if (data.balances) setBalances(data.balances);
             if (data.fx_rates) setFxRates(data.fx_rates);
@@ -302,15 +263,9 @@ const useCashStore = create((set, get) => ({
         const { setFxRates, setError } = get();
         
         try {
-            const response = await fetch('/api/v1/cash/fx/rates');
-            
-            if (!response.ok) {
-                throw new Error(`Failed to fetch FX rates: ${response.status}`);
-            }
-            
-            const data = await response.json();
+            const response = await apiClient.get('/cash/fx/rates');
+            const data = response.data?.data || response.data || {};
             setFxRates(data.rates || []);
-            
         } catch (error) {
             console.error('Error fetching FX rates:', error);
             setError(error.message);
@@ -328,15 +283,7 @@ const useCashStore = create((set, get) => ({
         setError(null);
         
         try {
-            const response = await fetch('/api/v1/cash/sweep/execute', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ suggestion_id: suggestionId })
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Sweep execution failed: ${response.status}`);
-            }
+            await apiClient.post('/cash/sweep/execute', { suggestion_id: suggestionId });
             
             // Refresh data after sweep
             await fetchCashData();
@@ -362,24 +309,18 @@ const useCashStore = create((set, get) => ({
         setError(null);
         
         try {
-            const response = await fetch('/api/v1/cash/fx/convert', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    from_currency: fromCurrency,
-                    to_currency: toCurrency,
-                    amount
-                })
+            const response = await apiClient.post('/cash/fx/convert', { 
+                from_currency: fromCurrency,
+                to_currency: toCurrency,
+                amount
             });
             
-            if (!response.ok) {
-                throw new Error(`FX conversion failed: ${response.status}`);
-            }
+            const result = response.data?.data || response.data || {};
             
             // Refresh data after conversion
             await fetchCashData();
             
-            return await response.json();
+            return result;
             
         } catch (error) {
             console.error('Error executing FX conversion:', error);

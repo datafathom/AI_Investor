@@ -42,6 +42,10 @@ class IntegrationFramework:
         self.cache_service = get_cache_service()
         self.supported_apps = ["mint", "ynab", "personal_capital", "quicken"]
         
+    def get_supported_apps(self) -> List[str]:
+        """Get list of supported apps."""
+        return self.supported_apps
+        
     async def create_integration(
         self,
         user_id: str,

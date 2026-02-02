@@ -60,7 +60,7 @@ def test_get_balances_success(client, mock_settlement_service):
 def test_get_rates_success(client, mock_settlement_service):
     """Test successful rates retrieval."""
     with patch('web.api.settlement_api.login_required', lambda f: f):
-        with patch('web.api.settlement_api.get_cache_service') as mock_cache:
+        with patch('services.system.cache_service.get_cache_service') as mock_cache:
             mock_cache.return_value.get.return_value = None
             response = client.get('/api/v1/settlement/rates')
             

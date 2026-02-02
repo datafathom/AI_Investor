@@ -9,6 +9,7 @@
 import React, { useEffect, useState } from 'react';
 import FearGreedGauge from '../components/FearGreedGauge';
 import './FearGreedWidget.css';
+import apiClient from '../services/apiClient';
 
 const FearGreedWidget = () => {
     const [data, setData] = useState({ score: 50, rating: 'Neutral', components: {} });
@@ -18,23 +19,19 @@ const FearGreedWidget = () => {
         const fetchData = async () => {
             try {
                 // In real app, fetch from /api/v1/market/fear-greed
-                // For MVP without backend running perfectly on same port/proxy yet, mock if fetch fails?
-                // Or try fetch.
-                const res = await fetch('http://localhost:5050/api/v1/market/fear-greed', {
-                     headers: { 'Authorization': `Bearer ${localStorage.getItem('widget_os_token')}` }
+                const response = await apiClient.get('/market/fear-greed');
+                setData(response.data);
+            } catch (e) {
+                // Fallback Mock for Demo stability
+                console.warn('FearGreed fallback used due to error:', e);
+                setData({
+                    score: Math.floor(Math.random() * 40) + 30,
+                    rating: 'Neutral',
+                    components: { vix: 20, momentum: 40 }
                 });
-                
-                if (res.ok) {
-                    const json = await res.json();
-                    setData(json);
-                } else {
-                    // Fallback Mock for Demo stability
-                    setData({
-                        score: Math.floor(Math.random() * 40) + 30,
-                        rating: 'Neutral',
-                        components: { vix: 20, momentum: 40 }
-                    });
-                }
+            } finally {
+                setLoading(false);
+            }
             } catch (e) {
                  setData({
                     score: 65,

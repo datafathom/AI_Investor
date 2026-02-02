@@ -15,9 +15,10 @@
  */
 
 import React, { useState } from 'react';
+import apiClient from '../../services/apiClient';
 import './RobinhoodConnect.css';
 
-const API_BASE = '/api/v1/robinhood';
+const API_BASE = '/robinhood';
 
 const RobinhoodConnect = ({ isOpen, onClose, onSuccess, onError }) => {
     const [username, setUsername] = useState('');
@@ -33,29 +34,13 @@ const RobinhoodConnect = ({ isOpen, onClose, onSuccess, onError }) => {
         setError(null);
 
         try {
-            const response = await fetch(`${API_BASE}/connect`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username,
-                    password,
-                    mfa_code: mfaCode || undefined
-                })
+            const response = await apiClient.post(`${API_BASE}/connect`, {
+                username,
+                password,
+                mfa_code: mfaCode || undefined
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                // Check if MFA is required
-                if (response.status === 401 && data.message?.includes('MFA')) {
-                    setRequiresMFA(true);
-                    setError('MFA code required');
-                    return;
-                }
-                throw new Error(data.message || 'Connection failed');
-            }
+            const data = response.data;
 
             if (onSuccess) {
                 onSuccess(data);

@@ -4,7 +4,7 @@ Comprehensive test coverage for API key management and usage tracking
 """
 
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.public_api.public_api_service import PublicAPIService
 from models.public_api import APIKey, APITier, APIUsage
@@ -53,14 +53,16 @@ async def test_create_api_key_different_tiers(service):
 
 
 @pytest.mark.asyncio
-async def test_track_api_usage(service):
+async def test_track_usage(service):
     """Test API usage tracking."""
     service._save_usage = AsyncMock()
+    service._get_api_key = AsyncMock(return_value=None)
     
-    result = await service.track_api_usage(
+    result = await service.track_usage(
         api_key_id="key_123",
         endpoint="/api/v1/portfolio",
-        response_time_ms=50
+        response_time_ms=50,
+        status_code=200
     )
     
     assert result is not None
@@ -76,7 +78,8 @@ async def test_get_api_usage(service):
             api_key_id="key_123",
             endpoint="/api/v1/portfolio",
             response_time_ms=50,
-            timestamp=datetime.utcnow()
+            status_code=200,
+            timestamp=datetime.now(timezone.utc)
         )
     ])
     

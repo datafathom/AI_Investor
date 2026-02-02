@@ -1,11 +1,7 @@
-"""
-Tests for Advanced Risk Management API Endpoints
-Phase 3: Advanced Risk Metrics & Stress Testing
-"""
-
 import pytest
 from unittest.mock import AsyncMock, patch
 from flask import Flask
+from datetime import datetime, timezone
 from web.api.advanced_risk_api import advanced_risk_bp
 
 
@@ -42,17 +38,24 @@ def mock_stress_testing_service():
         yield service
 
 
-@pytest.mark.asyncio
-async def test_get_risk_metrics_success(client, mock_risk_metrics_service):
+def test_get_risk_metrics_success(client, mock_risk_metrics_service):
     """Test successful risk metrics calculation."""
     from models.risk import RiskMetrics
     
     mock_metrics = RiskMetrics(
         portfolio_id='portfolio_1',
+        calculation_date=datetime.now(timezone.utc),
         var_95=0.05,
+        var_99=0.08,
         cvar_95=0.07,
-        max_drawdown=0.12,
-        sharpe_ratio=1.5
+        cvar_99=0.10,
+        maximum_drawdown=0.12,
+        maximum_drawdown_duration_days=30,
+        sharpe_ratio=1.5,
+        sortino_ratio=1.8,
+        calmar_ratio=1.2,
+        volatility=0.15,
+        method='historical'
     )
     mock_risk_metrics_service.calculate_risk_metrics.return_value = mock_metrics
     
@@ -65,8 +68,7 @@ async def test_get_risk_metrics_success(client, mock_risk_metrics_service):
     assert data['data']['sharpe_ratio'] == 1.5
 
 
-@pytest.mark.asyncio
-async def test_get_risk_metrics_error(client, mock_risk_metrics_service):
+def test_get_risk_metrics_error(client, mock_risk_metrics_service):
     """Test risk metrics error handling."""
     mock_risk_metrics_service.calculate_risk_metrics.side_effect = Exception('Calculation error')
     
@@ -77,17 +79,24 @@ async def test_get_risk_metrics_error(client, mock_risk_metrics_service):
     assert data['success'] is False
 
 
-@pytest.mark.asyncio
-async def test_run_historical_stress_success(client, mock_stress_testing_service):
+def test_run_historical_stress_success(client, mock_stress_testing_service):
     """Test successful historical stress test."""
-    from models.risk import StressTestResult
+    from models.risk import StressTestResult, StressScenario
+    
+    scenario = StressScenario(
+        scenario_name='2008_financial_crisis',
+        description='2008 Financial Crisis',
+        market_shock={'Equity': -0.3, 'Fixed Income': -0.05}
+    )
     
     mock_result = StressTestResult(
         portfolio_id='portfolio_1',
-        scenario_name='2008_financial_crisis',
-        portfolio_value_before=100000.0,
-        portfolio_value_after=70000.0,
-        loss_percent=30.0
+        scenario=scenario,
+        initial_value=100000.0,
+        stressed_value=70000.0,
+        loss_amount=30000.0,
+        loss_percentage=30.0,
+        calculation_date=datetime.now(timezone.utc)
     )
     mock_stress_testing_service.run_historical_scenario.return_value = mock_result
     
@@ -97,11 +106,10 @@ async def test_run_historical_stress_success(client, mock_stress_testing_service
     assert response.status_code == 200
     data = response.get_json()
     assert data['success'] is True
-    assert data['data']['scenario_name'] == '2008_financial_crisis'
+    assert data['data']['scenario']['scenario_name'] == '2008_financial_crisis'
 
 
-@pytest.mark.asyncio
-async def test_run_historical_stress_missing_scenario(client):
+def test_run_historical_stress_missing_scenario(client):
     """Test historical stress test without scenario name."""
     response = client.post('/api/risk/stress/historical/portfolio_1', json={})
     
@@ -110,17 +118,24 @@ async def test_run_historical_stress_missing_scenario(client):
     assert data['success'] is False
 
 
-@pytest.mark.asyncio
-async def test_run_monte_carlo_stress_success(client, mock_stress_testing_service):
+def test_run_monte_carlo_stress_success(client, mock_stress_testing_service):
     """Test successful Monte Carlo stress test."""
-    from models.risk import StressTestResult
+    from models.risk import StressTestResult, StressScenario
+    
+    scenario = StressScenario(
+        scenario_name='monte_carlo',
+        description='Monte Carlo Simulation',
+        market_shock={}
+    )
     
     mock_result = StressTestResult(
         portfolio_id='portfolio_1',
-        scenario_name='monte_carlo',
-        portfolio_value_before=100000.0,
-        portfolio_value_after=85000.0,
-        loss_percent=15.0
+        scenario=scenario,
+        initial_value=100000.0,
+        stressed_value=85000.0,
+        loss_amount=15000.0,
+        loss_percentage=15.0,
+        calculation_date=datetime.now(timezone.utc)
     )
     mock_stress_testing_service.run_monte_carlo_simulation.return_value = mock_result
     
@@ -132,23 +147,31 @@ async def test_run_monte_carlo_stress_success(client, mock_stress_testing_servic
     assert data['success'] is True
 
 
-@pytest.mark.asyncio
-async def test_run_custom_stress_success(client, mock_stress_testing_service):
+def test_run_custom_stress_success(client, mock_stress_testing_service):
     """Test successful custom stress test."""
     from models.risk import StressTestResult, StressScenario
     
+    scenario = StressScenario(
+        scenario_name='custom',
+        description='Custom Scenario',
+        market_shock={'Market': -0.1}
+    )
+    
     mock_result = StressTestResult(
         portfolio_id='portfolio_1',
-        scenario_name='custom',
-        portfolio_value_before=100000.0,
-        portfolio_value_after=90000.0,
-        loss_percent=10.0
+        scenario=scenario,
+        initial_value=100000.0,
+        stressed_value=90000.0,
+        loss_amount=10000.0,
+        loss_percentage=10.0,
+        calculation_date=datetime.now(timezone.utc)
     )
-    mock_stress_testing_service.run_custom_scenario.return_value = mock_result
+    mock_stress_testing_service.run_custom_stress_scenario.return_value = mock_result
     
     scenario_data = {
-        'name': 'market_crash',
-        'market_shock': -0.2,
+        'scenario_name': 'market_crash',
+        'description': 'Market Crash',
+        'market_shock': {'Equity': -0.2},
         'correlation_breakdown': True
     }
     
@@ -160,8 +183,7 @@ async def test_run_custom_stress_success(client, mock_stress_testing_service):
     assert data['success'] is True
 
 
-@pytest.mark.asyncio
-async def test_run_custom_stress_missing_scenario(client):
+def test_run_custom_stress_missing_scenario(client):
     """Test custom stress test without scenario."""
     response = client.post('/api/risk/stress/custom/portfolio_1', json={})
     

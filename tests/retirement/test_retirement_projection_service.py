@@ -22,6 +22,7 @@ def service():
 def mock_scenario():
     """Mock retirement scenario."""
     return RetirementScenario(
+        scenario_name="Base Case",
         current_age=35,
         retirement_age=65,
         current_savings=100000.0,

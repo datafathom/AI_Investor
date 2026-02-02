@@ -236,3 +236,14 @@ async def calculate_impermanent_loss():
     except Exception as e:
         logger.error(f"IL calculation failed: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+@web3_bp.route('/liquidity/depth/<pool_address>', methods=['GET'])
+async def get_liquidity_depth(pool_address: str):
+    """Get liquidity depth map for a pool."""
+    try:
+        depth = await _lp_service.get_liquidity_depth(pool_address)
+        return jsonify({"success": True, "data": depth})
+    except Exception as e:
+        logger.error(f"Liquidity depth fetch failed: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500

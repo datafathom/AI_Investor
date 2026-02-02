@@ -3,6 +3,7 @@ import logging
 import hashlib
 import json
 from datetime import datetime
+from typing import List, Dict
 from utils.database_manager import get_database_manager
 
 logger = logging.getLogger(__name__)
@@ -67,6 +68,36 @@ class AuditIntegrityService:
         except Exception as e:
             logger.error(f"Audit Verification Failed: {e}")
             return False
+
+    async def get_audit_stream(self, limit: int = 50) -> List[Dict]:
+        """
+        Retrieves the latest audit log entries for live streaming.
+        """
+        db = get_database_manager()
+        try:
+            with db.pg_cursor() as cur:
+                cur.execute("""
+                    SELECT id, user_id, activity_type, details, created_at, verification_hash
+                    FROM activity_logs
+                    ORDER BY created_at DESC
+                    LIMIT %s
+                """, (limit,))
+                records = cur.fetchall()
+                
+                return [
+                    {
+                        "id": str(r[0]),
+                        "user_id": r[1],
+                        "type": r[2],
+                        "details": r[3],
+                        "timestamp": r[4].isoformat() if r[4] else None,
+                        "hash": r[5][:12] + "..." if r[5] else None
+                    }
+                    for r in records
+                ]
+        except Exception as e:
+            logger.error(f"Failed to fetch audit stream: {e}")
+            return []
 
 def get_audit_integrity_service() -> AuditIntegrityService:
     return AuditIntegrityService()

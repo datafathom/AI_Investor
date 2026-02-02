@@ -4,7 +4,7 @@ Comprehensive test coverage for rebalancing checks, recommendations, and executi
 """
 
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.optimization.rebalancing_service import RebalancingService
 from models.optimization import RebalancingRecommendation, RebalancingHistory
@@ -180,20 +180,14 @@ async def test_execute_rebalancing(service):
         estimated_cost=50.0,
         estimated_tax_impact=200.0,
         requires_approval=False,
-        recommendation_date=datetime.utcnow()
+        recommendation_date=datetime.now(timezone.utc)
     )
     
     service._execute_trades = AsyncMock(return_value=[
-        {'symbol': 'AAPL', 'action': 'sell', 'quantity': 10, 'status': 'filled'},
-        {'symbol': 'JPM', 'action': 'buy', 'quantity': 20, 'status': 'filled'},
+        {'symbol': 'AAPL', 'action': 'sell', 'quantity': 10, 'status': 'filled', 'price': 100.0, 'value': 1000.0, 'execution_price': 100.0, 'execution_time': datetime.now(timezone.utc)},
+        {'symbol': 'JPM', 'action': 'buy', 'quantity': 20, 'status': 'filled', 'price': 100.0, 'value': 2000.0, 'execution_price': 100.0, 'execution_time': datetime.now(timezone.utc)},
     ])
-    service._record_rebalancing_history = AsyncMock(return_value={
-        'rebalancing_id': 'rebal_123',
-        'execution_date': datetime.utcnow(),
-        'trades_executed': 2,
-        'total_cost': 50.0,
-        'total_tax_impact': 200.0
-    })
+    service._record_rebalancing_history = AsyncMock(return_value=True)
     
     result = await service.execute_rebalancing(
         portfolio_id="test_portfolio",
@@ -218,10 +212,10 @@ async def test_execute_rebalancing_requires_approval_not_given(service):
         estimated_cost=15000.0,  # Exceeds threshold
         estimated_tax_impact=5000.0,
         requires_approval=True,
-        recommendation_date=datetime.utcnow()
+        recommendation_date=datetime.now(timezone.utc)
     )
     
-    with pytest.raises(ValueError, match="approval required"):
+    with pytest.raises(ValueError, match="requires approval but was not approved"):
         await service.execute_rebalancing(
             portfolio_id="test_portfolio",
             recommendation=recommendation,
@@ -235,15 +229,27 @@ async def test_get_rebalancing_history(service):
     service._get_history_from_db = AsyncMock(return_value=[
         {
             'rebalancing_id': 'rebal_1',
-            'execution_date': datetime(2024, 1, 1),
-            'trades_executed': 2,
-            'total_cost': 50.0
+            'portfolio_id': 'test_portfolio',
+            'rebalancing_date': datetime(2024, 1, 1, tzinfo=timezone.utc),
+            'strategy': 'threshold',
+            'before_weights': {},
+            'after_weights': {},
+            'trades_executed': [],
+            'total_cost': 50.0,
+            'tax_impact': 0.0,
+            'status': 'executed'
         },
         {
             'rebalancing_id': 'rebal_2',
-            'execution_date': datetime(2024, 2, 1),
-            'trades_executed': 3,
-            'total_cost': 75.0
+            'portfolio_id': 'test_portfolio',
+            'rebalancing_date': datetime(2024, 2, 1, tzinfo=timezone.utc),
+            'strategy': 'threshold',
+            'before_weights': {},
+            'after_weights': {},
+            'trades_executed': [],
+            'total_cost': 75.0,
+            'tax_impact': 0.0,
+            'status': 'executed'
         },
     ])
     
@@ -303,7 +309,7 @@ async def test_execute_rebalancing_error_handling(service):
         estimated_cost=50.0,
         estimated_tax_impact=200.0,
         requires_approval=False,
-        recommendation_date=datetime.utcnow()
+        recommendation_date=datetime.now(timezone.utc)
     )
     
     service._execute_trades = AsyncMock(side_effect=Exception("Execution error"))

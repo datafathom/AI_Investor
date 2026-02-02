@@ -77,7 +77,7 @@ async def create_trailing_stop():
         
         return jsonify({
             'success': True,
-            'data': order.dict()
+            'data': order.model_dump()
         })
         
     except Exception as e:
@@ -128,7 +128,7 @@ async def create_bracket_order():
         
         return jsonify({
             'success': True,
-            'data': bracket.dict()
+            'data': bracket.model_dump()
         })
         
     except Exception as e:
@@ -227,7 +227,7 @@ async def create_conditional_order():
         
         return jsonify({
             'success': True,
-            'data': order.dict()
+            'data': order.model_dump()
         })
         
     except Exception as e:
@@ -261,7 +261,7 @@ async def update_trailing_stop(order_id: str):
         
         return jsonify({
             'success': True,
-            'data': updated_order.dict()
+            'data': updated_order.model_dump()
         })
         
     except Exception as e:
@@ -308,7 +308,7 @@ async def execute_twap():
         
         return jsonify({
             'success': True,
-            'data': [e.dict() for e in executions]
+            'data': [e.model_dump() for e in executions]
         })
         
     except Exception as e:
@@ -355,7 +355,7 @@ async def execute_vwap():
         
         return jsonify({
             'success': True,
-            'data': [e.dict() for e in executions]
+            'data': [e.model_dump() for e in executions]
         })
         
     except Exception as e:
@@ -397,7 +397,7 @@ async def execute_implementation_shortfall():
         
         return jsonify({
             'success': True,
-            'data': [e.dict() for e in executions]
+            'data': [e.model_dump() for e in executions]
         })
         
     except Exception as e:

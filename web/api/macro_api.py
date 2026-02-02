@@ -242,3 +242,23 @@ async def get_macro_dashboard():
     except Exception as e:
         logger.error(f"Macro dashboard fetch failed: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+@macro_bp.route('/regime', methods=['GET'])
+async def get_macro_regime():
+    """Get the current economic regime classification."""
+    try:
+        regime = await _macro_service._fred.get_macro_regime()
+        return jsonify({
+            "success": True,
+            "data": {
+                "status": regime.status,
+                "signals": regime.signals,
+                "metrics": regime.metrics,
+                "health_score": regime.health_score,
+                "timestamp": regime.timestamp.isoformat()
+            }
+        })
+    except Exception as e:
+        logger.error(f"Regime detection failed: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500

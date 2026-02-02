@@ -57,7 +57,7 @@ async def create_integration():
         
         return jsonify({
             'success': True,
-            'data': integration.dict()
+            'data': integration.model_dump()
         })
         
     except Exception as e:
@@ -105,7 +105,7 @@ async def sync_integration(integration_id: str):
         
         return jsonify({
             'success': True,
-            'data': job.dict()
+            'data': job.model_dump() if hasattr(job, 'model_dump') else job
         })
         
     except Exception as e:

@@ -24,7 +24,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from models.enterprise import Organization, Team, TeamRole
 from services.system.cache_service import get_cache_service
@@ -59,11 +59,11 @@ class EnterpriseService:
         logger.info(f"Creating organization: {name}")
         
         organization = Organization(
-            organization_id=f"org_{datetime.utcnow().timestamp()}",
+            organization_id=f"org_{datetime.now(timezone.utc).timestamp()}",
             name=name,
             parent_organization_id=parent_organization_id,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Save organization
@@ -89,11 +89,11 @@ class EnterpriseService:
         logger.info(f"Creating team {team_name} in organization {organization_id}")
         
         team = Team(
-            team_id=f"team_{organization_id}_{datetime.utcnow().timestamp()}",
+            team_id=f"team_{organization_id}_{datetime.now(timezone.utc).timestamp()}",
             organization_id=organization_id,
             team_name=team_name,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Save team
@@ -128,9 +128,9 @@ class EnterpriseService:
             team.members.append({
                 "user_id": user_id,
                 "role": role,
-                "joined_date": datetime.utcnow().isoformat()
+                "joined_date": datetime.now(timezone.utc).isoformat()
             })
-            team.updated_date = datetime.utcnow()
+            team.updated_date = datetime.now(timezone.utc)
             await self._save_team(team)
         
         return team

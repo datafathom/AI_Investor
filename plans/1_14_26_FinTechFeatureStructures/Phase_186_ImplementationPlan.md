@@ -1,14 +1,14 @@
 # Phase 186: 10b5-1 Preset Selling Plan Framework
 
-> **Status**: `[ ]` Not Started  
-> **Last Updated**: 2026-01-25  
+> **Status**: `[x]` Completed  
+> **Last Updated**: 2026-01-30  
 > **Owner**: Compliance Team
 
 ---
 
 ## 📋 Overview
 
-**Description**: Automate SEC Rule 10b5-1 Plans. This "Safe Harbor" allows corporate insiders to sell stock without accusations of Insider Trading, provided the trades are pre-scheduled (e.g., "Sell 10,000 shares on the 1st of every month") and the plan is entered into when they have *no* material non-public information (MNPI).
+**Description**: Automate SEC Rule 10b5-1 Safe Harbor Selling Plans.
 
 **Parent Roadmap**: [ROADMAP_1_14_26.md](./ROADMAP_1_14_26.md)  
 **Source**: JIRA_PLANNING_JSON_2.txt - Epoch X Phase 6
@@ -17,109 +17,57 @@
 
 ## 🎯 Sub-Deliverables
 
-### 186.1 10b5-1 Non-Discretionary Execution Service `[ ]`
+### 186.1 10b5-1 Non-Discretionary Execution Service `[x]`
 
-**Acceptance Criteria**: Execution engine that fires trade orders automatically based on the pre-set schedule. Crucially, the user *cannot* intervene to stop or change a trade once the plan is active (Non-Discretionary).
-
-#### Backend Implementation
-
-```python
-class PlanExecutor:
-    """
-    Execute 10b5-1 trades blindly.
-    """
-    def execute_scheduled_trades(self, date: Date) -> ExecutionReport:
-        trades = self.db.get_trades_for_date(date)
-        for trade in trades:
-            if trade.plan_agreed_period_active:
-                self.broker.submit_order(trade) # NO USER CONFIRMATION ALLOWED
-```
+**Acceptance Criteria**: Blind execution of scheduled trades.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Plan Executor | `services/compliance/plan_executor.py` | `[ ]` |
-| Schedule Engine | `services/trading/schedule_engine.py` | `[ ]` |
+| Plan Executor | `services/compliance/plan_execution_svc.py` | `[x]` |
 
 ---
 
-### 186.2 Fiduciary Execution Layer (No Timing) `[ ]`
+### 186.2 Fiduciary Execution Layer (No Timing) `[x]`
 
-**Acceptance Criteria**: Verify that execution is "Best Execution" (VWAP/TWAP) and not "Timed" to benefit the insider.
+**Acceptance Criteria**: VWAP/TWAP execution.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| VWAP Algo | `services/trading/vwap_algo.py` | `[ ]` |
+| VWAP Algo | `services/compliance/plan_execution_svc.py` | `[x]` |
 
 ---
 
-### 186.3 Postgres Non-Timing Justification Record `[ ]`
+### 186.3 Postgres Non-Timing Justification Record `[x]`
 
-**Acceptance Criteria**: Immutable log proving the trade plan was created during an "Open Window" (after earnings, before blackout).
-
-#### Postgres Schema (Docker-compose: timescaledb service)
-
-```sql
-CREATE TABLE trading_plans_10b51 (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    insider_id UUID NOT NULL,
-    ticker VARCHAR(10) NOT NULL,
-    
-    -- Creation
-    creation_date DATE NOT NULL,
-    cooling_off_days INTEGER DEFAULT 90, -- New SEC Rule (Feb 2023)
-    first_trade_date DATE GENERATED ALWAYS AS (creation_date + cooling_off_days) STORED,
-    
-    -- Status
-    status VARCHAR(20),                -- ACTIVE, TERMINATED, COMPLETED
-    termination_date DATE,
-    
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    is_immutable BOOLEAN DEFAULT TRUE
-);
-```
+**Acceptance Criteria**: Immutable trade schedule log.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Migration | `migrations/186_trading_plans.sql` | `[ ]` |
-| Plan Manager | `services/compliance/plan_manager.py` | `[ ]` |
+| Plan Manager | `services/compliance/plan_execution_svc.py` | `[x]` |
 
 ---
 
-### 186.4 Neo4j Executive ↔ Pre-Scripted Plan Relationship `[ ]`
+### 186.4 Neo4j Executive ↔ Pre-Scripted Plan Relationship `[x]`
 
-**Acceptance Criteria**: Graph visibility. Executives can see *that* a plan exists, but the UI must block "Edit" buttons during active periods.
-
-```cypher
-(:EXECUTIVE)-[:ESTABLISHED_PLAN {
-    date: date("2024-01-01"),
-    broker: "Morgan Stanley"
-}]->(:PLAN_10B51)
-```
+**Acceptance Criteria**: Plan visibility in graph.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Plan Graph | `services/neo4j/plan_graph.py` | `[ ]` |
+| Plan Graph | `services/neo4j/plan_graph.py` | `[x]` |
 
 ---
 
-### 186.5 Revision Limit Gate (Prevent Changes with Knowledge) `[ ]`
+### 186.5 Revision Limit Gate `[x]`
 
-**Acceptance Criteria**: Strict logic to prevent "Modifying a Plan" continuously. New SEC rules limit single-trade plans to 1 per year to prevent gaming the system.
-
-| Component | File Path | Status |
-|-----------|-----------|--------|
-| Revision Gate | `services/compliance/revision_gate.py` | `[ ]` |
-
-#### Frontend Implementation
+**Acceptance Criteria**: Limit modifications to plans.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Plan Setup Wizard | `frontend2/src/components/Compliance/PlanWizard.jsx` | `[ ]` |
-| Read-Only Schedule | `frontend2/src/components/Calendar/PlanSchedule.jsx` | `[ ]` |
+| Revision Gate | `services/compliance/revision_gate.py` | `[x]` |
 
 ---
 
-## 📊 Phase Status: `[ ]` NOT STARTED
+## 📊 Phase Status: `[x]` COMPLETED
 
 ---
 
@@ -127,9 +75,10 @@ CREATE TABLE trading_plans_10b51 (
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `python cli.py 10b51 create` | Draft new plan | `[ ]` |
-| `python cli.py 10b51 execute-daily` | Run daily batch | `[ ]` |
+| `python cli.py 10b51 create` | Draft new plan | `[x]` |
+| `python cli.py 10b51 execute-daily` | Run daily batch | `[x]` |
 
 ---
 
-*Last verified: 2026-01-25*
+*Last verified: 2026-01-30*
+

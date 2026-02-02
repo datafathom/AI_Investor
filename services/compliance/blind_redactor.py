@@ -10,17 +10,16 @@ class PortfolioHolding(BaseModel):
     amount: float
     value: float
 
-class BlindTrustViewFilter:
+class BlindTrustRedactor:
     """
     Implements a 'Blind Trust' firewall.
     Redacts specific holding details for beneficiaries while showing total value.
     """
     
-    def filter_portfolio_view(
+    def redact_portfolio_data(
         self,
-        user_role: str,
-        total_value: float,
-        holdings: List[Dict[str, Any]]
+        portfolio_data: Dict[str, Any],
+        user_role: str
     ) -> Dict[str, Any]:
         """
         Redacts data if user is a BLIND_BENEFICIARY.
@@ -29,15 +28,17 @@ class BlindTrustViewFilter:
         
         if user_role == "BLIND_BENEFICIARY":
             # Redact everything except aggregated totals
+            # Return structure matching test expectation
             return {
-                "total_value": total_value,
-                "holdings": [],  # REDACTED
+                "total_market_value": portfolio_data.get("total_market_value"),
+                "holdings": [{"symbol": "HIDDEN", "value": h.get("value")} for h in portfolio_data.get("holdings", [])],
+                "is_redacted": True,
                 "status": "SECURE_BLIND_VIEW",
                 "message": "Holding-level details are restricted for Conflict of Interest avoidance."
             }
             
         return {
-            "total_value": total_value,
-            "holdings": holdings,
+            **portfolio_data,
+            "is_redacted": False,
             "status": "FULL_FIDUCIARY_VIEW"
         }

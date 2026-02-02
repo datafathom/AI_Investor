@@ -7,6 +7,7 @@
  */
 
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useEmailStore = create((set) => ({
     sending: false,
@@ -22,21 +23,17 @@ const useEmailStore = create((set) => ({
     sendTestEmail: async (email, mock = true) => {
         set({ sending: true, lastResult: null, error: null });
         try {
-            const response = await fetch(`/api/v1/notifications/email/send?mock=${mock}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
+            const response = await apiClient.post('/notifications/email/send', 
+                { 
                     to: email, 
                     subject: "AI Investor: Test Email",
                     content: "This is a test email sent from the Settings dashboard."
-                })
-            });
+                },
+                { params: { mock } }
+            );
             
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error || 'Failed to send email');
-            
-            set({ lastResult: data, sending: false });
-            return data;
+            set({ lastResult: response.data, sending: false });
+            return response.data;
         } catch (error) {
             console.error('Email send failed:', error);
             set({ error: error.message, sending: false });
@@ -45,11 +42,10 @@ const useEmailStore = create((set) => ({
 
     updatePreferences: async (email, prefs, mock = true) => {
         try {
-             await fetch(`/api/v1/notifications/email/subscribe?mock=${mock}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, preferences: prefs })
-            });
+            await apiClient.post('/notifications/email/subscribe', 
+                { email, preferences: prefs },
+                { params: { mock } }
+            );
             set({ preferences: prefs });
         } catch (error) {
             console.error('Update preferences failed:', error);

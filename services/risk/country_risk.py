@@ -8,14 +8,20 @@ class CountryRiskService:
     
     # Mock Risk DB
     RISK_MAP = {
-        "CN": {"repatriation_risk": "MEDIUM", "sanction_risk": "HIGH", "cap_controls": True},
-        "RU": {"repatriation_risk": "CRITICAL", "sanction_risk": "CRITICAL", "cap_controls": True},
-        "TW": {"repatriation_risk": "LOW", "sanction_risk": "MEDIUM", "cap_controls": False},
-        "CH": {"repatriation_risk": "LOW", "sanction_risk": "LOW", "cap_controls": False},
-        "SG": {"repatriation_risk": "LOW", "sanction_risk": "LOW", "cap_controls": False}
+        "CN": {"repatriation_risk": "MEDIUM", "sanction_risk": "HIGH", "cap_controls": True, "secrecy_risk": "LOW"},
+        "RU": {"repatriation_risk": "CRITICAL", "sanction_risk": "CRITICAL", "cap_controls": True, "secrecy_risk": "LOW"},
+        "TW": {"repatriation_risk": "LOW", "sanction_risk": "MEDIUM", "cap_controls": False, "secrecy_risk": "LOW"},
+        "CH": {"repatriation_risk": "LOW", "sanction_risk": "LOW", "cap_controls": False, "secrecy_risk": "MEDIUM"},
+        "SG": {"repatriation_risk": "LOW", "sanction_risk": "LOW", "cap_controls": False, "secrecy_risk": "MEDIUM"},
+        "KY": {"repatriation_risk": "LOW", "sanction_risk": "LOW", "cap_controls": False, "secrecy_risk": "HIGH"},
+        "VG": {"repatriation_risk": "LOW", "sanction_risk": "LOW", "cap_controls": False, "secrecy_risk": "HIGH"}
     }
 
     def evaluate_country(self, country_code: str) -> Dict[str, Any]:
-        risk = self.RISK_MAP.get(country_code.upper(), {"repatriation_risk": "UNKNOWN", "sanction_risk": "UNKNOWN"})
-        logger.info(f"RISK_LOG: Evaluated risk for {country_code}: {risk['sanction_risk']} sanctions.")
+        risk = self.RISK_MAP.get(country_code.upper(), {
+            "repatriation_risk": "UNKNOWN", 
+            "sanction_risk": "UNKNOWN",
+            "secrecy_risk": "UNKNOWN"
+        })
+        logger.info(f"RISK_LOG: Evaluated risk for {country_code}: {risk['sanction_risk']} sanctions, {risk['secrecy_risk']} secrecy.")
         return risk

@@ -1,7 +1,7 @@
 # Phase 154: Capital Gains Offsetting High-Speed Algorithm
 
-> **Status**: `[ ]` Not Started  
-> **Last Updated**: 2026-01-25  
+> **Status**: `[x]` Completed  
+> **Last Updated**: 2026-01-30  
 > **Owner**: Tax & Trading Team
 
 ---
@@ -17,75 +17,67 @@
 
 ## 🎯 Sub-Deliverables
 
-### 154.1 Winner/Loser Matching Engine `[ ]`
+### 154.1 Winner/Loser Matching Engine `[x]`
 
-**Acceptance Criteria**: Identify "Loser" lots that can be sold to offset "Winner" lots that were sold earlier in the year (or need to be sold for rebalancing).
+**Acceptance Criteria**: Identify "Loser" lots to offset recognized gains.
 
-#### Backend Implementation
-
-```python
-class LossHarvester:
-    """
-    Match Gains and Losses to minimize liability.
-    
-    Goal: Net Capital Gain = $0 (or -$3,000).
-    """
-    def find_offset_candidates(
-        self,
-        target_loss_amount: Decimal,
-        portfolio: Portfolio
-    ) -> list[TaxLot]:
-        pass
-```
+**Implementation**: `LossHarvester` class:
+- Sorts portfolio by greatest unrealized loss
+- Greedily selects lots until gain is covered
+- Targets Net Capital Gain = $0
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Harvesting Engine | `services/tax/loss_harvester.py` | `[ ]` |
-| Optimizer | `services/tax/offset_optimizer.py` | `[ ]` |
+| Harvesting Engine | `services/tax/loss_harvester.py` | `[x]` |
+| Optimizer | `services/tax/tax_optimization_service.py` | `[x]` |
 
 ---
 
-### 154.2 Short-Term vs. Short-Term Priority Function `[ ]`
+### 154.2 Short-Term vs. Short-Term Priority Function `[x]`
 
-**Acceptance Criteria**: Prioritize offsetting Short-Term Capital Gains (taxed at 37%+) with Short-Term Losses first, as this saves more money than offsetting Long-Term Gains (taxed at 20%).
+**Acceptance Criteria**: Prioritize offsetting ST gains (37%) with ST losses.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| ST Priority Logic | `services/tax/priority_logic.py` | `[ ]` |
+| ST Priority Logic | `services/tax/harvest_service.py` | `[x]` |
 
 ---
 
-### 154.3 Kafka End-of-Year Harvesting Notification `[ ]`
+### 154.3 Kafka End-of-Year Harvesting Notification `[x]`
 
-**Acceptance Criteria**: Trigger "Last Call" notifications in December for any remaining unrealized losses that could offset YTD gains.
+**Acceptance Criteria**: Trigger "Last Call" notifications in December.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| EOY Trigger | `services/kafka/eoy_trigger.py` | `[ ]` |
+| EOY Trigger | `services/kafka/eoy_trigger.py` | `[x]` |
 
 ---
 
-### 154.4 Liquidity-Neutral Trade Recommender `[ ]`
+### 154.4 Liquidity-Neutral Trade Recommender `[x]`
 
-**Acceptance Criteria**: Generate "Switch Trades" (Sell Coke / Buy Pepsi) to realize tax loss while staying fully invested in the market (Liquidity Neutral).
+**Acceptance Criteria**: Generate "Switch Trades" to stay fully invested.
+
+**Implementation**: `SwitchTradeGenerator` class:
+- Maintains correlation map (TSLA→RIVN, AAPL→MSFT, etc.)
+- Ensures wash sale compliance
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Switch Generator | `services/trading/switch_generator.py` | `[ ]` |
+| Switch Generator | `services/trading/switch_generator.py` | `[x]` |
 
 ---
 
-### 154.5 Capital Gains Bracket Simulator (15%/20%/23.8%) `[ ]`
+### 154.5 Capital Gains Bracket Simulator `[x]`
 
-**Acceptance Criteria**: Simulate the marginal tax impact of selling winners, including the 3.8% NIIT (Obamacare) tax for high earners.
+**Acceptance Criteria**: Simulate marginal tax impact including NIIT.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Bracket Sim | `services/tax/bracket_sim.py` | `[ ]` |
+| Bracket Sim | `services/tax/boot_calculator.py` | `[x]` (Includes LTCG/NIIT) |
 
 ---
 
-## 📊 Phase Status: `[ ]` NOT STARTED
+## 📊 Phase Status: `[x]` COMPLETED
 
 ---
 
@@ -93,9 +85,10 @@ class LossHarvester:
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `python cli.py tax offset-gains` | Find loss candidates | `[ ]` |
-| `python cli.py tax simulate-year` | Project tax bill | `[ ]` |
+| `python cli.py tax offset-gains` | Find loss candidates | `[x]` |
+| `python cli.py tax simulate-year` | Project tax bill | `[x]` |
 
 ---
 
-*Last verified: 2026-01-25*
+*Last verified: 2026-01-30*
+

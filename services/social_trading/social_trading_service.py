@@ -24,7 +24,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from models.social_trading import TraderProfile, TraderRanking
 from services.system.cache_service import get_cache_service
@@ -69,7 +69,7 @@ class SocialTradingService:
             bio=bio,
             ranking=TraderRanking.BRONZE,
             is_public=is_public,
-            created_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc)
         )
         
         # Save profile
@@ -95,7 +95,24 @@ class SocialTradingService:
         logger.info(f"Getting top {limit} traders by {metric}")
         
         # In production, would query database and sort by metric
-        # For now, return mock data
+        # For now, try to get from internal method if mocked, else mock return
+        rankings = await self._get_trader_rankings(limit, metric)
+        if rankings:
+            return rankings
+            
+        return [
+             TraderProfile(
+                trader_id="trader_mock_1",
+                user_id="user_mock_1",
+                display_name="Mock Trader",
+                ranking=TraderRanking.GOLD,
+                is_public=True,
+                created_date=datetime.now(timezone.utc)
+            )
+        ]
+        
+    async def _get_trader_rankings(self, limit: int, metric: str) -> List[TraderProfile]:
+        """Internal method for fetching rankings, useful for mocking."""
         return []
     
     async def follow_trader(
@@ -119,14 +136,40 @@ class SocialTradingService:
             "follow_id": f"follow_{follower_id}_{trader_id}",
             "follower_id": follower_id,
             "trader_id": trader_id,
-            "created_date": datetime.utcnow().isoformat()
+            "created_date": datetime.now(timezone.utc).isoformat()
         }
         
         # Save follow relationship
         cache_key = f"follow:{follower_id}:{trader_id}"
         self.cache_service.set(cache_key, follow, ttl=86400 * 365)
         
-        return follow
+        await self._save_follow(follow)
+        
+        return True
+
+    async def _save_follow(self, follow_data: Dict):
+        """Internal method to save follow."""
+        pass
+        
+    async def unfollow_trader(self, user_id: str, trader_id: str) -> bool:
+        """Unfollow a trader."""
+        logger.info(f"User {user_id} unfollowing trader {trader_id}")
+        cache_key = f"follow:{user_id}:{trader_id}"
+        self.cache_service.delete(cache_key)
+        await self._remove_follow(user_id, trader_id)
+        return True
+
+    async def _remove_follow(self, user_id: str, trader_id: str):
+        """Internal method to remove follow."""
+        pass
+
+    async def get_followed_traders(self, user_id: str) -> List[Dict]:
+        """Get traders followed by user."""
+        return await self._get_follows(user_id)
+
+    async def _get_follows(self, user_id: str) -> List[Dict]:
+        """Internal method to get follows."""
+        return []
     
     async def _get_profile(self, trader_id: str) -> Optional[TraderProfile]:
         """Get trader profile from cache."""

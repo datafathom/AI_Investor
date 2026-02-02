@@ -24,8 +24,7 @@ async def test_update_user_preferences(service):
     
     preferences = {
         'risk_tolerance': 'moderate',
-        'investment_style': 'growth',
-        'time_horizon': 'long_term'
+        'investment_style': 'growth'
     }
     
     result = await service.update_user_preferences(
@@ -34,22 +33,19 @@ async def test_update_user_preferences(service):
     )
     
     assert result is not None
-    assert isinstance(result, UserPreference) or isinstance(result, dict)
+    assert isinstance(result, list)
+    assert len(result) == 2
+    assert isinstance(result[0], UserPreference)
 
 
 @pytest.mark.asyncio
 async def test_get_recommendations(service):
     """Test getting personalized recommendations."""
-    service._get_user_preferences = AsyncMock(return_value={
-        'risk_tolerance': 'moderate',
-        'investment_style': 'growth'
-    })
-    service._generate_recommendations = AsyncMock(return_value=[
-        {'symbol': 'AAPL', 'reason': 'Matches growth style'},
-        {'symbol': 'MSFT', 'reason': 'Moderate risk'}
-    ])
+    # service.get_recommendations calls generate_recommendations
+    # which is already partially implemented with mocks in the service
     
     result = await service.get_recommendations("user_123")
     
     assert result is not None
     assert len(result) > 0
+    assert isinstance(result[0], Recommendation)

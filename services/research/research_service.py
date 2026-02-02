@@ -29,6 +29,8 @@ from datetime import datetime
 from typing import Dict, List, Optional
 from models.research import ResearchReport, ReportType, ReportStatus
 from services.system.cache_service import get_cache_service
+from services.analysis.filing_analyzer import FilingAnalyzer
+from services.valuation.dcf_engine import DCFEngine
 
 logger = logging.getLogger(__name__)
 
@@ -93,15 +95,7 @@ class ResearchService:
         title: Optional[str] = None
     ) -> ResearchReport:
         """
-        Generate company research report.
-        
-        Args:
-            user_id: User identifier
-            symbol: Stock symbol
-            title: Optional report title
-            
-        Returns:
-            ResearchReport object
+        Generate company research report using actual analytics engines.
         """
         logger.info(f"Generating company research for {symbol}")
         
@@ -116,10 +110,26 @@ class ResearchService:
             updated_date=datetime.utcnow()
         )
         
-        # Generate report content
-        report.content = await self._generate_company_content(symbol)
-        report.sections = await self._generate_company_sections(symbol)
-        report.data = await self._collect_company_data(symbol)
+        # 1. Qualitative Analysis
+        analyzer = FilingAnalyzer()
+        qual_data = analyzer.analyze_recent_filings(symbol)
+        
+        # 2. Quantitative Valuation
+        dcf = DCFEngine()
+        val_data = dcf.calculate_intrinsic_value(symbol)
+        
+        # 3. Assemble
+        report.data = {
+            **qual_data,
+            **val_data,
+            "ticker": symbol.upper()
+        }
+        
+        report.content = f"Deep Dive Research for {symbol}. Intrinsic Value: ${val_data.get('fair_value')}. Moat Score: {qual_data.get('moat_score')}/10."
+        report.sections = [
+            {"title": "Fundamental Insight", "content": qual_data.get("risk_summary")},
+            {"title": "DCF Valuation", "content": f"Fair Value Target: ${val_data.get('fair_value')}"}
+        ]
         
         report.status = ReportStatus.COMPLETED
         report.generated_date = datetime.utcnow()
@@ -182,9 +192,27 @@ class ResearchService:
         return None
     
     async def _save_report(self, report: ResearchReport):
-        """Save report to cache."""
+        """Save report to cache and pretend it's DB."""
         cache_key = f"report:{report.report_id}"
         self.cache_service.set(cache_key, report.dict(), ttl=86400 * 365)
+        
+        # Also track in user list
+        user_list_key = f"user_reports:{report.user_id}"
+        user_reports = self.cache_service.get(user_list_key) or []
+        user_reports.append(report.report_id)
+        self.cache_service.set(user_list_key, user_reports)
+
+    async def _get_reports_from_db(self, user_id: str) -> List[ResearchReport]:
+        """Fetch all reports for a user."""
+        user_list_key = f"user_reports:{user_id}"
+        report_ids = self.cache_service.get(user_list_key) or []
+        
+        reports = []
+        for rid in report_ids:
+            report = await self._get_report(rid)
+            if report:
+                reports.append(report)
+        return reports
 
 
 # Singleton instance

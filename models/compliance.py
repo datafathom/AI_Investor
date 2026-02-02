@@ -18,7 +18,7 @@ LAST_MODIFIED: 2026-01-21
 
 from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 from enum import Enum
 
 
@@ -36,7 +36,7 @@ class ComplianceRule(BaseModel):
     regulation: str  # SEC, FINRA, etc.
     rule_name: str
     description: str
-    rule_logic: Dict = {}  # Rule evaluation logic
+    rule_logic: Union[Dict, str] = {}  # Rule evaluation logic
 
 
 class ComplianceViolation(BaseModel):

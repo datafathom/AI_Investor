@@ -1,0 +1,17 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.1, pytest-7.4.0, pluggy-1.6.0 -- C:\Users\astir\Desktop\AI_Company\AI_Investor\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\astir\Desktop\AI_Company\AI_Investor
+configfile: pytest.ini
+plugins: anyio-4.12.1, asyncio-0.21.1, base-url-2.1.0
+asyncio: mode=Mode.AUTO
+collecting ... collected 6 items
+
+tests/risk/test_geopolitical_risk.py::test_simulate_total_war PASSED     [ 16%]
+tests/risk/test_geopolitical_risk.py::test_calculate_geopolitical_fear_score PASSED [ 33%]
+tests/risk/test_commodity_tracker.py::test_get_em_vulnerability PASSED   [ 50%]
+tests/risk/test_commodity_tracker.py::test_list_at_risk_countries PASSED [ 66%]
+tests/neo4j/test_policy_graph.py::test_map_policy_impact PASSED          [ 83%]
+tests/neo4j/test_policy_graph.py::test_get_impacted_investments PASSED   [100%]
+
+============================== 6 passed in 2.55s ==============================

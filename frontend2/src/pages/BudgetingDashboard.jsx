@@ -3,40 +3,37 @@
  * FILE: frontend2/src/pages/BudgetingDashboard.jsx
  * ROLE: Budgeting & Expense Tracking Dashboard
  * PURPOSE: Phase 10 - Budgeting & Expense Tracking
- *          Displays budgets, expense tracking, and spending insights.
  * 
  * INTEGRATION POINTS:
- *    - BudgetingAPI: /api/v1/budgeting endpoints
- * 
- * FEATURES:
- *    - Budget creation and management
- *    - Expense tracking
- *    - Spending insights
- *    - Category-based budgets
+ *    - BudgetingStore: Uses apiClient for all API calls (User Rule 6)
  * 
  * AUTHOR: AI Investor Team
  * CREATED: 2026-01-21
- * LAST_MODIFIED: 2026-01-21
+ * LAST_MODIFIED: 2026-01-30
  * ==============================================================================
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import useBudgetingStore from '../stores/budgetingStore';
 import './BudgetingDashboard.css';
-
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const BudgetingDashboard = () => {
-  const [budgets, setBudgets] = useState([]);
-  const [expenses, setExpenses] = useState([]);
-  const [insights, setInsights] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [userId] = useState('user_1');
+  const userId = 'user_1'; // TODO: Get from authStore
+  
+  const {
+    budgets,
+    expenses,
+    insights,
+    loading,
+    fetchBudgets,
+    fetchExpenses,
+    fetchInsights,
+    addExpense
+  } = useBudgetingStore();
+
   const [newExpense, setNewExpense] = useState({ amount: '', category: '', description: '' });
 
   const DEFAULT_LAYOUT = {
@@ -64,61 +61,22 @@ const BudgetingDashboard = () => {
   };
 
   useEffect(() => {
-    loadBudgets();
-    loadExpenses();
-    loadInsights();
-  }, []);
+    fetchBudgets(userId);
+    fetchExpenses(userId);
+    fetchInsights(userId);
+  }, [fetchBudgets, fetchExpenses, fetchInsights]);
 
-  const loadBudgets = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/budgeting/budgets`, {
-        params: { user_id: userId }
-      });
-      setBudgets(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading budgets:', error);
-    }
-  };
-
-  const loadExpenses = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/budgeting/expenses`, {
-        params: { user_id: userId, limit: 20 }
-      });
-      setExpenses(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading expenses:', error);
-    }
-  };
-
-  const loadInsights = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/budgeting/insights`, {
-        params: { user_id: userId }
-      });
-      setInsights(res.data.data);
-    } catch (error) {
-      console.error('Error loading insights:', error);
-    }
-  };
-
-  const addExpense = async () => {
+  const handleAddExpense = async () => {
     if (!newExpense.amount || !newExpense.category) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/budgeting/expenses/add`, {
-        user_id: userId,
-        amount: parseFloat(newExpense.amount),
-        category: newExpense.category,
-        description: newExpense.description
-      });
+    const success = await addExpense({
+      user_id: userId,
+      amount: parseFloat(newExpense.amount),
+      category: newExpense.category,
+      description: newExpense.description
+    });
+    if (success) {
       setNewExpense({ amount: '', category: '', description: '' });
-      loadExpenses();
-      loadInsights();
-    } catch (error) {
-      console.error('Error adding expense:', error);
-    } finally {
-      setLoading(false);
+      fetchInsights(userId);
     }
   };
 
@@ -190,7 +148,7 @@ const BudgetingDashboard = () => {
                 />
               </div>
               <div className="form-group" style={{ justifyContent: 'flex-end', flex: '0 0 auto' }}>
-                <button onClick={addExpense} disabled={loading} className="add-button">
+                <button onClick={handleAddExpense} disabled={loading} className="add-button">
                   Add Expense
                 </button>
               </div>

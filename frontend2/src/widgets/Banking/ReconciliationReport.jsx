@@ -1,4 +1,5 @@
 import React from 'react';
+import apiClient from '../../services/apiClient';
 import { ClipboardCheck, ArrowRight, Wallet } from 'lucide-react';
 import './ReconciliationReport.css';
 
@@ -9,11 +10,8 @@ const ReconciliationReport = () => {
     React.useEffect(() => {
         const fetchReport = async () => {
             try {
-                const res = await fetch('/api/v1/banking/reconciliation');
-                if (res.ok) {
-                    const data = await res.json();
-                    setReport(data);
-                }
+                const response = await apiClient.get('/banking/reconciliation');
+                setReport(response.data);
             } catch (e) {
                 console.error("Failed to fetch recon report", e);
             } finally {

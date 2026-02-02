@@ -42,10 +42,10 @@ def mock_sentiment_analysis_service():
         yield service
 
 
-@pytest.mark.asyncio
-async def test_get_news_articles_success(client, mock_news_aggregation_service):
+def test_get_news_articles_success(client, mock_news_aggregation_service):
     """Test successful news articles retrieval."""
     from models.news import NewsArticle
+    from datetime import datetime, timezone
     
     mock_articles = [
         NewsArticle(
@@ -53,8 +53,9 @@ async def test_get_news_articles_success(client, mock_news_aggregation_service):
             title='Test Article',
             content='Test content',
             source='Test Source',
-            published_at=None,
-            symbols=['AAPL']
+            published_date=datetime.now(timezone.utc),
+            symbols=['AAPL'],
+            relevance_score=0.9
         )
     ]
     mock_news_aggregation_service.fetch_news.return_value = mock_articles
@@ -67,10 +68,10 @@ async def test_get_news_articles_success(client, mock_news_aggregation_service):
     assert len(data['data']) == 1
 
 
-@pytest.mark.asyncio
-async def test_get_news_for_symbol_success(client, mock_news_aggregation_service):
+def test_get_news_for_symbol_success(client, mock_news_aggregation_service):
     """Test successful symbol-specific news retrieval."""
     from models.news import NewsArticle
+    from datetime import datetime, timezone
     
     mock_articles = [
         NewsArticle(
@@ -78,11 +79,12 @@ async def test_get_news_for_symbol_success(client, mock_news_aggregation_service
             title='Test Article',
             content='Test content',
             source='Test Source',
-            published_at=None,
-            symbols=['AAPL']
+            published_date=datetime.now(timezone.utc),
+            symbols=['AAPL'],
+            relevance_score=0.9
         )
     ]
-    mock_news_aggregation_service.fetch_news_for_symbol.return_value = mock_articles
+    mock_news_aggregation_service.get_news_for_symbol.return_value = mock_articles
     
     response = client.get('/api/news/symbol/AAPL?limit=20')
     
@@ -91,18 +93,23 @@ async def test_get_news_for_symbol_success(client, mock_news_aggregation_service
     assert data['success'] is True
 
 
-@pytest.mark.asyncio
-async def test_get_sentiment_success(client, mock_sentiment_analysis_service):
+def test_get_sentiment_success(client, mock_sentiment_analysis_service):
     """Test successful sentiment analysis."""
-    from models.news import SentimentAnalysis
+    from models.news import NewsSentiment, SentimentScore
+    from datetime import datetime, timezone
     
-    mock_sentiment = SentimentAnalysis(
+    mock_sentiment = NewsSentiment(
         symbol='AAPL',
         overall_sentiment=0.65,
-        sentiment_score=0.7,
-        article_count=10
+        sentiment_label=SentimentScore.BULLISH,
+        article_count=10,
+        bullish_count=7,
+        bearish_count=1,
+        neutral_count=2,
+        confidence=0.8,
+        last_updated=datetime.now(timezone.utc)
     )
-    mock_sentiment_analysis_service.analyze_sentiment.return_value = mock_sentiment
+    mock_sentiment_analysis_service.get_symbol_sentiment.return_value = mock_sentiment
     
     response = client.get('/api/news/sentiment/AAPL')
     
@@ -110,4 +117,4 @@ async def test_get_sentiment_success(client, mock_sentiment_analysis_service):
     data = response.get_json()
     assert data['success'] is True
     assert data['data']['symbol'] == 'AAPL'
-    assert data['data']['sentiment_score'] == 0.7
+    assert data['data']['overall_sentiment'] == 0.65

@@ -1,0 +1,14 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.1, pytest-7.4.0, pluggy-1.6.0 -- C:\Users\astir\Desktop\AI_Company\AI_Investor\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\astir\Desktop\AI_Company\AI_Investor
+configfile: pytest.ini
+plugins: anyio-4.12.1, asyncio-0.21.1, base-url-2.1.0
+asyncio: mode=Mode.AUTO
+collecting ... collected 3 items
+
+tests/compliance/test_10b51_plans.py::test_create_selling_plan PASSED    [ 33%]
+tests/compliance/test_10b51_plans.py::test_validate_plan_revision PASSED [ 66%]
+tests/compliance/test_10b51_plans.py::test_fiduciary_execution PASSED    [100%]
+
+============================== 3 passed in 0.42s ==============================

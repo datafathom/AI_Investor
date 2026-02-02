@@ -6,6 +6,25 @@ logger = logging.getLogger(__name__)
 class OperationalWorkloadService:
     """Summarizes human capital and data costs per investment model."""
     
+    def __init__(self):
+        self.seats = {
+            "BLOOMBERG": {"cost_per_month": 2400, "active_users": []},
+            "REFINITIV": {"cost_per_month": 1800, "active_users": []}
+        }
+
+    def assign_seat(self, user_id: str, platform: str) -> bool:
+        if platform.upper() in self.seats:
+            if user_id not in self.seats[platform.upper()]["active_users"]:
+                self.seats[platform.upper()]["active_users"].append(user_id)
+                return True
+        return False
+
+    def get_monthly_tech_burn(self) -> float:
+        total = 0.0
+        for platform, data in self.seats.items():
+            total += len(data["active_users"]) * data["cost_per_month"]
+        return total
+
     def summarize_monthly_effort(self, research_hrs: float, monitor_hrs: float, trading_mins: float) -> Dict[str, Any]:
         """
         Policy: Monitor time + Research time + Trading time overhead.

@@ -1,0 +1,80 @@
+/**
+ * ==============================================================================
+ * SentimentFlowRadar Styling
+ * ==============================================================================
+ */
+
+.sentiment-radar {
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    background: rgba(13, 17, 23, 0.4);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.sentiment-radar__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.sentiment-radar__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.sentiment-radar__card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    padding: 0.5rem;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.sentiment-radar__card:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sentiment-radar__value-box {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+}
+
+.sentiment-radar__bar {
+    height: 100%;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sentiment-radar__footer {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Scrollbar styling */
+.sentiment-radar__grid::-webkit-scrollbar {
+    width: 4px;
+}
+.sentiment-radar__grid::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+.sentiment-radar__grid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}

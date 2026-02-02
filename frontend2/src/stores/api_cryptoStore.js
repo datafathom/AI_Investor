@@ -7,6 +7,7 @@
  */
 
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useCryptoStore = create((set, get) => ({
     // State
@@ -26,14 +27,12 @@ const useCryptoStore = create((set, get) => ({
         try {
             const symStr = symbols.join(',');
             const curStr = currencies.join(',');
-            const url = `/api/v1/market/crypto/price?symbols=${symStr}&currencies=${curStr}${mock ? '&mock=true' : ''}`;
+            const response = await apiClient.get('/market/crypto/price', { 
+                params: { symbols: symStr, currencies: curStr, mock } 
+            });
             
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Failed to fetch crypto prices');
-            
-            const data = await response.json();
             set({ 
-                prices: data,
+                prices: response.data,
                 loading: { ...get().loading, prices: false }
             });
         } catch (error) {
@@ -45,13 +44,10 @@ const useCryptoStore = create((set, get) => ({
     fetchVolume: async (symbol, mock = false) => {
         set((state) => ({ loading: { ...state.loading, volumes: true }, error: null }));
         try {
-            const url = `/api/v1/market/crypto/volume/${symbol}${mock ? '?mock=true' : ''}`;
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`Failed to fetch volume for ${symbol}`);
+            const response = await apiClient.get(`/market/crypto/volume/${symbol}`, { params: { mock } });
             
-            const data = await response.json();
             set((state) => ({
-                volumes: { ...state.volumes, [symbol]: data },
+                volumes: { ...state.volumes, [symbol]: response.data },
                 loading: { ...state.loading, volumes: false }
             }));
         } catch (error) {

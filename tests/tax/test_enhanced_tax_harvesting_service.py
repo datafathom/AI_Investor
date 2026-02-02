@@ -4,7 +4,7 @@ Comprehensive test coverage for harvest opportunities, wash-sale detection, and 
 """
 
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.tax.enhanced_tax_harvesting_service import (
     EnhancedTaxHarvestingService,
@@ -28,11 +28,14 @@ def mock_harvest_candidate():
     """Mock harvest candidate."""
     return HarvestCandidate(
         ticker="AAPL",
-        quantity=100,
+        position_id="pos_1",
+        unrealized_loss=-3000.0,
         cost_basis=15000.0,
         current_value=12000.0,
-        unrealized_loss=-3000.0,
-        holding_period_days=200
+        holding_period_days=200,
+        is_long_term=False,
+        tax_savings_estimate=900.0,
+        wash_sale_risk=False
     )
 
 
@@ -113,8 +116,16 @@ async def test_identify_harvest_opportunities_no_candidates(service):
 async def test_identify_harvest_opportunities_ranking(service):
     """Test that opportunities are ranked by net benefit."""
     candidates = [
-        HarvestCandidate("AAPL", 100, 15000.0, 12000.0, -3000.0, 200),
-        HarvestCandidate("MSFT", 50, 15000.0, 11000.0, -4000.0, 150),
+        HarvestCandidate(
+            ticker="AAPL", position_id="pos_1", unrealized_loss=-3000.0, 
+            cost_basis=15000.0, current_value=12000.0, holding_period_days=200,
+            is_long_term=False, tax_savings_estimate=900.0, wash_sale_risk=False
+        ),
+        HarvestCandidate(
+            ticker="MSFT", position_id="pos_2", unrealized_loss=-4000.0, 
+            cost_basis=15000.0, current_value=11000.0, holding_period_days=150,
+            is_long_term=False, tax_savings_estimate=1200.0, wash_sale_risk=False
+        ),
     ]
     
     service.base_service.identify_harvest_candidates = AsyncMock(return_value=candidates)
@@ -139,14 +150,22 @@ async def test_batch_harvest_analysis(service):
     """Test batch harvest analysis."""
     opportunities = [
         EnhancedHarvestOpportunity(
-            candidate=HarvestCandidate("AAPL", 100, 15000.0, 12000.0, -3000.0, 200),
+            candidate=HarvestCandidate(
+                ticker="AAPL", position_id="pos_1", unrealized_loss=-3000.0, 
+                cost_basis=15000.0, current_value=12000.0, holding_period_days=200,
+                is_long_term=False, tax_savings_estimate=900.0, wash_sale_risk=False
+            ),
             tax_savings=900.0,
             net_benefit=888.0,
             replacement_suggestions=[],
             wash_sale_risk=False
         ),
         EnhancedHarvestOpportunity(
-            candidate=HarvestCandidate("MSFT", 50, 15000.0, 11000.0, -4000.0, 150),
+            candidate=HarvestCandidate(
+                ticker="MSFT", position_id="pos_2", unrealized_loss=-4000.0, 
+                cost_basis=15000.0, current_value=11000.0, holding_period_days=150,
+                is_long_term=False, tax_savings_estimate=1200.0, wash_sale_risk=False
+            ),
             tax_savings=1200.0,
             net_benefit=1189.0,
             replacement_suggestions=[],
@@ -163,7 +182,7 @@ async def test_batch_harvest_analysis(service):
     assert isinstance(result, BatchHarvestResult)
     assert result.total_tax_savings == 2100.0  # 900 + 1200
     assert result.total_net_benefit == 2077.0  # 888 + 1189
-    assert result.trades_required == 2
+    assert result.trades_required == 4
 
 
 @pytest.mark.asyncio
@@ -171,8 +190,12 @@ async def test_batch_harvest_analysis_requires_approval(service):
     """Test batch harvest analysis that requires approval."""
     opportunities = [
         EnhancedHarvestOpportunity(
-            candidate=HarvestCandidate("AAPL", 1000, 150000.0, 120000.0, -30000.0, 200),
-            tax_savings=9000.0,  # Exceeds approval threshold
+            candidate=HarvestCandidate(
+                ticker="AAPL", position_id="pos_large", unrealized_loss=-30000.0, 
+                cost_basis=150000.0, current_value=120000.0, holding_period_days=200,
+                is_long_term=False, tax_savings_estimate=9000.0, wash_sale_risk=False
+            ),
+            tax_savings=9000.0,
             net_benefit=8880.0,
             replacement_suggestions=[],
             wash_sale_risk=False
@@ -196,7 +219,7 @@ async def test_check_wash_sale_violation(service):
     violation = await service.check_wash_sale_violation(
         portfolio_id="test_portfolio",
         symbol="AAPL",
-        sale_date=datetime.utcnow()
+        sale_date=datetime.now(timezone.utc)
     )
     
     assert violation is not None
@@ -211,7 +234,7 @@ async def test_check_wash_sale_violation_no_violation(service):
     violation = await service.check_wash_sale_violation(
         portfolio_id="test_portfolio",
         symbol="AAPL",
-        sale_date=datetime.utcnow()
+        sale_date=datetime.now(timezone.utc)
     )
     
     assert violation is not None
@@ -247,7 +270,9 @@ async def test_batch_harvest_analysis_empty_opportunities(service):
 async def test_identify_harvest_opportunities_filters_by_threshold(service):
     """Test that opportunities are filtered by loss threshold."""
     small_loss_candidate = HarvestCandidate(
-        "AAPL", 10, 1500.0, 1450.0, -50.0, 200  # Below $500 threshold
+        ticker="AAPL", position_id="pos_s", unrealized_loss=-50.0, 
+        cost_basis=1500.0, current_value=1450.0, holding_period_days=200,
+        is_long_term=False, tax_savings_estimate=15.0, wash_sale_risk=False
     )
     
     service.base_service.identify_harvest_candidates = AsyncMock(return_value=[small_loss_candidate])

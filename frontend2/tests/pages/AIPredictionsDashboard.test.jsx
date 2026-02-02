@@ -5,10 +5,15 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import axios from 'axios';
+import apiClient from '../../src/services/apiClient';
 import AIPredictionsDashboard from '../../src/pages/AIPredictionsDashboard';
 
-vi.mock('axios');
+vi.mock('../../src/services/apiClient', () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+  },
+}));
 
 describe('AIPredictionsDashboard', () => {
   beforeEach(() => {
@@ -16,13 +21,11 @@ describe('AIPredictionsDashboard', () => {
   });
 
   it('should render dashboard', async () => {
-    axios.get.mockResolvedValue({ data: { data: {} } });
+    apiClient.get.mockResolvedValue({ data: { data: [] } });
     
     render(<AIPredictionsDashboard />);
     
-    await waitFor(() => {
-      expect(screen.getByText(/AI Predictions/i)).toBeInTheDocument();
-    });
+    expect(await screen.findByRole('heading', { name: /AI Predictions/i, level: 1 })).toBeInTheDocument();
   });
 
   it('should display prediction data', async () => {
@@ -30,12 +33,10 @@ describe('AIPredictionsDashboard', () => {
       price_forecast: { symbol: 'AAPL', predicted_price: 150.0, confidence: 0.85 }
     };
 
-    axios.get.mockResolvedValue({ data: { data: mockPredictions } });
+    apiClient.get.mockResolvedValue({ data: { data: mockPredictions } });
 
     render(<AIPredictionsDashboard />);
 
-    await waitFor(() => {
-      expect(screen.getByText(/AI Predictions/i)).toBeInTheDocument();
-    });
+    expect(await screen.findByRole('heading', { name: /AI Predictions/i, level: 1 })).toBeInTheDocument();
   });
 });

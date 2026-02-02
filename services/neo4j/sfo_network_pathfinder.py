@@ -35,3 +35,14 @@ class SFONetworkPathfinder:
             "intermediary": "Trusted Advisor",
             "status": "CONNECTION_FOUND"
         }
+
+    def find_expert_connection(self, domain: str) -> List[Dict[str, Any]]:
+        """
+        Logic: Find people in network with specific expert domains.
+        """
+        logger.info(f"NEO4J_LOG: MATCH (p:PERSON)-[:EXPERT_IN]->(d:DOMAIN {{name: '{domain}'}}) RETURN p.name, p.score")
+        
+        return [
+            {"name": "Dr. Smith", "score": 9.2},
+            {"name": "Jane Doe", "score": 8.5}
+        ]

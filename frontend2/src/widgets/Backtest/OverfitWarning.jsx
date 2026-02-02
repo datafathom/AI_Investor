@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import apiClient from '../../services/apiClient';
 import { AlertTriangle, TrendingDown, CheckCircle, Info } from 'lucide-react';
 import useBacktestStore from '../../stores/backtestStore';
 import './OverfitWarning.css';
@@ -10,9 +11,11 @@ const OverfitWarning = () => {
     useEffect(() => {
         const checkOverfit = async () => {
             try {
-                const response = await fetch(`/api/v1/backtest/overfit?is_sharpe=2.45&oos_sharpe=1.12`);
-                const data = await response.json();
-                setOverfitData(data);
+            try {
+                const response = await apiClient.get('/backtest/overfit', { 
+                    params: { is_sharpe: 2.45, oos_sharpe: 1.12 } 
+                });
+                setOverfitData(response.data);
             } catch (err) {
                 console.error('Failed to check overfit:', err);
             }

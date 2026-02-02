@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Shield, Key, CheckCircle, AlertCircle, X } from 'lucide-react';
-import axios from 'axios';
+import apiClient from '../services/apiClient';
 import './MFAVerificationModal.css';
 
 const MFAVerificationModal = ({ isOpen, onClose, onSuccess, onFail, actionName = "this action" }) => {
@@ -51,7 +51,8 @@ const MFAVerificationModal = ({ isOpen, onClose, onSuccess, onFail, actionName =
 
         try {
             // In dev/mock mode, we pass a dummy secret or the backend handles specific mock codes
-            const res = await axios.post('/api/auth/mfa/verify', { 
+            // Note: Using apiClient with full path since /auth is not prefixed with /api/v1
+            const res = await apiClient.post('/auth/mfa/verify', { 
                 code: fullCode,
                 secret: 'DEMO_SECRET' // In production, this would be handled server-side via session
             });

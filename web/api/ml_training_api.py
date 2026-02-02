@@ -154,7 +154,7 @@ async def deploy_model():
         
         return jsonify({
             'success': True,
-            'data': deployment
+            'data': deployment.dict()
         })
         
     except Exception as e:

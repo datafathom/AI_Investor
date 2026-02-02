@@ -3,6 +3,7 @@
  * Phase 60: Manages macro shock scenarios and portfolio impact simulation.
  */
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useScenarioStore = create((set, get) => ({
     // State
@@ -38,13 +39,8 @@ const useScenarioStore = create((set, get) => ({
         setError(null);
         try {
             const scenario = presetScenarios.find(s => s.id === scenarioId) || { id: scenarioId };
-            const response = await fetch('/api/v1/scenario/simulate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(scenario)
-            });
-            if (!response.ok) throw new Error(`Simulation failed: ${response.status}`);
-            const data = await response.json();
+            const response = await apiClient.post('/scenario/simulate', scenario);
+            const data = response.data;
             setImpactResults(data.impact);
             setHedgeSufficiency(data.hedge_sufficiency || 0);
             setRecoveryProjection(data.recovery);
@@ -59,9 +55,10 @@ const useScenarioStore = create((set, get) => ({
     runRefinedMonteCarlo: async (scenarioId, initialValue) => {
         set({ isSimulating: true });
         try {
-            const response = await fetch(`/api/v1/scenario/monte-carlo-refined?scenario_id=${scenarioId}&initial_value=${initialValue}`);
-            const data = await response.json();
-            set({ recoveryProjection: { ...get().recoveryProjection, mcPaths: data }, isSimulating: false });
+            const response = await apiClient.get('/scenario/monte-carlo-refined', {
+                params: { scenario_id: scenarioId, initial_value: initialValue }
+            });
+            set({ recoveryProjection: { ...get().recoveryProjection, mcPaths: response.data }, isSimulating: false });
         } catch (error) {
             set({ error: 'Refined Monte Carlo failed', isSimulating: false });
         }
@@ -70,11 +67,32 @@ const useScenarioStore = create((set, get) => ({
     fetchBankRunDetails: async (stressLevel = 1.0) => {
         set({ isSimulating: true });
         try {
-            const response = await fetch(`/api/v1/scenario/bank-run?stress_level=${stressLevel}`);
-            const data = await response.json();
-            set({ impactResults: { ...(get().impactResults || {}), bankRun: data }, isSimulating: false });
+            const response = await apiClient.get('/scenario/bank-run', { params: { stress_level: stressLevel } });
+            set({ impactResults: { ...(get().impactResults || {}), bankRun: response.data }, isSimulating: false });
         } catch (error) {
             set({ error: 'Bank run simulation failed', isSimulating: false });
+        }
+    },
+
+    runShadowRun: async (initialValue, baselineParams, shadowParams, horizonDays = 30) => {
+        set({ isSimulating: true });
+        try {
+            const response = await apiClient.post('/scenario/shadow-fork', {
+                initial_value: initialValue,
+                baseline_params: baselineParams,
+                shadow_params: shadowParams,
+                horizon_days: horizonDays
+            });
+            set({ 
+                impactResults: { 
+                    ...(get().impactResults || {}), 
+                    shadowRun: response.data 
+                }, 
+                isSimulating: false 
+            });
+            return response.data;
+        } catch (error) {
+            set({ error: 'Shadow run failed', isSimulating: false });
         }
     },
     

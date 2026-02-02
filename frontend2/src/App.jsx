@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, Suspense, lazy } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useColorPalette } from './hooks/useColorPalette';
 import { useWidgetLayout } from './hooks/useWidgetLayout';
+import apiClient from './services/apiClient';
 import { authService } from './utils/authService';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { ToastProvider } from './context/ToastContext';
@@ -17,6 +18,7 @@ import WindowWrapper from './components/WindowManager/WindowWrapper';
 import useWindowStore from './stores/windowStore';
 import useTaskbarStore from './stores/taskbarStore';
 import Taskbar from './components/Taskbar/Taskbar';
+import HardwareSigModal from './components/Modals/HardwareSigModal';
 
 // Phase 5: Risk & Safety
 import KillSwitch from './components/KillSwitch/KillSwitch';
@@ -112,6 +114,7 @@ const EvolutionDashboard = lazy(() => import('./pages/EvolutionDashboard')); // 
 const TermsOfService = lazy(() => import('./pages/Legal/TermsOfService'));
 const PrivacyPolicy = lazy(() => import('./pages/Legal/PrivacyPolicy'));
 const OnboardingFlow = lazy(() => import('./components/Onboarding/OnboardingFlow'));
+const SentinelStrategyDashboard = lazy(() => import('./pages/SentinelStrategyDashboard'));
 
 import MFAVerificationModal from './components/MFAVerificationModal';
 
@@ -292,9 +295,10 @@ function AppContent() {
       const onboardingCompleted = localStorage.getItem('onboarding_completed');
       if (!onboardingCompleted) {
         // Check with API
-        fetch('/api/v1/onboarding/status')
-          .then(res => res.json())
-          .then(data => {
+        // Check with API
+        apiClient.get('/onboarding/status')
+          .then(res => {
+            const data = res.data;
             if (data.success && !data.data.completed) {
               // Double check local storage didn't change during fetch
               if (!localStorage.getItem('onboarding_completed')) {
@@ -811,6 +815,7 @@ function AppContent() {
                 <Route path="/legal/privacy" element={<PrivacyPolicy />} />
                 <Route path="/settings" element={<div className="p-8 text-white"><h1>Settings</h1><p>Configuration panel coming soon.</p></div>} />
                 <Route path="/chat" element={<div className="p-8 text-white"><h1>Chat</h1><p>Real-time chat interface coming soon.</p></div>} />
+                <Route path="/sentinel/strategy" element={<SentinelStrategyDashboard />} />
               </Routes>
 
             </Suspense>
@@ -892,14 +897,10 @@ function AppContent() {
                 setIsSystemFrozen(true);
                 triggerKillSwitch(); // Update taskbar store state to 'active'
                 try {
-                    await fetch('/api/v1/risk/kill-switch', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
+                    await apiClient.post('/risk/kill-switch', {
                           action: 'engage', 
                           reason: 'User Kill Switch (MFA Verified)',
                           mfa_code: mfa_code 
-                        })
                     });
                     notify({ title: 'SYSTEM HALTED', body: 'Kill switch signal broadcasted', type: 'critical' });
                 } catch (e) {
@@ -918,36 +919,26 @@ function AppContent() {
             onConfirm={async () => {
                 setRiskModalOpen(false);
                 try {
-                    const token = localStorage.getItem('widget_os_token');
-                    const response = await fetch('/api/v1/brokerage/order', {
-                        method: 'POST',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({
+                    const response = await apiClient.post('/brokerage/order', {
                             symbol: pendingTrade.ticker,
                             qty: pendingTrade.size,
                             side: pendingTrade.side,
                             type: 'market'
-                        })
                     });
-                    const result = await response.json();
-                    if (response.ok) {
-                        notify({ 
-                            title: 'ORDER EXECUTED', 
-                            body: `${pendingTrade.side} ${pendingTrade.size} ${pendingTrade.ticker} @ ${result.price || 'Mkt'}`, 
-                            type: 'success' 
-                        });
-                    } else {
-                        notify({ 
-                            title: 'EXECUTION REJECTED', 
-                            body: result.reason || 'Safety parameters violated', 
-                            type: 'error' 
-                        });
-                    }
+                    const result = response.data;
+                    notify({ 
+                        title: 'ORDER EXECUTED', 
+                        body: `${pendingTrade.side} ${pendingTrade.size} ${pendingTrade.ticker} @ ${result.price || 'Mkt'}`, 
+                        type: 'success' 
+                    });
                 } catch (e) {
-                    notify({ title: 'ROUTING ERROR', body: 'Failed to reach execution gateway', type: 'error' });
+                    const result = e.response?.data || {};
+                    notify({ 
+                        title: 'EXECUTION REJECTED', 
+                        body: result.reason || 'Safety parameters violated', 
+                        type: 'error' 
+                    });
+                     // notify({ title: 'ROUTING ERROR', body: 'Failed to reach execution gateway', type: 'error' }); // Kept in catch block logic generally
                 }
             }}
         />
@@ -978,16 +969,12 @@ function AppContent() {
                 };
 
                 // Save to API
-                fetch('/api/v1/onboarding/complete', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ preferences })
-                }).catch(console.error);
+                apiClient.post('/onboarding/complete', { preferences }).catch(console.error);
               }}
               onSkip={() => {
                 setShowOnboarding(false);
                 localStorage.setItem('onboarding_completed', 'skipped');
-                fetch('/api/v1/onboarding/skip', { method: 'POST' }).catch(console.error);
+                apiClient.post('/onboarding/skip').catch(console.error);
               }}
             />
           </Suspense>

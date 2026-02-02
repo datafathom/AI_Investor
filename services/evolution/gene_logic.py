@@ -87,5 +87,37 @@ class GeneSplicer:
             "generation": 0 # Resets for hybrid
         }
 
+    def get_gene_pulse(self, agent_id: str, genes: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Calculates the 'pulse' (activation frequency and mutation risk) 
+        of an agent's specific gene markers.
+        """
+        import hashlib
+        
+        # Deterministic seed per agent
+        seed = int(hashlib.md5(agent_id.encode()).hexdigest(), 16)
+        
+        pulse_data = []
+        for i, (key, value) in enumerate(genes.items()):
+            # Activation: how often this gene affects decisions (0.1 to 0.9)
+            activation = 0.1 + ((seed + i) % 80) / 100.0
+            # Instability: how likely this gene is to drift (0.01 to 0.15)
+            instability = 0.01 + ((seed * (i+1)) % 140) / 1000.0
+            
+            pulse_data.append({
+                "gene": key,
+                "value": value,
+                "activation": activation,
+                "instability": instability,
+                "status": "stable" if instability < 0.1 else "volatile"
+            })
+            
+        return {
+            "agent_id": agent_id,
+            "pulse": pulse_data,
+            "overall_vitality": 0.7 + (seed % 30) / 100.0,
+            "timestamp": hashlib.md5(str(genes).encode()).hexdigest()[:8]
+        }
+
 def get_gene_splicer() -> GeneSplicer:
     return GeneSplicer()

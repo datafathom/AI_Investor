@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import './FuturesCurve.css';
+import apiClient from '../../services/apiClient';
 
 const FuturesCurve = () => {
     const d3Container = useRef(null);
@@ -12,8 +13,9 @@ const FuturesCurve = () => {
         // Fetch real futures data
         const fetchData = async () => {
             try {
-                const response = await fetch(`http://localhost:5050/api/v1/macro/futures/${commodity}`);
-                const result = await response.json();
+            try {
+                const response = await apiClient.get(`/macro/futures/${commodity}`);
+                const result = response.data;
                 if (result.success) {
                     setContracts(result.data.contracts);
                     setCurveShape(result.data.curve_shape);

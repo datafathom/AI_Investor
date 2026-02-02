@@ -126,6 +126,11 @@ class SocialAuthService:
             self.logger.error("Error fetching user %s: %s", email, e)
         return None
 
+    def initiate_auth_flow(self, provider: str) -> str:
+        """Generates the OAuth start URL for a given provider."""
+        # In a real app, this would use the provider's SDK or build a URL
+        return f"https://{provider}.com/oauth/authorize?client_id=mock_id&redirect_uri=callback"
+
     def handle_callback(self, provider: str, code: str) -> Dict[str, Any]:
         """
         Processes the OAuth callback, exchanges code for user info, 
@@ -155,6 +160,7 @@ class SocialAuthService:
         
         # 2. Find or Create User based on EMAIL
         user_data = self._get_user_by_email(vendor_email)
+        is_new_user = False
         
         with self.db.pg_cursor() as cur:
             if user_data:
@@ -163,6 +169,7 @@ class SocialAuthService:
                 cur.execute("UPDATE users SET is_verified = TRUE WHERE id = %s;", (user_data["id"],))
                 user_data["is_verified"] = True
             else:
+                is_new_user = True
                 # Create NEW user with UNIQUE username handling
                 base_username = vendor_email.split('@')[0]
                 username = base_username
@@ -205,9 +212,9 @@ class SocialAuthService:
                 "role": user_data["role"],
                 "is_verified": user_data["is_verified"],
                 "organization_id": user_data.get("organization_id"),
-                "has_password": user_data["password_hash"] is not None
+                "has_password": user_data.get("password_hash") is not None
             },
-            "new_user": not user_data
+            "new_user": is_new_user
         }
 
     def _get_user_by_id(self, user_id: int) -> Optional[Dict[str, Any]]:

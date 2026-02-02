@@ -1,0 +1,32 @@
+INFO:services.credit.loan_tape_svc:CREDIT_LOG: Ingested tape with 2 loans. Total Principal: $3,500,000.00
+INFO:services.credit.credit_risk_engine:CreditRiskEngine initialized
+INFO:services.credit.credit_risk_engine:CREDIT_LOG: Gross 11.50% -> Net 10.70% (Exp Loss: 0.80%)
+INFO:services.pe.waterfall_engine:WaterfallEngine initialized
+INFO:services.pe.waterfall_engine:PE_LOG: Waterfall Distribution: LP $480,000.00, GP $20,000.00
+INFO:services.neo4j.covenant_graph:CovenantGraphService initialized
+INFO:services.neo4j.covenant_graph:NEO4J_LOG: MERGE (b:BORROWER {name: 'TechCorp'})
+INFO:services.neo4j.covenant_graph:NEO4J_LOG: MATCH (b:BORROWER {name: 'TechCorp'}) MERGE (c:COVENANT {type: 'Debt/EBITDA', limit: 4.5, loan_id: 'L-77'}) MERGE (b)-[:SUBJECT_TO]->(c)
+INFO:services.analysis.rate_exposure:ANALYSIS_LOG: Interest Rate Shift (100bps) results in $100,000.00 income delta.
+
+============================================================
+       PHASE 171: PRIVATE CREDIT TRACKER VERIFICATION
+============================================================
+
+[*] Testing LoanTapeService...
+    Total Committed: $3,500,000.00 (Expected: $3,500,000.00)
+
+[*] Testing CreditRiskEngine...
+    Net Yield: 10.70% (Expected: 10.7%)
+
+[*] Testing WaterfallEngine...
+    LP Dist: $480,000.00
+
+[*] Testing CovenantGraphService...
+
+[*] Testing RateExposureAnalyzer...
+    100bps Impact: $100,000.00 (Expected: $100,000.00)
+
+============================================================
+               PHASE 171 VERIFICATION COMPLETE
+============================================================
+

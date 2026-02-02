@@ -27,22 +27,43 @@ def client(app):
 @pytest.fixture
 def mock_fixed_income_service():
     """Mock FixedIncomeService."""
-    with patch('web.api.fixed_income_api._service') as mock:
-        service = AsyncMock()
+    # Use new=AsyncMock to ensure the mocked object behaves like an async object
+    # OR configure methods to be async. Since _service is instance, we replace it.
+    with patch('web.api.fixed_income_api._service') as mock_service:
         from services.analysis.fixed_income_service import YieldCurve
         mock_curve = YieldCurve(
             date='2024-01-01',
             rates={'1Y': 0.05, '10Y': 0.04},
             is_inverted=True
         )
-        service.get_yield_curve.return_value = mock_curve
-        service.get_historical_curves.return_value = [mock_curve]
-        service.simulate_rate_shock.return_value = {'impact': 0.1}
-        service.calculate_duration.return_value = {'duration': 5.5}
-        service.calculate_wal.return_value = {'wal': 7.2}
-        service.get_liquidity_gaps.return_value = []
-        mock.return_value = service
-        yield service
+        
+        # Configure methods to return awaitables (coroutines)
+        # We can simulate this by assigning an AsyncMock to the method name
+        mock_service.get_yield_curve = AsyncMock(return_value=mock_curve)
+        mock_service.get_historical_curves = AsyncMock(return_value=[mock_curve])
+        
+        mock_impact = MagicMock()
+        mock_impact.shock_basis_points = 100
+        mock_impact.portfolio_value_before = 1000000
+        mock_impact.portfolio_value_after = 990000
+        mock_impact.dollar_change = -10000
+        mock_impact.percentage_change = -1.0
+        mock_service.get_rate_shock_impact = AsyncMock(return_value=mock_impact)
+        
+        mock_metrics = MagicMock()
+        mock_metrics.macaulay_duration = 5.2
+        mock_metrics.modified_duration = 5.0
+        mock_metrics.convexity = 20.0
+        mock_metrics.dollar_duration = 5000.0
+        mock_service.calculate_duration = AsyncMock(return_value=mock_metrics)
+        
+        mock_service.calculate_weighted_average_life = AsyncMock(return_value=7.2)
+        mock_service.get_liquidity_gap_analysis = AsyncMock(return_value=[])
+        mock_service.detect_inversion = AsyncMock(return_value=True)
+        # Note: _get_mock_portfolio is sync
+        mock_service._get_mock_portfolio.return_value = []
+        
+        yield mock_service
 
 
 def test_get_yield_curve_success(client, mock_fixed_income_service):

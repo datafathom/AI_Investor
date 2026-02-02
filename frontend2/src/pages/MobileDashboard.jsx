@@ -4,30 +4,21 @@ import BiometricKill from '../widgets/Mobile/BiometricKill';
 import TradeAuth from '../widgets/Mobile/TradeAuth';
 import HapticAlerts from '../widgets/Mobile/HapticAlerts';
 import MFAVerificationModal from '../components/MFAVerificationModal';
+import useMobileStore from '../stores/mobileStore';
 import '../widgets/Mobile/BiometricKill.css'; 
-import axios from 'axios';
 
 const MobileDashboard = () => {
     const [isMfaOpen, setIsMfaOpen] = useState(false);
+    const { activateKillSwitch, killSwitchActive } = useMobileStore();
 
     // This function will be called AFTER MFA success
     const handleKillSwitchAction = async () => {
         try {
-            // We assume the service requires a token or just proof of MFA session
-            // For this demo, we just call the protected endpoint, but really the modal already verified it. 
-            // In a real app, we might pass a one-time token from the modal to this endpoint.
-            // For now, let's just log or trigger the "success" visual in the widget if possible.
-            // Since the widget handles its own click, we might need to wrap it specifically.
             console.log("MFA Confirmed. Kill Switch Activated.");
-            
-            // To properly integrate, we should ideally pass a prop to BiometricKill 
-            // OR wrap the BiometricKill component's sensitive button.
-            // Given the structure, let's pretend the whole 'BiometricKill' widget IS the trigger.
-            // But BiometricKill likely has its own button.
-            
-            // Re-simulating the request here for effect/confirmation:
-            await axios.post('/api/v1/mobile/kill-switch', { token: "MFA_PROVED" });
-            alert("EMERGENCY KILL SWITCH ACTIVATED!");
+            await activateKillSwitch("MFA_PROVED");
+            if (!killSwitchActive) {
+                alert("EMERGENCY KILL SWITCH ACTIVATED!");
+            }
         } catch (e) {
             console.error(e);
         }

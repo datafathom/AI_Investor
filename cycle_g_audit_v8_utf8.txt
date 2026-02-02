@@ -1,0 +1,25 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.1, pytest-7.4.0, pluggy-1.6.0 -- C:\Users\astir\Desktop\AI_Company\AI_Investor\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\astir\Desktop\AI_Company\AI_Investor
+configfile: pytest.ini
+plugins: anyio-4.12.1, asyncio-0.21.1, base-url-2.1.0
+asyncio: mode=Mode.AUTO
+collecting ... collected 112 items
+
+tests/system/test_alert_service.py::test_singleton PASSED                [  0%]
+tests/system/test_alert_service.py::test_trigger_alert PASSED            [  1%]
+tests/system/test_audit_integrity.py::test_calculate_hash PASSED         [  2%]
+tests/system/test_audit_integrity.py::test_log_activity_flow PASSED      [  3%]
+tests/system/test_audit_integrity_verify.py::test_verify_chain_integrity PASSED [  4%]
+tests/system/test_banking_service.py::test_banking_service_singleton PASSED [  5%]
+tests/system/test_banking_service.py::test_create_link_token_simulated PASSED [  6%]
+tests/system/test_banking_service.py::test_token_exchange_simulated PASSED [  7%]
+tests/system/test_banking_service.py::test_get_accounts_simulated PASSED [  8%]
+tests/system/test_brokerage_service.py::test_brokerage_service_singleton PASSED [  8%]
+tests/system/test_brokerage_service.py::test_get_status_simulated PASSED [  9%]
+tests/system/test_brokerage_service.py::test_get_positions_simulated PASSED [ 10%]
+tests/system/test_brokerage_service.py::test_connection_invalid_keys PASSED [ 11%]
+tests/system/test_cache_service.py::test_cache_set_get PASSED            [ 12%]
+tests/system/test_cache_service.py::test_cache_delete PASSED             [ 13%]
+tests/system/test_cache_service.py::test_cache_clear_namespace PASSED    [ 14%]

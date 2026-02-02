@@ -28,10 +28,15 @@ def client(app):
 def mock_compliance_engine():
     """Mock ComplianceEngine."""
     with patch('web.api.compliance_api.get_compliance_engine') as mock:
+        # Since the API uses asyncio.run(), the method must return an awaitable.
+        # We can simulate this by having a regular MagicMock return an async function result,
+        # OR simply use AsyncMock which returns a coroutine.
+        # The previous failure "coroutine never awaited" implies something else might be wrong,
+        # or it is an AsyncMock interaction issue.
+        # Let's use a standard pattern for mocking async calls in sync code: return an awaitable.
         engine = AsyncMock()
         mock.return_value = engine
         yield engine
-
 
 @pytest.fixture
 def mock_reporting_service():
@@ -46,6 +51,7 @@ def mock_reporting_service():
 async def test_check_compliance_success(client, mock_compliance_engine):
     """Test successful compliance check."""
     from models.compliance import ComplianceViolation
+    from datetime import datetime
     
     mock_violations = [
         ComplianceViolation(
@@ -53,7 +59,8 @@ async def test_check_compliance_success(client, mock_compliance_engine):
             user_id='user_1',
             rule_id='rule_1',
             severity='low',
-            description='Test violation'
+            description='Test violation',
+            detected_date=datetime.now()
         )
     ]
     mock_compliance_engine.check_compliance.return_value = mock_violations
@@ -84,12 +91,15 @@ async def test_check_compliance_missing_params(client):
 async def test_generate_report_success(client, mock_reporting_service):
     """Test successful compliance report generation."""
     from models.compliance import ComplianceReport
+    from datetime import datetime
     
     mock_report = ComplianceReport(
         report_id='report_1',
         user_id='user_1',
         report_type='regulatory',
-        status='completed'
+        period_start=datetime.now(),
+        period_end=datetime.now(),
+        generated_date=datetime.now()
     )
     mock_reporting_service.generate_report.return_value = mock_report
     

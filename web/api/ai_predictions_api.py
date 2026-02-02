@@ -58,7 +58,7 @@ async def predict_price():
         
         return jsonify({
             'success': True,
-            'data': prediction.dict()
+            'data': prediction.model_dump()
         })
         
     except Exception as e:
@@ -94,7 +94,7 @@ async def predict_trend():
         
         return jsonify({
             'success': True,
-            'data': prediction.dict()
+            'data': prediction.model_dump()
         })
         
     except Exception as e:
@@ -121,7 +121,7 @@ async def get_market_regime():
         
         return jsonify({
             'success': True,
-            'data': regime.dict()
+            'data': regime.model_dump()
         })
         
     except Exception as e:

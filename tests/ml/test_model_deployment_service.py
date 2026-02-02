@@ -20,13 +20,16 @@ def service():
 @pytest.fixture
 def mock_model_version():
     """Mock model version."""
+    from models.ml_training import TrainingStatus
     return ModelVersion(
         model_id="model_123",
         model_name="price_predictor",
         version="v1.0",
-        training_job_id="job_123",
-        performance_metrics={'accuracy': 0.85},
-        created_date=datetime.utcnow()
+        framework="tensorflow",
+        training_status=TrainingStatus.COMPLETED,
+        accuracy=0.85,
+        created_date=datetime.utcnow(),
+        metadata={'training_job_id': 'job_123'}
     )
 
 

@@ -151,6 +151,39 @@ class ScenarioService:
             "system_stress_index": min(1.0, 0.2 * stress_level)
         }
 
+    async def simulate_shadow_fork(
+        self, 
+        initial_value: float, 
+        baseline_params: Dict[str, float], 
+        shadow_params: Dict[str, float],
+        horizon_days: int = 30
+    ) -> Dict:
+        """
+        Simulates two parallel strategy paths from a single starting point.
+        baseline_params/shadow_params expected keys: 'mu' (return), 'sigma' (vol)
+        """
+        import math
+        dt = 1/252
+        
+        def projection(val, mu, sigma, days):
+            # Geometric Brownian Motion result (simplified median)
+            return val * math.exp((mu - 0.5 * sigma**2) * (days * dt))
+
+        results = []
+        for day in range(0, horizon_days + 1):
+            results.append({
+                "day": day,
+                "baseline": projection(initial_value, baseline_params.get('mu', 0.08), baseline_params.get('sigma', 0.15), day),
+                "shadow": projection(initial_value, shadow_params.get('mu', 0.08), shadow_params.get('sigma', 0.15), day)
+            })
+            
+        return {
+            "initial_value": initial_value,
+            "horizon_days": horizon_days,
+            "paths": results,
+            "divergence": results[-1]["shadow"] - results[-1]["baseline"]
+        }
+
 _scenario_service: Optional[ScenarioService] = None
 def get_scenario_service() -> ScenarioService:
     global _scenario_service

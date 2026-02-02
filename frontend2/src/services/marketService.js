@@ -2,9 +2,11 @@
  * MarketService
  * Handles API calls for market-related data.
  */
+import apiClient from './apiClient';
+
 class MarketService {
     constructor() {
-        this.baseUrl = '/api/v1/market';
+        this.baseUrl = '/market';
     }
 
     /**
@@ -22,13 +24,8 @@ class MarketService {
             // Default to mock=true for now as per backend default
             queryParams.append('mock', 'true');
 
-            const response = await fetch(`${this.baseUrl}/fear-greed?${queryParams.toString()}`);
-
-            if (!response.ok) {
-                throw new Error(`Market API error: ${response.statusText}`);
-            }
-
-            return await response.json();
+            const response = await apiClient.get(`${this.baseUrl}/fear-greed?${queryParams.toString()}`);
+            return response.data;
         } catch (error) {
             console.error('Failed to fetch Fear & Greed Index:', error);
             throw error;
@@ -45,13 +42,8 @@ class MarketService {
             const queryParams = new URLSearchParams();
             queryParams.append('symbol', symbol);
 
-            const response = await fetch(`${this.baseUrl}/predict?${queryParams.toString()}`);
-
-            if (!response.ok) {
-                throw new Error(`Prediction API error: ${response.statusText}`);
-            }
-
-            return await response.json();
+            const response = await apiClient.get(`${this.baseUrl}/predict?${queryParams.toString()}`);
+            return response.data;
         } catch (error) {
             console.error('Failed to fetch Market Prediction:', error);
             return {

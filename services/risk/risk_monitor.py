@@ -18,6 +18,7 @@ ROADMAP: Phase 20 - Risk Monitor
 """
 
 import logging
+from datetime import datetime
 from typing import List, Dict, Any
 import pandas as pd
 import numpy as np
@@ -141,6 +142,65 @@ class RiskMonitor:
                 warnings.append(f"SECTOR WARNING: {sector} weight ({total_weight*100:.1f}%) exceeds limit ({self.MAX_SECTOR_EXPOSURE*100}%)")
                 
         return warnings
+
+    def simulate_order_impact(self, 
+                             symbol: str, 
+                             side: str, 
+                             quantity: float, 
+                             price: float) -> Dict[str, Any]:
+        """
+        Simulates the projected impact of a pending order on the portfolio's 
+        Margin, Delta, and Gamma profile.
+        """
+        import random
+        
+        notional = quantity * price
+        
+        # Simulate Greeks impact
+        delta_impact = notional * (0.01 if side == 'buy' else -0.01)
+        gamma_impact = abs(notional) * 0.0001
+        vega_impact = abs(notional) * 0.0005
+        
+        # Simulate margin impact
+        margin_requirement = notional * 0.15 # 15% maintenance margin
+        buying_power_reduction = notional * 1.0 # Standard 1:1 for cash, or lower for margin
+        
+        # Risk analysis
+        analysis = self.analyze_trade_risk(symbol, side, quantity, price)
+        
+        return {
+            "symbol": symbol,
+            "side": side,
+            "notional": notional,
+            "greeks_impact": {
+                "delta": delta_impact,
+                "gamma": gamma_impact,
+                "vega": vega_impact
+            },
+            "margin_impact": {
+                "requirement": margin_requirement,
+                "buying_power_used": buying_power_reduction,
+                "available_after": 500000 - buying_power_reduction # Mock available
+            },
+            "risk_verdict": analysis["rating"],
+            "reasons": analysis["reasons"],
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+    def trigger_liquidity_markdown(self, asset_id: str, markdown_pct: float):
+        """
+        Phase 181.3: Kafka Liquidity Event Markdown Trigger.
+        Triggers a markdown on private assets when a public liquidity event (forced sale/downround) occurs.
+        """
+        message = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "asset_id": asset_id,
+            "markdown_pct": markdown_pct,
+            "reason": "PUBLIC_PROXY_LIQUIDITY_EVENT"
+        }
+        logger.info(f"KAFKA_LOG: Triggering Liquidity Markdown for {asset_id} (-{markdown_pct:.1%}) to 'risk_events_v1'")
+        # Real: self.producer.send('risk_events', message)
+        return message
 
 # Singleton
 _instance = None

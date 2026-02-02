@@ -5,11 +5,11 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import axios from 'axios';
+import apiClient from '../../src/services/apiClient';
 import AdvancedPortfolioAnalytics from '../../src/pages/AdvancedPortfolioAnalytics';
 
 // Mock axios
-vi.mock('axios');
+vi.mock('../../src/services/apiClient');
 
 describe('AdvancedPortfolioAnalytics', () => {
   beforeEach(() => {
@@ -17,7 +17,7 @@ describe('AdvancedPortfolioAnalytics', () => {
   });
 
   it('should render loading state initially', () => {
-    axios.get.mockResolvedValue({ data: { data: null } });
+    apiClient.get.mockResolvedValue({ data: { data: null } });
     
     render(<AdvancedPortfolioAnalytics />);
     
@@ -40,24 +40,24 @@ describe('AdvancedPortfolioAnalytics', () => {
       factor_risks: [
         { factor: 'Market', risk: 0.12 },
         { factor: 'Sector', risk: 0.06 }
-      ]
+      ],
+      factor_exposures: []
     };
 
-    axios.get
-      .mockResolvedValueOnce({ data: { data: mockAttribution } })
-      .mockResolvedValueOnce({ data: { data: mockRiskDecomp } });
+    // Use flat mock implementation
+    apiClient.get
+      .mockResolvedValueOnce(mockAttribution)
+      .mockResolvedValueOnce(mockRiskDecomp);
 
     render(<AdvancedPortfolioAnalytics />);
 
-    await waitFor(() => {
-      expect(screen.getByText('Advanced Portfolio Analytics')).toBeInTheDocument();
-      expect(screen.getByText(/Performance Attribution/i)).toBeInTheDocument();
-      expect(screen.getByText(/Risk Decomposition/i)).toBeInTheDocument();
-    });
+    expect(await screen.findByText('Advanced Portfolio Analytics')).toBeInTheDocument();
+    expect(await screen.findByText(/15\.50%/)).toBeInTheDocument();
+    expect(await screen.findByText(/3\.50%/)).toBeInTheDocument();
   });
 
   it('should handle API errors gracefully', async () => {
-    axios.get.mockRejectedValue(new Error('API Error'));
+    apiClient.get.mockRejectedValue(new Error('API Error'));
 
     render(<AdvancedPortfolioAnalytics />);
 

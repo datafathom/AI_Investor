@@ -38,45 +38,38 @@ def mock_banking_service():
 
 def test_create_link_token_success(client, mock_banking_service):
     """Test successful link token creation."""
-    with patch('web.api.banking_api.login_required', lambda f: f):
-        with patch('web.api.banking_api.g') as mock_g:
-            mock_g.user_id = 'user_1'
-            response = client.post('/api/v1/banking/plaid/create-link-token')
-            
-            assert response.status_code == 200
-            data = response.get_json()
-            assert 'link_token' in data
+    # Rely on dev environment login_required bypass (g.user_id = 'demo-admin')
+    response = client.post('/api/v1/banking/plaid/create-link-token')
+    
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'link_token' in data
 
 
 def test_exchange_public_token_success(client, mock_banking_service):
     """Test successful public token exchange."""
-    with patch('web.api.banking_api.login_required', lambda f: f):
-        with patch('web.api.banking_api.g') as mock_g:
-            mock_g.user_id = 'user_1'
-            response = client.post('/api/v1/banking/plaid/exchange-public-token',
-                                  json={'public_token': 'public_token_123'})
-            
-            assert response.status_code == 200
-            data = response.get_json()
-            assert data['status'] == 'success'
+    response = client.post('/api/v1/banking/plaid/exchange-public-token',
+                          json={'public_token': 'public_token_123'})
+    
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['status'] == 'success'
 
 
 def test_get_accounts_success(client, mock_banking_service):
     """Test successful accounts retrieval."""
-    with patch('web.api.banking_api.login_required', lambda f: f):
-        response = client.get('/api/v1/banking/accounts')
-        
-        assert response.status_code == 200
-        data = response.get_json()
-        assert isinstance(data, list)
+    response = client.get('/api/v1/banking/accounts')
+    
+    assert response.status_code == 200
+    data = response.get_json()
+    assert isinstance(data, list)
 
 
 def test_sync_transactions_success(client):
     """Test successful transaction sync."""
-    with patch('web.api.banking_api.login_required', lambda f: f):
-        with patch('web.api.banking_api.requires_role', lambda role: lambda f: f):
-            response = client.post('/api/v1/banking/sync')
-            
-            assert response.status_code == 200
-            data = response.get_json()
-            assert data['status'] == 'success'
+    # Requires 'trader' role, handled by auth_utils dev bypass
+    response = client.post('/api/v1/banking/sync')
+    
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['status'] == 'success'

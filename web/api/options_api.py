@@ -67,7 +67,7 @@ async def create_strategy():
         
         return jsonify({
             'success': True,
-            'data': strategy.dict()
+            'data': strategy.model_dump()
         })
         
     except Exception as e:
@@ -116,7 +116,7 @@ async def create_from_template():
         
         return jsonify({
             'success': True,
-            'data': strategy.dict()
+            'data': strategy.model_dump()
         })
         
     except Exception as e:
@@ -172,7 +172,7 @@ async def get_greeks(strategy_id: str):
         
         return jsonify({
             'success': True,
-            'data': greeks.dict()
+            'data': greeks.model_dump()
         })
         
     except Exception as e:
@@ -225,7 +225,7 @@ async def get_pnl(strategy_id: str):
         
         return jsonify({
             'success': True,
-            'data': pnl.dict()
+            'data': pnl.model_dump()
         })
         
     except Exception as e:
@@ -282,7 +282,7 @@ async def analyze_strategy(strategy_id: str):
         
         return jsonify({
             'success': True,
-            'data': analysis.dict()
+            'data': analysis.model_dump()
         })
         
     except Exception as e:

@@ -4,7 +4,7 @@ Comprehensive test coverage for extension reviews, ratings, and installation
 """
 
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.marketplace.marketplace_service import MarketplaceService
 from models.marketplace import ExtensionReview
@@ -46,7 +46,7 @@ async def test_get_extension_reviews(service):
             user_id="user_1",
             rating=5,
             comment="Great!",
-            created_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc)
         ),
         ExtensionReview(
             review_id="review_2",
@@ -54,7 +54,7 @@ async def test_get_extension_reviews(service):
             user_id="user_2",
             rating=4,
             comment="Good extension",
-            created_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc)
         ),
     ])
     
@@ -78,4 +78,6 @@ async def test_install_extension(service):
         extension_id="ext_123"
     )
     
-    assert result is True
+    assert result is not None
+    assert result['status'] == 'active'
+    assert result['extension_id'] == 'ext_123'

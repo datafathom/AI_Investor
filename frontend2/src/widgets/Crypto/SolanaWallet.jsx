@@ -15,9 +15,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import './SolanaWallet.css';
 
-const API_BASE = '/api/v1/solana';
+const API_BASE = '/solana';
 
 const SolanaWallet = ({ address, onAddressChange }) => {
     const [solBalance, setSolBalance] = useState(null);
@@ -38,16 +39,12 @@ const SolanaWallet = ({ address, onAddressChange }) => {
 
         try {
             const [balanceRes, tokensRes] = await Promise.all([
-                fetch(`${API_BASE}/balance/${walletAddress}`),
-                fetch(`${API_BASE}/tokens/${walletAddress}`)
+                apiClient.get(`${API_BASE}/balance/${walletAddress}`),
+                apiClient.get(`${API_BASE}/tokens/${walletAddress}`)
             ]);
 
-            if (!balanceRes.ok || !tokensRes.ok) {
-                throw new Error('Failed to load wallet data');
-            }
-
-            const balanceData = await balanceRes.json();
-            const tokensData = await tokensRes.json();
+            const balanceData = balanceRes.data;
+            const tokensData = tokensRes.data;
 
             setSolBalance(balanceData);
             setTokens(tokensData.tokens || []);

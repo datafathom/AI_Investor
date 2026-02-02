@@ -3,7 +3,7 @@ from decimal import Decimal
 
 logger = logging.getLogger(__name__)
 
-class MasterObjectiveService:
+class MasterObjectiveOptimizer:
     """
     The 'Ghost in the Machine'.
     Defines the ultimate utility function the AI is trying to maximize.
@@ -15,14 +15,21 @@ class MasterObjectiveService:
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
-            cls._instance = super(MasterObjectiveService, cls).__new__(cls)
+            cls._instance = super(MasterObjectiveOptimizer, cls).__new__(cls)
         return cls._instance
 
     def __init__(self):
         if hasattr(self, '_initialized') and self._initialized:
             return
         self._initialized = True
-        logger.info("MasterObjectiveService initialized")
+        logger.info("MasterObjectiveOptimizer initialized")
+        
+    def get_current_status(self):
+        return {
+            "active_goal": "Maximize Return on Lifestyle (ROL)",
+            "state": "OPTIMIZING",
+            "optimization_score": 98.4
+        }
 
     def calculate_rol(self, current_wealth: float, annual_burn: float, happiness_factor: float) -> float:
         """

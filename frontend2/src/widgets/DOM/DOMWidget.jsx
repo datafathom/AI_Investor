@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './DOM.css';
 import useSymbolLink from '../../hooks/useSymbolLink';
+import apiClient from '../../services/apiClient';
 
 const DOMWidget = ({ linkingGroup = 'none' }) => {
   const { currentSymbol } = useSymbolLink(linkingGroup);
@@ -11,9 +12,9 @@ const DOMWidget = ({ linkingGroup = 'none' }) => {
     const fetchDepth = async () => {
       if (!currentSymbol) return;
       try {
-        const response = await fetch(`http://localhost:5050/api/v1/market/dom/${currentSymbol}`);
-        const data = await response.json();
-        setDepth(data);
+      try {
+        const response = await apiClient.get(`/market/dom/${currentSymbol}`);
+        setDepth(response.data);
       } catch (err) {
         console.error("DOM Fetch error:", err);
       }

@@ -1,0 +1,13 @@
+# .gitleaks.toml
+# Gitleaks configuration for AI Investor
+
+[allowlist]
+description = "Allow placeholders in documentation"
+# We allow 'your_jwt_token' as it's a documentation placeholder, not a real secret.
+regexes = [
+    'your_jwt_token',
+    '\$\{JWT_TOKEN\}'
+]
+paths = [
+    'docs/api/API_DOCUMENTATION.md'
+]

@@ -25,7 +25,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Optional
 from models.financial_planning import (
     FinancialGoal, GoalStatus, GoalProjection
@@ -70,7 +70,7 @@ class GoalTrackingService:
         
         # Update current amount
         goal.current_amount = current_amount
-        goal.updated_date = datetime.utcnow()
+        goal.updated_date = datetime.now(timezone.utc)
         
         # Update status
         goal.status = await self._calculate_status(goal)
@@ -114,6 +114,24 @@ class GoalTrackingService:
             'status': goal.status.value
         }
     
+    async def get_goals(self, user_id: str) -> List[FinancialGoal]:
+        """
+        Get all goals for user.
+        
+        Args:
+            user_id: User identifier
+            
+        Returns:
+            List of FinancialGoals
+        """
+        # In a real implementation this would fetch from DB
+        return await self._get_user_goals_from_db(user_id)
+
+    async def _get_user_goals_from_db(self, user_id: str) -> List[FinancialGoal]:
+        """Get user goals from storage."""
+        # Mock/Placeholder implementation
+        return []
+
     async def check_milestones(
         self,
         goal_id: str
@@ -164,7 +182,7 @@ class GoalTrackingService:
     async def _calculate_status(self, goal: FinancialGoal) -> GoalStatus:
         """Calculate goal status based on progress and timeline."""
         progress_pct = (goal.current_amount / goal.target_amount * 100) if goal.target_amount > 0 else 0.0
-        days_remaining = (goal.target_date - datetime.utcnow()).days
+        days_remaining = (goal.target_date - datetime.now(timezone.utc)).days
         days_total = (goal.target_date - goal.created_date).days
         progress_days = days_total - days_remaining
         

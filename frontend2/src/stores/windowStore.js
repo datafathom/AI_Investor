@@ -22,6 +22,7 @@ const useWindowStore = create((set, get) => ({
       isMaximized: false,
       snapshot: null, // Data URL for window preview
       component: windowConfig.component || null, // Component string/type
+      workspace: windowConfig.workspace || 'Strategy', // Default workspace
       props: windowConfig.props || {},
       ...windowConfig
     };

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import { Activity } from 'lucide-react';
 
 const SentimentHeatmap = () => {
@@ -8,8 +9,9 @@ const SentimentHeatmap = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('/api/v1/social/sentiment/heatmap');
-                const result = await response.json();
+            try {
+                const response = await apiClient.get('/social/sentiment/heatmap');
+                const result = response.data;
                 if (result.status === 'success') {
                     setHeatmapData(result.data);
                 }

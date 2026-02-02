@@ -11,15 +11,36 @@ class AdvisorGraphService:
 
     def create_advisor_node(self, advisor_id: str, name: str, types: List[str], fiduciary: bool):
         """
-        Creates specialized advisor nodes.
+        Creates specialized advisor nodes in Neo4j.
         types: WEALTH_MANAGER, ASSET_MANAGER, FINANCIAL_PLANNER, PRIVATE_BANKER
         """
         labels = ":".join(["ADVISOR"] + types)
-        # Mocking Cypher
-        logger.info(f"NEO4J_LOG: MERGE (a:{labels} {{id: '{advisor_id}', name: '{name}', fiduciary: {fiduciary}}})")
+        query = f"MERGE (a:{labels} {{id: $id}}) SET a.name = $name, a.fiduciary = $fiduciary, a.updated_at = datetime()"
+        parameters = {"id": advisor_id, "name": name, "fiduciary": fiduciary}
+        
+        logger.info(f"AdvisorGraph: Creating advisor node {advisor_id}")
+        self.driver.execute_query(query, parameters)
 
     def link_advisor_to_firm(self, advisor_id: str, firm_id: str):
-        logger.info(f"NEO4J_LOG: MATCH (a:ADVISOR {{id: '{advisor_id}'}}), (f:FIRM {{id: '{firm_id}'}}) MERGE (a)-[:EMPLOYED_BY]->(f)")
+        """Links an advisor to a firm (Employment relationship)."""
+        query = """
+        MATCH (a:ADVISOR {id: $advisor_id}), (f:FIRM {id: $firm_id})
+        MERGE (a)-[r:EMPLOYED_BY]->(f)
+        SET r.updated_at = datetime()
+        """
+        parameters = {"advisor_id": advisor_id, "firm_id": firm_id}
+        
+        logger.info(f"AdvisorGraph: Linking advisor {advisor_id} to firm {firm_id}")
+        self.driver.execute_query(query, parameters)
 
     def recommend_product(self, advisor_id: str, product_id: str, commission: float):
-        logger.info(f"NEO4J_LOG: Linked advisor {advisor_id} to product {product_id} with comm {commission}")
+        """Links an advisor to a recommended product."""
+        query = """
+        MATCH (a:ADVISOR {id: $advisor_id}), (p:PRODUCT {id: $product_id})
+        MERGE (a)-[r:RECOMMENDS]->(p)
+        SET r.commission = $commission, r.updated_at = datetime()
+        """
+        parameters = {"advisor_id": advisor_id, "product_id": product_id, "commission": commission}
+        
+        logger.info(f"AdvisorGraph: Linking advisor {advisor_id} to product {product_id}")
+        self.driver.execute_query(query, parameters)

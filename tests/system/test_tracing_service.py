@@ -1,4 +1,4 @@
-
+import os
 import pytest
 from unittest.mock import MagicMock, patch
 from services.system.tracing_service import TracingService
@@ -17,7 +17,8 @@ def test_singleton(tracing_service):
 @patch('opentelemetry.instrumentation.flask.FlaskInstrumentor.instrument_app')
 @patch('opentelemetry.trace.set_tracer_provider')
 @patch('opentelemetry.sdk.trace.TracerProvider')
-@patch('opentelemetry.exporter.otlp.proto.grpc.trace_exporter.OTLPSpanExporter')
+@patch('services.system.tracing_service.OTLPSpanExporter')
+@patch.dict(os.environ, {"ENABLE_TRACING": "true"})
 def test_initialize(mock_exporter, mock_provider, mock_set_provider, mock_instrument_app, tracing_service):
     app = MagicMock()
     tracing_service.initialize(app)
@@ -25,6 +26,7 @@ def test_initialize(mock_exporter, mock_provider, mock_set_provider, mock_instru
     # Check that initialize finished successfully
     assert tracing_service._is_initialized is True
     assert mock_set_provider.called
+    # The exporter class is instantiated
     assert mock_exporter.called
     assert mock_instrument_app.called
 

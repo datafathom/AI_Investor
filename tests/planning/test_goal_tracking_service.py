@@ -4,7 +4,7 @@ Comprehensive test coverage for goal progress tracking and status updates
 """
 
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.planning.goal_tracking_service import GoalTrackingService
 from models.financial_planning import FinancialGoal, GoalStatus, GoalType
@@ -30,8 +30,8 @@ def mock_goal():
         current_amount=50000.0,
         target_date=datetime(2050, 1, 1),
         status=GoalStatus.IN_PROGRESS,
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
 
 
@@ -56,7 +56,7 @@ async def test_update_goal_progress(service, mock_goal):
 async def test_update_goal_progress_achieved(service, mock_goal):
     """Test goal progress update when goal is achieved."""
     service._get_goal = AsyncMock(return_value=mock_goal)
-    service._calculate_status = AsyncMock(return_value=GoalStatus.ACHIEVED)
+    service._calculate_status = AsyncMock(return_value=GoalStatus.COMPLETED)
     service._save_goal = AsyncMock()
     
     result = await service.update_goal_progress(
@@ -65,7 +65,7 @@ async def test_update_goal_progress_achieved(service, mock_goal):
     )
     
     assert result is not None
-    assert result.status == GoalStatus.ACHIEVED
+    assert result.status == GoalStatus.COMPLETED
 
 
 @pytest.mark.asyncio
@@ -81,8 +81,8 @@ async def test_get_goals(service):
             current_amount=50000.0,
             target_date=datetime(2050, 1, 1),
             status=GoalStatus.IN_PROGRESS,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
     ])
     

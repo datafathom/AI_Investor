@@ -24,7 +24,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Optional
 from models.budgeting import Budget, BudgetAnalysis, ExpenseCategory
 from services.system.cache_service import get_cache_service
@@ -65,14 +65,14 @@ class BudgetingService:
         total_budget = sum(categories.values())
         
         budget = Budget(
-            budget_id=f"budget_{user_id}_{datetime.utcnow().timestamp()}",
+            budget_id=f"budget_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             budget_name=budget_name,
             period=period,
             categories=categories,
             total_budget=total_budget,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Cache budget
@@ -81,24 +81,29 @@ class BudgetingService:
         
         return budget
     
-    async def analyze_budget(
+    async def get_budget_analysis(
         self,
         budget_id: str,
-        start_date: datetime,
-        end_date: datetime
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None
     ) -> BudgetAnalysis:
         """
         Analyze budget vs actual spending.
         
         Args:
             budget_id: Budget identifier
-            start_date: Analysis period start
-            end_date: Analysis period end
+            start_date: Optional analysis period start (default: last 30 days)
+            end_date: Optional analysis period end (default: now)
             
         Returns:
             BudgetAnalysis with spending comparison
         """
         logger.info(f"Analyzing budget {budget_id}")
+        
+        if not end_date:
+            end_date = datetime.now(timezone.utc)
+        if not start_date:
+            start_date = end_date - timedelta(days=30)
         
         # Get budget
         budget = await self._get_budget(budget_id)

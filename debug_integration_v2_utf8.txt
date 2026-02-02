@@ -1,0 +1,193 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.1, pytest-7.4.0, pluggy-1.6.0 -- C:\Users\astir\Desktop\AI_Company\AI_Investor\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\astir\Desktop\AI_Company\AI_Investor
+configfile: pytest.ini
+plugins: anyio-4.12.1, asyncio-0.21.1, base-url-2.1.0
+asyncio: mode=Mode.AUTO
+collecting ... collected 37 items
+
+tests/integration/test_integration_framework.py::test_create_integration PASSED [  2%]
+tests/integration/test_integration_framework.py::test_create_integration_unsupported_app PASSED [  5%]
+tests/integration/test_integration_framework.py::test_get_supported_apps PASSED [  8%]
+tests/integration/test_integration_service.py::test_sync_data PASSED     [ 10%]
+tests/integration/test_integration_service.py::test_sync_data_full PASSED [ 13%]
+tests/integration/test_integration_service.py::test_get_sync_status FAILED [ 16%]
+tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_list_documents PASSED [ 18%]
+tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_get_document PASSED [ 21%]
+tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_get_nonexistent_document PASSED [ 24%]
+tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_accept_documents FAILED [ 27%]
+tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_accept_documents_unauthorized PASSED [ 29%]
+tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_get_acceptance_status PASSED [ 32%]
+tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_get_acceptance_history PASSED [ 35%]
+tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_check_document_updates PASSED [ 37%]
+tests/integration/test_migration_system.py::TestMigrationManager::test_create_migration PASSED [ 40%]
+tests/integration/test_migration_system.py::TestMigrationManager::test_list_migrations PASSED [ 43%]
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_pending_migrations PASSED [ 45%]
+tests/integration/test_migration_system.py::TestMigrationManager::test_validate_migration PASSED [ 48%]
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_migration_status PASSED [ 51%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_get_onboarding_status FAILED [ 54%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_get_onboarding_status_unauthorized FAILED [ 56%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_update_onboarding_step FAILED [ 59%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_complete_onboarding FAILED [ 62%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_complete_onboarding_missing_fields FAILED [ 64%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_get_preferences FAILED [ 67%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_update_preferences FAILED [ 70%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_skip_onboarding FAILED [ 72%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_reset_onboarding FAILED [ 75%]
+tests/integration/test_secrets_management.py::TestSecretManager::test_get_secret_from_env PASSED [ 78%]
+tests/integration/test_secrets_management.py::TestSecretManager::test_get_secret_default PASSED [ 81%]
+tests/integration/test_secrets_management.py::TestSecretManager::test_get_masked_secret PASSED [ 83%]
+tests/integration/test_secrets_management.py::TestSecretManager::test_get_db_credentials PASSED [ 86%]
+tests/integration/test_secrets_management.py::TestSecretManager::test_get_status PASSED [ 89%]
+tests/integration/test_secrets_management.py::TestProductionSecretManager::test_fallback_to_env PASSED [ 91%]
+tests/integration/test_secrets_management.py::TestProductionSecretManager::test_vault_integration PASSED [ 94%]
+tests/integration/test_secrets_management.py::TestAWSSecretsManager::test_aws_secrets_manager_init SKIPPED [ 97%]
+tests/integration/test_secrets_management.py::TestAWSSecretsManager::test_get_secret_from_aws SKIPPED [100%]
+
+================================== FAILURES ===================================
+____________________________ test_get_sync_status _____________________________
+tests\integration\test_integration_service.py:65: in test_get_sync_status
+    result = await service.get_sync_status("sync_123")
+services\integration\integration_service.py:85: in get_sync_status
+    return SyncJob(**job_data)
+E   pydantic_core._pydantic_core.ValidationError: 3 validation errors for SyncJob
+E   sync_job_id
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   integration_id
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   sync_type
+E     Field required [type=missing, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+_________________ TestLegalDocumentFlow.test_accept_documents _________________
+tests\integration\test_legal_acceptance_flow.py:78: in test_accept_documents
+    assert response.status_code == 200
+E   assert 401 == 200
+E    +  where 401 = <WrapperTestResponse streamed [401 UNAUTHORIZED]>.status_code
+________________ TestOnboardingFlow.test_get_onboarding_status ________________
+tests\integration\test_onboarding_flow.py:53: in test_get_onboarding_status
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+_________ TestOnboardingFlow.test_get_onboarding_status_unauthorized __________
+tests\integration\test_onboarding_flow.py:66: in test_get_onboarding_status_unauthorized
+    assert response.status_code == 401
+E   assert 404 == 401
+E    +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+_______________ TestOnboardingFlow.test_update_onboarding_step ________________
+tests\integration\test_onboarding_flow.py:77: in test_update_onboarding_step
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+_________________ TestOnboardingFlow.test_complete_onboarding _________________
+tests\integration\test_onboarding_flow.py:96: in test_complete_onboarding
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+_________ TestOnboardingFlow.test_complete_onboarding_missing_fields __________
+tests\integration\test_onboarding_flow.py:112: in test_complete_onboarding_missing_fields
+    assert response.status_code == 400
+E   assert 404 == 400
+E    +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+___________________ TestOnboardingFlow.test_get_preferences ___________________
+tests\integration\test_onboarding_flow.py:120: in test_get_preferences
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+_________________ TestOnboardingFlow.test_update_preferences __________________
+tests\integration\test_onboarding_flow.py:136: in test_update_preferences
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+___________________ TestOnboardingFlow.test_skip_onboarding ___________________
+tests\integration\test_onboarding_flow.py:146: in test_skip_onboarding
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+__________________ TestOnboardingFlow.test_reset_onboarding ___________________
+tests\integration\test_onboarding_flow.py:157: in test_reset_onboarding
+    assert response.status_code == 200
+E   assert 404 == 200
+E    +  where 404 = <WrapperTestResponse streamed [404 NOT FOUND]>.status_code
+============================== warnings summary ===============================
+tests/integration/test_integration_framework.py::test_create_integration
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\integration\integration_framework.py:72: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    integration_id=f"integration_{user_id}_{app_name}_{datetime.utcnow().timestamp()}",
+
+tests/integration/test_integration_framework.py::test_create_integration
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\integration\integration_framework.py:77: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    created_date=datetime.utcnow(),
+
+tests/integration/test_integration_framework.py::test_create_integration
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\integration\integration_framework.py:78: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    updated_date=datetime.utcnow()
+
+tests/integration/test_integration_service.py::test_sync_data
+tests/integration/test_integration_service.py::test_sync_data_full
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\integration\integration_service.py:63: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    sync_job_id=f"sync_{integration_id}_{datetime.utcnow().timestamp()}",
+
+tests/integration/test_integration_service.py::test_sync_data
+tests/integration/test_integration_service.py::test_sync_data_full
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\integration\integration_service.py:67: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    started_date=datetime.utcnow()
+
+tests/integration/test_integration_service.py::test_sync_data
+tests/integration/test_integration_service.py::test_sync_data_full
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\integration\integration_service.py:72: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    job.completed_date = datetime.utcnow()
+
+tests/integration/test_integration_service.py::test_get_sync_status
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\integration\test_integration_service.py:60: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    started_date=datetime.utcnow(),
+
+tests/integration/test_integration_service.py::test_get_sync_status
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\integration\test_integration_service.py:61: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    completed_date=datetime.utcnow(),
+
+tests/integration/test_migration_system.py::TestMigrationManager::test_create_migration
+tests/integration/test_migration_system.py::TestMigrationManager::test_list_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_list_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_pending_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_pending_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_validate_migration
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_migration_status
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\scripts\database\migration_manager.py:49: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+
+tests/integration/test_migration_system.py::TestMigrationManager::test_create_migration
+tests/integration/test_migration_system.py::TestMigrationManager::test_list_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_list_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_pending_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_pending_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_validate_migration
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_migration_status
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\scripts\database\migration_manager.py:58: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    -- Created: {datetime.utcnow().isoformat()}
+
+tests/integration/test_migration_system.py::TestMigrationManager::test_create_migration
+tests/integration/test_migration_system.py::TestMigrationManager::test_list_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_list_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_pending_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_pending_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_validate_migration
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_migration_status
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\scripts\database\migration_manager.py:77: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    -- Created: {datetime.utcnow().isoformat()}
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/integration/test_integration_service.py::test_get_sync_status - ...
+FAILED tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_accept_documents
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_get_onboarding_status
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_get_onboarding_status_unauthorized
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_update_onboarding_step
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_complete_onboarding
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_complete_onboarding_missing_fields
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_get_preferences
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_update_preferences
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_skip_onboarding
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_reset_onboarding
+============ 11 failed, 24 passed, 2 skipped, 32 warnings in 4.30s ============

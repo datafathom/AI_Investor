@@ -1,0 +1,26 @@
+INFO:services.lending.stock_lending_svc:StockLendingService initialized
+INFO:services.lending.stock_lending_svc:LENDING_LOG: TSLA borrowing capacity: $2,000,000.00 (20% LTV)
+INFO:services.kafka.collateral_monitor:CollateralMonitor initialized
+WARNING:services.kafka.collateral_monitor:KAFKA_LOG: [MARGIN_CALL] Loan LOAN-1 is underwater! LTV: 80.00%
+INFO:services.lending.payment_sched:LENDING_LOG: Generated 3-month IO schedule for $1,000,000.00.
+
+============================================================
+       PHASE 167: STOCK-BASED LENDING VERIFICATION
+============================================================
+
+[*] Testing StockLendingService...
+    Capacity: $2,000,000.00 (Expected: $2,000,000.00)
+
+[*] Testing Spread Analysis...
+    Breakeven Years: 6.0 (Expected: 6.0)
+
+[*] Testing CollateralMonitor...
+    Margin Call Triggered: True (Expected: True)
+
+[*] Testing PaymentScheduleTracker...
+    Monthly IO Payment: $4,166.67 (Expected: $4,166.67)
+
+============================================================
+               PHASE 167 VERIFICATION COMPLETE
+============================================================
+

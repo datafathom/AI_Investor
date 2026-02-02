@@ -18,7 +18,7 @@ Usage:
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from enum import Enum
 import logging
 
@@ -168,3 +168,17 @@ class MacroService:
     async def get_economic_calendar(self, days_ahead: int = 7) -> List[Dict]:
         """Upcoming events."""
         return [{"date": "2026-01-20", "event": "Fed Rate Decision", "country": "USA", "importance": "high"}]
+
+    def produce_macro_event(self, event_type: str, data: Dict[str, Any]):
+        """
+        Phase 180.2: Kafka Bridge to Phase 181 (Volatility).
+        Streams macro events (Rate hikes, Geopolitical shocks) to downstream consumers.
+        """
+        message = {
+            "timestamp": datetime.now().isoformat(),
+            "event_type": event_type,
+            "payload": data
+        }
+        logger.info(f"KAFKA_LOG: Producing macro event to 'macro_events_v1': {event_type}")
+        # In a real system: self.producer.send('macro_events', message)
+        return message

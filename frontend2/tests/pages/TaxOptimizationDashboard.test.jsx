@@ -5,10 +5,10 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import axios from 'axios';
+import apiClient from '../../src/services/apiClient';
 import TaxOptimizationDashboard from '../../src/pages/TaxOptimizationDashboard';
 
-vi.mock('axios');
+vi.mock('../../src/services/apiClient');
 
 describe('TaxOptimizationDashboard', () => {
   beforeEach(() => {
@@ -16,7 +16,7 @@ describe('TaxOptimizationDashboard', () => {
   });
 
   it('should render dashboard', async () => {
-    axios.get.mockResolvedValue({ data: { data: {} } });
+    apiClient.get.mockResolvedValue({ data: { data: {} } });
     
     render(<TaxOptimizationDashboard />);
     
@@ -32,7 +32,7 @@ describe('TaxOptimizationDashboard', () => {
       ]
     };
 
-    axios.get.mockResolvedValue({ data: { data: mockData } });
+    apiClient.get.mockResolvedValue({ data: { data: mockData } });
 
     render(<TaxOptimizationDashboard />);
 

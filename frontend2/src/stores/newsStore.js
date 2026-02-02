@@ -15,11 +15,13 @@
  */
 
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useNewsStore = create((set, get) => ({
     // State
     headlines: [],
     marketSentiment: { average_score: 0, label: 'NEUTRAL', count: 0 },
+    sectorSentiment: [],
     analyzedTopics: {}, // keyed by topic
     
     loading: {
@@ -33,11 +35,8 @@ const useNewsStore = create((set, get) => ({
     fetchHeadlines: async (mock = false) => {
         set((state) => ({ loading: { ...state.loading, headlines: true }, error: null }));
         try {
-            const url = `/api/v1/news/headlines${mock ? '?mock=true' : ''}`;
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Failed to fetch headlines');
-            
-            const data = await response.json();
+            const response = await apiClient.get('/news/headlines', { params: mock ? { mock: true } : {} });
+            const data = response.data;
             set({ 
                 headlines: data.top_news || [],
                 marketSentiment: {
@@ -57,18 +56,28 @@ const useNewsStore = create((set, get) => ({
         const lowerTopic = topic.toLowerCase();
         set((state) => ({ loading: { ...state.loading, topics: true }, error: null }));
         try {
-            const url = `/api/v1/news/analyze/${topic}${mock ? '?mock=true' : ''}`;
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`Failed to analyze topic: ${topic}`);
-            
-            const data = await response.json();
+            const response = await apiClient.get(`/news/analyze/${topic}`, { params: mock ? { mock: true } : {} });
             set((state) => ({
-                analyzedTopics: { ...state.analyzedTopics, [lowerTopic]: data },
+                analyzedTopics: { ...state.analyzedTopics, [lowerTopic]: response.data },
                 loading: { ...state.loading, topics: false }
             }));
         } catch (error) {
             console.error(`Analyze topic ${topic} failed:`, error);
             set({ error: error.message, loading: { ...get().loading, topics: false } });
+        }
+    },
+
+    fetchSectorSentiment: async () => {
+        set((state) => ({ loading: { ...state.loading, sectors: true }, error: null }));
+        try {
+            const response = await apiClient.get('/news/sectors');
+            set({ 
+                sectorSentiment: response.data,
+                loading: { ...get().loading, sectors: false }
+            });
+        } catch (error) {
+            console.error('Fetch sector sentiment failed:', error);
+            set({ error: error.message, loading: { ...get().loading, sectors: false } });
         }
     },
 

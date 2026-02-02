@@ -224,7 +224,3 @@ const AIPredictionsDashboard = () => {
 };
 
 export default AIPredictionsDashboard;
-  );
-};
-
-export default AIPredictionsDashboard;

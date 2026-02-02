@@ -10,10 +10,12 @@ PURPOSE: Provides professional-grade tools for financial advisors,
 import logging
 import math
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Any
 from models.institutional import Client, WhiteLabelConfig, ClientAnalytics
 from services.system.cache_service import get_cache_service
+from services.neo4j.neo4j_service import neo4j_service
+from services.neo4j.advisor_graph import AdvisorGraphService
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +28,8 @@ class InstitutionalService:
     def __init__(self):
         """Initialize service with dependencies."""
         self.cache_service = get_cache_service()
+        self.neo4j = neo4j_service
+        self.advisor_graph = AdvisorGraphService(self.neo4j)
         
     async def create_client(
         self,
@@ -45,12 +49,29 @@ class InstitutionalService:
             jurisdiction=jurisdiction,
             funding_source=funding_source,
             strategy=strategy,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
-        # Save client
+        # Save to Cache (Redis)
         await self._save_client(client)
+        
+        # Save to Graph (Neo4j)
+        query = """
+        MERGE (c:CLIENT {id: $client_id})
+        SET c.name = $name, c.jurisdiction = $jurisdiction, c.strategy = $strategy, c.created_at = datetime()
+        WITH c
+        MATCH (a:ADVISOR {id: $advisor_id})
+        MERGE (a)-[:MANAGES]->(c)
+        """
+        self.neo4j.execute_query(query, {
+            "client_id": client.client_id,
+            "advisor_id": advisor_id,
+            "name": client_name,
+            "jurisdiction": jurisdiction,
+            "strategy": strategy
+        })
+        
         return client
     
     async def configure_white_label(
@@ -73,42 +94,45 @@ class InstitutionalService:
             secondary_color=secondary_color,
             custom_domain=custom_domain,
             branding_name=branding_name,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         await self._save_white_label_config(config)
         return config
     
     async def get_clients_for_advisor(self, advisor_id: str) -> List[Client]:
-        """Get all clients belonging to an advisor."""
-        logger.info(f"Fetching clients for advisor {advisor_id}")
+        """Get all clients belonging to an advisor from Neo4j."""
+        logger.info(f"Fetching clients for advisor {advisor_id} from Neo4j")
         
-        mock_clients = [
-            Client(
-                client_id=f"client_{advisor_id}_1",
-                advisor_id=advisor_id,
-                client_name="Family Office Alpha",
-                aum=120000000.0,
-                risk_level="Low",
-                retention_score=92.5,
-                kyc_status="Verified",
-                created_date=datetime.utcnow(),
-                updated_date=datetime.utcnow()
-            ),
-            Client(
-                client_id=f"client_{advisor_id}_2",
-                advisor_id=advisor_id,
-                client_name="Endowment Beta",
-                aum=450000000.0,
-                risk_level="Moderate",
-                retention_score=88.0,
-                kyc_status="Pending",
-                created_date=datetime.utcnow(),
-                updated_date=datetime.utcnow()
-            )
-        ]
-        return mock_clients
+        query = """
+        MATCH (a:ADVISOR {id: $advisor_id})-[:MANAGES]->(c:CLIENT)
+        RETURN c
+        """
+        results = self.neo4j.execute_query(query, {"advisor_id": advisor_id})
+        
+        clients = []
+        for record in results:
+            node = record['c']
+            # Try to fetch full object from cache, otherwise reconstruct from node
+            cache_key = f"client:{node['id']}"
+            cached_data = self.cache_service.get(cache_key)
+            
+            if cached_data:
+                clients.append(Client(**cached_data))
+            else:
+                # Reconstruct minimum model if cache is empty
+                clients.append(Client(
+                    client_id=node['id'],
+                    advisor_id=advisor_id,
+                    client_name=node.get('name', 'Unknown'),
+                    jurisdiction=node.get('jurisdiction', 'US'),
+                    strategy=node.get('strategy', 'Aggressive AI'),
+                    created_date=datetime.now(timezone.utc), # Fallback
+                    updated_date=datetime.now(timezone.utc)
+                ))
+        
+        return clients
 
     async def get_client_analytics(self, client_id: str) -> ClientAnalytics:
         """Calculate and return analytics for a specific client."""
@@ -122,7 +146,7 @@ class InstitutionalService:
             churn_probability=0.08,
             kyc_risk_score=15.0,
             rebalance_drift=0.045,
-            last_updated=datetime.utcnow()
+            last_updated=datetime.now(timezone.utc)
         )
 
     async def get_client_risk_profile(self, client_id: str) -> Dict[str, Any]:
@@ -158,7 +182,7 @@ class InstitutionalService:
         projected_fees = current_fees * (1 + growth_rate)
         
         history = []
-        base_date = datetime.utcnow()
+        base_date = datetime.now(timezone.utc)
         for i in range(12):
             date = (base_date - timedelta(days=30 * (11 - i))).strftime("%Y-%m-%d")
             amount = current_fees * (1 + 0.1 * math.sin(i / 2) + random.uniform(-0.02, 0.02))
@@ -176,7 +200,7 @@ class InstitutionalService:
         logger.info(f"Fetching signature status for client {client_id}")
         
         docs = [
-            {"id": "DOC_ENG_001", "name": "Institutional Engagement Letter", "status": "Signed", "date": (datetime.utcnow() - timedelta(days=10)).strftime("%Y-%m-%d")},
+            {"id": "DOC_ENG_001", "name": "Institutional Engagement Letter", "status": "Signed", "date": (datetime.now(timezone.utc) - timedelta(days=10)).strftime("%Y-%m-%d")},
             {"id": "DOC_KYC_001", "name": "KYC Phase 1 Verification", "status": "Signed", "date": (datetime.utcnow() - timedelta(days=8)).strftime("%Y-%m-%d")},
             {"id": "DOC_AML_001", "name": "AML Risk Disclosure", "status": "Pending", "date": (datetime.utcnow() - timedelta(days=2)).strftime("%Y-%m-%d")},
             {"id": "DOC_TAX_001", "name": "W-9/Tax Certification", "status": "Signed", "date": (datetime.utcnow() - timedelta(days=5)).strftime("%Y-%m-%d")}
@@ -209,7 +233,7 @@ class InstitutionalService:
             "client_id": client_id,
             "allocations": current,
             "total_aum": 120000000.0,
-            "last_rebalanced": (datetime.utcnow() - timedelta(days=45)).strftime("%Y-%m-%d")
+            "last_rebalanced": (datetime.now(timezone.utc) - timedelta(days=45)).strftime("%Y-%m-%d")
         }
 
     async def _save_client(self, client: Client):

@@ -22,9 +22,10 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
+import apiClient from '../../services/apiClient';
 import './CommandChat.css';
 
-const API_BASE = '/api/v1/ai/autocoder';
+const API_BASE = '/ai/autocoder';
 
 /**
  * CommandChat Component
@@ -81,22 +82,12 @@ const CommandChat = () => {
 
         try {
             // Call backend API
-            const response = await fetch(`${API_BASE}/generate`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    prompt: userMessage,
-                    execute: false // Don't execute automatically, show preview first
-                })
+            const response = await apiClient.post(`${API_BASE}/generate`, {
+                prompt: userMessage,
+                execute: false // Don't execute automatically, show preview first
             });
 
-            if (!response.ok) {
-                throw new Error(`API error: ${response.statusText}`);
-            }
-
-            const data = await response.json();
+            const data = response.data;
 
             // Add assistant response
             const assistantMessage = {
@@ -131,21 +122,11 @@ const CommandChat = () => {
         setLoading(true);
 
         try {
-            const response = await fetch(`${API_BASE}/execute`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    code: code
-                })
+            const response = await apiClient.post(`${API_BASE}/execute`, {
+                code: code
             });
 
-            if (!response.ok) {
-                throw new Error(`Execution error: ${response.statusText}`);
-            }
-
-            const data = await response.json();
+            const data = response.data;
 
             // Update message with execution result
             setMessages(prev => prev.map(msg => 

@@ -51,14 +51,31 @@ export function initErrorTracking() {
  * Capture exception
  */
 export function captureException(error, context = {}) {
+  // 1. Send to standard console for local debugging
+  console.error('[CaptureException]', error, context);
+
+  // 2. Send to backend telemetry (The "Golden Path" for observability)
+  // We use a detached promise to avoid blocking the UI
+  try {
+    const apiClient = window.apiClient; // Accessing via window to avoid circular dependency
+    if (apiClient) {
+      apiClient.post('/system/error', {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : 'N/A',
+        context: context
+      }).catch(err => console.warn('[TelemetryFailed]', err));
+    }
+  } catch (err) {
+    // Fail silently to avoid recursive error loops
+  }
+
+  // 3. Send to Sentry if initialized
   if (errorTracker) {
     errorTracker.captureException(error, {
       contexts: {
         custom: context,
       },
     });
-  } else {
-    console.error('Error:', error, context);
   }
 }
 

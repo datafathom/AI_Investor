@@ -24,7 +24,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Optional
 from models.budgeting import Expense, ExpenseCategory, SpendingTrend
 from services.system.cache_service import get_cache_service
@@ -85,13 +85,13 @@ class ExpenseTrackingService:
             category = await self._auto_categorize(description, merchant)
         
         expense = Expense(
-            expense_id=f"exp_{user_id}_{datetime.utcnow().timestamp()}",
+            expense_id=f"exp_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             amount=amount,
             category=ExpenseCategory(category),
             description=description,
             merchant=merchant,
-            date=date or datetime.utcnow()
+            date=date or datetime.now(timezone.utc)
         )
         
         # Save expense
@@ -121,6 +121,20 @@ class ExpenseTrackingService:
         # In production, fetch from database
         # For now, return mock data
         return []
+
+    async def get_spending_insights(self, user_id: str) -> Dict[str, Any]:
+        """
+        Get spending insights (total spending, top categories).
+        """
+        end_date = datetime.now(timezone.utc)
+        start_date = end_date - timedelta(days=30)
+        expenses = await self.get_expenses(user_id, start_date, end_date)
+        total_spending = sum(e.amount for e in expenses)
+        
+        return {
+            "total_spending": total_spending,
+            "period": "30 days"
+        }
     
     async def analyze_spending_trends(
         self,
@@ -142,7 +156,7 @@ class ExpenseTrackingService:
         logger.info(f"Analyzing spending trends for user {user_id}")
         
         # Get expenses
-        end_date = datetime.utcnow()
+        end_date = datetime.now(timezone.utc)
         start_date = end_date - timedelta(days=90)  # 3 months
         
         expenses = await self.get_expenses(user_id, start_date, end_date, category)

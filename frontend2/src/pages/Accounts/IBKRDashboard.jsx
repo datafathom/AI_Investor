@@ -17,9 +17,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
+import { RefreshCw, TrendingUp, DollarSign, Activity, AlertTriangle } from 'lucide-react';
 import './IBKRDashboard.css';
 
-const API_BASE = '/api/v1/ibkr';
+const API_BASE = '/brokerage/ibkr';
 
 const IBKRDashboard = () => {
     const [accountSummary, setAccountSummary] = useState(null);
@@ -28,6 +30,7 @@ const IBKRDashboard = () => {
     const [currencyExposure, setCurrencyExposure] = useState([]);
     const [loading, setLoading] = useState(false);
     const [gatewayStatus, setGatewayStatus] = useState(null);
+    const [error, setError] = useState(null); // Added for gateway status error
 
     useEffect(() => {
         loadAllData();
@@ -51,36 +54,33 @@ const IBKRDashboard = () => {
         }
     };
 
-    const loadAccountSummary = async () => {
+    const loadAccountSummary = async () => {        // Fetch Account Summary
         try {
-            const response = await fetch(`${API_BASE}/account-summary`);
-            if (response.ok) {
-                const data = await response.json();
-                setAccountSummary(data);
+            const response = await apiClient.get(`${API_BASE}/account-summary`);
+            if (response.data.status === 'success') {
+                setAccountSummary(response.data.data);
             }
         } catch (err) {
             console.error('Failed to load account summary:', err);
         }
     };
 
-    const loadPositions = async () => {
+    const loadPositions = async () => {        // Fetch Positions
         try {
-            const response = await fetch(`${API_BASE}/positions`);
-            if (response.ok) {
-                const data = await response.json();
-                setPositions(data.positions || []);
+            const response = await apiClient.get(`${API_BASE}/positions`);
+            if (response.data.status === 'success') {
+                setPositions(response.data.data);
             }
         } catch (err) {
             console.error('Failed to load positions:', err);
         }
     };
 
-    const loadMargin = async () => {
+    const loadMargin = async () => {        // Fetch Margin
         try {
-            const response = await fetch(`${API_BASE}/margin`);
-            if (response.ok) {
-                const data = await response.json();
-                setMargin(data);
+            const response = await apiClient.get(`${API_BASE}/margin`);
+            if (response.data.status === 'success') {
+                setMargin(response.data.data);
             }
         } catch (err) {
             console.error('Failed to load margin:', err);
@@ -89,10 +89,9 @@ const IBKRDashboard = () => {
 
     const loadCurrencyExposure = async () => {
         try {
-            const response = await fetch(`${API_BASE}/currency-exposure`);
-            if (response.ok) {
-                const data = await response.json();
-                setCurrencyExposure(data.currency_exposure || []);
+            const response = await apiClient.get(`${API_BASE}/currency-exposure`);
+            if (response.data.status === 'success') {
+                setCurrencyExposure(response.data.data.currency_exposure || []);
             }
         } catch (err) {
             console.error('Failed to load currency exposure:', err);
@@ -101,13 +100,12 @@ const IBKRDashboard = () => {
 
     const loadGatewayStatus = async () => {
         try {
-            const response = await fetch(`${API_BASE}/gateway/status`);
-            if (response.ok) {
-                const data = await response.json();
-                setGatewayStatus(data);
+            const response = await apiClient.get(`${API_BASE}/gateway/status`);
+            if (response.data.status !== 'success') {
+                setError('Gateway disconnected');
             }
-        } catch (err) {
-            console.error('Failed to load gateway status:', err);
+        } catch (e) {
+            console.error('Failed to load gateway status:', e);
         }
     };
 

@@ -1,13 +1,13 @@
 
 import pytest
-from services.crypto.wallet_service import Web3WalletService
+from services.crypto.wallet_service import WalletService
 from unittest.mock import patch, MagicMock
 
 @pytest.fixture
 def service():
     # Force simulation mode for tests
-    Web3WalletService._instance = None
-    return Web3WalletService()
+    WalletService._instance = None
+    return WalletService()
 
 def test_wallet_balances_simulated(service):
     # Ensure service stays in simulation for this test

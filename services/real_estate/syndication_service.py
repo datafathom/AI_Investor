@@ -1,7 +1,10 @@
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 from datetime import datetime
 from pydantic import BaseModel, Field
 from decimal import Decimal
+import logging
+
+logger = logging.getLogger(__name__)
 
 class K1Distribution(BaseModel):
     syndication_id: str
@@ -23,6 +26,31 @@ class SyndicationService:
         # In a real scenario, this would connect to a database
         self.records: Dict[str, SyndicationRecord] = {}
         self.distributions: List[K1Distribution] = []
+        self.commitments: Dict[str, List[Dict[str, Any]]] = {} # Phase 166.4: Capital Raise Tracker
+        logger.info("SyndicationService initialized")
+
+    def soft_circle(self, deal_id: str, investor_id: str, amount: Decimal) -> bool:
+        """Tracks soft commitments before funding."""
+        if deal_id not in self.commitments:
+            self.commitments[deal_id] = []
+        self.commitments[deal_id].append({
+            "investor_id": investor_id,
+            "amount": amount,
+            "status": "SOFT_CIRCLE",
+            "timestamp": datetime.now()
+        })
+        logger.info(f"SYND_LOG: Soft circle of ${amount:,.2f} for deal {deal_id} from {investor_id}")
+        return True
+
+    def get_raise_status(self, deal_id: str, target: Decimal) -> Dict[str, Any]:
+        """Calculates total soft-circled capital."""
+        total_soft = sum(c["amount"] for c in self.commitments.get(deal_id, []))
+        return {
+            "deal_id": deal_id,
+            "target": float(target),
+            "soft_circled": float(total_soft),
+            "pct_complete": float(round((total_soft / target) * 100, 2)) if target > 0 else 0
+        }
 
     def create_syndication(self, name: str, initial_investment: Decimal) -> SyndicationRecord:
         syndication_id = f"SYND_{name.upper().replace(' ', '_')}_{int(datetime.now().timestamp())}"

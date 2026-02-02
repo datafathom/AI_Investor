@@ -22,6 +22,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import apiClient from '../services/apiClient';
 import { analyticsService } from '../services/analyticsService';
 import { GlassCard } from '../components/Common';
 import './PortfolioOptimizationDashboard.css';
@@ -79,11 +80,11 @@ const PortfolioOptimizationDashboard = () => {
     try {
       // Note: Rebalancing history endpoint might need adding to analyticsService if used frequently
       // For now, using a generic fetch or adding to service
-      const res = await fetch(`/api/v1/optimization/rebalancing-history?portfolio_id=${portfolioId}`, {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('widget_os_token')}` }
+      const res = await apiClient.get('/optimization/rebalancing-history', {
+        params: { portfolio_id: portfolioId }
       });
-      const data = await res.json();
-      setRebalancingHistory(data.data || []);
+      const data = res.data;
+      setRebalancingHistory(data.history || []);
     } catch (error) {
       console.error('Error loading rebalancing history:', error);
     }

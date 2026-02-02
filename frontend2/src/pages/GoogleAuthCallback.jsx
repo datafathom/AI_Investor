@@ -13,6 +13,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import apiClient from '../services/apiClient';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import './GoogleAuthCallback.css';
 
@@ -42,20 +43,14 @@ const GoogleAuthCallback = () => {
 
             try {
                 // Send code to backend for processing
-                const response = await fetch('/api/v1/auth/google/callback', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ code, state })
+                const response = await apiClient.post('/auth/google/callback', { 
+                    code,
+                    role: role || 'user'
                 });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Authentication failed');
-                }
-
-                const data = await response.json();
+                
+                const data = response.data;
+                
+                authService.setSession(data.token, data.user);
 
                 if (data.success) {
                     // Store session token

@@ -22,20 +22,19 @@ def get_clew_index():
     """
     try:
         service = get_clew_index_service()
-        # Mocking usage of service for now if it requires arguments
-        # Assuming service has get_current_index() or similar
-        # For now, return mock data matching frontend expectation if service fails or is incomplete
+        index = float(service.calculate_current_index())
+        inflation = float(service.get_uhnwi_inflation_rate())
         
         return jsonify({
-            "current_index": 142.5,
-            "inflation_rate": 0.084, # 8.4%
+            "current_index": index,
+            "inflation_rate": inflation,
             "components": {
                 "tuition": 0.12,
                 "staff": 0.05,
                 "travel": 0.09,
                 "real_estate": 0.06
             },
-            "history": [] # Would populate with historical data
+            "status": "success"
         })
         
     except Exception as e:

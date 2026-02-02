@@ -15,9 +15,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import './CoinbaseTrade.css';
 
-const API_BASE = '/api/v1/coinbase';
+const API_BASE = '/coinbase';
 
 const CoinbaseTrade = () => {
     const [tradingPairs, setTradingPairs] = useState([]);
@@ -37,13 +38,12 @@ const CoinbaseTrade = () => {
 
     const loadTradingPairs = async () => {
         try {
-            const response = await fetch(`${API_BASE}/trading-pairs`);
-            if (response.ok) {
-                const data = await response.json();
-                setTradingPairs(data.trading_pairs || []);
-                if (data.trading_pairs?.length > 0) {
-                    setSelectedPair(data.trading_pairs[0]);
-                }
+        try {
+            const response = await apiClient.get(`${API_BASE}/trading-pairs`);
+            const data = response.data;
+            setTradingPairs(data.trading_pairs || []);
+            if (data.trading_pairs?.length > 0) {
+                setSelectedPair(data.trading_pairs[0]);
             }
         } catch (err) {
             console.error('Failed to load trading pairs:', err);
@@ -52,11 +52,9 @@ const CoinbaseTrade = () => {
 
     const loadOrders = async () => {
         try {
-            const response = await fetch(`${API_BASE}/orders?limit=10`);
-            if (response.ok) {
-                const data = await response.json();
-                setOrders(data.orders || []);
-            }
+            const response = await apiClient.get(`${API_BASE}/orders`, { params: { limit: 10 } });
+            const data = response.data;
+            setOrders(data.orders || []);
         } catch (err) {
             console.error('Failed to load orders:', err);
         }
@@ -83,24 +81,13 @@ const CoinbaseTrade = () => {
                 ? { market_market_ioc: { quote_size: amount } }
                 : { limit_limit_gtc: { base_size: amount, limit_price: price } };
 
-            const response = await fetch(`${API_BASE}/orders`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    product_id: selectedPair,
-                    side: side,
-                    order_configuration: orderConfig
-                })
+            const response = await apiClient.post(`${API_BASE}/orders`, {
+                product_id: selectedPair,
+                side: side,
+                order_configuration: orderConfig
             });
 
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.message || 'Order failed');
-            }
-
-            const data = await response.json();
+            const data = response.data;
             
             // Reload orders
             await loadOrders();

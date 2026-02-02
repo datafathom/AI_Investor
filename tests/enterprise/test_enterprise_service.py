@@ -4,7 +4,7 @@ Comprehensive test coverage for organization and team management
 """
 
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.enterprise.enterprise_service import EnterpriseService
 from models.enterprise import Organization, Team, TeamRole
@@ -55,8 +55,8 @@ async def test_add_team_member(service):
         organization_id="org_123",
         team_name="Test Team",
         members=[],
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_team = AsyncMock(return_value=team)
@@ -65,7 +65,7 @@ async def test_add_team_member(service):
     result = await service.add_team_member(
         team_id="team_123",
         user_id="user_456",
-        role=TeamRole.MEMBER
+        role=TeamRole.ANALYST
     )
     
     assert result is not None

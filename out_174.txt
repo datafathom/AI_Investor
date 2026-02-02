@@ -1,0 +1,32 @@
+INFO:services.neo4j.alts_graph:AltsGraphService initialized
+INFO:services.neo4j.alts_graph:NEO4J_LOG: MERGE (a:ASSET_CLASS:ALTERNATIVE {name: 'Blue Chip Art', correlation_sp500: 0.1, liquidity: 'LOW'})
+INFO:services.neo4j.alts_graph:NEO4J_LOG: MATCH (p:PORTFOLIO {id: 'PORT-1'}) MATCH (a:ALTERNATIVE {name: 'Blue Chip Art'}) MERGE (p)-[:ALLOCATED_TO {pct: 0.05}]->(a)
+INFO:services.external.masterworks_adapter:EXTERNAL_LOG: Fetched Masterworks value for w-101 (Warhol): $1,866,121.35
+INFO:services.external.chrono24_adapter:EXTERNAL_LOG: Fetched Chrono24 value for Rolex Daytona: $196,521.68
+INFO:services.alts.cost_tracker:ALTS_LOG: Annual carry cost for WATCH-7 (WATCH): $2,000.00
+INFO:services.tax.k1_tracker:TAX_LOG: K-1 Status for HedgeFund-A (2024): DELINQUENT
+INFO:services.portfolio.emotional_utility:PORTFOLIO_LOG: Emotional Utility Optimization (Fin: 8.00%, Emo: 0.90) -> Total: 0.3260
+
+============================================================
+       PHASE 174: ALTERNATIVE ASSETS VERIFICATION
+============================================================
+
+[*] Testing AltsGraphService...
+
+[*] Testing External Adapters...
+    Masterworks Value: $1,866,121.35
+    Chrono24 Value: $196,521.68
+
+[*] Testing AltsCostTracker...
+    Annual Carry: $2,000.00 (2.0%)
+
+[*] Testing K1Tracker...
+    K-1 Status: DELINQUENT
+
+[*] Testing EmotionalUtilityOptimizer...
+    Total Utility Index: 0.326
+
+============================================================
+               PHASE 174 VERIFICATION COMPLETE
+============================================================
+

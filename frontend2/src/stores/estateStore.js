@@ -1,91 +1,114 @@
 /**
  * Estate Store - Zustand State Management for Estate Planning
- * Phase 58: Manages beneficiaries, dead man's switch, and succession planning.
+ * Phase 58: Manages beneficiaries, estate plans, and inheritance simulations.
+ * Updated to use apiClient per User Rule 6.
  */
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useEstateStore = create((set, get) => ({
     // State
+    estatePlan: null,
     beneficiaries: [],
+    inheritanceSim: null,
     heartbeatStatus: { lastCheck: null, isAlive: true, daysUntilTrigger: 30, triggerDate: null },
     entityGraph: { nodes: [], edges: [] },
-    successionPlan: null,
-    isHeartbeatEnabled: false,
     isLoading: false,
     error: null,
     
-    // Actions
-    setBeneficiaries: (beneficiaries) => set({ beneficiaries }),
-    addBeneficiary: (b) => set((s) => ({ beneficiaries: [...s.beneficiaries, b] })),
-    removeBeneficiary: (id) => set((s) => ({ beneficiaries: s.beneficiaries.filter(b => b.id !== id) })),
-    setHeartbeatStatus: (status) => set({ heartbeatStatus: status }),
-    setEntityGraph: (graph) => set({ entityGraph: graph }),
-    toggleHeartbeat: (enabled) => set({ isHeartbeatEnabled: enabled }),
-    setError: (error) => set({ error }),
-    
-    // Async: Fetch all estate data
-    fetchEstateData: async () => {
-        set({ isLoading: true });
+    // Actions - Estate Plan
+    fetchEstatePlan: async (userId) => {
+        set({ isLoading: true, error: null });
         try {
-            const [bRes, hRes, gRes] = await Promise.all([
-                fetch('/api/v1/estate/beneficiaries'),
-                fetch('/api/v1/estate/heartbeat'),
-                fetch('/api/v1/estate/graph')
-            ]);
-            
-            const [beneficiaries, heartbeatStatus, entityGraph] = await Promise.all([
-                bRes.json(),
-                hRes.json(),
-                gRes.json()
-            ]);
-            
-            set({ beneficiaries, heartbeatStatus, entityGraph, isLoading: false });
+            const response = await apiClient.get('/estate/plan', { params: { user_id: userId } });
+            set({ estatePlan: response.data?.data || response.data, isLoading: false });
         } catch (error) {
-            console.error('Failed to fetch estate data:', error);
-            set({ error: 'Failed to synchronize estate protocol', isLoading: false });
+            console.error('Failed to fetch estate plan:', error);
+            set({ error: error.message, isLoading: false });
         }
     },
-    
-    // Async: Confirm alive
+
+    // Actions - Beneficiaries
+    fetchBeneficiaries: async (userId) => {
+        set({ isLoading: true, error: null });
+        try {
+            const response = await apiClient.get('/estate/beneficiaries', { params: { user_id: userId } });
+            set({ beneficiaries: response.data?.data || response.data || [], isLoading: false });
+        } catch (error) {
+            console.error('Failed to fetch beneficiaries:', error);
+            set({ error: error.message, isLoading: false });
+        }
+    },
+
+    addBeneficiary: async (beneficiaryData) => {
+        set({ isLoading: true, error: null });
+        try {
+            await apiClient.post('/estate/beneficiary/add', beneficiaryData);
+            await get().fetchBeneficiaries(beneficiaryData.user_id);
+            set({ isLoading: false });
+            return true;
+        } catch (error) {
+            console.error('Failed to add beneficiary:', error);
+            set({ error: error.message, isLoading: false });
+            return false;
+        }
+    },
+
+    removeBeneficiary: async (beneficiaryId, userId) => {
+        set({ isLoading: true, error: null });
+        try {
+            await apiClient.delete(`/estate/beneficiary/${beneficiaryId}`);
+            await get().fetchBeneficiaries(userId);
+            set({ isLoading: false });
+            return true;
+        } catch (error) {
+            console.error('Failed to remove beneficiary:', error);
+            set({ error: error.message, isLoading: false });
+            return false;
+        }
+    },
+
+    // Actions - Inheritance Simulation
+    runInheritanceSimulation: async (userId) => {
+        set({ isLoading: true, error: null });
+        try {
+            const response = await apiClient.post('/estate/inheritance/simulate', { user_id: userId });
+            set({ inheritanceSim: response.data?.data || response.data, isLoading: false });
+            return true;
+        } catch (error) {
+            console.error('Failed to run simulation:', error);
+            set({ error: error.message, isLoading: false });
+            return false;
+        }
+    },
+
+    // Actions - Heartbeat / Dead Man's Switch
     confirmAlive: async () => {
         try {
-            const response = await fetch('/api/v1/estate/heartbeat/confirm', { method: 'POST' });
-            if (response.ok) {
-                const hRes = await fetch('/api/v1/estate/heartbeat');
-                const heartbeatStatus = await hRes.json();
-                set({ heartbeatStatus });
-            }
+            await apiClient.post('/estate/heartbeat/confirm');
+            const response = await apiClient.get('/estate/heartbeat');
+            set({ heartbeatStatus: response.data?.data || response.data });
         } catch (error) {
             console.error('Confirm alive failed:', error);
         }
     },
 
-    // Async: Update allocation
-    updateAllocation: async (beneficiaryId, percent) => {
+    // Actions - Entity Graph
+    fetchEntityGraph: async () => {
         try {
-            const response = await fetch('/api/v1/estate/beneficiaries/allocation', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ beneficiary_id: beneficiaryId, percent })
-            });
-            if (response.ok) {
-                set((s) => ({
-                    beneficiaries: s.beneficiaries.map(b => 
-                        b.id === beneficiaryId ? { ...b, allocation_percent: percent } : b
-                    )
-                }));
-            }
+            const response = await apiClient.get('/estate/graph');
+            set({ entityGraph: response.data?.data || response.data || { nodes: [], edges: [] } });
         } catch (error) {
-            console.error('Allocation update failed:', error);
+            console.error('Failed to fetch entity graph:', error);
         }
     },
-    
+
     reset: () => set({
+        estatePlan: null,
         beneficiaries: [], 
+        inheritanceSim: null,
         heartbeatStatus: { lastCheck: null, isAlive: true, daysUntilTrigger: 30, triggerDate: null },
         entityGraph: { nodes: [], edges: [] },
-        successionPlan: null, 
-        isHeartbeatEnabled: false, 
         isLoading: false,
         error: null
     })

@@ -3,7 +3,7 @@ from typing import List, Dict, Any
 
 logger = logging.getLogger(__name__)
 
-class MasterGraphService:
+class MasterGraph:
     """
     The Central Brain.
     Merges disjointed domain graphs (Tax, Equity, Estate, Risk) into a single
@@ -17,7 +17,7 @@ class MasterGraphService:
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
-            cls._instance = super(MasterGraphService, cls).__new__(cls)
+            cls._instance = super(MasterGraph, cls).__new__(cls)
         return cls._instance
 
     def __init__(self, neo4j_driver=None):
@@ -27,7 +27,19 @@ class MasterGraphService:
         from services.neo4j.neo4j_service import neo4j_service
         self.neo4j = neo4j_service
         self.driver = neo4j_driver or self.neo4j.driver
-        logger.info("MasterGraphService initialized (The Brain is Online)")
+        logger.info("MasterGraph initialized (The Brain is Online)")
+
+    def get_node_count(self) -> int:
+        """
+        Returns the total number of nodes in the graph.
+        """
+        query = "MATCH (n) RETURN count(n) as count"
+        try:
+            results = self.neo4j.execute_query(query)
+            return results[0]['count'] if results else 0
+        except Exception as e:
+            logger.error(f"Failed to get node count: {e}")
+            return 0
 
     def unify_graphs(self):
         """
@@ -50,10 +62,9 @@ class MasterGraphService:
         """
         logger.info(f"MasterGraph: Triggering shock on {asset_id} with magnitude {magnitude}")
         
-        # Cypher query to find propagation paths
-        # Returns paths from the shocked asset to all reachable nodes
+        # Cypher query to find propagation paths via refined relationships
         query = """
-        MATCH path = (asset {id: $asset_id})-[r*1..5]->(affected)
+        MATCH path = (asset {id: $asset_id})-[r:OWNS|BENEFICIARY_OF|EXPOSED_TO*1..3]->(affected)
         RETURN affected, path, [rel IN r | rel.weight] as weights
         """
         
@@ -62,19 +73,15 @@ class MasterGraphService:
             
             affected_nodes = []
             propagation_paths = []
-            contagion_velocity = 0.0
             
             if not results:
-                # Fallback mock for demonstration if graph is empty
+                logger.warning(f"MasterGraph: No downstream nodes affected by shock on {asset_id}")
                 return {
                     "asset_id": asset_id,
                     "magnitude": magnitude,
-                    "affected_nodes": [asset_id, "Portfolio_Main", "Trust_Revocable"],
-                    "contagion_velocity": 0.75,
-                    "propagation_paths": [
-                        [asset_id, "Portfolio_Main"],
-                        ["Portfolio_Main", "Trust_Revocable"]
-                    ]
+                    "affected_nodes": [],
+                    "contagion_velocity": 0.0,
+                    "propagation_paths": []
                 }
 
             for record in results:
@@ -84,21 +91,20 @@ class MasterGraphService:
                     affected_nodes.append({
                         "id": node_id,
                         "group": list(node.labels)[0].lower() if node.labels else "unknown",
-                        "impact": magnitude * 0.8 # Simplified impact attenuation
+                        "impact": magnitude * 0.8 # Attenuation factor
                     })
                 
-                # Extract path IDs
                 path_nodes = [n.get('id') or str(n.id) for n in record['path'].nodes]
                 propagation_paths.append(path_nodes)
             
-            # Calculate contagion velocity (simplified)
-            contagion_velocity = min(1.0, len(affected_nodes) * 0.15)
+            # Contagion velocity is proportional to the branching factor
+            contagion_velocity = min(1.0, len(affected_nodes) * 0.12)
             
             return {
                 "asset_id": asset_id,
                 "magnitude": magnitude,
                 "affected_nodes": affected_nodes,
-                "contagion_velocity": contagion_velocity,
+                "contagion_velocity": round(contagion_velocity, 2),
                 "propagation_paths": propagation_paths
             }
             
@@ -108,63 +114,62 @@ class MasterGraphService:
 
     def query_global_exposure(self, risk_factor: str) -> List[Dict[str, Any]]:
         """
-        Finds every dollar exposed to a specific risk across ALL entities
-        (Personal, Trust, LLC, Foundation).
+        Finds every dollar exposed to a specific risk across ALL entities.
         """
-        logger.info(f"MasterGraph: Scanning entire ecosystem for '{risk_factor}' exposure...")
+        logger.info(f"MasterGraph: Scanning super-graph for '{risk_factor}' exposure...")
         
-        # Mock result
-        return [
-            {"entity": "Grandchildren Trust", "asset": "EM_ETF", "exposure": 500000},
-            {"entity": "Personal Account", "asset": "Tech_Stock_A", "exposure": 1200000}
-        ]
+        query = """
+        MATCH (risk:Risk {name: $risk_factor})<-[:EXPOSED_TO]-(asset:Asset)<-[:OWNS]-(owner)
+        RETURN owner.name as entity, asset.name as asset, asset.value as exposure
+        """
+        
+        try:
+            results = self.neo4j.execute_query(query, {"risk_factor": risk_factor})
+            return [{"entity": r["entity"], "asset": r["asset"], "exposure": r["exposure"]} for r in results]
+        except Exception as e:
+            logger.error(f"Failed to query global exposure: {e}")
+            return []
+
+    def get_search_entities(self) -> List[Dict[str, Any]]:
+        """
+        Returns a list of searchable entities (Clients, Agents, Symbols) from the graph.
+        """
+        query = """
+        MATCH (n) 
+        WHERE n:Client OR n:AGENT OR n:Portfolio OR n:Asset
+        RETURN n.id as id, 
+               COALESCE(n.name, n.id) as label, 
+               labels(n)[0] as group,
+               CASE 
+                 WHEN n:Client THEN 'client'
+                 WHEN n:AGENT THEN 'agent'
+                 WHEN n:Portfolio THEN 'portfolio'
+                 ELSE 'ticker'
+               END as type
+        LIMIT 500
+        """
+        try:
+            return self.neo4j.execute_query(query)
+        except Exception as e:
+            logger.error(f"MasterGraph: Failed to fetch search entities: {e}")
+            return []
 
     def get_graph_data(self) -> Dict[str, Any]:
         """
         Extracts the full Neo4j graph structure formatted for D3.js Force Graphs.
         """
-        if not self.driver:
-            # Fallback mock for dev
-            return {
-                "nodes": [
-                    {"id": "Client_Alpha", "group": "entity", "val": 20},
-                    {"id": "Trust_Revocable", "group": "trust", "val": 15},
-                    {"id": "Trust_Irrevocable", "group": "trust", "val": 15},
-                    {"id": "Portfolio_Main", "group": "portfolio", "val": 10},
-                    {"id": "Portfolio_Spec", "group": "portfolio", "val": 8},
-                    {"id": "Asset_AAPL", "group": "asset", "val": 5},
-                    {"id": "Asset_BTC", "group": "asset", "val": 5},
-                    {"id": "Asset_RealEstate", "group": "asset", "val": 12},
-                    {"id": "Risk_Geopolitics", "group": "risk", "val": 8},
-                    {"id": "Risk_Margin", "group": "risk", "val": 8},
-                    {"id": "Benefit_Kids", "group": "entity", "val": 5},
-                ],
-                "links": [
-                    {"source": "Client_Alpha", "target": "Trust_Revocable"},
-                    {"source": "Client_Alpha", "target": "Trust_Irrevocable"},
-                    {"source": "Trust_Revocable", "target": "Portfolio_Main"},
-                    {"source": "Trust_Irrevocable", "target": "Portfolio_Spec"},
-                    {"source": "Portfolio_Main", "target": "Asset_AAPL"},
-                    {"source": "Portfolio_Main", "target": "Asset_RealEstate"},
-                    {"source": "Portfolio_Spec", "target": "Asset_BTC"},
-                    {"source": "Risk_Geopolitics", "target": "Portfolio_Spec"},
-                    {"source": "Risk_Margin", "target": "Portfolio_Main"},
-                    {"source": "Trust_Irrevocable", "target": "Benefit_Kids"},
-                ]
-            }
-
-        # Real Cypher Query
-        logger.info("MasterGraph: Fetching live super-graph from Neo4j...")
-        with self.driver.session() as session:
-            result = session.run("MATCH (n)-[r]->(m) RETURN n, r, m LIMIT 100")
+        query = "MATCH (n)-[r]->(m) RETURN n, r, m LIMIT 250"
+        
+        try:
+            result = self.neo4j.execute_query(query)
             nodes = {}
             links = []
+            
             for record in result:
                 n = record['n']
                 m = record['m']
                 r = record['r']
                 
-                # Add nodes
                 for node in [n, m]:
                     node_id = node.get('id') or str(node.id)
                     if node_id not in nodes:
@@ -175,7 +180,6 @@ class MasterGraphService:
                             "val": node.get('importance', 10)
                         }
                 
-                # Add link
                 links.append({
                     "source": n.get('id') or str(n.id),
                     "target": m.get('id') or str(m.id),
@@ -183,3 +187,7 @@ class MasterGraphService:
                 })
             
             return {"nodes": list(nodes.values()), "links": links}
+        except Exception as e:
+            logger.error(f"MasterGraph: Error fetching live graph: {e}")
+            # Final fallback: Return empty graph rather than hardcoded mock
+            return {"nodes": [], "links": []}

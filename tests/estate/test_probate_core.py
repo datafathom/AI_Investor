@@ -20,17 +20,24 @@ def test_probate_fee_calculation_ca(fee_calc):
     # Total statutory fee = 28k (for one party)
     # total_statutory_fees (both) = 56k
     result = fee_calc.calculate_statutory_fees(Decimal('1500000'))
-    assert result['attorney_fee'] == Decimal('28000.00')
-    assert result['total_statutory_fees'] == Decimal('56000.00')
+    assert result['attorney_statutory_fee'] == 28000.0
+    assert result['total_statutory_cost'] == 56000.0
 
 def test_intestacy_logic_spouse_only(intestacy):
-    result = intestacy.identify_legal_heirs(True, 0, 1000000)
-    assert len(result) == 1
-    assert result[0]['heir'] == "SPOUSE"
-    assert result[0]['share_pct'] == 100.0
+    # Spouse, 0 kids, No parents, 1M community, 0 separate
+    result = intestacy.map_succession(True, 0, False, 1000000.0, 0.0)
+    distributions = [d for d in result['distributions'] if d['value'] > 0]
+    assert len(distributions) == 1
+    assert distributions[0]['party'] == "Spouse"
+    assert distributions[0]['value'] == 1000000.0
 
 def test_intestacy_logic_spouse_and_child(intestacy):
-    result = intestacy.identify_legal_heirs(True, 1, 1000000)
-    assert len(result) == 2
-    assert result[0]['share_pct'] == 50.0
-    assert result[1]['share_pct'] == 50.0
+    # Spouse, 1 kid, No parents, 0 community, 1M separate -> 50/50 split
+    result = intestacy.map_succession(True, 1, False, 0.0, 1000000.0)
+    distributions = [d for d in result['distributions'] if d['value'] > 0]
+    assert len(distributions) == 2
+    # Order: Spouse, Child 1
+    assert distributions[0]['party'] == "Spouse"
+    assert distributions[0]['value'] == 500000.0
+    assert distributions[1]['party'] == "Child 1"
+    assert distributions[1]['value'] == 500000.0

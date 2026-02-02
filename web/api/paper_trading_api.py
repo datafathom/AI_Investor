@@ -65,7 +65,7 @@ async def create_virtual_portfolio():
         
         return jsonify({
             'success': True,
-            'data': portfolio.dict()
+            'data': portfolio.model_dump()
         })
         
     except Exception as e:
@@ -93,7 +93,7 @@ async def get_portfolio(portfolio_id: str):
         
         return jsonify({
             'success': True,
-            'data': portfolio.dict()
+            'data': portfolio.model_dump()
         })
         
     except Exception as e:
@@ -141,7 +141,7 @@ async def execute_paper_order():
         
         return jsonify({
             'success': True,
-            'data': order.dict()
+            'data': order.model_dump()
         })
         
     except Exception as e:
@@ -214,7 +214,7 @@ async def run_simulation():
         
         return jsonify({
             'success': True,
-            'data': result.dict()
+            'data': result.model_dump()
         })
         
     except Exception as e:

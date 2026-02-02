@@ -547,9 +547,10 @@ def create_app() -> Flask:
     # from web.api.briefing_api import briefing_bp # ABSOLUTE STRIP
     app.register_blueprint(briefing_bp, url_prefix='/api/v1/ai')
 
-    # Phase 11: AI Research API (Perplexity)
-    # # from web.api.research_api import research_bp # ABSOLUTE STRIP
-    app.register_blueprint(research_bp, url_prefix='/api/v1/ai')
+    # Phase 11: AI Research API
+    # research_bp already has '/api/research' prefix in definition.
+    # Registering without additional prefix to avoid double-nesting.
+    app.register_blueprint(research_bp)
 
     # Phase 12: Billing API (Stripe)
     # from web.api.stripe_api import stripe_bp # ABSOLUTE STRIP

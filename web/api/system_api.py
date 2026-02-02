@@ -79,3 +79,46 @@ async def get_kafka_lag(
     health = await service.get_health_status()
     kafka = health.get("kafka")
     return kafka.details if kafka else {"error": "Not available"}
+
+
+class FrontendErrorLog(BaseModel):
+    error: str
+    stack: str = None
+    context: Dict[str, Any] = None
+
+
+@router.post("/error")
+async def log_frontend_error(
+    log: FrontendErrorLog,
+    service: SystemHealthService = Depends(get_system_health_service)
+):
+    """
+    Log frontend crashes and exceptions to the system health service.
+    Ensures that frontend reliability is tracked alongside backend stability.
+    """
+    logger.error(f"FRONTEND_CRASH: {log.error}\nStack: {log.stack}\nContext: {log.context}")
+    # In a real system, this would also push to TimescaleDB or ElasticSearch
+    # For now, we utilize the standardized system logger
+    return {"status": "logged"}
+
+
+@router.get("/audit/stream")
+async def get_audit_stream():
+    """
+    Sprint 6: Live stream of immutable audit logs.
+    """
+    from services.system.audit_integrity_service import get_audit_integrity_service
+    service = get_audit_integrity_service()
+    stream = await service.get_audit_stream()
+    return {"success": True, "data": stream}
+
+
+@router.get("/quotas")
+async def get_api_quotas():
+    """
+    Sprint 6: API Rate limit & Quota monitoring.
+    """
+    from services.system.api_governance import get_governor
+    governor = get_governor()
+    stats = governor.get_all_stats()
+    return {"success": True, "data": stats}

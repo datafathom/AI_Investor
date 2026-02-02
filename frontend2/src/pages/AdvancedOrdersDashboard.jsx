@@ -6,32 +6,32 @@
  *          Displays advanced order types, execution algorithms, and order management.
  * 
  * INTEGRATION POINTS:
- *    - AdvancedOrdersAPI: /api/v1/advanced-orders endpoints
- * 
- * FEATURES:
- *    - Trailing stops
- *    - Bracket orders
- *    - OCO/OTO orders
- *    - Smart execution (TWAP/VWAP)
+ *    - AdvancedOrdersStore: Uses apiClient for all API calls (User Rule 6)
  * 
  * AUTHOR: AI Investor Team
  * CREATED: 2026-01-21
- * LAST_MODIFIED: 2026-01-21
+ * LAST_MODIFIED: 2026-01-30
  * ==============================================================================
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import useAdvancedOrdersStore from '../stores/advancedOrdersStore';
 import './AdvancedOrdersDashboard.css';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 const AdvancedOrdersDashboard = () => {
-  const [orders, setOrders] = useState([]);
-  const [orderTemplates, setOrderTemplates] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [userId] = useState('user_1');
+  const userId = 'user_1'; // TODO: Get from authStore
+  
+  const {
+    orders,
+    templates,
+    loading,
+    fetchOrders,
+    fetchTemplates,
+    placeOrder,
+    executeTWAP,
+    executeVWAP
+  } = useAdvancedOrdersStore();
+
   const [newOrder, setNewOrder] = useState({
     symbol: '',
     quantity: '',
@@ -42,92 +42,48 @@ const AdvancedOrdersDashboard = () => {
   });
 
   useEffect(() => {
-    loadOrders();
-    loadOrderTemplates();
-  }, []);
+    fetchOrders(userId);
+    fetchTemplates();
+  }, [fetchOrders, fetchTemplates]);
 
-  const loadOrders = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/advanced-orders/orders`, {
-        params: { user_id: userId }
-      });
-      setOrders(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading orders:', error);
-    }
-  };
-
-  const loadOrderTemplates = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/advanced-orders/templates`);
-      setOrderTemplates(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading templates:', error);
-    }
-  };
-
-  const placeOrder = async () => {
+  const handlePlaceOrder = async () => {
     if (!newOrder.symbol || !newOrder.quantity) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/advanced-orders/place`, {
-        user_id: userId,
-        symbol: newOrder.symbol.toUpperCase(),
-        quantity: parseInt(newOrder.quantity),
-        order_type: newOrder.order_type,
-        trailing_percent: newOrder.trailing_percent ? parseFloat(newOrder.trailing_percent) : undefined,
-        stop_price: newOrder.stop_price ? parseFloat(newOrder.stop_price) : undefined,
-        limit_price: newOrder.limit_price ? parseFloat(newOrder.limit_price) : undefined
-      });
+    const success = await placeOrder({
+      user_id: userId,
+      symbol: newOrder.symbol.toUpperCase(),
+      quantity: parseInt(newOrder.quantity),
+      order_type: newOrder.order_type,
+      trailing_percent: newOrder.trailing_percent ? parseFloat(newOrder.trailing_percent) : undefined,
+      stop_price: newOrder.stop_price ? parseFloat(newOrder.stop_price) : undefined,
+      limit_price: newOrder.limit_price ? parseFloat(newOrder.limit_price) : undefined
+    });
+    if (success) {
       setNewOrder({
-        symbol: '',
-        quantity: '',
-        order_type: 'trailing_stop',
-        trailing_percent: '',
-        stop_price: '',
-        limit_price: ''
+        symbol: '', quantity: '', order_type: 'trailing_stop',
+        trailing_percent: '', stop_price: '', limit_price: ''
       });
-      loadOrders();
-    } catch (error) {
-      console.error('Error placing order:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const executeTWAP = async () => {
+  const handleTWAP = async () => {
     if (!newOrder.symbol || !newOrder.quantity) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/advanced-orders/execute/twap`, {
-        user_id: userId,
-        symbol: newOrder.symbol.toUpperCase(),
-        quantity: parseInt(newOrder.quantity),
-        duration_minutes: 60
-      });
-      loadOrders();
-    } catch (error) {
-      console.error('Error executing TWAP:', error);
-    } finally {
-      setLoading(false);
-    }
+    await executeTWAP({
+      user_id: userId,
+      symbol: newOrder.symbol.toUpperCase(),
+      quantity: parseInt(newOrder.quantity),
+      duration_minutes: 60
+    });
+    fetchOrders(userId);
   };
 
-  const executeVWAP = async () => {
+  const handleVWAP = async () => {
     if (!newOrder.symbol || !newOrder.quantity) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/advanced-orders/execute/vwap`, {
-        user_id: userId,
-        symbol: newOrder.symbol.toUpperCase(),
-        quantity: parseInt(newOrder.quantity)
-      });
-      loadOrders();
-    } catch (error) {
-      console.error('Error executing VWAP:', error);
-    } finally {
-      setLoading(false);
-    }
+    await executeVWAP({
+      user_id: userId,
+      symbol: newOrder.symbol.toUpperCase(),
+      quantity: parseInt(newOrder.quantity)
+    });
+    fetchOrders(userId);
   };
 
   return (
@@ -217,7 +173,7 @@ const AdvancedOrdersDashboard = () => {
                 </>
               )}
               <div className="form-group flex-end">
-                <button onClick={placeOrder} disabled={loading} className="place-button">
+                <button onClick={handlePlaceOrder} disabled={loading} className="place-button">
                   Place Order
                 </button>
               </div>
@@ -228,7 +184,7 @@ const AdvancedOrdersDashboard = () => {
           <div className="smart-execution-panel">
             <h2>Smart Execution</h2>
             <div className="execution-form">
-              <div className="form-group">
+              <div className be="form-group">
                 <span className="form-label">Symbol</span>
                 <input
                   type="text"
@@ -249,10 +205,10 @@ const AdvancedOrdersDashboard = () => {
                 />
               </div>
               <div className="execution-buttons">
-                <button onClick={executeTWAP} disabled={loading} className="twap-button">
+                <button onClick={handleTWAP} disabled={loading} className="twap-button">
                   Execute TWAP
                 </button>
-                <button onClick={executeVWAP} disabled={loading} className="vwap-button">
+                <button onClick={handleVWAP} disabled={loading} className="vwap-button">
                   Execute VWAP
                 </button>
               </div>
@@ -262,9 +218,9 @@ const AdvancedOrdersDashboard = () => {
           {/* Order Templates */}
           <div className="templates-panel">
             <h2>Order Templates</h2>
-            {orderTemplates.length > 0 ? (
+            {templates.length > 0 ? (
               <div className="templates-list">
-                {orderTemplates.map((template) => (
+                {templates.map((template) => (
                   <div key={template.template_id} className="template-card">
                     <h3>{template.template_name}</h3>
                     <p className="template-description">{template.description}</p>

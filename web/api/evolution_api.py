@@ -130,3 +130,22 @@ def genomic_playback():
         logger.exception("Playback failed")
         return jsonify({"status": "error", "message": str(e)}), 500
 
+
+@evolution_bp.route('/pulse/<agent_id>', methods=['POST'])
+def get_gene_pulse(agent_id: str):
+    """
+    Sprint 6: Micro-view of gene activation and instability.
+    """
+    try:
+        data = request.json
+        genes = data.get('genes')
+        if not genes:
+            return jsonify({"status": "error", "message": "Missing genes"}), 400
+            
+        splicer = get_gene_splicer()
+        pulse = splicer.get_gene_pulse(agent_id, genes)
+        return jsonify({"status": "success", "data": pulse})
+    except Exception as e:
+        logger.exception("Pulse fetch failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
+

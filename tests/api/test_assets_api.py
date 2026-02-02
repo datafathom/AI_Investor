@@ -27,17 +27,15 @@ def client(app):
 @pytest.fixture
 def mock_assets_service():
     """Mock AssetsService."""
-    with patch('web.api.assets_api.assets_service') as mock:
-        service = MagicMock()
-        service.get_all_assets.return_value = [
+    with patch('web.api.assets_api.assets_service') as mock_service:
+        mock_service.get_all_assets.return_value = [
             {'id': 'asset_1', 'name': 'House', 'value': 500000.0}
         ]
-        service.add_asset.return_value = {'id': 'asset_2', 'name': 'Car', 'value': 30000.0}
-        service.update_asset.return_value = {'id': 'asset_1', 'name': 'House', 'value': 550000.0}
-        service.delete_asset.return_value = True
-        service.get_total_valuation.return_value = 530000.0
-        mock.return_value = service
-        yield service
+        mock_service.add_asset.return_value = {'id': 'asset_2', 'name': 'Car', 'value': 30000.0}
+        mock_service.update_asset.return_value = {'id': 'asset_1', 'name': 'House', 'value': 550000.0}
+        mock_service.delete_asset.return_value = True
+        mock_service.get_total_valuation.return_value = 530000.0
+        yield mock_service
 
 
 def test_get_assets_success(client, mock_assets_service):

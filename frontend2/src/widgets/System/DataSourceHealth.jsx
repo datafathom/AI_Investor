@@ -13,6 +13,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import './DataSourceHealth.css';
 
 const DataSourceHealth = () => {
@@ -22,9 +23,8 @@ const DataSourceHealth = () => {
 
     const fetchHealth = async () => {
         try {
-            const response = await fetch('/api/v1/system/health');
-            if (!response.ok) throw new Error('Failed to fetch system health');
-            const data = await response.json();
+            const response = await apiClient.get('/system/health');
+            const data = response.data;
             
             if (data.data_sources) {
                 setSources(data.data_sources);

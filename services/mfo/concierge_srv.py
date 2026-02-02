@@ -25,15 +25,18 @@ class ConciergeService:
 
     def create_lifestyle_request(self, family_id: UUID, req_type: str, detail: str) -> Dict[str, Any]:
         """
-        Policy: Log request and route to shared concierge team.
+        Policy: Log request to concierge_tickets and route to shared team.
         """
-        logger.info(f"MFO_LOG: New {req_type} request for family {family_id}: {detail[:30]}...")
+        # Simulated database insert into concierge_tickets (Phase 175.1)
+        logger.info(f"POSTGRES_LOG: INSERT INTO concierge_tickets (family_id, request_type, request_summary, status) "
+                    f"VALUES ('{family_id}', '{req_type}', '{detail[:100]}', 'OPEN')")
         
         return {
-            "ticket_id": "REQ-001",
-            "assigned_team": "LIFESTYLE_MGMT",
-            "priority": "HIGH" if "URGENT" in detail.upper() else "STANDARD",
-            "status": "QUEUED"
+            "ticket_id": "REQ-002",
+            "family_id": str(family_id),
+            "assigned_team": "MFO_SHARED_CONCIERGE",
+            "priority": "VIP" if "JET" in detail.upper() or "URGENT" in detail.upper() else "STANDARD",
+            "status": "OPEN"
         }
 
     def fetch_expert_access(self, domain: str) -> Dict[str, Any]:

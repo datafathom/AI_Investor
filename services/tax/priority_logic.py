@@ -10,6 +10,14 @@ class TaxPriorityLogic:
     Prioritizes offsetting Short-Term gains (high tax) over Long-Term gains.
     """
     
+    def determine_harvest_priority(self, st_gains: float, lt_gains: float) -> str:
+        """
+        Determines whether to focus on Short-Term or Long-Term realization.
+        """
+        if st_gains > 0:
+            return "ST_REALIZATION"
+        return "LT_REALIZATION"
+
     def prioritize_lots(self, lot_candidates: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
         Sorts lots by tax efficiency (Short-Term losses first).

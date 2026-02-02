@@ -62,6 +62,18 @@ OPENAPI_SPEC = {
         {
             "name": "Health",
             "description": "Health check endpoints"
+        },
+        {
+            "name": "Institutional",
+            "description": "Institutional onboarding and analytics"
+        },
+        {
+            "name": "Evolution",
+            "description": "Genomic evolution and playback"
+        },
+        {
+            "name": "Search",
+            "description": "Systemic search and discovery"
         }
     ],
     "paths": {
@@ -220,6 +232,36 @@ OPENAPI_SPEC = {
                             }
                         }
                     }
+                }
+            }
+        },
+        "/api/v1/institutional/client/create": {
+            "post": {
+                "tags": ["Institutional"],
+                "summary": "Create institutional client",
+                "description": "Add a new institutional client to the roster",
+                "responses": {
+                    "201": {"description": "Client created"}
+                }
+            }
+        },
+        "/api/v1/evolution/playback": {
+            "post": {
+                "tags": ["Evolution"],
+                "summary": "Genomic playback",
+                "description": "Replay historical market data for a given genome",
+                "responses": {
+                    "200": {"description": "Playback results returned"}
+                }
+            }
+        },
+        "/api/v1/search/index": {
+            "get": {
+                "tags": ["Search"],
+                "summary": "Refresh search index",
+                "description": "Get latest searchable entities from Neo4j",
+                "responses": {
+                    "200": {"description": "Search index returned"}
                 }
             }
         }

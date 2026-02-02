@@ -5,10 +5,18 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import axios from 'axios';
+import apiClient from '../../src/services/apiClient';
 import AdvancedRiskDashboard from '../../src/pages/AdvancedRiskDashboard';
 
-vi.mock('axios');
+// Mock apiClient with factory
+vi.mock('../../src/services/apiClient', () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
+  },
+}));
 
 describe('AdvancedRiskDashboard', () => {
   beforeEach(() => {
@@ -16,28 +24,30 @@ describe('AdvancedRiskDashboard', () => {
   });
 
   it('should render dashboard', async () => {
-    axios.get.mockResolvedValue({ data: { data: {} } });
+    apiClient.get.mockResolvedValue({});
     
     render(<AdvancedRiskDashboard />);
     
-    await waitFor(() => {
-      expect(screen.getByText(/Advanced Risk Management/i)).toBeInTheDocument();
-    });
+    // Use role and name for specificity
+    expect(await screen.findByRole('heading', { name: /ADVANCED RISK/i, level: 1 })).toBeInTheDocument();
   });
 
   it('should display risk metrics', async () => {
     const mockData = {
-      var_95: 0.05,
-      cvar_95: 0.07,
-      max_drawdown: 0.12
+      var: 0.05,
+      cvar: 0.07,
+      max_drawdown: 0.12,
+      sharpe_ratio: 1.5,
+      sortino_ratio: 1.8,
+      calmar_ratio: 1.2
     };
 
-    axios.get.mockResolvedValue({ data: { data: mockData } });
+    apiClient.get.mockResolvedValue(mockData);
 
     render(<AdvancedRiskDashboard />);
 
-    await waitFor(() => {
-      expect(screen.getByText(/Advanced Risk Management/i)).toBeInTheDocument();
-    });
+    // Wait for the value to appear
+    expect(await screen.findByText(/\$0\.05/)).toBeInTheDocument();
+    expect(await screen.findByText(/0\.07/)).toBeInTheDocument();
   });
 });

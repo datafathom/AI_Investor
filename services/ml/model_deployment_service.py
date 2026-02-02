@@ -88,6 +88,31 @@ class ModelDeploymentService:
             Performance metrics dictionary
         """
         # In production, would track actual metrics
+        metrics = await self._collect_metrics(model_id)
+        return metrics
+    
+    async def rollback_model(self, model_id: str) -> bool:
+        """
+        Rollback model to previous version.
+        
+        Args:
+            model_id: Model identifier
+            
+        Returns:
+            True if rollback successful
+        """
+        logger.info(f"Rolling back model {model_id}")
+        
+        if model_id in self.deployed_models:
+            success = await self._remove_deployment(model_id)
+            if success:
+                del self.deployed_models[model_id]
+                return True
+        
+        return False
+        
+    async def _collect_metrics(self, model_id: str) -> Dict:
+        """Collect internal metrics (Mock)."""
         return {
             "model_id": model_id,
             "accuracy": 0.85,
@@ -95,6 +120,11 @@ class ModelDeploymentService:
             "throughput_rps": 100.0,
             "error_rate": 0.02
         }
+        
+    async def _remove_deployment(self, model_id: str) -> bool:
+        """Remove model deployment (Mock)."""
+        logger.info(f"Removing deployment for {model_id}")
+        return True
 
 
 # Singleton instance

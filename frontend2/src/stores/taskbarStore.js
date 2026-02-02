@@ -25,6 +25,7 @@ const useTaskbarStore = create((set, get) => ({
     activeWorkspace: 'Strategy', // 'Research', 'Strategy', 'Admin'
     killSwitchState: 'inactive', // 'inactive', 'arming', 'active'
     isKillMFAOpen: false,
+    isLockedDown: false,
     
     // System Metrics
     systemMetrics: {
@@ -54,9 +55,10 @@ const useTaskbarStore = create((set, get) => ({
     // Kill Switch Logic
     startArming: () => set({ killSwitchState: 'arming' }),
     cancelArming: () => set({ killSwitchState: 'inactive' }),
-    triggerKillSwitch: () => set({ killSwitchState: 'active' }),
-    resetKillSwitch: () => set({ killSwitchState: 'inactive' }),
+    triggerKillSwitch: () => set({ killSwitchState: 'active', isLockedDown: true }),
+    resetKillSwitch: () => set({ killSwitchState: 'inactive', isLockedDown: false }),
     setKillMFAOpen: (isOpen) => set({ isKillMFAOpen: isOpen }),
+    toggleLockdown: (locked) => set({ isLockedDown: locked }),
     updateMetrics: (metrics) => set((state) => ({ 
         systemMetrics: { ...state.systemMetrics, ...metrics } 
     })),

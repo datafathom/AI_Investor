@@ -8,6 +8,7 @@
  */
 
 import React, { useState } from 'react';
+import apiClient from '../../services/apiClient';
 import PropTypes from 'prop-types';
 import './VenmoButton.css';
 
@@ -26,14 +27,9 @@ const VenmoButton = ({ amount, onSuccess, onError, mock = true }) => {
                 return;
             }
 
-            const response = await fetch(`/api/v1/payment/venmo/pay?mock=${mock}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount })
-            });
+            const response = await apiClient.post(`/payment/venmo/pay?mock=${mock}`, { amount });
             
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.error || 'Venmo payment failed');
+            const result = response.data;
 
             if (onSuccess) onSuccess(result);
 

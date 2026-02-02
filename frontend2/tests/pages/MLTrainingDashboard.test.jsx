@@ -5,10 +5,15 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import axios from 'axios';
+import apiClient from '../../src/services/apiClient';
 import MLTrainingDashboard from '../../src/pages/MLTrainingDashboard';
 
-vi.mock('axios');
+vi.mock('../../src/services/apiClient', () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+  },
+}));
 
 describe('MLTrainingDashboard', () => {
   beforeEach(() => {
@@ -16,12 +21,10 @@ describe('MLTrainingDashboard', () => {
   });
 
   it('should render dashboard', async () => {
-    axios.get.mockResolvedValue({ data: { data: {} } });
+    apiClient.get.mockResolvedValue({ data: { data: [] } });
     
     render(<MLTrainingDashboard />);
     
-    await waitFor(() => {
-      expect(screen.getByText(/ML Training/i)).toBeInTheDocument();
-    });
+    expect(await screen.findByRole('heading', { name: /ML Training/i, level: 1 })).toBeInTheDocument();
   });
 });

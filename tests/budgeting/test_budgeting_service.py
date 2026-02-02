@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.budgeting.budgeting_service import BudgetingService
-from models.budgeting import Budget
+from models.budgeting import Budget, ExpenseCategory
 
 
 @pytest.fixture
@@ -20,7 +20,11 @@ def service():
 @pytest.mark.asyncio
 async def test_create_budget(service):
     """Test budget creation."""
-    categories = {'Groceries': 500.0, 'Transportation': 300.0, 'Entertainment': 200.0}
+    categories = {
+        ExpenseCategory.FOOD.value: 500.0,
+        ExpenseCategory.TRANSPORTATION.value: 300.0,
+        ExpenseCategory.ENTERTAINMENT.value: 200.0
+    }
     
     result = await service.create_budget(
         user_id="user_123",
@@ -44,17 +48,24 @@ async def test_get_budget_analysis(service):
         user_id="user_123",
         budget_name="Test Budget",
         period="monthly",
-        categories={'Groceries': 500.0},
+        categories={ExpenseCategory.FOOD.value: 500.0},
         total_budget=500.0,
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(),
+        updated_date=datetime.now()
     ))
-    service._get_actual_spending = AsyncMock(return_value={'Groceries': 450.0})
-    
-    result = await service.get_budget_analysis("budget_123")
-    
-    assert result is not None
-    assert 'budget_vs_actual' in result or hasattr(result, 'budget_vs_actual')
+    # Correct mock for actual spending source - budgeting_service uses expense_tracking_service
+    with patch('services.budgeting.expense_tracking_service.get_expense_tracking_service') as mock_get_expense:
+        mock_expense_service = Mock()
+        mock_expense_service.get_expenses = AsyncMock(return_value=[
+            Mock(amount=450.0, category=ExpenseCategory.FOOD)
+        ])
+        mock_get_expense.return_value = mock_expense_service
+        
+        result = await service.get_budget_analysis("budget_123")
+        
+        assert result is not None
+        assert result.total_spent == 450.0
+        assert result.remaining == 50.0
 
 
 @pytest.mark.asyncio

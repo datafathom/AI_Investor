@@ -65,7 +65,7 @@ async def test_follow_trader(service):
     service._save_follow = AsyncMock(return_value=True)
     
     result = await service.follow_trader(
-        user_id="user_123",
+        follower_id="user_123",
         trader_id="trader_456"
     )
     

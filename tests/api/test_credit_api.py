@@ -6,6 +6,7 @@ Phase 12: Credit Score Monitoring & Improvement
 import pytest
 from unittest.mock import AsyncMock, patch
 from flask import Flask
+from datetime import datetime, timezone
 from web.api.credit_api import credit_bp
 
 
@@ -42,8 +43,7 @@ def mock_credit_improvement_service():
         yield service
 
 
-@pytest.mark.asyncio
-async def test_track_credit_score_success(client, mock_credit_monitoring_service):
+def test_track_credit_score_success(client, mock_credit_monitoring_service):
     """Test successful credit score tracking."""
     from models.credit import CreditScore
     
@@ -52,7 +52,8 @@ async def test_track_credit_score_success(client, mock_credit_monitoring_service
         user_id='user_1',
         score=750,
         score_type='fico',
-        factors={}
+        factors={},
+        report_date=datetime.now(timezone.utc)
     )
     mock_credit_monitoring_service.track_credit_score.return_value = mock_score
     
@@ -69,8 +70,7 @@ async def test_track_credit_score_success(client, mock_credit_monitoring_service
     assert data['data']['score'] == 750
 
 
-@pytest.mark.asyncio
-async def test_track_credit_score_missing_params(client):
+def test_track_credit_score_missing_params(client):
     """Test credit score tracking with missing parameters."""
     response = client.post('/api/credit/score/track', json={'user_id': 'user_1'})
     
@@ -79,8 +79,7 @@ async def test_track_credit_score_missing_params(client):
     assert data['success'] is False
 
 
-@pytest.mark.asyncio
-async def test_get_credit_history_success(client, mock_credit_monitoring_service):
+def test_get_credit_history_success(client, mock_credit_monitoring_service):
     """Test successful credit history retrieval."""
     from models.credit import CreditScore
     
@@ -90,7 +89,8 @@ async def test_get_credit_history_success(client, mock_credit_monitoring_service
             user_id='user_1',
             score=750,
             score_type='fico',
-            factors={}
+            factors={},
+            report_date=datetime.now(timezone.utc)
         )
     ]
     mock_credit_monitoring_service.get_credit_history.return_value = mock_scores
@@ -103,18 +103,20 @@ async def test_get_credit_history_success(client, mock_credit_monitoring_service
     assert len(data['data']) == 1
 
 
-@pytest.mark.asyncio
-async def test_get_recommendations_success(client, mock_credit_improvement_service):
+def test_get_recommendations_success(client, mock_credit_improvement_service):
     """Test successful recommendations retrieval."""
     from models.credit import CreditRecommendation
     
     mock_recommendations = [
         CreditRecommendation(
             recommendation_id='rec_1',
-            user_id='user_1',
-            action='pay_down_debt',
-            impact_score=0.8,
-            estimated_score_increase=20
+            factor='credit_utilization',
+            title='Pay Down Debt',
+            description='Reducing your credit utilization will increase your score.',
+            impact_score=20,
+            difficulty='medium',
+            estimated_time='1 month',
+            action_items=['Pay off credit card balance']
         )
     ]
     mock_credit_improvement_service.get_recommendations.return_value = mock_recommendations

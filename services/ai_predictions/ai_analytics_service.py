@@ -26,7 +26,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime
 from typing import Dict, List, Optional
-from models.ai_predictions import MarketRegime
+from models.ai_predictions import MarketRegime, SentimentAnalysisResult
 from services.ai_predictions.prediction_engine import get_prediction_engine
 from services.system.cache_service import get_cache_service
 
@@ -42,6 +42,53 @@ class AIAnalyticsService:
         """Initialize service with dependencies."""
         self.prediction_engine = get_prediction_engine()
         self.cache_service = get_cache_service()
+    
+    async def analyze_sentiment(
+        self,
+        symbol: str,
+        text: str
+    ) -> SentimentAnalysisResult:
+        """
+        Analyze sentiment for text.
+        
+        Args:
+            symbol: Symbol to associate with sentiment
+            text: Text to analyze
+            
+        Returns:
+            SentimentAnalysisResult object
+        """
+        logger.info(f"Analyzing sentiment for {symbol}")
+        
+        # In production, would use NLP model or external service
+        sentiment_data = await self._analyze_text_sentiment(text)
+        
+        return SentimentAnalysisResult(
+            symbol=symbol,
+            overall_sentiment=sentiment_data['overall_sentiment'],
+            positive_score=sentiment_data['positive_score'],
+            negative_score=sentiment_data['negative_score'],
+            neutral_score=sentiment_data.get('neutral_score', 0.1),
+            sentiment_label=sentiment_data.get('sentiment_label', 'positive'),
+            confidence=0.85
+        )
+    
+    async def _analyze_text_sentiment(self, text: str) -> Dict:
+        """Internal text sentiment analysis (Mock)."""
+        return {
+            'overall_sentiment': 0.7,
+            'positive_score': 0.8,
+            'negative_score': 0.1,
+            'neutral_score': 0.1,
+            'sentiment_label': 'positive'
+        }
+    
+    async def _analyze_market_conditions(self) -> Dict:
+        """Internal market condition analysis (Mock)."""
+        return {
+            'regime': 'bull',
+            'confidence': 0.8
+        }
         
     async def detect_market_regime(
         self,
@@ -58,10 +105,10 @@ class AIAnalyticsService:
         """
         logger.info(f"Detecting market regime for {market_index}")
         
-        # In production, would analyze market conditions, volatility, trends
-        # For now, use simplified detection
-        regime_type = "bull"  # Mock
-        confidence = 0.80
+        # In production, would analyze market conditions
+        conditions = await self._analyze_market_conditions()
+        regime_type = conditions.get('regime', 'bull')
+        confidence = conditions.get('confidence', 0.80)
         
         regime = MarketRegime(
             regime_id=f"regime_{market_index}_{datetime.utcnow().timestamp()}",

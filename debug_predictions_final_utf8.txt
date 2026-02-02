@@ -1,0 +1,86 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.1, pytest-7.4.0, pluggy-1.6.0 -- C:\Users\astir\Desktop\AI_Company\AI_Investor\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\astir\Desktop\AI_Company\AI_Investor
+configfile: pytest.ini
+plugins: anyio-4.12.1, asyncio-0.21.1, base-url-2.1.0
+asyncio: mode=Mode.AUTO
+collecting ... collected 6 items
+
+tests/ai_predictions/test_ai_analytics_service.py::test_analyze_sentiment PASSED [ 16%]
+tests/ai_predictions/test_ai_analytics_service.py::test_detect_market_regime PASSED [ 33%]
+tests/ai_predictions/test_prediction_engine.py::test_predict_price PASSED [ 50%]
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons PASSED [ 66%]
+tests/ai_predictions/test_prediction_engine.py::test_predict_trend PASSED [ 83%]
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_cached FAILED [100%]
+
+================================== FAILURES ===================================
+__________________________ test_predict_price_cached __________________________
+tests\ai_predictions\test_prediction_engine.py:92: in test_predict_price_cached
+    service._get_current_price.assert_not_called()
+E   AttributeError: 'function' object has no attribute 'assert_not_called'
+============================== warnings summary ===============================
+tests/ai_predictions/test_ai_analytics_service.py::test_analyze_sentiment
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\venv\Lib\site-packages\pydantic\main.py:250: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+
+tests/ai_predictions/test_ai_analytics_service.py::test_detect_market_regime
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\ai_analytics_service.py:114: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    regime_id=f"regime_{market_index}_{datetime.utcnow().timestamp()}",
+
+tests/ai_predictions/test_ai_analytics_service.py::test_detect_market_regime
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\ai_analytics_service.py:117: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    detected_date=datetime.utcnow(),
+
+tests/ai_predictions/test_ai_analytics_service.py::test_detect_market_regime
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\ai_analytics_service.py:159: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    self.cache_service.set(cache_key, regime.dict(), ttl=86400 * 7)
+
+tests/ai_predictions/test_prediction_engine.py::test_predict_price
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\prediction_engine.py:90: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    prediction_id=f"pred_{symbol}_{datetime.utcnow().timestamp()}",
+
+tests/ai_predictions/test_prediction_engine.py::test_predict_price
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\prediction_engine.py:94: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    prediction_date=datetime.utcnow(),
+
+tests/ai_predictions/test_prediction_engine.py::test_predict_price
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\prediction_engine.py:149: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    self.cache_service.set(cache_key, prediction.dict(), ttl=86400 * 7)  # 7 days
+
+tests/ai_predictions/test_prediction_engine.py::test_predict_price
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\prediction_engine.py:153: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    self.cache_service.set(id_key, prediction.dict(), ttl=86400 * 7)
+
+tests/ai_predictions/test_prediction_engine.py::test_predict_trend
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\prediction_engine.py:130: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    prediction_id=f"trend_{symbol}_{datetime.utcnow().timestamp()}",
+
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_cached
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\ai_predictions\test_prediction_engine.py:82: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    'prediction_date': datetime.utcnow(),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/ai_predictions/test_prediction_engine.py::test_predict_price_cached
+================== 1 failed, 5 passed, 30 warnings in 21.01s ==================

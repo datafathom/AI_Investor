@@ -108,7 +108,7 @@ class OpenAIClient:
             CompletionResponse with content and usage
         """
         if self.mock:
-            return self._mock_completion(messages, model)
+            return await self._mock_completion(messages, model)
         
         if not self.client:
             raise RuntimeError("OpenAI client not initialized. Check API key.")
@@ -288,7 +288,7 @@ class OpenAIClient:
         
         return True
     
-    def _mock_completion(self, messages: List[Dict[str, str]], model: str) -> CompletionResponse:
+    async def _mock_completion(self, messages: List[Dict[str, str]], model: str) -> CompletionResponse:
         """Generate mock completion for testing"""
         await asyncio.sleep(0.5)  # Simulate API latency
         

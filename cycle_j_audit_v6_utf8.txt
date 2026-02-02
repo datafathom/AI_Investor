@@ -1,0 +1,712 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.1, pytest-7.4.0, pluggy-1.6.0 -- C:\Users\astir\Desktop\AI_Company\AI_Investor\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\astir\Desktop\AI_Company\AI_Investor
+configfile: pytest.ini
+plugins: anyio-4.12.1, asyncio-0.21.1, base-url-2.1.0
+asyncio: mode=Mode.AUTO
+collecting ... collected 73 items
+
+tests/ai/test_openai_client.py::TestOpenAIClient::test_validate_function_schema PASSED [  1%]
+tests/ai_assistant/test_assistant_service.py::test_create_conversation PASSED [  2%]
+tests/ai_assistant/test_assistant_service.py::test_send_message FAILED   [  4%]
+tests/ai_assistant/test_assistant_service.py::test_get_conversation_history FAILED [  5%]
+tests/ai_assistant/test_learning_service.py::test_update_user_preferences FAILED [  6%]
+tests/ai_assistant/test_learning_service.py::test_get_recommendations FAILED [  8%]
+tests/ai_predictions/test_ai_analytics_service.py::test_analyze_sentiment FAILED [  9%]
+tests/ai_predictions/test_ai_analytics_service.py::test_detect_market_regime PASSED [ 10%]
+tests/ai_predictions/test_prediction_engine.py::test_predict_price PASSED [ 12%]
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons PASSED [ 13%]
+tests/ai_predictions/test_prediction_engine.py::test_predict_trend PASSED [ 15%]
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_cached FAILED [ 16%]
+tests/ml/test_model_deployment_service.py::test_deploy_model ERROR       [ 17%]
+tests/ml/test_model_deployment_service.py::test_deploy_model_gradual_rollout ERROR [ 19%]
+tests/ml/test_model_deployment_service.py::test_monitor_performance ERROR [ 20%]
+tests/ml/test_model_deployment_service.py::test_rollback_model ERROR     [ 21%]
+tests/ml/test_training_pipeline.py::test_create_training_job PASSED      [ 23%]
+tests/ml/test_training_pipeline.py::test_start_training FAILED           [ 24%]
+tests/ml/test_training_pipeline.py::test_get_model_versions FAILED       [ 26%]
+tests/auth/test_trust_permission.py::test_trust_permission_singleton PASSED [ 27%]
+tests/auth/test_trust_permission.py::test_check_permission_revocable PASSED [ 28%]
+tests/auth/test_trust_permission.py::test_check_permission_irrevocable PASSED [ 30%]
+tests/test_auth_hashing.py::TestAuthHashing::test_invalid_credentials PASSED [ 31%]
+tests/test_auth_hashing.py::TestAuthHashing::test_registration_versus_login_hashing PASSED [ 32%]
+tests/neo4j/test_affiliate_graph.py::test_map_affiliate PASSED           [ 34%]
+tests/neo4j/test_affiliate_graph.py::test_get_insider_exposure PASSED    [ 35%]
+tests/neo4j/test_flow_graph.py::test_map_passive_inflow PASSED           [ 36%]
+tests/neo4j/test_flow_graph.py::test_query_structural_risk PASSED        [ 38%]
+tests/neo4j/test_impact_graph.py::test_map_impact_event PASSED           [ 39%]
+tests/neo4j/test_impact_graph.py::test_map_heir_legacy PASSED            [ 41%]
+tests/neo4j/test_mobility_graph.py::test_map_citizenship PASSED          [ 42%]
+tests/neo4j/test_mobility_graph.py::test_find_heritage_path PASSED       [ 43%]
+tests/neo4j/test_policy_graph.py::test_map_policy_impact PASSED          [ 45%]
+tests/neo4j/test_policy_graph.py::test_get_impacted_investments PASSED   [ 46%]
+tests/communication/test_notifications.py::TestNotificationManager::test_alert_routing_critical PASSED [ 47%]
+tests/communication/test_notifications.py::TestNotificationManager::test_alert_routing_info PASSED [ 49%]
+tests/integration/test_integration_framework.py::test_create_integration PASSED [ 50%]
+tests/integration/test_integration_framework.py::test_create_integration_unsupported_app PASSED [ 52%]
+tests/integration/test_integration_framework.py::test_get_supported_apps FAILED [ 53%]
+tests/integration/test_integration_service.py::test_sync_data PASSED     [ 54%]
+tests/integration/test_integration_service.py::test_sync_data_full PASSED [ 56%]
+tests/integration/test_integration_service.py::test_get_sync_status FAILED [ 57%]
+tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_list_documents PASSED [ 58%]
+tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_get_document PASSED [ 60%]
+tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_get_nonexistent_document PASSED [ 61%]
+tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_accept_documents FAILED [ 63%]
+tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_accept_documents_unauthorized FAILED [ 64%]
+tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_get_acceptance_status FAILED [ 65%]
+tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_get_acceptance_history FAILED [ 67%]
+tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_check_document_updates FAILED [ 68%]
+tests/integration/test_migration_system.py::TestMigrationManager::test_create_migration FAILED [ 69%]
+tests/integration/test_migration_system.py::TestMigrationManager::test_list_migrations PASSED [ 71%]
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_pending_migrations PASSED [ 72%]
+tests/integration/test_migration_system.py::TestMigrationManager::test_validate_migration FAILED [ 73%]
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_migration_status PASSED [ 75%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_get_onboarding_status FAILED [ 76%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_get_onboarding_status_unauthorized FAILED [ 78%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_update_onboarding_step FAILED [ 79%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_complete_onboarding FAILED [ 80%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_complete_onboarding_missing_fields FAILED [ 82%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_get_preferences FAILED [ 83%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_update_preferences FAILED [ 84%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_skip_onboarding FAILED [ 86%]
+tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_reset_onboarding FAILED [ 87%]
+tests/integration/test_secrets_management.py::TestSecretManager::test_get_secret_from_env PASSED [ 89%]
+tests/integration/test_secrets_management.py::TestSecretManager::test_get_secret_default PASSED [ 90%]
+tests/integration/test_secrets_management.py::TestSecretManager::test_get_masked_secret PASSED [ 91%]
+tests/integration/test_secrets_management.py::TestSecretManager::test_get_db_credentials PASSED [ 93%]
+tests/integration/test_secrets_management.py::TestSecretManager::test_get_status PASSED [ 94%]
+tests/integration/test_secrets_management.py::TestProductionSecretManager::test_fallback_to_env PASSED [ 95%]
+tests/integration/test_secrets_management.py::TestProductionSecretManager::test_vault_integration FAILED [ 97%]
+tests/integration/test_secrets_management.py::TestAWSSecretsManager::test_aws_secrets_manager_init FAILED [ 98%]
+tests/integration/test_secrets_management.py::TestAWSSecretsManager::test_get_secret_from_aws FAILED [100%]
+
+=================================== ERRORS ====================================
+_____________________ ERROR at setup of test_deploy_model _____________________
+tests\ml\test_model_deployment_service.py:23: in mock_model_version
+    return ModelVersion(
+E   pydantic_core._pydantic_core.ValidationError: 2 validation errors for ModelVersion
+E   framework
+E     Field required [type=missing, input_value={'model_id': 'model_123',...2, 2, 8, 53, 9, 417816)}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   training_status
+E     Field required [type=missing, input_value={'model_id': 'model_123',...2, 2, 8, 53, 9, 417816)}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+_____________ ERROR at setup of test_deploy_model_gradual_rollout _____________
+tests\ml\test_model_deployment_service.py:23: in mock_model_version
+    return ModelVersion(
+E   pydantic_core._pydantic_core.ValidationError: 2 validation errors for ModelVersion
+E   framework
+E     Field required [type=missing, input_value={'model_id': 'model_123',...2, 2, 8, 53, 9, 440538)}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   training_status
+E     Field required [type=missing, input_value={'model_id': 'model_123',...2, 2, 8, 53, 9, 440538)}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+_________________ ERROR at setup of test_monitor_performance __________________
+tests\ml\test_model_deployment_service.py:23: in mock_model_version
+    return ModelVersion(
+E   pydantic_core._pydantic_core.ValidationError: 2 validation errors for ModelVersion
+E   framework
+E     Field required [type=missing, input_value={'model_id': 'model_123',...2, 2, 8, 53, 9, 450959)}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   training_status
+E     Field required [type=missing, input_value={'model_id': 'model_123',...2, 2, 8, 53, 9, 450959)}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+____________________ ERROR at setup of test_rollback_model ____________________
+tests\ml\test_model_deployment_service.py:23: in mock_model_version
+    return ModelVersion(
+E   pydantic_core._pydantic_core.ValidationError: 2 validation errors for ModelVersion
+E   framework
+E     Field required [type=missing, input_value={'model_id': 'model_123',...2, 2, 8, 53, 9, 460483)}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   training_status
+E     Field required [type=missing, input_value={'model_id': 'model_123',...2, 2, 8, 53, 9, 460483)}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+================================== FAILURES ===================================
+______________________________ test_send_message ______________________________
+tests\ai_assistant\test_assistant_service.py:52: in test_send_message
+    result = await service.send_message(
+services\ai_assistant\assistant_service.py:110: in send_message
+    preferences = await self.learning_service.get_user_preferences(conversation.user_id)
+E   TypeError: object MagicMock can't be used in 'await' expression
+________________________ test_get_conversation_history ________________________
+tests\ai_assistant\test_assistant_service.py:69: in test_get_conversation_history
+    ConversationMessage(
+E   pydantic_core._pydantic_core.ValidationError: 1 validation error for ConversationMessage
+E   conversation_id
+E     Field required [type=missing, input_value={'message_id': 'msg_1', '..., 2, 8, 52, 43, 491623)}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+________________________ test_update_user_preferences _________________________
+tests\ai_assistant\test_learning_service.py:31: in test_update_user_preferences
+    result = await service.update_user_preferences(
+E   AttributeError: 'LearningService' object has no attribute 'update_user_preferences'. Did you mean: 'get_user_preferences'?
+__________________________ test_get_recommendations ___________________________
+tests\ai_assistant\test_learning_service.py:52: in test_get_recommendations
+    result = await service.get_recommendations("user_123")
+E   AttributeError: 'LearningService' object has no attribute 'get_recommendations'. Did you mean: 'generate_recommendations'?
+___________________________ test_analyze_sentiment ____________________________
+tests\ai_predictions\test_ai_analytics_service.py:29: in test_analyze_sentiment
+    result = await service.analyze_sentiment(
+E   AttributeError: 'AIAnalyticsService' object has no attribute 'analyze_sentiment'
+----------------------------- Captured log setup ------------------------------
+WARNING  services.system.vault_secret_manager:vault_secret_manager.py:207 No production secret manager configured. Using environment variables only.
+WARNING  services.system.cache_service:cache_service.py:49 Redis unavailable (Timeout connecting to server). Falling back to In-Memory simulation.
+__________________________ test_predict_price_cached __________________________
+tests\ai_predictions\test_prediction_engine.py:88: in test_predict_price_cached
+    assert result.predicted_price == 157.5
+E   AssertionError: assert 105.0 == 157.5
+E    +  where 105.0 = PricePrediction(prediction_id='pred_AAPL_1770040389.395397', symbol='AAPL', predicted_price=105.0, confidence=0.75, prediction_date=datetime.datetime(2026, 2, 2, 8, 53, 9, 395404), time_horizon='1m', confidence_interval={'lower': 85.4, 'upper': 124.6}, model_version='v1.0').predicted_price
+_____________________________ test_start_training _____________________________
+tests\ml\test_training_pipeline.py:55: in test_start_training
+    assert result.status == TrainingStatus.TRAINING
+E   AttributeError: type object 'TrainingStatus' has no attribute 'TRAINING'. Did you mean: 'RUNNING'?
+___________________________ test_get_model_versions ___________________________
+tests\ml\test_training_pipeline.py:62: in test_get_model_versions
+    ModelVersion(
+E   pydantic_core._pydantic_core.ValidationError: 4 validation errors for ModelVersion
+E   model_id
+E     Field required [type=missing, input_value={'version_id': 'v1.0', 'm...2, 2, 8, 53, 9, 506406)}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   version
+E     Field required [type=missing, input_value={'version_id': 'v1.0', 'm...2, 2, 8, 53, 9, 506406)}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   framework
+E     Field required [type=missing, input_value={'version_id': 'v1.0', 'm...2, 2, 8, 53, 9, 506406)}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   training_status
+E     Field required [type=missing, input_value={'version_id': 'v1.0', 'm...2, 2, 8, 53, 9, 506406)}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+___________________________ test_get_supported_apps ___________________________
+tests\integration\test_integration_framework.py:51: in test_get_supported_apps
+    apps = service.get_supported_apps()
+E   AttributeError: 'IntegrationFramework' object has no attribute 'get_supported_apps'. Did you mean: 'supported_apps'?
+____________________________ test_get_sync_status _____________________________
+tests\integration\test_integration_service.py:65: in test_get_sync_status
+    result = await service.get_sync_status("sync_123")
+E   AttributeError: 'IntegrationService' object has no attribute 'get_sync_status'
+_________________ TestLegalDocumentFlow.test_accept_documents _________________
+C:\Python313\Lib\unittest\mock.py:1421: in patched
+    with self.decoration_helper(patched,
+C:\Python313\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+C:\Python313\Lib\unittest\mock.py:1403: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+C:\Python313\Lib\contextlib.py:530: in enter_context
+    result = _enter(cm)
+C:\Python313\Lib\unittest\mock.py:1495: in __enter__
+    original, local = self.get_original()
+C:\Python313\Lib\unittest\mock.py:1465: in get_original
+    raise AttributeError(
+E   AttributeError: <module 'web.api.legal_api' from 'C:\\Users\\astir\\Desktop\\AI_Company\\AI_Investor\\web\\api\\legal_api.py'> does not have the attribute 'g'
+__________ TestLegalDocumentFlow.test_accept_documents_unauthorized ___________
+C:\Python313\Lib\unittest\mock.py:1421: in patched
+    with self.decoration_helper(patched,
+C:\Python313\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+C:\Python313\Lib\unittest\mock.py:1403: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+C:\Python313\Lib\contextlib.py:530: in enter_context
+    result = _enter(cm)
+C:\Python313\Lib\unittest\mock.py:1495: in __enter__
+    original, local = self.get_original()
+C:\Python313\Lib\unittest\mock.py:1465: in get_original
+    raise AttributeError(
+E   AttributeError: <module 'web.api.legal_api' from 'C:\\Users\\astir\\Desktop\\AI_Company\\AI_Investor\\web\\api\\legal_api.py'> does not have the attribute 'g'
+______________ TestLegalDocumentFlow.test_get_acceptance_status _______________
+C:\Python313\Lib\unittest\mock.py:1421: in patched
+    with self.decoration_helper(patched,
+C:\Python313\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+C:\Python313\Lib\unittest\mock.py:1403: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+C:\Python313\Lib\contextlib.py:530: in enter_context
+    result = _enter(cm)
+C:\Python313\Lib\unittest\mock.py:1495: in __enter__
+    original, local = self.get_original()
+C:\Python313\Lib\unittest\mock.py:1465: in get_original
+    raise AttributeError(
+E   AttributeError: <module 'web.api.legal_api' from 'C:\\Users\\astir\\Desktop\\AI_Company\\AI_Investor\\web\\api\\legal_api.py'> does not have the attribute 'g'
+______________ TestLegalDocumentFlow.test_get_acceptance_history ______________
+C:\Python313\Lib\unittest\mock.py:1421: in patched
+    with self.decoration_helper(patched,
+C:\Python313\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+C:\Python313\Lib\unittest\mock.py:1403: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+C:\Python313\Lib\contextlib.py:530: in enter_context
+    result = _enter(cm)
+C:\Python313\Lib\unittest\mock.py:1495: in __enter__
+    original, local = self.get_original()
+C:\Python313\Lib\unittest\mock.py:1465: in get_original
+    raise AttributeError(
+E   AttributeError: <module 'web.api.legal_api' from 'C:\\Users\\astir\\Desktop\\AI_Company\\AI_Investor\\web\\api\\legal_api.py'> does not have the attribute 'g'
+______________ TestLegalDocumentFlow.test_check_document_updates ______________
+C:\Python313\Lib\unittest\mock.py:1421: in patched
+    with self.decoration_helper(patched,
+C:\Python313\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+C:\Python313\Lib\unittest\mock.py:1403: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+C:\Python313\Lib\contextlib.py:530: in enter_context
+    result = _enter(cm)
+C:\Python313\Lib\unittest\mock.py:1495: in __enter__
+    original, local = self.get_original()
+C:\Python313\Lib\unittest\mock.py:1465: in get_original
+    raise AttributeError(
+E   AttributeError: <module 'web.api.legal_api' from 'C:\\Users\\astir\\Desktop\\AI_Company\\AI_Investor\\web\\api\\legal_api.py'> does not have the attribute 'g'
+_________________ TestMigrationManager.test_create_migration __________________
+tests\integration\test_migration_system.py:27: in test_create_migration
+    assert forward.exists()
+E   AttributeError: 'str' object has no attribute 'exists'
+________________ TestMigrationManager.test_validate_migration _________________
+tests\integration\test_migration_system.py:62: in test_validate_migration
+    content = forward.read_text()
+E   AttributeError: 'str' object has no attribute 'read_text'
+________________ TestOnboardingFlow.test_get_onboarding_status ________________
+C:\Python313\Lib\unittest\mock.py:1421: in patched
+    with self.decoration_helper(patched,
+C:\Python313\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+C:\Python313\Lib\unittest\mock.py:1403: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+C:\Python313\Lib\contextlib.py:530: in enter_context
+    result = _enter(cm)
+C:\Python313\Lib\unittest\mock.py:1522: in __enter__
+    elif spec is None and _is_async_obj(original):
+C:\Python313\Lib\unittest\mock.py:58: in _is_async_obj
+    if hasattr(obj, '__func__'):
+venv\Lib\site-packages\werkzeug\local.py:318: in __get__
+    obj = instance._get_current_object()
+venv\Lib\site-packages\werkzeug\local.py:519: in _get_current_object
+    raise RuntimeError(unbound_message) from None
+E   RuntimeError: Working outside of application context.
+E   
+E   This typically means that you attempted to use functionality that needed
+E   the current application. To solve this, set up an application context
+E   with app.app_context(). See the documentation for more information.
+_________ TestOnboardingFlow.test_get_onboarding_status_unauthorized __________
+C:\Python313\Lib\unittest\mock.py:1421: in patched
+    with self.decoration_helper(patched,
+C:\Python313\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+C:\Python313\Lib\unittest\mock.py:1403: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+C:\Python313\Lib\contextlib.py:530: in enter_context
+    result = _enter(cm)
+C:\Python313\Lib\unittest\mock.py:1522: in __enter__
+    elif spec is None and _is_async_obj(original):
+C:\Python313\Lib\unittest\mock.py:58: in _is_async_obj
+    if hasattr(obj, '__func__'):
+venv\Lib\site-packages\werkzeug\local.py:318: in __get__
+    obj = instance._get_current_object()
+venv\Lib\site-packages\werkzeug\local.py:519: in _get_current_object
+    raise RuntimeError(unbound_message) from None
+E   RuntimeError: Working outside of application context.
+E   
+E   This typically means that you attempted to use functionality that needed
+E   the current application. To solve this, set up an application context
+E   with app.app_context(). See the documentation for more information.
+_______________ TestOnboardingFlow.test_update_onboarding_step ________________
+C:\Python313\Lib\unittest\mock.py:1421: in patched
+    with self.decoration_helper(patched,
+C:\Python313\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+C:\Python313\Lib\unittest\mock.py:1403: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+C:\Python313\Lib\contextlib.py:530: in enter_context
+    result = _enter(cm)
+C:\Python313\Lib\unittest\mock.py:1522: in __enter__
+    elif spec is None and _is_async_obj(original):
+C:\Python313\Lib\unittest\mock.py:58: in _is_async_obj
+    if hasattr(obj, '__func__'):
+venv\Lib\site-packages\werkzeug\local.py:318: in __get__
+    obj = instance._get_current_object()
+venv\Lib\site-packages\werkzeug\local.py:519: in _get_current_object
+    raise RuntimeError(unbound_message) from None
+E   RuntimeError: Working outside of application context.
+E   
+E   This typically means that you attempted to use functionality that needed
+E   the current application. To solve this, set up an application context
+E   with app.app_context(). See the documentation for more information.
+_________________ TestOnboardingFlow.test_complete_onboarding _________________
+C:\Python313\Lib\unittest\mock.py:1421: in patched
+    with self.decoration_helper(patched,
+C:\Python313\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+C:\Python313\Lib\unittest\mock.py:1403: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+C:\Python313\Lib\contextlib.py:530: in enter_context
+    result = _enter(cm)
+C:\Python313\Lib\unittest\mock.py:1522: in __enter__
+    elif spec is None and _is_async_obj(original):
+C:\Python313\Lib\unittest\mock.py:58: in _is_async_obj
+    if hasattr(obj, '__func__'):
+venv\Lib\site-packages\werkzeug\local.py:318: in __get__
+    obj = instance._get_current_object()
+venv\Lib\site-packages\werkzeug\local.py:519: in _get_current_object
+    raise RuntimeError(unbound_message) from None
+E   RuntimeError: Working outside of application context.
+E   
+E   This typically means that you attempted to use functionality that needed
+E   the current application. To solve this, set up an application context
+E   with app.app_context(). See the documentation for more information.
+_________ TestOnboardingFlow.test_complete_onboarding_missing_fields __________
+C:\Python313\Lib\unittest\mock.py:1421: in patched
+    with self.decoration_helper(patched,
+C:\Python313\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+C:\Python313\Lib\unittest\mock.py:1403: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+C:\Python313\Lib\contextlib.py:530: in enter_context
+    result = _enter(cm)
+C:\Python313\Lib\unittest\mock.py:1522: in __enter__
+    elif spec is None and _is_async_obj(original):
+C:\Python313\Lib\unittest\mock.py:58: in _is_async_obj
+    if hasattr(obj, '__func__'):
+venv\Lib\site-packages\werkzeug\local.py:318: in __get__
+    obj = instance._get_current_object()
+venv\Lib\site-packages\werkzeug\local.py:519: in _get_current_object
+    raise RuntimeError(unbound_message) from None
+E   RuntimeError: Working outside of application context.
+E   
+E   This typically means that you attempted to use functionality that needed
+E   the current application. To solve this, set up an application context
+E   with app.app_context(). See the documentation for more information.
+___________________ TestOnboardingFlow.test_get_preferences ___________________
+C:\Python313\Lib\unittest\mock.py:1421: in patched
+    with self.decoration_helper(patched,
+C:\Python313\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+C:\Python313\Lib\unittest\mock.py:1403: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+C:\Python313\Lib\contextlib.py:530: in enter_context
+    result = _enter(cm)
+C:\Python313\Lib\unittest\mock.py:1522: in __enter__
+    elif spec is None and _is_async_obj(original):
+C:\Python313\Lib\unittest\mock.py:58: in _is_async_obj
+    if hasattr(obj, '__func__'):
+venv\Lib\site-packages\werkzeug\local.py:318: in __get__
+    obj = instance._get_current_object()
+venv\Lib\site-packages\werkzeug\local.py:519: in _get_current_object
+    raise RuntimeError(unbound_message) from None
+E   RuntimeError: Working outside of application context.
+E   
+E   This typically means that you attempted to use functionality that needed
+E   the current application. To solve this, set up an application context
+E   with app.app_context(). See the documentation for more information.
+_________________ TestOnboardingFlow.test_update_preferences __________________
+C:\Python313\Lib\unittest\mock.py:1421: in patched
+    with self.decoration_helper(patched,
+C:\Python313\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+C:\Python313\Lib\unittest\mock.py:1403: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+C:\Python313\Lib\contextlib.py:530: in enter_context
+    result = _enter(cm)
+C:\Python313\Lib\unittest\mock.py:1522: in __enter__
+    elif spec is None and _is_async_obj(original):
+C:\Python313\Lib\unittest\mock.py:58: in _is_async_obj
+    if hasattr(obj, '__func__'):
+venv\Lib\site-packages\werkzeug\local.py:318: in __get__
+    obj = instance._get_current_object()
+venv\Lib\site-packages\werkzeug\local.py:519: in _get_current_object
+    raise RuntimeError(unbound_message) from None
+E   RuntimeError: Working outside of application context.
+E   
+E   This typically means that you attempted to use functionality that needed
+E   the current application. To solve this, set up an application context
+E   with app.app_context(). See the documentation for more information.
+___________________ TestOnboardingFlow.test_skip_onboarding ___________________
+C:\Python313\Lib\unittest\mock.py:1421: in patched
+    with self.decoration_helper(patched,
+C:\Python313\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+C:\Python313\Lib\unittest\mock.py:1403: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+C:\Python313\Lib\contextlib.py:530: in enter_context
+    result = _enter(cm)
+C:\Python313\Lib\unittest\mock.py:1522: in __enter__
+    elif spec is None and _is_async_obj(original):
+C:\Python313\Lib\unittest\mock.py:58: in _is_async_obj
+    if hasattr(obj, '__func__'):
+venv\Lib\site-packages\werkzeug\local.py:318: in __get__
+    obj = instance._get_current_object()
+venv\Lib\site-packages\werkzeug\local.py:519: in _get_current_object
+    raise RuntimeError(unbound_message) from None
+E   RuntimeError: Working outside of application context.
+E   
+E   This typically means that you attempted to use functionality that needed
+E   the current application. To solve this, set up an application context
+E   with app.app_context(). See the documentation for more information.
+__________________ TestOnboardingFlow.test_reset_onboarding ___________________
+C:\Python313\Lib\unittest\mock.py:1421: in patched
+    with self.decoration_helper(patched,
+C:\Python313\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+C:\Python313\Lib\unittest\mock.py:1403: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+C:\Python313\Lib\contextlib.py:530: in enter_context
+    result = _enter(cm)
+C:\Python313\Lib\unittest\mock.py:1522: in __enter__
+    elif spec is None and _is_async_obj(original):
+C:\Python313\Lib\unittest\mock.py:58: in _is_async_obj
+    if hasattr(obj, '__func__'):
+venv\Lib\site-packages\werkzeug\local.py:318: in __get__
+    obj = instance._get_current_object()
+venv\Lib\site-packages\werkzeug\local.py:519: in _get_current_object
+    raise RuntimeError(unbound_message) from None
+E   RuntimeError: Working outside of application context.
+E   
+E   This typically means that you attempted to use functionality that needed
+E   the current application. To solve this, set up an application context
+E   with app.app_context(). See the documentation for more information.
+_____________ TestProductionSecretManager.test_vault_integration ______________
+C:\Python313\Lib\unittest\mock.py:1889: in _inner
+    return f(*args, **kw)
+C:\Python313\Lib\unittest\mock.py:1421: in patched
+    with self.decoration_helper(patched,
+C:\Python313\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+C:\Python313\Lib\unittest\mock.py:1403: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+C:\Python313\Lib\contextlib.py:530: in enter_context
+    result = _enter(cm)
+C:\Python313\Lib\unittest\mock.py:1495: in __enter__
+    original, local = self.get_original()
+C:\Python313\Lib\unittest\mock.py:1465: in get_original
+    raise AttributeError(
+E   AttributeError: <module 'services.system.vault_secret_manager' from 'C:\\Users\\astir\\Desktop\\AI_Company\\AI_Investor\\services\\system\\vault_secret_manager.py'> does not have the attribute 'hvac'
+_____________ TestAWSSecretsManager.test_aws_secrets_manager_init _____________
+C:\Python313\Lib\unittest\mock.py:1421: in patched
+    with self.decoration_helper(patched,
+C:\Python313\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+C:\Python313\Lib\unittest\mock.py:1403: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+C:\Python313\Lib\contextlib.py:530: in enter_context
+    result = _enter(cm)
+C:\Python313\Lib\unittest\mock.py:1495: in __enter__
+    original, local = self.get_original()
+C:\Python313\Lib\unittest\mock.py:1465: in get_original
+    raise AttributeError(
+E   AttributeError: <module 'services.system.aws_secret_manager' from 'C:\\Users\\astir\\Desktop\\AI_Company\\AI_Investor\\services\\system\\aws_secret_manager.py'> does not have the attribute 'boto3'
+_______________ TestAWSSecretsManager.test_get_secret_from_aws ________________
+C:\Python313\Lib\unittest\mock.py:1421: in patched
+    with self.decoration_helper(patched,
+C:\Python313\Lib\contextlib.py:141: in __enter__
+    return next(self.gen)
+C:\Python313\Lib\unittest\mock.py:1403: in decoration_helper
+    arg = exit_stack.enter_context(patching)
+C:\Python313\Lib\contextlib.py:530: in enter_context
+    result = _enter(cm)
+C:\Python313\Lib\unittest\mock.py:1495: in __enter__
+    original, local = self.get_original()
+C:\Python313\Lib\unittest\mock.py:1465: in get_original
+    raise AttributeError(
+E   AttributeError: <module 'services.system.aws_secret_manager' from 'C:\\Users\\astir\\Desktop\\AI_Company\\AI_Investor\\services\\system\\aws_secret_manager.py'> does not have the attribute 'boto3'
+============================== warnings summary ===============================
+tests/ai_assistant/test_assistant_service.py::test_create_conversation
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_assistant\assistant_service.py:65: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    conversation_id=f"conv_{user_id}_{datetime.utcnow().timestamp()}",
+
+tests/ai_assistant/test_assistant_service.py::test_create_conversation
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_assistant\assistant_service.py:68: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    created_date=datetime.utcnow(),
+
+tests/ai_assistant/test_assistant_service.py::test_create_conversation
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_assistant\assistant_service.py:69: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    updated_date=datetime.utcnow()
+
+tests/ai_assistant/test_assistant_service.py::test_send_message
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\ai_assistant\test_assistant_service.py:44: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    created_date=datetime.utcnow(),
+
+tests/ai_assistant/test_assistant_service.py::test_send_message
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\ai_assistant\test_assistant_service.py:45: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    updated_date=datetime.utcnow()
+
+tests/ai_assistant/test_assistant_service.py::test_send_message
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_assistant\assistant_service.py:101: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    message_id=f"msg_{conversation_id}_{datetime.utcnow().timestamp()}",
+
+tests/ai_assistant/test_assistant_service.py::test_send_message
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_assistant\assistant_service.py:105: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow()
+
+tests/ai_assistant/test_assistant_service.py::test_get_conversation_history
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\ai_assistant\test_assistant_service.py:73: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow()
+
+tests/ai_predictions/test_ai_analytics_service.py::test_detect_market_regime
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\ai_analytics_service.py:67: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    regime_id=f"regime_{market_index}_{datetime.utcnow().timestamp()}",
+
+tests/ai_predictions/test_ai_analytics_service.py::test_detect_market_regime
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\ai_analytics_service.py:70: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    detected_date=datetime.utcnow(),
+
+tests/ai_predictions/test_ai_analytics_service.py::test_detect_market_regime
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\ai_analytics_service.py:112: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    self.cache_service.set(cache_key, regime.dict(), ttl=86400 * 7)
+
+tests/ai_predictions/test_prediction_engine.py::test_predict_price
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_cached
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\prediction_engine.py:83: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    prediction_id=f"pred_{symbol}_{datetime.utcnow().timestamp()}",
+
+tests/ai_predictions/test_prediction_engine.py::test_predict_price
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_cached
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\prediction_engine.py:87: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    prediction_date=datetime.utcnow(),
+
+tests/ai_predictions/test_prediction_engine.py::test_predict_price
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_cached
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\prediction_engine.py:141: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    self.cache_service.set(cache_key, prediction.dict(), ttl=86400 * 7)  # 7 days
+
+tests/ai_predictions/test_prediction_engine.py::test_predict_price
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\prediction_engine.py:141: RuntimeWarning: coroutine 'AsyncMockMixin._execute_mock_call' was never awaited
+    self.cache_service.set(cache_key, prediction.dict(), ttl=86400 * 7)  # 7 days
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/ai_predictions/test_prediction_engine.py::test_predict_trend
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\prediction_engine.py:123: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    prediction_id=f"trend_{symbol}_{datetime.utcnow().timestamp()}",
+
+tests/ml/test_model_deployment_service.py::test_deploy_model
+tests/ml/test_model_deployment_service.py::test_deploy_model_gradual_rollout
+tests/ml/test_model_deployment_service.py::test_monitor_performance
+tests/ml/test_model_deployment_service.py::test_rollback_model
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\ml\test_model_deployment_service.py:29: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    created_date=datetime.utcnow()
+
+tests/ml/test_training_pipeline.py::test_create_training_job
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ml\training_pipeline.py:64: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    job_id=f"job_{model_name}_{datetime.utcnow().timestamp()}",
+
+tests/ml/test_training_pipeline.py::test_start_training
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ml\training_pipeline.py:94: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    job.started_date = datetime.utcnow()
+
+tests/ml/test_training_pipeline.py::test_get_model_versions
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\ml\test_training_pipeline.py:67: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    created_date=datetime.utcnow()
+
+tests/integration/test_integration_framework.py::test_create_integration
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\integration\integration_framework.py:68: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    integration_id=f"integration_{user_id}_{app_name}_{datetime.utcnow().timestamp()}",
+
+tests/integration/test_integration_framework.py::test_create_integration
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\integration\integration_framework.py:73: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    created_date=datetime.utcnow(),
+
+tests/integration/test_integration_framework.py::test_create_integration
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\integration\integration_framework.py:74: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    updated_date=datetime.utcnow()
+
+tests/integration/test_integration_service.py::test_sync_data
+tests/integration/test_integration_service.py::test_sync_data_full
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\integration\integration_service.py:63: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    sync_job_id=f"sync_{integration_id}_{datetime.utcnow().timestamp()}",
+
+tests/integration/test_integration_service.py::test_sync_data
+tests/integration/test_integration_service.py::test_sync_data_full
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\integration\integration_service.py:67: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    started_date=datetime.utcnow()
+
+tests/integration/test_integration_service.py::test_sync_data
+tests/integration/test_integration_service.py::test_sync_data_full
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\integration\integration_service.py:72: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    job.completed_date = datetime.utcnow()
+
+tests/integration/test_integration_service.py::test_get_sync_status
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\integration\test_integration_service.py:60: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    started_date=datetime.utcnow(),
+
+tests/integration/test_integration_service.py::test_get_sync_status
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\integration\test_integration_service.py:61: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    completed_date=datetime.utcnow(),
+
+tests/integration/test_migration_system.py::TestMigrationManager::test_create_migration
+tests/integration/test_migration_system.py::TestMigrationManager::test_list_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_list_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_pending_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_pending_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_validate_migration
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_migration_status
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\scripts\database\migration_manager.py:49: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+
+tests/integration/test_migration_system.py::TestMigrationManager::test_create_migration
+tests/integration/test_migration_system.py::TestMigrationManager::test_list_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_list_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_pending_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_pending_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_validate_migration
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_migration_status
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\scripts\database\migration_manager.py:58: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    -- Created: {datetime.utcnow().isoformat()}
+
+tests/integration/test_migration_system.py::TestMigrationManager::test_create_migration
+tests/integration/test_migration_system.py::TestMigrationManager::test_list_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_list_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_pending_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_pending_migrations
+tests/integration/test_migration_system.py::TestMigrationManager::test_validate_migration
+tests/integration/test_migration_system.py::TestMigrationManager::test_get_migration_status
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\scripts\database\migration_manager.py:77: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    -- Created: {datetime.utcnow().isoformat()}
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/ai_assistant/test_assistant_service.py::test_send_message - Type...
+FAILED tests/ai_assistant/test_assistant_service.py::test_get_conversation_history
+FAILED tests/ai_assistant/test_learning_service.py::test_update_user_preferences
+FAILED tests/ai_assistant/test_learning_service.py::test_get_recommendations
+FAILED tests/ai_predictions/test_ai_analytics_service.py::test_analyze_sentiment
+FAILED tests/ai_predictions/test_prediction_engine.py::test_predict_price_cached
+FAILED tests/ml/test_training_pipeline.py::test_start_training - AttributeErr...
+FAILED tests/ml/test_training_pipeline.py::test_get_model_versions - pydantic...
+FAILED tests/integration/test_integration_framework.py::test_get_supported_apps
+FAILED tests/integration/test_integration_service.py::test_get_sync_status - ...
+FAILED tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_accept_documents
+FAILED tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_accept_documents_unauthorized
+FAILED tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_get_acceptance_status
+FAILED tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_get_acceptance_history
+FAILED tests/integration/test_legal_acceptance_flow.py::TestLegalDocumentFlow::test_check_document_updates
+FAILED tests/integration/test_migration_system.py::TestMigrationManager::test_create_migration
+FAILED tests/integration/test_migration_system.py::TestMigrationManager::test_validate_migration
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_get_onboarding_status
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_get_onboarding_status_unauthorized
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_update_onboarding_step
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_complete_onboarding
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_complete_onboarding_missing_fields
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_get_preferences
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_update_preferences
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_skip_onboarding
+FAILED tests/integration/test_onboarding_flow.py::TestOnboardingFlow::test_reset_onboarding
+FAILED tests/integration/test_secrets_management.py::TestProductionSecretManager::test_vault_integration
+FAILED tests/integration/test_secrets_management.py::TestAWSSecretsManager::test_aws_secrets_manager_init
+FAILED tests/integration/test_secrets_management.py::TestAWSSecretsManager::test_get_secret_from_aws
+ERROR tests/ml/test_model_deployment_service.py::test_deploy_model - pydantic...
+ERROR tests/ml/test_model_deployment_service.py::test_deploy_model_gradual_rollout
+ERROR tests/ml/test_model_deployment_service.py::test_monitor_performance - p...
+ERROR tests/ml/test_model_deployment_service.py::test_rollback_model - pydant...
+============ 29 failed, 40 passed, 74 warnings, 4 errors in 34.25s ============

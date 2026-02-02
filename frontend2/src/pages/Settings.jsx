@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import apiClient from '../services/apiClient';
 import BillingDashboard from '../widgets/Billing/BillingDashboard'; 
 import IdentityProfileCard from '../components/Identity/IdentityProfileCard';
 import { Settings as SettingsIcon, CreditCard, Palette, User, ShieldCheck } from 'lucide-react';
@@ -20,14 +21,10 @@ function Settings() {
   const fetchIdentity = async () => {
     setLoadingIdentity(true);
     try {
-        const token = localStorage.getItem('widget_os_token');
-        const res = await fetch('/api/v1/identity/profile', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (res.ok) {
-            const data = await res.json();
-            setIdentityData(data);
-        }
+        // apiClient handles token automatically
+        const res = await apiClient.get('/identity/profile');
+        const data = res.data; // apiClient typically returns data in res.data
+        setIdentityData(data);
     } catch (e) {
         console.error("Failed to fetch identity", e);
     } finally {
@@ -37,18 +34,17 @@ function Settings() {
 
   const handleReconcile = async () => {
       // Optimistic update or show loading
-      const token = localStorage.getItem('token');
+      setIsReconciling(true); // Set loading state for reconciliation
       try {
-          const res = await fetch('/api/v1/identity/reconcile', {
-              method: 'POST',
-              headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (res.ok) {
-              const result = await res.json();
-              setIdentityData(result.data);
-          }
+          // apiClient handles token automatically
+          const res = await apiClient.post('/identity/reconcile');
+          const result = res.data; // apiClient typically returns data in res.data
+          alert(`Reconciliation complete. Status: ${result.status}`); // Added alert based on instruction
+          setIdentityData(result.data);
       } catch (e) {
           console.error("Reconciliation failed", e);
+      } finally {
+          setIsReconciling(false); // Reset loading state
       }
   };
 

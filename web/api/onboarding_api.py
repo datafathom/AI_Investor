@@ -57,7 +57,7 @@ ONBOARDING_STEPS = [
 ]
 
 
-@onboarding_api_bp.route('/onboarding/status', methods=['GET'])
+@onboarding_api_bp.route('/api/v1/onboarding/status', methods=['GET'])
 @login_required
 def get_onboarding_status():
     """
@@ -98,7 +98,7 @@ def get_onboarding_status():
     }), 200
 
 
-@onboarding_api_bp.route('/onboarding/step', methods=['POST'])
+@onboarding_api_bp.route('/api/v1/onboarding/step', methods=['POST'])
 @login_required
 def update_onboarding_step():
     """
@@ -156,7 +156,7 @@ def update_onboarding_step():
     }), 200
 
 
-@onboarding_api_bp.route('/onboarding/complete', methods=['POST'])
+@onboarding_api_bp.route('/api/v1/onboarding/complete', methods=['POST'])
 @login_required
 def complete_onboarding():
     """
@@ -219,7 +219,7 @@ def complete_onboarding():
     }), 200
 
 
-@onboarding_api_bp.route('/onboarding/preferences', methods=['GET'])
+@onboarding_api_bp.route('/api/v1/onboarding/preferences', methods=['GET'])
 @login_required
 def get_preferences():
     """
@@ -252,7 +252,7 @@ def get_preferences():
     }), 200
 
 
-@onboarding_api_bp.route('/onboarding/preferences', methods=['PUT'])
+@onboarding_api_bp.route('/api/v1/onboarding/preferences', methods=['PUT'])
 @login_required
 def update_preferences():
     """
@@ -309,7 +309,7 @@ def update_preferences():
     }), 200
 
 
-@onboarding_api_bp.route('/onboarding/skip', methods=['POST'])
+@onboarding_api_bp.route('/api/v1/onboarding/skip', methods=['POST'])
 @login_required
 def skip_onboarding():
     """
@@ -347,7 +347,7 @@ def skip_onboarding():
     }), 200
 
 
-@onboarding_api_bp.route('/onboarding/reset', methods=['POST'])
+@onboarding_api_bp.route('/api/v1/onboarding/reset', methods=['POST'])
 @login_required
 def reset_onboarding():
     """

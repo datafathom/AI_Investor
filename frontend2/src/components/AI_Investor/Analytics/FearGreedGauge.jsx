@@ -18,10 +18,11 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+import apiClient from '../../../services/apiClient';
 import PropTypes from 'prop-types';
 import './FearGreedGauge.css';
 
-const API_BASE = ''; // Use same-origin API (Express server)
+const API_BASE = '/market'; 
 
 /**
  * FearGreedGauge - Phase 12 Dashboard Widget
@@ -45,15 +46,11 @@ export default function FearGreedGauge({
         try {
             setLoading(true);
             const symbolsParam = symbols.join(',');
-            const response = await fetch(
-                `${API_BASE}/api/v1/market/fear-greed?symbols=${symbolsParam}&mock=true`
+            const response = await apiClient.get(
+                `${API_BASE}/fear-greed?symbols=${symbolsParam}&mock=true`
             );
 
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-
-            const result = await response.json();
+            const result = response.data;
             setData(result);
             setLastUpdate(new Date());
             setError(null);

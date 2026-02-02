@@ -420,6 +420,29 @@ def simulate_bank_run():
         logger.exception("Bank run simulation failed")
         return jsonify({"status": "error", "message": str(e)}), 500
 
+@scenario_bp.route('/shadow-fork', methods=['POST'])
+@login_required
+def shadow_fork():
+    """
+    Simulate parallel strategy paths from a single starting point.
+    """
+    try:
+        data = request.json
+        service = get_scenario_service()
+        res = _run_async(service.simulate_shadow_fork(
+            data.get('initial_value', 1000000),
+            data.get('baseline_params', {}),
+            data.get('shadow_params', {}),
+            data.get('horizon_days', 30)
+        ))
+        return jsonify({
+            "status": "success",
+            "data": res
+        })
+    except Exception as e:
+        logger.exception("Shadow fork simulation failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 # --- Philanthropy (Phase 61) ---
 @philanthropy_bp.route('/donate', methods=['POST'])
 @login_required

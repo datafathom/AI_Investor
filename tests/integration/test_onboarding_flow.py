@@ -25,6 +25,13 @@ def client(app):
     return app.test_client()
 
 
+@pytest.fixture(autouse=True)
+def app_context(app):
+    """Push application context."""
+    with app.app_context():
+        yield
+
+
 @pytest.fixture
 def mock_user():
     """Mock user for testing."""

@@ -24,7 +24,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from models.enterprise import SharedResource
 from services.system.cache_service import get_cache_service
@@ -67,14 +67,31 @@ class MultiUserService:
             resource_type=resource_type,
             team_id=team_id,
             permissions=permissions,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Save shared resource
         await self._save_shared_resource(shared_resource)
         
         return shared_resource
+    
+    async def get_shared_resources(self, team_id: str) -> List[SharedResource]:
+        """
+        Get resources shared with team.
+        
+        Args:
+            team_id: Team identifier
+            
+        Returns:
+            List of SharedResource objects
+        """
+        logger.info(f"Getting shared resources for team {team_id}")
+        return await self._get_shared_resources_from_db(team_id)
+
+    async def _get_shared_resources_from_db(self, team_id: str) -> List[SharedResource]:
+        """Internal method to get shared resources."""
+        return []
     
     async def _save_shared_resource(self, resource: SharedResource):
         """Save shared resource to cache."""

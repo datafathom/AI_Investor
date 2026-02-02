@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -19,12 +20,13 @@ const BinanceWidget = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const tickerRes = await fetch(`/api/binance/ticker/${symbol}`);
-            const tickerData = await tickerRes.json();
+        try {
+            const tickerRes = await apiClient.get(`/binance/ticker/${symbol}`);
+            const tickerData = tickerRes.data;
             setTicker(tickerData);
 
-            const depthRes = await fetch(`/api/binance/depth/${symbol}?limit=5`);
-            const depthData = await depthRes.json();
+            const depthRes = await apiClient.get(`/binance/depth/${symbol}`, { params: { limit: 5 } });
+            const depthData = depthRes.data;
             setDepth(depthData);
         } catch (error) {
             console.error("Error fetching Binance data:", error);
@@ -51,26 +53,18 @@ const BinanceWidget = () => {
         }
 
         try {
-            const res = await fetch('/api/binance/order', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    symbol: symbol,
-                    side: orderSide,
-                    quantity: parseFloat(orderQty)
-                })
+            const res = await apiClient.post('/binance/order', {
+                symbol: symbol,
+                side: orderSide,
+                quantity: parseFloat(orderQty)
             });
-            const data = await res.json();
+            const data = res.data;
             
-            if (res.ok) {
-                toast({
-                    title: "Order Placed",
-                    description: `Successfully ${data.side} ${data.executedQty} ${data.symbol} @ ${data.price}`,
-                });
-                fetchData(); // Refresh data
-            } else {
-                throw new Error(data.error || "Order failed");
-            }
+            toast({
+                title: "Order Placed",
+                description: `Successfully ${data.side} ${data.executedQty} ${data.symbol} @ ${data.price}`,
+            });
+            fetchData(); // Refresh data
         } catch (error) {
             toast({ title: "Order Failed", description: error.message, variant: "destructive" });
         }

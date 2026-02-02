@@ -15,9 +15,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import './PortfolioCalendar.css';
 
-const API_BASE = '/api/v1/calendar';
+const API_BASE = '/calendar';
 
 const EVENT_COLORS = {
     earnings: '#4285f4',    // Blue
@@ -43,14 +44,14 @@ const PortfolioCalendar = () => {
             const start = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
             const end = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
             
-            const response = await fetch(
-                `${API_BASE}/events?start_time=${start.toISOString()}&end_time=${end.toISOString()}`
-            );
-            
-            if (response.ok) {
-                const data = await response.json();
-                setEvents(data.events || []);
-            }
+            const response = await apiClient.get(`${API_BASE}/events`, {
+                params: {
+                    start_time: start.toISOString(),
+                    end_time: end.toISOString()
+                }
+            });
+            const data = response.data;
+            setEvents(data.events || []);
         } catch (err) {
             console.error('Failed to load events:', err);
         } finally {
@@ -61,17 +62,8 @@ const PortfolioCalendar = () => {
     const handleSyncEarnings = async () => {
         setSyncing(true);
         try {
-            const response = await fetch(`${API_BASE}/sync/earnings`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({})
-            });
-            
-            if (response.ok) {
-                await loadEvents(); // Reload events
-            }
+            await apiClient.post(`${API_BASE}/sync/earnings`, {});
+            await loadEvents(); // Reload events
         } catch (err) {
             console.error('Earnings sync failed:', err);
         } finally {

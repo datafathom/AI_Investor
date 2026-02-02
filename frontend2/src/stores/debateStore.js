@@ -7,6 +7,7 @@
  */
 
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useDebateStore = create((set) => ({
     debateResult: null,
@@ -16,14 +17,12 @@ const useDebateStore = create((set) => ({
     runDebate: async (ticker, mock = true) => {
         set({ loading: true, error: null, debateResult: null });
         try {
-            const url = `/api/v1/ai/debate/run/${ticker}?mock=${mock}`;
-            const response = await fetch(url, { method: 'POST' });
+            const response = await apiClient.post(`/ai/debate/run/${ticker}`, null, {
+                params: { mock }
+            });
             
-            if (!response.ok) throw new Error('Failed to run debate simulation');
-            
-            const data = await response.json();
             set({ 
-                debateResult: data,
+                debateResult: response.data,
                 loading: false 
             });
         } catch (error) {

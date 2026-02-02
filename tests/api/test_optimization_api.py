@@ -1,11 +1,7 @@
-"""
-Tests for Optimization API Endpoints
-Phase 2: Portfolio Optimization & Rebalancing
-"""
-
 import pytest
 from unittest.mock import AsyncMock, patch
 from flask import Flask
+from datetime import datetime, timezone
 from web.api.optimization_api import optimization_bp
 
 
@@ -42,16 +38,21 @@ def mock_rebalancing_service():
         yield service
 
 
-@pytest.mark.asyncio
-async def test_optimize_portfolio_success(client, mock_optimizer_service):
+def test_optimize_portfolio_success(client, mock_optimizer_service):
     """Test successful portfolio optimization."""
     from models.optimization import OptimizationResult
     
     mock_result = OptimizationResult(
         portfolio_id='portfolio_1',
-        optimized_weights={'AAPL': 0.4, 'MSFT': 0.6},
+        optimization_method='mean_variance',
+        objective='maximize_sharpe',
+        optimal_weights={'AAPL': 0.4, 'MSFT': 0.6},
         expected_return=0.12,
-        expected_risk=0.15
+        expected_risk=0.15,
+        sharpe_ratio=1.5,
+        constraint_satisfaction={'min_weight': True, 'max_weight': True},
+        optimization_time_seconds=0.5,
+        optimization_date=datetime.now(timezone.utc)
     )
     mock_optimizer_service.optimize.return_value = mock_result
     
@@ -65,16 +66,21 @@ async def test_optimize_portfolio_success(client, mock_optimizer_service):
     assert data['data']['expected_return'] == 0.12
 
 
-@pytest.mark.asyncio
-async def test_optimize_portfolio_with_constraints(client, mock_optimizer_service):
+def test_optimize_portfolio_with_constraints(client, mock_optimizer_service):
     """Test optimization with constraints."""
-    from models.optimization import OptimizationResult, OptimizationConstraints
+    from models.optimization import OptimizationResult
     
     mock_result = OptimizationResult(
         portfolio_id='portfolio_1',
-        optimized_weights={'AAPL': 0.4, 'MSFT': 0.6},
+        optimization_method='mean_variance',
+        objective='maximize_sharpe',
+        optimal_weights={'AAPL': 0.4, 'MSFT': 0.6},
         expected_return=0.12,
-        expected_risk=0.15
+        expected_risk=0.15,
+        sharpe_ratio=1.5,
+        constraint_satisfaction={'min_weight': True, 'max_weight': True},
+        optimization_time_seconds=0.5,
+        optimization_date=datetime.now(timezone.utc)
     )
     mock_optimizer_service.optimize.return_value = mock_result
     
@@ -94,8 +100,7 @@ async def test_optimize_portfolio_with_constraints(client, mock_optimizer_servic
     mock_optimizer_service.optimize.assert_called_once()
 
 
-@pytest.mark.asyncio
-async def test_optimize_portfolio_error(client, mock_optimizer_service):
+def test_optimize_portfolio_error(client, mock_optimizer_service):
     """Test optimization error handling."""
     mock_optimizer_service.optimize.side_effect = Exception('Optimization failed')
     
@@ -107,8 +112,7 @@ async def test_optimize_portfolio_error(client, mock_optimizer_service):
     assert data['success'] is False
 
 
-@pytest.mark.asyncio
-async def test_check_rebalancing_needed(client, mock_rebalancing_service):
+def test_check_rebalancing_needed(client, mock_rebalancing_service):
     """Test rebalancing check."""
     mock_rebalancing_service.check_rebalancing_needed.return_value = True
     
@@ -120,16 +124,20 @@ async def test_check_rebalancing_needed(client, mock_rebalancing_service):
     assert data['data']['needs_rebalancing'] is True
 
 
-@pytest.mark.asyncio
-async def test_recommend_rebalancing_success(client, mock_rebalancing_service):
+def test_recommend_rebalancing_success(client, mock_rebalancing_service):
     """Test rebalancing recommendation."""
     from models.optimization import RebalancingRecommendation
     
     mock_recommendation = RebalancingRecommendation(
         portfolio_id='portfolio_1',
-        trades=[],
-        estimated_cost=0.0,
-        requires_approval=False
+        current_weights={'AAPL': 0.5, 'MSFT': 0.5},
+        target_weights={'AAPL': 0.4, 'MSFT': 0.6},
+        recommended_trades=[{'symbol': 'AAPL', 'action': 'sell', 'quantity': 10, 'price': 150.0}],
+        drift_percentage=0.1,
+        estimated_cost=5.0,
+        estimated_tax_impact=2.0,
+        requires_approval=False,
+        recommendation_date=datetime.now(timezone.utc)
     )
     mock_rebalancing_service.generate_rebalancing_recommendation.return_value = mock_recommendation
     
@@ -141,25 +149,34 @@ async def test_recommend_rebalancing_success(client, mock_rebalancing_service):
     assert data['success'] is True
 
 
-@pytest.mark.asyncio
-async def test_execute_rebalancing_success(client, mock_rebalancing_service):
+def test_execute_rebalancing_success(client, mock_rebalancing_service):
     """Test rebalancing execution."""
-    from models.optimization import RebalancingRecommendation, RebalancingHistory
-    
-    recommendation_data = {
-        'portfolio_id': 'portfolio_1',
-        'trades': [],
-        'estimated_cost': 0.0,
-        'requires_approval': False
-    }
+    from models.optimization import RebalancingHistory
     
     mock_history = RebalancingHistory(
+        rebalancing_id='reb_1',
         portfolio_id='portfolio_1',
-        executed_at=datetime.now(),
-        trades=[],
-        total_cost=0.0
+        rebalancing_date=datetime.now(timezone.utc),
+        strategy='threshold',
+        before_weights={'AAPL': 0.5},
+        after_weights={'AAPL': 0.4},
+        trades_executed=[],
+        total_cost=5.0,
+        tax_impact=2.0,
+        status='executed'
     )
     mock_rebalancing_service.execute_rebalancing.return_value = mock_history
+    recommendation_data = {
+        'portfolio_id': 'portfolio_1',
+        'current_weights': {'AAPL': 0.5},
+        'target_weights': {'AAPL': 0.4},
+        'recommended_trades': [],
+        'drift_percentage': 0.1,
+        'estimated_cost': 5.0,
+        'estimated_tax_impact': 2.0,
+        'requires_approval': False,
+        'recommendation_date': datetime.now(timezone.utc).isoformat()
+    }
     
     response = client.post('/api/optimization/rebalancing/execute/portfolio_1',
                           json={'recommendation': recommendation_data, 'approved': True})
@@ -169,8 +186,7 @@ async def test_execute_rebalancing_success(client, mock_rebalancing_service):
     assert data['success'] is True
 
 
-@pytest.mark.asyncio
-async def test_execute_rebalancing_missing_recommendation(client):
+def test_execute_rebalancing_missing_recommendation(client):
     """Test rebalancing execution without recommendation."""
     response = client.post('/api/optimization/rebalancing/execute/portfolio_1',
                           json={'approved': True})
@@ -180,18 +196,22 @@ async def test_execute_rebalancing_missing_recommendation(client):
     assert data['success'] is False
 
 
-@pytest.mark.asyncio
-async def test_get_rebalancing_history(client, mock_rebalancing_service):
+def test_get_rebalancing_history(client, mock_rebalancing_service):
     """Test getting rebalancing history."""
     from models.optimization import RebalancingHistory
-    from datetime import datetime
     
     mock_history = [
         RebalancingHistory(
+            rebalancing_id='reb_1',
             portfolio_id='portfolio_1',
-            executed_at=datetime.now(),
-            trades=[],
-            total_cost=0.0
+            rebalancing_date=datetime.now(timezone.utc),
+            strategy='threshold',
+            before_weights={'AAPL': 0.5},
+            after_weights={'AAPL': 0.4},
+            trades_executed=[],
+            total_cost=5.0,
+            tax_impact=2.0,
+            status='executed'
         )
     ]
     mock_rebalancing_service.get_rebalancing_history.return_value = mock_history

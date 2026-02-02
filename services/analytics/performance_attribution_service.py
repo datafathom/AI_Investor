@@ -42,7 +42,7 @@ LAST_MODIFIED: 2026-01-21
 
 import logging
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Tuple
 import pandas as pd
 import numpy as np
@@ -147,7 +147,7 @@ class PerformanceAttributionService:
             benchmark_comparison=benchmark_comparison,
             calculation_metadata=CalculationMetadata(
                 calculation_method="Modified Dietz",
-                calculation_date=datetime.utcnow(),
+                calculation_date=datetime.now(timezone.utc),
                 data_quality="good",
                 missing_data_points=0,
                 cache_hit=False
@@ -160,7 +160,7 @@ class PerformanceAttributionService:
         
         return result
         
-    async def calculate_contribution(
+    async def calculate_holding_contributions(
         self,
         portfolio_id: str,
         start_date: datetime,
@@ -173,6 +173,7 @@ class PerformanceAttributionService:
             List of holdings sorted by contribution (absolute and percentage)
         """
         logger.info(f"Calculating contribution analysis for portfolio {portfolio_id}")
+        
         
         # Get portfolio data
         portfolio_data = await self._get_portfolio_data(portfolio_id, start_date, end_date)
@@ -269,47 +270,7 @@ class PerformanceAttributionService:
         end_date: datetime
     ) -> Dict:
         """Get portfolio holdings and transactions."""
-        # In production, this would fetch from portfolio service
-        # For now, use mock data structure
-        return {
-            'holdings': [
-                {
-                    'symbol': 'AAPL',
-                    'name': 'Apple Inc.',
-                    'quantity': 100,
-                    'cost_basis': 15000.0,
-                    'value': 18000.0,
-                    'weight': 0.3,
-                    'sector': 'Technology',
-                    'asset_class': 'Equity',
-                    'geography': 'US'
-                },
-                {
-                    'symbol': 'MSFT',
-                    'name': 'Microsoft Corporation',
-                    'quantity': 50,
-                    'cost_basis': 12000.0,
-                    'value': 15000.0,
-                    'weight': 0.25,
-                    'sector': 'Technology',
-                    'asset_class': 'Equity',
-                    'geography': 'US'
-                },
-                {
-                    'symbol': 'JPM',
-                    'name': 'JPMorgan Chase & Co.',
-                    'quantity': 75,
-                    'cost_basis': 8000.0,
-                    'value': 9000.0,
-                    'weight': 0.15,
-                    'sector': 'Financials',
-                    'asset_class': 'Equity',
-                    'geography': 'US'
-                }
-            ],
-            'transactions': [],
-            'cash_flows': []
-        }
+        return await self.portfolio_aggregator.get_portfolio(portfolio_id)
     
     async def _calculate_time_weighted_return(
         self,
@@ -487,7 +448,7 @@ class PerformanceAttributionService:
                 weight=weight,
                 return_pct=return_pct,
                 contribution_absolute=contribution_absolute,
-                contribution_pct=(contribution_absolute / sum(h.get('value', 0) for h in portfolio_data.get('holdings', [])) * 100) if portfolio_data.get('holdings') else 0.0,
+                contribution_pct=(contribution_absolute / sum(h.get('value', 0) for h in portfolio_data.get('holdings', [])) * 100) if sum(h.get('value', 0) for h in portfolio_data.get('holdings', [])) > 0 else 0.0,
                 allocation_effect=allocation_effect,
                 selection_effect=selection_effect
             ))

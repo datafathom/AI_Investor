@@ -16,9 +16,10 @@
  */
 
 import React, { useEffect, useState, useRef } from 'react';
+import apiClient from '../../services/apiClient';
 import './PlaidLinkModal.css';
 
-const API_BASE = '/api/v1/plaid';
+const API_BASE = '/plaid';
 
 const PlaidLinkModal = ({ isOpen, onClose, onSuccess, onError }) => {
     const [linkToken, setLinkToken] = useState(null);
@@ -43,22 +44,11 @@ const PlaidLinkModal = ({ isOpen, onClose, onSuccess, onError }) => {
         setError(null);
         
         try {
-            const response = await fetch(`${API_BASE}/link-token`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    client_name: 'AI Investor'
-                })
+            const response = await apiClient.post(`${API_BASE}/link-token`, {
+                client_name: 'AI Investor'
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to create link token');
-            }
-
-            const data = await response.json();
-            setLinkToken(data.link_token);
+            setLinkToken(response.data.link_token);
         } catch (err) {
             console.error('Failed to create link token:', err);
             setError('Failed to initialize bank connection. Please try again.');
@@ -96,21 +86,11 @@ const PlaidLinkModal = ({ isOpen, onClose, onSuccess, onError }) => {
     const handlePlaidSuccess = async (publicToken, metadata) => {
         try {
             // Exchange public token for access token
-            const response = await fetch(`${API_BASE}/exchange-token`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    public_token: publicToken
-                })
+            const response = await apiClient.post(`${API_BASE}/exchange-token`, {
+                public_token: publicToken
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to exchange token');
-            }
-
-            const data = await response.json();
+            const data = response.data;
 
             if (onSuccess) {
                 onSuccess({

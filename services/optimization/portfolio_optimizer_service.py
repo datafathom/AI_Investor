@@ -43,7 +43,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
@@ -96,7 +96,7 @@ class PortfolioOptimizerService:
         """
         logger.info(f"Optimizing portfolio {portfolio_id} with objective {objective}")
         
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         # Check cache
         cache_key = f"optimization:{portfolio_id}:{objective}:{method}"
@@ -147,7 +147,7 @@ class PortfolioOptimizerService:
             optimal_weights, holdings, constraints
         )
         
-        optimization_time = (datetime.utcnow() - start_time).total_seconds()
+        optimization_time = (datetime.now(timezone.utc) - start_time).total_seconds()
         
         # Create result
         result = OptimizationResult(
@@ -160,7 +160,7 @@ class PortfolioOptimizerService:
             sharpe_ratio=float(sharpe_ratio),
             constraint_satisfaction=constraint_satisfaction,
             optimization_time_seconds=optimization_time,
-            optimization_date=datetime.utcnow()
+            optimization_date=datetime.now(timezone.utc)
         )
         
         # Cache result (1 hour)

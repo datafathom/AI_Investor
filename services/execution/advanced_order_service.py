@@ -26,7 +26,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from models.orders import (
     TrailingStopOrder, BracketOrder, ConditionalOrder,
@@ -73,7 +73,7 @@ class AdvancedOrderService:
         logger.info(f"Creating trailing stop for {symbol}")
         
         order = TrailingStopOrder(
-            order_id=f"trail_{user_id}_{datetime.utcnow().timestamp()}",
+            order_id=f"trail_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             symbol=symbol,
             quantity=quantity,
             trailing_type=trailing_type,
@@ -84,8 +84,8 @@ class AdvancedOrderService:
         )
         
         # Save order
-        await self._save_order(order.order_id, order.dict())
-        self.active_orders[order.order_id] = order.dict()
+        await self._save_order(order.order_id, order.model_dump())
+        self.active_orders[order.order_id] = order.model_dump()
         
         return order
     
@@ -114,12 +114,12 @@ class AdvancedOrderService:
         """
         logger.info(f"Creating bracket order for {symbol}")
         
-        entry_order_id = f"entry_{user_id}_{datetime.utcnow().timestamp()}"
-        profit_target_order_id = f"profit_{user_id}_{datetime.utcnow().timestamp()}" if profit_target_price else None
-        stop_loss_order_id = f"stop_{user_id}_{datetime.utcnow().timestamp()}" if stop_loss_price else None
+        entry_order_id = f"entry_{user_id}_{datetime.now(timezone.utc).timestamp()}"
+        profit_target_order_id = f"profit_{user_id}_{datetime.now(timezone.utc).timestamp()}" if profit_target_price else None
+        stop_loss_order_id = f"stop_{user_id}_{datetime.now(timezone.utc).timestamp()}" if stop_loss_price else None
         
         bracket = BracketOrder(
-            bracket_id=f"bracket_{user_id}_{datetime.utcnow().timestamp()}",
+            bracket_id=f"bracket_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             entry_order_id=entry_order_id,
             profit_target_order_id=profit_target_order_id,
             stop_loss_order_id=stop_loss_order_id,
@@ -128,7 +128,7 @@ class AdvancedOrderService:
         )
         
         # Save bracket order
-        await self._save_order(bracket.bracket_id, bracket.dict())
+        await self._save_order(bracket.bracket_id, bracket.model_dump())
         
         return bracket
     
@@ -155,7 +155,7 @@ class AdvancedOrderService:
         """
         logger.info(f"Creating OCO order for {symbol}")
         
-        oco_id = f"oco_{user_id}_{datetime.utcnow().timestamp()}"
+        oco_id = f"oco_{user_id}_{datetime.now(timezone.utc).timestamp()}"
         
         oco_order = {
             "oco_id": oco_id,
@@ -164,7 +164,7 @@ class AdvancedOrderService:
             "order1": order1,
             "order2": order2,
             "status": "pending",
-            "created_date": datetime.utcnow().isoformat()
+            "created_date": datetime.now(timezone.utc).isoformat()
         }
         
         # Save OCO order
@@ -198,7 +198,7 @@ class AdvancedOrderService:
         logger.info(f"Creating conditional order for {symbol}")
         
         order = ConditionalOrder(
-            order_id=f"cond_{user_id}_{datetime.utcnow().timestamp()}",
+            order_id=f"cond_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             symbol=symbol,
             quantity=quantity,
             order_type=order_type,
@@ -208,7 +208,7 @@ class AdvancedOrderService:
         )
         
         # Save conditional order
-        await self._save_order(order.order_id, order.dict())
+        await self._save_order(order.order_id, order.model_dump())
         
         return order
     
@@ -248,8 +248,8 @@ class AdvancedOrderService:
             order.current_stop_price = new_stop
         
         # Update stored order
-        self.active_orders[order_id] = order.dict()
-        await self._save_order(order_id, order.dict())
+        self.active_orders[order_id] = order.model_dump()
+        await self._save_order(order_id, order.model_dump())
         
         return order
     

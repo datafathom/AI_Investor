@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import { Globe, RefreshCw, ArrowRightLeft, TrendingUp, DollarSign, Wallet } from 'lucide-react';
 import './SettlementDashboard.css';
 
@@ -11,21 +12,11 @@ const SettlementDashboard = () => {
     const fetchBalances = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('widget_os_token');
-            const res = await fetch('/api/v1/settlement/balances', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            
-            if (!res.ok) {
-                console.warn("API Error, using mock data:", res.status);
-                setData(MOCK_DATA);
-                return;
-            }
-
-            const json = await res.json();
-            setData(json);
+        try {
+            const response = await apiClient.get('/settlement/balances');
+            setData(response.data);
         } catch (e) {
-            console.error("Failed to fetch settlement balances, using mock data", e);
+            console.warn("API Error, using mock data:", e);
             setData(MOCK_DATA);
         } finally {
             setLoading(false);
@@ -34,16 +25,9 @@ const SettlementDashboard = () => {
 
     const handleConvert = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const res = await fetch('/api/v1/settlement/convert', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
-                },
-                body: JSON.stringify(convertData)
-            });
-            const result = await res.json();
+        try {
+            const response = await apiClient.post('/settlement/convert', convertData);
+            const result = response.data;
             if (result.status === 'SUCCESS') {
                 fetchBalances();
                 alert(`Successfully converted ${result.amount_sold} ${result.from} to ${result.amount_bought} ${result.to}`);

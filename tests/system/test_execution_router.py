@@ -33,7 +33,7 @@ def test_risk_limit_rejection(service):
 
 def test_order_routing_error_handling(service):
     # Force simulated=False and mock a failure
-    service._brokerage._is_simulated = False
+    service._brokerage.is_simulated = False
     service._brokerage._client = MagicMock()
     service._brokerage._client.submit_order.side_effect = Exception("API Down")
     

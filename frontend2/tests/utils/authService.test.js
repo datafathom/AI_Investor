@@ -5,40 +5,36 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { authService } from '../../src/utils/authService';
 
-// Mock fetch globally
-global.fetch = vi.fn();
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { authService } from '../../src/utils/authService';
+import apiClient from '../../src/services/apiClient';
+
+// Mock apiClient
+vi.mock('../../src/services/apiClient');
 
 describe('authService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
-    fetch.mockClear();
+    localStorage.clear();
+    vi.clearAllMocks();
   });
 
   describe('register', () => {
     it('should register a new user successfully', async () => {
       const mockResponse = {
-        ok: true,
-        json: async () => ({ message: 'User registered successfully' }),
+        data: { message: 'User registered successfully' }
       };
-      fetch.mockResolvedValueOnce(mockResponse);
+      apiClient.post.mockResolvedValueOnce(mockResponse);
 
       const result = await authService.register('newuser', 'password123');
 
-      expect(fetch).toHaveBeenCalledWith('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: 'newuser', password: 'password123' }),
-      });
+      expect(apiClient.post).toHaveBeenCalledWith('/auth/register', { username: 'newuser', password: 'password123' });
       expect(result).toEqual({ message: 'User registered successfully' });
     });
 
     it('should throw error on registration failure', async () => {
-      const mockResponse = {
-        ok: false,
-        json: async () => ({ error: 'Username already exists' }),
-      };
-      fetch.mockResolvedValueOnce(mockResponse);
+      apiClient.post.mockRejectedValueOnce({ response: { data: { error: 'Username already exists' } } });
 
       await expect(authService.register('existinguser', 'password123')).rejects.toThrow(
         'Username already exists'
@@ -48,22 +44,16 @@ describe('authService', () => {
 
   describe('login', () => {
     it('should login successfully and store token', async () => {
-      const mockResponse = {
-        ok: true,
-        json: async () => ({
+      apiClient.post.mockResolvedValueOnce({
+        data: {
           token: 'test-token-123',
           user: { id: 1, username: 'testuser' },
-        }),
-      };
-      fetch.mockResolvedValueOnce(mockResponse);
+        }
+      });
 
       const result = await authService.login('testuser', 'password123');
 
-      expect(fetch).toHaveBeenCalledWith('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: 'testuser', password: 'password123' }),
-      });
+      expect(apiClient.post).toHaveBeenCalledWith('/auth/login', { username: 'testuser', password: 'password123' });
 
       expect(localStorage.setItem).toHaveBeenCalledWith('widget_os_token', 'test-token-123');
       expect(localStorage.setItem).toHaveBeenCalledWith(
@@ -77,11 +67,7 @@ describe('authService', () => {
     });
 
     it('should throw error on login failure', async () => {
-      const mockResponse = {
-        ok: false,
-        json: async () => ({ error: 'Invalid credentials' }),
-      };
-      fetch.mockResolvedValueOnce(mockResponse);
+      apiClient.post.mockRejectedValueOnce(new Error('Invalid credentials'));
 
       await expect(authService.login('testuser', 'wrongpass')).rejects.toThrow(
         'Invalid credentials'

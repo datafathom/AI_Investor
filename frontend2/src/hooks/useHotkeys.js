@@ -9,6 +9,14 @@ import { useEffect } from 'react';
 export function useHotkeys(hotkeyMap) {
     useEffect(() => {
         const handleKeyDown = (event) => {
+            // Ignore if focus is in an input or textarea
+            const activeElement = document.activeElement;
+            const isInput = activeElement.tagName === 'INPUT' || 
+                            activeElement.tagName === 'TEXTAREA' || 
+                            activeElement.isContentEditable;
+            
+            if (isInput) return;
+
             // Build key string (e.g., "Shift+B", "Ctrl+S", "Escape")
             let keyStr = '';
             if (event.ctrlKey) keyStr += 'Ctrl+';

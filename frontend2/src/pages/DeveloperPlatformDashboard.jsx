@@ -3,91 +3,50 @@
  * FILE: frontend2/src/pages/DeveloperPlatformDashboard.jsx
  * ROLE: Developer Platform Dashboard
  * PURPOSE: Phase 29 - Public API & Developer Platform
- *          Displays API key management, usage analytics, and developer tools.
  * 
  * INTEGRATION POINTS:
- *    - PublicAPI: /api/v1/public-api endpoints
- * 
- * FEATURES:
- *    - API key management
- *    - Usage analytics
- *    - API documentation
- *    - Developer tools
+ *    - PublicApiStore: Uses apiClient for all API calls (User Rule 6)
  * 
  * AUTHOR: AI Investor Team
  * CREATED: 2026-01-21
- * LAST_MODIFIED: 2026-01-21
+ * LAST_MODIFIED: 2026-01-30
  * ==============================================================================
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import usePublicApiStore from '../stores/publicApiStore';
 import './DeveloperPlatformDashboard.css';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 const DeveloperPlatformDashboard = () => {
-  const [apiKeys, setApiKeys] = useState([]);
-  const [usageStats, setUsageStats] = useState(null);
+  const userId = 'user_1'; // TODO: Get from authStore
+  
+  const {
+    apiKeys,
+    usage,
+    loading,
+    fetchApiKeys,
+    fetchUsage,
+    createApiKey,
+    revokeApiKey
+  } = usePublicApiStore();
+
   const [newKeyName, setNewKeyName] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [userId] = useState('user_1');
 
   useEffect(() => {
-    loadApiKeys();
-    loadUsageStats();
-  }, []);
+    fetchApiKeys(userId);
+    fetchUsage(userId);
+  }, [fetchApiKeys, fetchUsage]);
 
-  const loadApiKeys = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/public-api/keys`, {
-        params: { user_id: userId }
-      });
-      setApiKeys(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading API keys:', error);
-    }
-  };
-
-  const loadUsageStats = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/public-api/usage`, {
-        params: { user_id: userId }
-      });
-      setUsageStats(res.data.data);
-    } catch (error) {
-      console.error('Error loading usage stats:', error);
-    }
-  };
-
-  const createApiKey = async () => {
+  const handleCreateKey = async () => {
     if (!newKeyName) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/public-api/key/create`, {
-        user_id: userId,
-        key_name: newKeyName
-      });
+    const success = await createApiKey({ user_id: userId, key_name: newKeyName });
+    if (success) {
       setNewKeyName('');
-      loadApiKeys();
-    } catch (error) {
-      console.error('Error creating API key:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const revokeApiKey = async (keyId) => {
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/public-api/key/${keyId}/revoke`);
-      loadApiKeys();
-    } catch (error) {
-      console.error('Error revoking API key:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleRevokeKey = async (keyId) => {
+    await revokeApiKey(keyId, userId);
   };
 
   return (
@@ -99,13 +58,13 @@ const DeveloperPlatformDashboard = () => {
 
       <div className="dashboard-content">
         {/* Usage Statistics */}
-        {usageStats && (
+        {usage && (
           <div className="stats-panel">
             <h2>API Usage Statistics</h2>
             <div className="stats-grid">
               <div className="stat-card">
                 <div className="stat-label">Total Requests (30d)</div>
-                <div className="stat-value">{usageStats.total_requests_30d || 0}</div>
+                <div className="stat-value">{usage.total_requests_30d || 0}</div>
               </div>
               <div className="stat-card">
                 <div className="stat-label">Active Keys</div>
@@ -113,11 +72,11 @@ const DeveloperPlatformDashboard = () => {
               </div>
               <div className="stat-card">
                 <div className="stat-label">Rate Limit</div>
-                <div className="stat-value">{usageStats.rate_limit || 'N/A'}</div>
+                <div className="stat-value">{usage.rate_limit || 'N/A'}</div>
               </div>
               <div className="stat-card">
                 <div className="stat-label">Remaining Quota</div>
-                <div className="stat-value">{usageStats.remaining_quota || 'Unlimited'}</div>
+                <div className="stat-value">{usage.remaining_quota || 'Unlimited'}</div>
               </div>
             </div>
           </div>
@@ -134,7 +93,7 @@ const DeveloperPlatformDashboard = () => {
               onChange={(e) => setNewKeyName(e.target.value)}
               className="form-input"
             />
-            <button onClick={createApiKey} disabled={loading || !newKeyName} className="create-button">
+            <button onClick={handleCreateKey} disabled={loading || !newKeyName} className="create-button">
               Create Key
             </button>
           </div>
@@ -165,7 +124,7 @@ const DeveloperPlatformDashboard = () => {
                   </div>
                   {key.status === 'active' && (
                     <button
-                      onClick={() => revokeApiKey(key.api_key_id)}
+                      onClick={() => handleRevokeKey(key.api_key_id)}
                       disabled={loading}
                       className="revoke-button"
                     >

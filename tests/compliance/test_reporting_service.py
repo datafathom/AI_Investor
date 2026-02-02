@@ -4,7 +4,7 @@ Comprehensive test coverage for automated report generation and regulatory filin
 """
 
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.compliance.reporting_service import ReportingService
 from models.compliance import ComplianceReport
@@ -24,8 +24,8 @@ async def test_generate_compliance_report(service):
     service.compliance_engine.get_violations = AsyncMock(return_value=[])
     service._save_report = AsyncMock()
     
-    start_date = datetime(2024, 1, 1)
-    end_date = datetime(2024, 12, 31)
+    start_date = datetime(2024, 1, 1, tzinfo=timezone.utc)
+    end_date = datetime(2024, 12, 31, tzinfo=timezone.utc)
     
     result = await service.generate_compliance_report(
         user_id="user_123",
@@ -51,7 +51,7 @@ async def test_generate_regulatory_filing(service):
     result = await service.generate_regulatory_filing(
         user_id="user_123",
         filing_type="sec_form_13f",
-        period_end=datetime(2024, 12, 31)
+        period_end=datetime(2024, 12, 31, tzinfo=timezone.utc)
     )
     
     assert result is not None

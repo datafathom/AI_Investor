@@ -4,7 +4,7 @@ Comprehensive test coverage for expense tracking and categorization
 """
 
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.budgeting.expense_tracking_service import ExpenseTrackingService
 from models.budgeting import Expense, ExpenseCategory
@@ -27,7 +27,8 @@ async def test_add_expense(service):
         user_id="user_123",
         amount=50.0,
         merchant="Restaurant",
-        date=datetime.utcnow()
+        description="Dinner",
+        date=datetime.now(timezone.utc)
     )
     
     assert result is not None
@@ -40,8 +41,8 @@ async def test_add_expense(service):
 async def test_get_spending_insights(service):
     """Test getting spending insights."""
     service._get_expenses = AsyncMock(return_value=[
-        Expense(expense_id="1", user_id="user_123", amount=50.0, category=ExpenseCategory.FOOD, date=datetime.utcnow()),
-        Expense(expense_id="2", user_id="user_123", amount=100.0, category=ExpenseCategory.TRANSPORTATION, date=datetime.utcnow()),
+        Expense(expense_id="1", user_id="user_123", amount=50.0, category=ExpenseCategory.FOOD, date=datetime.now(timezone.utc), description="Lunch"),
+        Expense(expense_id="2", user_id="user_123", amount=100.0, category=ExpenseCategory.TRANSPORTATION, date=datetime.now(timezone.utc), description="Gas"),
     ])
     
     result = await service.get_spending_insights("user_123")

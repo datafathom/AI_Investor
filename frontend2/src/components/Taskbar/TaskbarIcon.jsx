@@ -18,8 +18,8 @@ const TaskbarIcon = ({ window, isActive }) => {
     const closeWindow = useWindowStore((state) => state.closeWindow);
     
     // PERFORMANCE: Hover preview disabled - uncomment to re-enable
-    // const [showPreview, setShowPreview] = useState(false);
-    // const hoverTimer = useRef(null);
+    const [showPreview, setShowPreview] = useState(false);
+    const hoverTimer = useRef(null);
     
     const handleClick = () => {
         if (window.isMinimized) {
@@ -35,7 +35,7 @@ const TaskbarIcon = ({ window, isActive }) => {
     // const handleMouseEnter = () => {
     //     hoverTimer.current = setTimeout(() => {
     //         setShowPreview(true);
-    //     }, 300);
+    //     }, 400); // 400ms debounce to avoid accidental triggers
     // };
 
     // const handleMouseLeave = () => {
@@ -49,11 +49,11 @@ const TaskbarIcon = ({ window, isActive }) => {
     };
 
     // PERFORMANCE: Cleanup disabled since hover is disabled
-    // useEffect(() => {
-    //     return () => {
-    //         if (hoverTimer.current) clearTimeout(hoverTimer.current);
-    //     };
-    // }, []);
+    useEffect(() => {
+        return () => {
+            if (hoverTimer.current) clearTimeout(hoverTimer.current);
+        };
+    }, []);
     
     // Risk color based on window state
     const riskColor = window.risk === 'high' ? '#ff4757' : window.risk === 'medium' ? '#ffc107' : '#00ff88';
@@ -69,7 +69,6 @@ const TaskbarIcon = ({ window, isActive }) => {
             // PERFORMANCE: Hover handlers disabled
             // onMouseEnter={handleMouseEnter}
             // onMouseLeave={handleMouseLeave}
-            title={window.title} // Use native tooltip instead of heavy preview
         >
             <div className="icon-indicator" style={{ backgroundColor: riskColor }}></div>
             <span className="icon-label">{window.title.substring(0, 2).toUpperCase()}</span>
@@ -81,9 +80,9 @@ const TaskbarIcon = ({ window, isActive }) => {
             {/* PERFORMANCE: Hover preview disabled - heavy DOM causing frame drops
              * TODO: Re-enable after implementing virtualization or lazy loading
              * See: TechDebt2.txt
-             * 
-            {showPreview && (
-                <div className="hover-preview">
+             */}
+            {/* {showPreview && (
+                <div className="hover-preview glass-premium">
                     <div className="preview-header">
                         <span className="preview-title">{window.title}</span>
                         <button 
@@ -124,11 +123,9 @@ const TaskbarIcon = ({ window, isActive }) => {
                         </span>
                     </div>
                 </div>
-            )}
-            */}
+            )} */}
         </div>
     );
 };
 
 export default React.memo(TaskbarIcon);
-

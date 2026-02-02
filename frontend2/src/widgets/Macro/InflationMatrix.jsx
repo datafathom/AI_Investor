@@ -1,5 +1,6 @@
 import React from 'react';
 import './InflationMatrix.css';
+import apiClient from '../../services/apiClient';
 
 const InflationMatrix = () => {
     const [assets, setAssets] = React.useState(null);
@@ -8,8 +9,9 @@ const InflationMatrix = () => {
     React.useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:5050/api/v1/macro/correlations');
-                const result = await response.json();
+            try {
+                const response = await apiClient.get('/macro/correlations');
+                const result = response.data;
                 if (result.success) {
                     setAssets(result.data.assets);
                     // Transform api dict to matrix array for rendering

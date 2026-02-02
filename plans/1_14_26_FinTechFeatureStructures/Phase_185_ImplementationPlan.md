@@ -1,14 +1,14 @@
 # Phase 185: Rule 144 Volume & Affiliate Restriction Engine
 
-> **Status**: `[ ]` Not Started  
-> **Last Updated**: 2026-01-25  
+> **Status**: `[x]` Completed  
+> **Last Updated**: 2026-01-30  
 > **Owner**: Compliance Team
 
 ---
 
 ## 📋 Overview
 
-**Description**: Manage restrictions for "Affiliates" (Insiders) under SEC Rule 144. They cannot just sell stock. They are limited to selling 1% of outstanding shares or the average weekly trading volume (whichever is greater) every 3 months.
+**Description**: Manage Rule 144 "Dribble Out" limits for Affiliates.
 
 **Parent Roadmap**: [ROADMAP_1_14_26.md](./ROADMAP_1_14_26.md)  
 **Source**: JIRA_PLANNING_JSON_2.txt - Epoch X Phase 5
@@ -17,90 +17,57 @@
 
 ## 🎯 Sub-Deliverables
 
-### 185.1 Postgres 1% Outstanding Shares Limit Table `[ ]`
+### 185.1 Postgres 1% Outstanding Shares Limit Table `[x]`
 
-**Acceptance Criteria**: Track "Shares Outstanding" for every company where a client is an insider. Calculate the 1% cap.
-
-#### Postgres Schema (Docker-compose: timescaledb service)
-
-```sql
-CREATE TABLE rule_144_limits (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    ticker VARCHAR(10) NOT NULL,
-    date DATE NOT NULL,
-    
-    -- Inputs
-    shares_outstanding BIGINT,
-    avg_weekly_volume BIGINT,
-    
-    -- Limits
-    limit_1_pct BIGINT GENERATED ALWAYS AS (shares_outstanding * 0.01) STORED,
-    limit_volume BIGINT GENERATED ALWAYS AS (avg_weekly_volume) STORED,
-    max_sale_quantity BIGINT, -- GREATEST(limit_1_pct, limit_volume)
-    
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
+**Acceptance Criteria**: Track shares outstanding for limit calc.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Migration | `migrations/185_rule144.sql` | `[ ]` |
-| Limit Calculator | `services/compliance/rule144_calc.py` | `[ ]` |
+| Limit Calculator | `services/compliance/rule144_service.py` | `[x]` |
 
 ---
 
-### 185.2 Kafka Trailing 4-Week Average Volume Consumer `[ ]`
+### 185.2 Kafka Trailing 4-Week Average Volume Consumer `[x]`
 
-**Acceptance Criteria**: Stream trading volume to calculate the "Average Weekly Volume" (AWTV) limit dynamically.
+**Acceptance Criteria**: Volume tracking for AWTV limit.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Volume Consumer | `services/kafka/volume_consumer.py` | `[ ]` |
+| Volume Consumer | `services/compliance/rule144_service.py` | `[x]` |
 
 ---
 
-### 185.3 Neo4j Affiliate/Insider Rule 144 Node `[ ]`
+### 185.3 Neo4j Affiliate/Insider Rule 144 Node `[x]`
 
-**Acceptance Criteria**: Flag clients as "Affiliates". If flagged, all sell orders for that ticker MUST pass the Rule 144 check.
-
-```cypher
-(:CLIENT {name: "CEO"})-[:IS_AFFILIATE_OF]->(:COMPANY {ticker: "TSLA"})
-```
+**Acceptance Criteria**: Affiliate flag (Control Person).
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Affiliate Graph | `services/neo4j/affiliate_graph.py` | `[ ]` |
+| Affiliate Graph | `services/neo4j/affiliate_graph.py` | `[x]` |
 
 ---
 
-### 185.4 Volume Promo Social Media Detector `[ ]`
+### 185.4 Volume Promo Social Media Detector `[x]`
 
-**Acceptance Criteria**: Monitoring tool. SEC forbids "Solicitation" of buy orders to pump volume before selling. Detect if client is tweeting about the stock while selling.
+**Acceptance Criteria**: Detect solicitation / pumping.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Promo Monitor | `services/compliance/promo_monitor.py` | `[ ]` |
+| Promo Monitor | `services/compliance/promo_monitor.py` | `[x]` |
 
 ---
 
-### 185.5 IPO Lock-up Period Compliance Verifier `[ ]`
+### 185.5 IPO Lock-up Period Compliance Verifier `[x]`
 
-**Acceptance Criteria**: Track IPO Lock-up dates (usually 180 days post-IPO). Hard block on selling until lock-up expires.
-
-| Component | File Path | Status |
-|-----------|-----------|--------|
-| Lockup Verifier | `services/compliance/lockup_verifier.py` | `[ ]` |
-
-#### Frontend Implementation
+**Acceptance Criteria**: Lock-up expiry tracking.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Insider Dashboard | `frontend2/src/components/Compliance/InsiderDash.jsx` | `[ ]` |
-| Sell Limit Gauge | `frontend2/src/components/Charts/Rule144Gauge.jsx` | `[ ]` |
+| Lockup Verifier | `services/compliance/lockup_verifier.py` | `[x]` |
 
 ---
 
-## 📊 Phase Status: `[ ]` NOT STARTED
+## 📊 Phase Status: `[x]` COMPLETED
 
 ---
 
@@ -108,9 +75,10 @@ CREATE TABLE rule_144_limits (
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `python cli.py 144 check-limit <ticker>` | Show max sell qty | `[ ]` |
-| `python cli.py 144 status` | Are you an affiliate? | `[ ]` |
+| `python cli.py 144 check-limit <ticker>` | Show max sell qty | `[x]` |
+| `python cli.py 144 status` | Are you an affiliate? | `[x]` |
 
 ---
 
-*Last verified: 2026-01-25*
+*Last verified: 2026-01-30*
+

@@ -50,3 +50,21 @@ class EfficiencyEngine:
             "ebitda_growth_pct": round(float(ebitda_margin_expansion), 2),
             "status": "IMPROVED" if total_opex_savings > 0 else "FLAT"
         }
+
+    def get_vintage_performance(self, vintage_year: int) -> Dict[str, Any]:
+        """
+        Phase 164.4: Vintage Year Market Cycle Tracker.
+        Heuristic returns based on historical market cycles (e.g. 2008 was a great vintage).
+        """
+        # Heuristic cycle lookup
+        cycle_data = {
+            2008: {"market_cycle": "TROUGH", "avg_moic": 3.2, "avg_irr": 28.5},
+            2014: {"market_cycle": "RECOVERY", "avg_moic": 2.1, "avg_irr": 18.2},
+            2021: {"market_cycle": "PEAK", "avg_moic": 1.4, "avg_irr": 12.0},
+            2026: {"market_cycle": "EARLY_PHASE", "avg_moic": 2.0, "avg_irr": 15.0} # System default
+        }
+        
+        stats = cycle_data.get(vintage_year, {"market_cycle": "STABLE", "avg_moic": 1.8, "avg_irr": 15.0})
+        
+        logger.info(f"PE_LOG: Vintage {vintage_year} analyzed as {stats['market_cycle']}.")
+        return stats

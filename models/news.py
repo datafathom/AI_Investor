@@ -68,3 +68,17 @@ class MarketImpact(BaseModel):
     expected_magnitude: float  # Percentage change
     confidence: float
     time_horizon: str  # "short", "medium", "long"
+
+
+class SectorSentiment(BaseModel):
+    """Aggregated sentiment analysis by sector."""
+    sector: str
+    overall_sentiment: float  # -1 to 1
+    sentiment_label: SentimentScore
+    article_count: int
+    bullish_count: int
+    bearish_count: int
+    neutral_count: int
+    confidence: float  # 0 to 1
+    velocity: float  # -1 to 1 (rate of change)
+    last_updated: datetime

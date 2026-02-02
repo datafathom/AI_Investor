@@ -4,9 +4,10 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import syncService from '../../src/services/syncService';
+import apiClient from '../../src/services/apiClient';
 
-// Mock fetch
-global.fetch = vi.fn();
+// Mock apiClient
+vi.mock('../../src/services/apiClient');
 
 describe('SyncService', () => {
   beforeEach(() => {
@@ -33,7 +34,7 @@ describe('SyncService', () => {
 
   it('should process queue when online', async () => {
     syncService.isOnline = true;
-    fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ success: true }) });
+    apiClient.request = vi.fn().mockResolvedValue({ data: { success: true } });
 
     const action = { type: 'save', url: '/api/test', method: 'POST', data: { id: 1 } };
     syncService.queueAction(action);
@@ -41,7 +42,7 @@ describe('SyncService', () => {
     // Wait for processing
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    expect(fetch).toHaveBeenCalled();
+    expect(apiClient.request).toHaveBeenCalled();
     expect(syncService.getQueueStatus().length).toBe(0);
   });
 

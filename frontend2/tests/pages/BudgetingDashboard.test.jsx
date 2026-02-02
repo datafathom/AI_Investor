@@ -5,10 +5,15 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import axios from 'axios';
+import apiClient from '../../src/services/apiClient';
 import BudgetingDashboard from '../../src/pages/BudgetingDashboard';
 
-vi.mock('axios');
+vi.mock('../../src/services/apiClient', () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+  },
+}));
 
 describe('BudgetingDashboard', () => {
   beforeEach(() => {
@@ -16,12 +21,10 @@ describe('BudgetingDashboard', () => {
   });
 
   it('should render dashboard', async () => {
-    axios.get.mockResolvedValue({ data: { data: {} } });
+    apiClient.get.mockResolvedValue({ data: { data: [] } });
     
     render(<BudgetingDashboard />);
     
-    await waitFor(() => {
-      expect(screen.getByText(/Budgeting/i)).toBeInTheDocument();
-    });
+    expect(await screen.findByRole('heading', { name: /Budgeting/i, level: 1 })).toBeInTheDocument();
   });
 });

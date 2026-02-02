@@ -76,6 +76,18 @@ class IntegrationService:
         await self._save_sync_job(job)
         
         return job
+        
+    async def get_sync_status(self, sync_job_id: str) -> Optional[SyncJob]:
+        """Get sync job status."""
+        return await self._get_sync_job(sync_job_id)
+
+    async def _get_sync_job(self, sync_job_id: str) -> Optional[SyncJob]:
+        """Internal helper for getting sync job."""
+        cache_key = f"sync_job:{sync_job_id}"
+        job_data = self.cache_service.get(cache_key)
+        if job_data:
+            return SyncJob(**job_data)
+        return None
     
     async def _save_sync_job(self, job: SyncJob):
         """Save sync job to cache."""

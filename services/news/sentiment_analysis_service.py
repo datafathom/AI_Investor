@@ -27,7 +27,7 @@ import logging
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 from models.news import (
-    NewsArticle, NewsSentiment, SentimentScore, MarketImpact
+    NewsArticle, NewsSentiment, SentimentScore, MarketImpact, SectorSentiment
 )
 from services.news.news_aggregation_service import get_news_aggregation_service
 from services.system.cache_service import get_cache_service
@@ -208,6 +208,68 @@ class SentimentAnalysisService:
             confidence=sentiment.confidence,
             time_horizon=time_horizon
         )
+
+    async def get_all_sectors_sentiment(self) -> List[SectorSentiment]:
+        """
+        Calculates sentiment for all primary market sectors.
+        """
+        sectors = [
+            "Technology", "Healthcare", "Financials", 
+            "Consumer Discretionary", "Consumer Staples", 
+            "Energy", "Utilities", "Industrials", 
+            "Materials", "Real Estate", "Communication Services"
+        ]
+        
+        results = []
+        for sector in sectors:
+            # Aggregate news for the sector (using sector name as topic)
+            articles = await self.news_service.fetch_news(symbols=[sector], limit=50)
+            
+            # Analyze each article
+            scores = []
+            bullish = 0
+            bearish = 0
+            neutral = 0
+            
+            for article in articles:
+                analyzed = await self.analyze_article_sentiment(article)
+                if analyzed.sentiment_score is not None:
+                    scores.append(analyzed.sentiment_score)
+                    if analyzed.sentiment_label in [SentimentScore.BULLISH, SentimentScore.VERY_BULLISH]:
+                        bullish += 1
+                    elif analyzed.sentiment_label in [SentimentScore.BEARISH, SentimentScore.VERY_BEARISH]:
+                        bearish += 1
+                    else:
+                        neutral += 1
+            
+            # Calculate metrics
+            avg_score = sum(scores) / len(scores) if scores else 0.0
+            confidence = min(1.0, len(scores) / 10.0)
+            
+            # Simulated velocity for demo heatmap dynamics
+            import random
+            velocity = random.uniform(-0.5, 0.5) 
+
+            label = SentimentScore.NEUTRAL
+            if avg_score > 0.3: label = SentimentScore.VERY_BULLISH
+            elif avg_score > 0.1: label = SentimentScore.BULLISH
+            elif avg_score < -0.3: label = SentimentScore.VERY_BEARISH
+            elif avg_score < -0.1: label = SentimentScore.BEARISH
+
+            results.append(SectorSentiment(
+                sector=sector,
+                overall_sentiment=avg_score,
+                sentiment_label=label,
+                article_count=len(articles),
+                bullish_count=bullish,
+                bearish_count=bearish,
+                neutral_count=neutral,
+                confidence=confidence,
+                velocity=velocity,
+                last_updated=datetime.utcnow()
+            ))
+            
+        return results
 
 
 # Singleton instance

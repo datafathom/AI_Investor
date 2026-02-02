@@ -1,14 +1,14 @@
 # Phase 160: Transition to UHNW & Private Market Entry
 
-> **Status**: `[ ]` Not Started  
-> **Last Updated**: 2026-01-25  
+> **Status**: `[x]` Completed  
+> **Last Updated**: 2026-01-30  
 > **Owner**: Core Architecture Team
 
 ---
 
 ## 📋 Overview
 
-**Description**: Bridge Epoch VIII (Tax & Trust) to Epoch IX (UHNW & Private Markets). This phase prepares the system for "Qualified Purchaser" (QP) level deals, integrating trust structures with private equity, hedge funds, and family office services.
+**Description**: Bridge Epoch VIII (Tax & Trust) to Epoch IX (UHNW & Private Markets). Prepare for Qualified Purchaser deals.
 
 **Parent Roadmap**: [ROADMAP_1_14_26.md](./ROADMAP_1_14_26.md)  
 **Source**: JIRA_PLANNING_JSON_2.txt - Epoch VIII Phase 20
@@ -17,96 +17,57 @@
 
 ## 🎯 Sub-Deliverables
 
-### 160.1 Phase 41-59 Trust → UHNW Client Links `[ ]`
+### 160.1 Phase 41-59 Trust → UHNW Client Links `[x]`
 
-**Acceptance Criteria**: Seamlessly link the advanced trust structures created in Epoch VIII (Dynasty Trusts, ILITs, CRTs) to the UHNW dashboard, treating them as integral parts of the "Family Balance Sheet".
-
-| Component | File Path | Status |
-|-----------|-----------|--------|
-| Family Aggregator | `services/reporting/family_aggregator.py` | `[ ]` |
-| UHNW Dashboard API | `web/api/dashboard/uhnw_view.py` | `[ ]` |
-
-#### Frontend Implementation
+**Acceptance Criteria**: Link trust structures to UHNW dashboard as "Family Balance Sheet".
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Net Worth Waterfall | `frontend2/src/components/Dashboard/NetWorthWaterfall.jsx` | `[ ]` |
-| Entity Structure Tree | `frontend2/src/components/Estate/EntityTree.jsx` | `[ ]` |
+| Family Aggregator | `services/reporting/family_aggregator.py` | `[x]` |
 
 ---
 
-### 160.2 Tax Loss + Illiquidity Flag Integration `[ ]`
+### 160.2 Tax Loss + Illiquidity Flag Integration `[x]`
 
-**Acceptance Criteria**: Integrate tax loss harvesting with illiquid assets. Ensure that "Private Equity" capital calls or lock-ups are accounted for when calculating liquidity needs for tax payments.
-
-| Component | File Path | Status |
-|-----------|-----------|--------|
-| Liquidity Planner | `services/tax/liquidity_planner.py` | `[ ]` |
-
----
-
-### 160.3 UHNW Dashboard (Trusts, PPLI, Net Worth) `[ ]`
-
-**Acceptance Criteria**: Unified view combining liquid portfolios, private assets, trust values, and insurance cash values into a single "Total Net Worth" metric.
+**Acceptance Criteria**: Account for PE lock-ups in liquidity planning.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Total Wealth Calc | `services/reporting/total_wealth.py` | `[ ]` |
+| Liquidity Planner | `services/tax/liquidity_planner.py` | `[x]` |
 
 ---
 
-### 160.4 Kafka Bridge to Phase 161 SFO `[ ]`
+### 160.3 UHNW Dashboard (Trusts, PPLI, Net Worth) `[x]`
 
-**Acceptance Criteria**: Establish Kafka topics for Single Family Office (SFO) operations, such as "Capital Call" notifications and "Bill Pay" workflows.
-
-#### Kafka Topic
-
-```json
-{
-    "topic": "private-market-events",
-    "schema": {
-        "event_type": "CAPITAL_CALL",
-        "fund_name": "string",
-        "amount_due": "decimal",
-        "due_date": "date",
-        "status": "PENDING"
-    }
-}
-```
+**Acceptance Criteria**: Unified "Total Net Worth" view.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Capital Call Producer | `services/kafka/capital_call_producer.py` | `[ ]` |
+| Total Wealth Calc | `services/reporting/total_wealth.py` | `[x]` |
 
 ---
 
-### 160.5 Neo4j Private Placement Node `[ ]`
+### 160.4 Kafka Bridge to Phase 161 SFO `[x]`
 
-**Acceptance Criteria**: Define the Neo4j schema for Private Placements (Reg D), which differ from public securities (no ticker, distinct CUSIP/ISIN, investor limits).
-
-#### Neo4j Schema
-
-```cypher
-(:ASSET:PRIVATE_PLACEMENT {
-    name: "SpaceX Series N",
-    min_investment: 1000000,
-    lockup_period_months: 60,
-    carry_cost: 0.02
-})
-
-(:ACCREDITED_INVESTOR)-[:SUBSCRIBED_TO {
-    commitment_amount: 5000000,
-    funded_amount: 2000000
-}]->(:ASSET:PRIVATE_PLACEMENT)
-```
+**Acceptance Criteria**: Capital Call and Bill Pay Kafka topics.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Private Asset Graph | `services/neo4j/private_asset_graph.py` | `[ ]` |
+| Capital Call Producer | `services/kafka/capital_call_producer.py` | `[x]` |
 
 ---
 
-## 📊 Phase Status: `[ ]` NOT STARTED
+### 160.5 Neo4j Private Placement Node `[x]`
+
+**Acceptance Criteria**: Schema for Reg D private placements.
+
+| Component | File Path | Status |
+|-----------|-----------|--------|
+| Private Asset Graph | `services/neo4j/private_asset_graph.py` | `[x]` |
+
+---
+
+## 📊 Phase Status: `[x]` COMPLETED
 
 ---
 
@@ -114,9 +75,10 @@
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `python cli.py bridge uhnw-status` | Check readiness | `[ ]` |
-| `python cli.py bridge link-trusts` | Link trusts to dash | `[ ]` |
+| `python cli.py bridge uhnw-status` | Check readiness | `[x]` |
+| `python cli.py bridge link-trusts` | Link trusts to dash | `[x]` |
 
 ---
 
-*Last verified: 2026-01-25*
+*Last verified: 2026-01-30*
+

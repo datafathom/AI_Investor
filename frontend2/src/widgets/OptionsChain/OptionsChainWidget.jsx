@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import './OptionsChain.css';
 import useSymbolLink from '../../hooks/useSymbolLink';
+import apiClient from '../../services/apiClient';
 
 const OptionsChainWidget = ({ linkingGroup = 'none' }) => {
   const { currentSymbol } = useSymbolLink(linkingGroup);
@@ -13,10 +14,9 @@ const OptionsChainWidget = ({ linkingGroup = 'none' }) => {
       if (!currentSymbol) return;
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:5050/api/v1/market/options/${currentSymbol}`);
-        if (!response.ok) throw new Error('Failed to fetch options chain');
-        const data = await response.json();
-        setChain(data);
+      try {
+        const response = await apiClient.get(`/market/options/${currentSymbol}`);
+        setChain(response.data);
         setError(null);
       } catch (err) {
         setError(err.message);

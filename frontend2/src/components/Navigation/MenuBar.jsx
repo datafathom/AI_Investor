@@ -565,6 +565,13 @@ export default function MenuBar({
       return;
     }
 
+    if (action === "logout" && onLogout) {
+      onLogout();
+    }
+    if (action === "signin" && onSignin) {
+      onSignin();
+    }
+
     if (onMenuAction) {
       onMenuAction(action);
     }

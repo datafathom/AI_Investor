@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,9 +14,9 @@ const TaxBitWidget = () => {
     const fetchAnalysis = async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/v1/tax/harvesting/opportunities?mock=true');
-            if (!res.ok) throw new Error('Failed to fetch tax data');
-            const jsonData = await res.json();
+        try {
+            const response = await apiClient.get('/tax/harvesting/opportunities', { params: { mock: true } });
+            const jsonData = response.data;
             setData(jsonData);
         } catch (error) {
             console.error("Error fetching TaxBit data:", error);

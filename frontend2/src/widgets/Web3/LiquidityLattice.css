@@ -1,0 +1,89 @@
+/**
+ * ==============================================================================
+ * LiquidityLattice Styling
+ * ==============================================================================
+ */
+
+.liquidity-lattice {
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    background: rgba(13, 17, 23, 0.4);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.liquidity-lattice__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.liquidity-lattice__chart {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.liquidity-lattice__row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 12px;
+}
+
+.liquidity-lattice__label {
+    width: 45px;
+    font-size: 8px;
+    font-family: var(--font-mono);
+    text-align: right;
+}
+
+.liquidity-lattice__bar-container {
+    flex: 1;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.02);
+    position: relative;
+}
+
+.liquidity-lattice__bar {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.liquidity-lattice__overlay {
+    position: absolute;
+    bottom: 50px;
+    right: 20px;
+    padding: 0.5rem 1rem;
+    background: rgba(13, 17, 23, 0.8);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+.liquidity-lattice__footer {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Hide scrollbar */
+.liquidity-lattice__chart::-webkit-scrollbar {
+    display: none;
+}
+.liquidity-lattice__chart {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

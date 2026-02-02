@@ -4,6 +4,7 @@ import sys
 import time
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+from services.neo4j.neo4j_service import neo4j_service
 
 # Default to the local dev database URL if not set
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://investor_user:investor_password@localhost:5432/investor_db")
@@ -60,6 +61,21 @@ def run_seed_db():
                 print(f"   WARN Failed to update admin password: {e}")
 
         conn.close()
+        print("OK Postgres seeding complete.")
+        
+        # 2. Neo4j Seeding
+        print("🌱 Seeding Neo4j...")
+        try:
+            # Create default advisor node
+            query = """
+            MERGE (a:ADVISOR {id: 'demo-advisor'})
+            SET a.name = 'Demo Advisor', a.role = 'advisor', a.is_active = TRUE
+            """
+            neo4j_service.execute_query(query)
+            print("   OK Neo4j 'demo-advisor' node created/verified.")
+        except Exception as e:
+            print(f"   ERROR Neo4j seeding failed: {e}")
+
         print("OK Database seeding complete.")
         
     except Exception as e:

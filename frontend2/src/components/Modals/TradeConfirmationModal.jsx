@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import apiClient from '../../services/apiClient';
 import { Shield, AlertTriangle, X, Check, Info } from 'lucide-react';
 import './TradeConfirmationModal.css';
 
@@ -20,13 +21,8 @@ const TradeConfirmationModal = ({
     const fetchRiskAnalysis = async () => {
         setLoading(true);
         try {
-            const response = await fetch('/api/v1/risk/preview', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(tradeDetails)
-            });
-            const data = await response.json();
-            setRiskAnalysis(data);
+            const response = await apiClient.post('/risk/preview', tradeDetails);
+            setRiskAnalysis(response.data);
         } catch (error) {
             console.error('Risk analysis failed:', error);
         } finally {

@@ -1,43 +1,24 @@
-const API_URL = '/api/auth';
+import apiClient from '../services/apiClient';
 
 export const authService = {
     async register(email, password) {
-        const response = await fetch(`${API_URL}/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
-        });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Registration failed');
-        return data;
+        // apiClient autoconfigures base URL (e.g. /api/v1)
+        const response = await apiClient.post('/auth/register', { email, password });
+        return response.data;
     },
 
     async login(email, password) {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
-
+        // apiClient handles timeouts and errors
         try {
-            const response = await fetch(`${API_URL}/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-                signal: controller.signal
-            });
-            clearTimeout(timeoutId);
-
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error || 'Login failed');
-
+            const data = await apiClient.post('/auth/login', { email, password });
+            
             // Save to localStorage
             localStorage.setItem('widget_os_token', data.token);
             localStorage.setItem('widget_os_user', JSON.stringify(data.user));
 
             return data;
         } catch (error) {
-            clearTimeout(timeoutId);
-            if (error.name === 'AbortError') {
-                throw new Error('Login request timed out. Check backend connection.');
-            }
+            console.error('Login error:', error);
             throw error;
         }
     },
@@ -46,6 +27,9 @@ export const authService = {
         localStorage.removeItem('widget_os_token');
         localStorage.removeItem('widget_os_user');
         localStorage.removeItem('widget_os_tenant_id');
+        // Optional: Call logout endpoint if exists
+        // apiClient.post('/auth/logout').catch(() => {});
+        window.location.href = '/login';
     },
 
     setTenantId(tenantId) {
@@ -69,7 +53,8 @@ export const authService = {
         return !!this.getToken();
     },
 
-    // Helper to add auth headers to fetch requests
+    // Legacy helper kept for backward compatibility if any non-apiClient calls remain temporarily
+    // Ideally this should be removed once full migration is complete
     getAuthHeaders() {
         const token = this.getToken();
         const tenantId = this.getTenantId();
@@ -78,28 +63,6 @@ export const authService = {
             'X-Tenant-ID': tenantId,
             ...(token && { 'Authorization': `Bearer ${token}` })
         };
-    },
-
-    // Wrapper for authenticated fetch requests
-    async authenticatedFetch(url, options = {}) {
-        const headers = {
-            ...this.getAuthHeaders(),
-            ...options.headers
-        };
-
-        const response = await fetch(url, {
-            ...options,
-            headers
-        });
-
-        // If unauthorized, clear auth and redirect to login
-        if (response.status === 401) {
-            this.logout();
-            window.location.reload();
-            throw new Error('Session expired. Please log in again.');
-        }
-
-        return response;
     },
 
     setSession(token, user) {

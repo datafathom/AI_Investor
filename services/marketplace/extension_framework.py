@@ -24,7 +24,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from models.marketplace import Extension, ExtensionStatus
 from services.system.cache_service import get_cache_service
@@ -72,8 +72,8 @@ class ExtensionFramework:
             version=version,
             category=category,
             status=ExtensionStatus.DRAFT,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Save extension
@@ -83,20 +83,38 @@ class ExtensionFramework:
     
     async def validate_extension(
         self,
-        extension_id: str
-    ) -> bool:
+        extension: Extension
+    ) -> Dict:
         """
         Validate extension for security.
         
         Args:
-            extension_id: Extension identifier
+            extension: Extension object
             
         Returns:
-            True if valid, False otherwise
+            Validation result dictionary
         """
-        # In production, would perform security scanning
-        logger.info(f"Validating extension {extension_id}")
-        return True
+        logger.info(f"Validating extension {extension.extension_id}")
+        
+        security_check = await self._validate_security(extension)
+        code_check = await self._validate_code(extension)
+        
+        is_valid = security_check.get('valid', False) and code_check.get('valid', False)
+        
+        return {
+            'valid': is_valid,
+            'security': security_check,
+            'code': code_check,
+            'timestamp': datetime.now(timezone.utc).isoformat()
+        }
+
+    async def _validate_security(self, extension: Extension) -> Dict:
+        """Placeholder security validation."""
+        return {'valid': True, 'errors': []}
+
+    async def _validate_code(self, extension: Extension) -> Dict:
+        """Placeholder code validation."""
+        return {'valid': True, 'errors': []}
     
     async def _save_extension(self, extension: Extension):
         """Save extension to cache."""

@@ -7,6 +7,7 @@
  */
 
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useIntegrationStore = create((set, get) => ({
     availableIntegrations: [],
@@ -18,9 +19,8 @@ const useIntegrationStore = create((set, get) => ({
     fetchAvailable: async () => {
         set({ loading: true, error: null });
         try {
-            const res = await fetch('/api/v1/integrations/available');
-            const data = await res.json();
-            set({ availableIntegrations: data.data || [], loading: false });
+            const res = await apiClient.get('/integrations/available');
+            set({ availableIntegrations: res.data.data || [], loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -29,9 +29,8 @@ const useIntegrationStore = create((set, get) => ({
     fetchConnected: async (userId = 'user_1') => {
         set({ loading: true, error: null });
         try {
-            const res = await fetch(`/api/v1/integrations/connected?user_id=${userId}`);
-            const data = await res.json();
-            set({ connectedIntegrations: data.data || [], loading: false });
+            const res = await apiClient.get('/integrations/connected', { params: { user_id: userId } });
+            set({ connectedIntegrations: res.data.data || [], loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -40,9 +39,8 @@ const useIntegrationStore = create((set, get) => ({
     fetchSyncHistory: async (userId = 'user_1') => {
         set({ loading: true, error: null });
         try {
-            const res = await fetch(`/api/v1/integrations/sync-history?user_id=${userId}&limit=20`);
-            const data = await res.json();
-            set({ syncHistory: data.data || [], loading: false });
+            const res = await apiClient.get('/integrations/sync-history', { params: { user_id: userId, limit: 20 } });
+            set({ syncHistory: res.data.data || [], loading: false });
         } catch (error) {
             set({ error: error.message, loading: false });
         }
@@ -51,12 +49,7 @@ const useIntegrationStore = create((set, get) => ({
     connectIntegration: async (integrationId, userId = 'user_1') => {
         set({ loading: true, error: null });
         try {
-            const res = await fetch('/api/v1/integrations/connect', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: userId, integration_id: integrationId })
-            });
-            if (!res.ok) throw new Error('Failed to connect integration');
+            await apiClient.post('/integrations/connect', { user_id: userId, integration_id: integrationId });
             await get().fetchConnected(userId);
         } catch (error) {
             set({ error: error.message, loading: false });
@@ -66,12 +59,7 @@ const useIntegrationStore = create((set, get) => ({
     syncIntegration: async (integrationId, userId = 'user_1') => {
         set({ loading: true, error: null });
         try {
-            const res = await fetch('/api/v1/integrations/sync', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ integration_id: integrationId })
-            });
-            if (!res.ok) throw new Error('Failed to sync integration');
+            await apiClient.post('/integrations/sync', { integration_id: integrationId });
             await get().fetchSyncHistory(userId);
         } catch (error) {
             set({ error: error.message, loading: false });

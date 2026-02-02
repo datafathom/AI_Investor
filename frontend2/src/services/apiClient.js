@@ -7,6 +7,7 @@
 
 import axios from 'axios';
 import { useStore } from '../store/store';
+import useHardwareStore from '../stores/hardwareStore';
 import hardwareService from './hardwareService';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5050/api/v1';
@@ -52,7 +53,13 @@ apiClient.interceptors.request.use(
     if ((isSensitive && isHighValue) || isAlwaysRequired) {
       if (config.method === 'post') {
         try {
-          const signature = await hardwareService.signTransaction(config.data);
+          // Trigger the global hardware signature flow (modal + service call)
+          const signature = await useHardwareStore.getState().requestSignature({
+            ...config.data,
+            endpoint: config.url,
+            amount: transactionAmount
+          });
+          
           config.headers['X-Hardware-Signature'] = signature;
           console.log(`[API] Hardware signature attached (amount: $${transactionAmount})`);
         } catch (err) {

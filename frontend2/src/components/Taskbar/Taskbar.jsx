@@ -13,14 +13,22 @@ import './Taskbar.css';
 
 const Taskbar = () => {
     // Optimized: Only re-render if the set of window IDs changes
-    const windowIds = useWindowStore(useShallow((state) => state.windows.map(w => w.id)));
+    const windows = useWindowStore((state) => state.windows);
     
     // Optimized: Select only what is needed from taskbar store
     const isStartMenuOpen = useTaskbarStore((state) => state.isStartMenuOpen);
     const activeWorkspace = useTaskbarStore((state) => state.activeWorkspace);
+    const isLockedDown = useTaskbarStore((state) => state.isLockedDown);
     const setWorkspace = useTaskbarStore((state) => state.setWorkspace);
     const closeStartMenu = useTaskbarStore((state) => state.closeStartMenu);
     const toggleStartMenu = useTaskbarStore((state) => state.toggleStartMenu);
+
+    // Filter windows by active workspace
+    const windowIds = useMemo(() => {
+        return windows
+            .filter(w => w.workspace === activeWorkspace)
+            .map(w => w.id);
+    }, [windows, activeWorkspace]);
     
     const handleStartClick = (e) => {
         e.stopPropagation();
@@ -28,8 +36,14 @@ const Taskbar = () => {
     };
 
     return (
-        <div className="taskbar-container" onClick={() => isStartMenuOpen && closeStartMenu()}>
+        <div className={`taskbar-container ${isLockedDown ? 'lockdown' : ''}`} onClick={() => isStartMenuOpen && closeStartMenu()}>
             <StartMenu />
+            
+            {isLockedDown && (
+                <div className="system-lockdown-overlay">
+                    <div className="lockdown-glitch">SYSTEM LOCKDOWN ACTIVE</div>
+                </div>
+            )}
 
             <div className="taskbar-left-section">
                 <div 
@@ -59,8 +73,6 @@ const Taskbar = () => {
             
             <div className="taskbar-right-section">
                 <FPSCounter />
-                <AgentMoodIcons />
-                <SystemHealthMeters />
                 <KillSwitch />
                 <TaskbarClock />
             </div>

@@ -7,6 +7,7 @@
  */
 
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useBankStore = create((set, get) => ({
     accounts: [],
@@ -18,10 +19,8 @@ const useBankStore = create((set, get) => ({
     fetchLinkToken: async (mock = true) => {
         set({ loading: true, error: null });
         try {
-            const response = await fetch(`/api/v1/bank/plaid/link-token?mock=${mock}`, { method: 'POST' });
-            if (!response.ok) throw new Error('Failed to create link token');
-            const data = await response.json();
-            set({ linkToken: data.link_token, loading: false });
+            const response = await apiClient.post('/bank/plaid/link-token', null, { params: { mock } });
+            set({ linkToken: response.data.link_token, loading: false });
         } catch (error) {
             console.error('Fetch link token failed:', error);
             set({ error: error.message, loading: false });
@@ -31,13 +30,10 @@ const useBankStore = create((set, get) => ({
     exchangePublicToken: async (publicToken, mock = true) => {
         set({ loading: true, error: null });
         try {
-            const response = await fetch(`/api/v1/bank/plaid/exchange-token?mock=${mock}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ public_token: publicToken })
-            });
-
-            if (!response.ok) throw new Error('Failed to exchange token');
+            await apiClient.post('/bank/plaid/exchange-token', 
+                { public_token: publicToken },
+                { params: { mock } }
+            );
             
             // On success, fetch accounts
             await get().fetchAccounts(mock);
@@ -52,10 +48,8 @@ const useBankStore = create((set, get) => ({
     fetchAccounts: async (mock = true) => {
         set({ loading: true });
         try {
-            const response = await fetch(`/api/v1/bank/accounts?mock=${mock}`);
-            if (!response.ok) throw new Error('Failed to fetch accounts');
-            const data = await response.json();
-            set({ accounts: data, loading: false });
+            const response = await apiClient.get('/bank/accounts', { params: { mock } });
+            set({ accounts: response.data, loading: false });
         } catch (error) {
             console.error('Fetch accounts failed:', error);
             set({ error: error.message, loading: false });

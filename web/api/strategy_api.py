@@ -70,7 +70,7 @@ async def create_strategy():
         
         return jsonify({
             'success': True,
-            'data': strategy.dict()
+            'data': strategy.model_dump()
         })
         
     except Exception as e:
@@ -98,7 +98,7 @@ async def get_strategy(strategy_id: str):
         
         return jsonify({
             'success': True,
-            'data': strategy.dict()
+            'data': strategy.model_dump()
         })
         
     except Exception as e:
@@ -144,7 +144,7 @@ async def add_rule(strategy_id: str):
         
         return jsonify({
             'success': True,
-            'data': rule.dict()
+            'data': rule.model_dump()
         })
         
     except Exception as e:
@@ -222,7 +222,7 @@ async def start_strategy(strategy_id: str):
         
         return jsonify({
             'success': True,
-            'data': strategy.dict()
+            'data': strategy.model_dump()
         })
         
     except Exception as e:
@@ -244,7 +244,7 @@ async def stop_strategy(strategy_id: str):
         
         return jsonify({
             'success': True,
-            'data': strategy.dict()
+            'data': strategy.model_dump()
         })
         
     except Exception as e:
@@ -266,7 +266,7 @@ async def pause_strategy(strategy_id: str):
         
         return jsonify({
             'success': True,
-            'data': strategy.dict()
+            'data': strategy.model_dump()
         })
         
     except Exception as e:
@@ -288,11 +288,32 @@ async def get_strategy_performance(strategy_id: str):
         
         return jsonify({
             'success': True,
-            'data': performance.dict()
+            'data': performance.model_dump()
         })
         
     except Exception as e:
         logger.error(f"Error getting performance: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@strategy_bp.route('/<strategy_id>/drift', methods=['GET'])
+async def get_strategy_drift(strategy_id: str):
+    """
+    Get model drift metrics for a strategy.
+    """
+    try:
+        service = get_strategy_execution_service()
+        drift = await service.calculate_model_drift(strategy_id)
+        
+        return jsonify({
+            'success': True,
+            'data': drift.model_dump()
+        })
+    except Exception as e:
+        logger.error(f"Error getting drift: {e}")
         return jsonify({
             'success': False,
             'error': str(e)

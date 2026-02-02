@@ -1,12 +1,7 @@
-"""
-Tests for Paper Trading API Endpoints
-Phase 14: Paper Trading & Simulation
-"""
-
 import pytest
 from unittest.mock import AsyncMock, patch
 from flask import Flask
-from datetime import datetime
+from datetime import datetime, timezone
 from web.api.paper_trading_api import paper_trading_bp, simulation_bp
 
 
@@ -44,17 +39,20 @@ def mock_simulation_service():
         yield service
 
 
-@pytest.mark.asyncio
-async def test_create_virtual_portfolio_success(client, mock_paper_trading_service):
+def test_create_virtual_portfolio_success(client, mock_paper_trading_service):
     """Test successful virtual portfolio creation."""
-    from models.trading import VirtualPortfolio
+    from models.paper_trading import VirtualPortfolio
     
     mock_portfolio = VirtualPortfolio(
         portfolio_id='portfolio_1',
         user_id='user_1',
         portfolio_name='Paper Trading Portfolio',
-        cash_balance=100000.0,
-        positions={}
+        initial_cash=100000.0,
+        current_cash=100000.0,
+        total_value=100000.0,
+        positions={},
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     mock_paper_trading_service.create_virtual_portfolio.return_value = mock_portfolio
     
@@ -71,8 +69,7 @@ async def test_create_virtual_portfolio_success(client, mock_paper_trading_servi
     assert data['data']['portfolio_id'] == 'portfolio_1'
 
 
-@pytest.mark.asyncio
-async def test_create_virtual_portfolio_missing_user_id(client):
+def test_create_virtual_portfolio_missing_user_id(client):
     """Test portfolio creation without user_id."""
     response = client.post('/api/paper-trading/portfolio/create',
                           json={'portfolio_name': 'Test'})
@@ -82,19 +79,22 @@ async def test_create_virtual_portfolio_missing_user_id(client):
     assert data['success'] is False
 
 
-@pytest.mark.asyncio
-async def test_get_portfolio_success(client, mock_paper_trading_service):
+def test_get_portfolio_success(client, mock_paper_trading_service):
     """Test successful portfolio retrieval."""
-    from models.trading import VirtualPortfolio
+    from models.paper_trading import VirtualPortfolio
     
     mock_portfolio = VirtualPortfolio(
         portfolio_id='portfolio_1',
         user_id='user_1',
         portfolio_name='Paper Trading Portfolio',
-        cash_balance=100000.0,
-        positions={}
+        initial_cash=100000.0,
+        current_cash=100000.0,
+        total_value=100000.0,
+        positions={},
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
-    mock_paper_trading_service.get_virtual_portfolio.return_value = mock_portfolio
+    mock_paper_trading_service._get_portfolio.return_value = mock_portfolio
     
     response = client.get('/api/paper-trading/portfolio/portfolio_1')
     
@@ -103,19 +103,22 @@ async def test_get_portfolio_success(client, mock_paper_trading_service):
     assert data['success'] is True
 
 
-@pytest.mark.asyncio
-async def test_execute_paper_order_success(client, mock_paper_trading_service):
+def test_execute_paper_order_success(client, mock_paper_trading_service):
     """Test successful paper order execution."""
-    from models.trading import PaperOrder, PaperOrderExecution
+    from models.paper_trading import PaperOrder
     
-    mock_execution = PaperOrderExecution(
+    mock_order = PaperOrder(
         order_id='order_1',
-        portfolio_id='portfolio_1',
-        executed_at=datetime.now(),
-        fill_price=150.0,
-        quantity=10
+        user_id='user_1',
+        symbol='AAPL',
+        quantity=10,
+        order_type='market',
+        status='filled',
+        filled_price=150.0,
+        filled_quantity=10,
+        created_date=datetime.now(timezone.utc)
     )
-    mock_paper_trading_service.execute_paper_order.return_value = mock_execution
+    mock_paper_trading_service.execute_paper_order.return_value = mock_order
     
     order_data = {
         'portfolio_id': 'portfolio_1',
@@ -132,17 +135,14 @@ async def test_execute_paper_order_success(client, mock_paper_trading_service):
     assert data['success'] is True
 
 
-@pytest.mark.asyncio
-async def test_get_performance_success(client, mock_paper_trading_service):
+def test_get_performance_success(client, mock_paper_trading_service):
     """Test successful performance retrieval."""
-    from models.trading import PortfolioPerformance
-    
-    mock_performance = PortfolioPerformance(
-        portfolio_id='portfolio_1',
-        total_return=0.15,
-        sharpe_ratio=1.5,
-        max_drawdown=0.05
-    )
+    # API returns a dict directly from service
+    mock_performance = {
+        'total_return': 0.15,
+        'sharpe_ratio': 1.5,
+        'max_drawdown': 0.05
+    }
     mock_paper_trading_service.get_portfolio_performance.return_value = mock_performance
     
     response = client.get('/api/paper-trading/portfolio/portfolio_1/performance')
@@ -153,24 +153,28 @@ async def test_get_performance_success(client, mock_paper_trading_service):
     assert data['data']['total_return'] == 0.15
 
 
-@pytest.mark.asyncio
-async def test_run_simulation_success(client, mock_simulation_service):
+def test_run_simulation_success(client, mock_simulation_service):
     """Test successful simulation run."""
-    from models.trading import SimulationResult
+    from models.paper_trading import SimulationResult
     
     mock_result = SimulationResult(
         simulation_id='sim_1',
-        strategy_id='strategy_1',
-        start_date=datetime(2024, 1, 1),
-        end_date=datetime(2024, 12, 31),
+        strategy_name='strategy_1',
+        start_date=datetime(2024, 1, 1, tzinfo=timezone.utc),
+        end_date=datetime(2024, 12, 31, tzinfo=timezone.utc),
+        initial_capital=100000.0,
+        final_capital=120000.0,
         total_return=0.20,
-        sharpe_ratio=1.8
+        sharpe_ratio=1.8,
+        max_drawdown=0.05,
+        win_rate=0.6,
+        trades=[]
     )
     mock_simulation_service.run_historical_simulation.return_value = mock_result
     
     response = client.post('/api/simulation/run',
                           json={
-                              'strategy_id': 'strategy_1',
+                              'strategy_name': 'strategy_1',
                               'start_date': '2024-01-01',
                               'end_date': '2024-12-31'
                           })

@@ -1,11 +1,44 @@
 
 import logging
 from typing import List, Dict, Any, Optional
+from datetime import datetime
+from enum import Enum
+from pydantic import BaseModel
 from services.system.secret_manager import get_secret_manager
 
 from services.crypto.ethereum_client import get_eth_client
 
 logger = logging.getLogger(__name__)
+
+class Chain(str, Enum):
+    ETHEREUM = "ethereum"
+    SOLANA = "solana"
+    BITCOIN = "bitcoin"
+    POLYGON = "polygon"
+
+class WalletType(str, Enum):
+    METAMASK = "metamask"
+    PHANTOM = "phantom"
+    LEDGER = "ledger"
+
+class Balance(BaseModel):
+    token: str
+    chain: Chain
+    amount: float
+    usd_value: float
+    price: float = 0.0
+
+class CryptoPortfolio(BaseModel):
+    user_id: str
+    total_usd_value: float
+    balances: List[Balance]
+    wallets: List[str]
+    last_updated: datetime
+
+class ConnectionStatus(BaseModel):
+    connected: bool
+    wallet_address: Optional[str] = None
+    chain: Optional[Chain] = None
 
 class WalletService:
     """
@@ -29,10 +62,30 @@ class WalletService:
         self._is_simulated = True
 
 
-    async def get_wallet_balance(self, address: str, chain: str) -> Any:
+    async def get_wallet_balance(self, address: str, chain: str) -> Optional[Balance]:
         """Get balance for a single address."""
+        # For simulation, return a mock Balance
+        if self._is_simulated:
+             return Balance(
+                 token="ETH" if chain == "ethereum" else "SOL",
+                 chain=Chain(chain),
+                 amount=1.5,
+                 usd_value=3500.00,
+                 price=2333.33
+             )
+        
         res = await self.get_wallet_balances([{"address": address, "chain": chain}])
-        return res[0] if res else None
+        if res:
+            # Convert dict to Balance if needed, but get_wallet_balances returns dicts
+            r = res[0]
+            return Balance(
+                token=r.get("symbol", ""),
+                chain=Chain(chain),
+                amount=r.get("balance", 0.0),
+                usd_value=r.get("value_usd", 0.0),
+                price=0.0
+            ) 
+        return None
     
     def validate_wallet_address(self, address: str, chain: str) -> bool:
         """
@@ -84,35 +137,26 @@ class WalletService:
             "tokens_updated": 0
         }
 
-    async def get_aggregated_portfolio(self, user_id: str) -> Any:
+    async def get_aggregated_portfolio(self, user_id: str) -> CryptoPortfolio:
         """Mock implementation of aggregated portfolio."""
-        from pydantic import BaseModel
-        from datetime import datetime
-        
-        class MockBalance(BaseModel):
-            token: str
-            chain: Any
-            amount: float
-            usd_value: float
-            price: float
-            
-        class MockPortfolio(BaseModel):
-            user_id: str
-            total_usd_value: float
-            balances: List[MockBalance]
-            wallets: List[str]
-            last_updated: datetime
-
-        return MockPortfolio(
+        return CryptoPortfolio(
             user_id=user_id,
             total_usd_value=5000.0,
             balances=[
-                MockBalance(token="ETH", chain=type('obj', (object,), {'value': 'ethereum'}), amount=1.2, usd_value=3000.0, price=2500.0),
-                MockBalance(token="SOL", chain=type('obj', (object,), {'value': 'solana'}), amount=20.0, usd_value=2000.0, price=100.0)
+                Balance(token="ETH", chain=Chain.ETHEREUM, amount=1.2, usd_value=3000.0, price=2500.0),
+                Balance(token="SOL", chain=Chain.SOLANA, amount=20.0, usd_value=2000.0, price=100.0)
             ],
             wallets=["0x123...", "789..."],
             last_updated=datetime.utcnow()
         )
+
+    async def verify_connection(self, wallet_type: str) -> bool:
+        """
+        Verify if a wallet type can be connected.
+        """
+        # In a real implementation, this might check for browser extensions or specific protocols.
+        # For now, we mock it as True for supported wallets.
+        return wallet_type.lower() in [w.value for w in WalletType]
 
     def get_supported_chains(self) -> List[str]:
         return ["ethereum", "solana", "polygon", "bitcoin"]

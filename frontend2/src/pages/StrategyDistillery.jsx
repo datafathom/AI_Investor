@@ -9,22 +9,37 @@ import MutationRateSlider from '../widgets/Evolution/MutationRateSlider';
 import SurvivalProbabilityMeter from '../widgets/Evolution/SurvivalProbabilityMeter';
 import AncestorLineageMap from '../widgets/Evolution/AncestorLineageMap';
 import SplicingConflictResolver from '../widgets/Evolution/SplicingConflictResolver';
+import AgentHallOfFame from '../widgets/Evolution/AgentHallOfFame';
+import GenomicPlaybackModal from '../components/Modals/GenomicPlaybackModal';
 import ShadowStrategyPanel from '../widgets/Strategy/ShadowStrategyPanel';
 import './StrategyDistillery.css';
 
 const StrategyDistillery = () => {
   const { 
-    generation, 
-    isEvolving, 
-    initSocket, 
-    startEvolution, 
-    fitnessSurface, 
-    geneFrequencies 
+    geneFrequencies,
+    hallOfFame,
+    spliceAgents
   } = useEvolutionStore();
+
+  const [selectedAgent, setSelectedAgent] = React.useState(null);
+  const [isPlaybackOpen, setIsPlaybackOpen] = React.useState(false);
+  const [splicingParents, setSplicingParents] = React.useState({ p1: null, p2: null });
 
   useEffect(() => {
     initSocket();
   }, [initSocket]);
+
+  const handleSelectAgent = (agent) => {
+    setSelectedAgent(agent);
+    setIsPlaybackOpen(true);
+  };
+
+  const handleResolveSplicing = async (resolvedGenes) => {
+      if (splicingParents.p1 && splicingParents.p2) {
+          await spliceAgents(splicingParents.p1, splicingParents.p2, resolvedGenes);
+          setSplicingParents({ p1: null, p2: null });
+      }
+  };
 
   // Mock Active Strategy for Shadow Engine Demo
   const activeStrategy = {
@@ -94,17 +109,37 @@ const StrategyDistillery = () => {
           </div>
 
           {/* BOTTOM SECTION: Lineage & Splicing */}
-          <div className="lg:col-span-7">
-            <AncestorLineageMap />
+          <div className="lg:col-span-8">
+            <AncestorLineageMap onSelect={handleSelectAgent} />
           </div>
-          <div className="lg:col-span-5">
-            <SplicingConflictResolver />
+          <div className="lg:col-span-4">
+            <AgentHallOfFame onSelectAgent={handleSelectAgent} />
+          </div>
+
+          <div className="lg:col-span-12">
+            <div className="p-8 glass-premium rounded-3xl border border-cyan-500/10">
+                <div className="flex items-center gap-2 mb-8">
+                    <Zap className="text-cyan-400" />
+                    <h2 className="text-xl font-bold text-white uppercase italic">Active Splicing Lab</h2>
+                </div>
+                <SplicingConflictResolver 
+                    parent1={splicingParents.p1} 
+                    parent2={splicingParents.p2} 
+                    onResolve={handleResolveSplicing} 
+                />
+            </div>
           </div>
 
         </div>
         
         <div className="scroll-buffer-100" />
       </div>
+
+      <GenomicPlaybackModal 
+        isOpen={isPlaybackOpen} 
+        onClose={() => setIsPlaybackOpen(false)} 
+        agent={selectedAgent} 
+      />
     </div>
   );
 };

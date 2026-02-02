@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import apiClient from '../services/apiClient';
 import './DockerWidget.css';
 
 const STATE_COLORS = {
@@ -17,10 +18,8 @@ const DockerWidget = ({ onToast }) => {
 
     const fetchContainers = useCallback(async () => {
         try {
-            const response = await fetch('/api/docker/containers');
-            if (!response.ok) throw new Error('Failed to fetch containers');
-            const data = await response.json();
-            setContainers(data);
+            const response = await apiClient.get('/docker/containers');
+            setContainers(response.data);
             setError(null);
         } catch (err) {
             setError(err.message);
@@ -38,15 +37,20 @@ const DockerWidget = ({ onToast }) => {
     const handleAction = async (containerId, action) => {
         setActionLoading(prev => ({ ...prev, [containerId]: action }));
         try {
-            const method = action === 'remove' ? 'DELETE' : 'POST';
+            const method = action === 'remove' ? 'delete' : 'post';
             const url = action === 'remove'
-                ? `/api/docker/containers/${containerId}?force=true`
-                : `/api/docker/containers/${containerId}/${action}`;
+                ? `/docker/containers/${containerId}?force=true`
+                : `/docker/containers/${containerId}/${action}`;
 
-            const response = await fetch(url, { method });
-            const result = await response.json();
-
-            if (!response.ok) throw new Error(result.error);
+            // apiClient methods are lower case: apiClient.get, apiClient.post, apiClient.delete
+            let response;
+            if (method === 'delete') {
+                 response = await apiClient.delete(url);
+            } else {
+                 response = await apiClient.post(url);
+            }
+            
+            const result = response.data;
 
             if (onToast) onToast({ type: 'success', message: result.message });
             fetchContainers();

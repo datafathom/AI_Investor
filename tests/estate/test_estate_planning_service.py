@@ -22,8 +22,8 @@ def service():
 async def test_create_estate_plan(service):
     """Test estate plan creation."""
     beneficiaries = [
-        {'name': 'John Doe', 'relationship': 'spouse', 'allocation_pct': 0.5},
-        {'name': 'Jane Doe', 'relationship': 'child', 'allocation_pct': 0.5}
+        {'name': 'John Doe', 'relationship': 'spouse', 'allocation_percentage': 50.0},
+        {'name': 'Jane Doe', 'relationship': 'child', 'allocation_percentage': 50.0}
     ]
     service._save_estate_plan = AsyncMock()
     
@@ -45,5 +45,5 @@ async def test_calculate_estate_tax(service):
     result = await service.calculate_estate_tax(estate_value)
     
     assert result is not None
-    assert 'federal_tax' in result or hasattr(result, 'federal_tax')
-    assert result.get('federal_tax', 0) > 0  # Should have tax above exemption
+    assert 'estate_tax' in result or hasattr(result, 'estate_tax')
+    assert result.get('estate_tax', 0) > 0  # Should have tax above exemption

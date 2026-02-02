@@ -24,7 +24,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from models.compliance import ComplianceRule, ComplianceViolation, ViolationSeverity
 from services.system.cache_service import get_cache_service
@@ -66,18 +66,27 @@ class ComplianceEngine:
             # Simplified rule checking (in production, would use rule_logic)
             if await self._evaluate_rule(rule, transaction):
                 violation = ComplianceViolation(
-                    violation_id=f"violation_{user_id}_{datetime.utcnow().timestamp()}",
+                    violation_id=f"violation_{user_id}_{datetime.now(timezone.utc).timestamp()}",
                     rule_id=rule_id,
                     user_id=user_id,
                     severity=ViolationSeverity.MEDIUM,
                     description=f"Violation of {rule.rule_name}",
-                    detected_date=datetime.utcnow(),
+                    detected_date=datetime.now(timezone.utc),
                     status="open"
                 )
                 violations.append(violation)
                 await self._save_violation(violation)
         
         return violations
+
+    async def get_violations(self, user_id: str) -> List[ComplianceViolation]:
+        """Get violations for a user."""
+        # In production, query DB
+        return await self._get_violations_from_db(user_id)
+
+    async def _get_violations_from_db(self, user_id: str) -> List[ComplianceViolation]:
+        """Get violations from DB (mockable)."""
+        return []
     
     async def _evaluate_rule(
         self,

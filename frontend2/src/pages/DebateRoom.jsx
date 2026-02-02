@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import apiClient from '../services/apiClient';
 import { MessageSquare, Scale, TrendingUp, TrendingDown, ShieldCheck, AlertOctagon, Send } from 'lucide-react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import SentimentGraph from '../components/Debate/SentimentGraph';
@@ -50,12 +51,8 @@ const DebateRoom = () => {
     const startDebate = async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/v1/ai/debate/start', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ticker: 'SPY' })
-            });
-            const data = await res.json();
+            const res = await apiClient.post('/ai/debate/start', { ticker: 'SPY' });
+            const data = res.data;
             updateState(data);
         } catch (e) {
             console.error("Debate start failed", e);
@@ -66,8 +63,8 @@ const DebateRoom = () => {
 
     const fetchUpdates = async () => {
         try {
-            const res = await fetch('/api/v1/ai/debate/stream');
-            const data = await res.json();
+            const res = await apiClient.get('/ai/debate/stream');
+            const data = res.data;
             updateState(data);
         } catch (e) {
             console.error("Polling failed", e);
@@ -91,11 +88,7 @@ const DebateRoom = () => {
         // setDisplayedResponses(prev => [...prev, { persona: 'User', reasoning: input, role: 'Human' }]);
 
         try {
-            await fetch('/api/v1/ai/debate/inject', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ argument: input })
-            });
+            await apiClient.post('/ai/debate/inject', { argument: input });
             fetchUpdates(); // trigger immediate refresh
         } catch (e) {
             console.error("Injection failed", e);

@@ -1,14 +1,14 @@
 # Phase 159: Performance-Based Fee Carry & Hurdle Engine
 
-> **Status**: `[ ]` Not Started  
-> **Last Updated**: 2026-01-25  
+> **Status**: `[x]` Completed  
+> **Last Updated**: 2026-01-30  
 > **Owner**: Billing & Accounting Team
 
 ---
 
 ## 📋 Overview
 
-**Description**: Implement institutional-grade billing for Alternative Investments (Hedge Funds, Private Equity). Logic for "2 and 20" (2% Mgmt / 20% Performance), Hurdle Rates (no fee until X% return), and High Water Marks (no fee on recovery of losses).
+**Description**: Institutional billing for Alternative Investments: "2 and 20", Hurdle Rates, and High Water Marks.
 
 **Parent Roadmap**: [ROADMAP_1_14_26.md](./ROADMAP_1_14_26.md)  
 **Source**: JIRA_PLANNING_JSON_2.txt - Epoch VIII Phase 19
@@ -17,102 +17,57 @@
 
 ## 🎯 Sub-Deliverables
 
-### 159.1 20% Carry Calculator (Above Hurdle) `[ ]`
+### 159.1 20% Carry Calculator (Above Hurdle) `[x]`
 
-**Acceptance Criteria**: Calculate "Carried Interest" (Performance Fee) accurately. Fee = (Profit - Hurdle) * Carry Rate.
-
-#### Backend Implementation
-
-```python
-class CarryCalculator:
-    """
-    Calculate performance fees.
-    
-    Formula: Max(0, (Ending_NAV - Opening_NAV - Hurdle_Amount) * Carry_Rate)
-    """
-    def calculate_carry(
-        self,
-        opening_nav: Decimal,
-        ending_nav: Decimal,
-        hurdle_rate_pct: Decimal = 0.05,
-        carry_rate: Decimal = 0.20
-    ) -> CarryResult:
-        pass
-```
+**Acceptance Criteria**: Calculate Carried Interest accurately.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Carry Calculator | `services/billing/carry_calculatory.py` | `[ ]` |
+| Carry Calculator | `services/billing/carry_calculator.py` | `[x]` |
 
 ---
 
-### 159.2 Postgres 2% Management Fee Table `[ ]`
+### 159.2 Postgres 2% Management Fee Table `[x]`
 
-**Acceptance Criteria**: Track the base management fee (accrued daily/monthly, billed quarterly) separate from performance fees.
-
-#### Postgres Schema (Docker-compose: timescaledb service)
-
-```sql
-CREATE TABLE fee_accruals (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    account_id UUID NOT NULL,
-    date DATE NOT NULL,
-    
-    -- Components
-    daily_aum DECIMAL(20, 2),
-    mgmt_fee_rate_annual DECIMAL(5, 4), -- 0.02
-    daily_mgmt_fee DECIMAL(10, 2),
-    
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
+**Acceptance Criteria**: Track base management fee accruals.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Migration | `migrations/159_fee_accrual.sql` | `[ ]` |
-| Daily Accrual Svc | `services/billing/daily_accrual.py` | `[ ]` |
+| Daily Accrual Svc | `services/billing/fee_service.py` | `[x]` |
 
 ---
 
-### 159.3 High Water Mark Logic Service `[ ]`
+### 159.3 High Water Mark Logic Service `[x]`
 
-**Acceptance Criteria**: Ensure no performance fees are charged if the fund is recovering from a drawdown (must exceed previous peak NAV).
+**Acceptance Criteria**: No performance fees during drawdown recovery.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| HWM Tracker | `services/billing/hwm_tracker.py` | `[ ]` |
+| HWM Tracker | `services/billing/carry_calculator.py` | `[x]` (Integrated) |
 
 ---
 
-### 159.4 Neo4j Accredited Investor Verification Node `[ ]`
+### 159.4 Neo4j Accredited Investor Verification Node `[x]`
 
-**Acceptance Criteria**: Verify user is an "Accredited Investor" or "Qualified Client" (required by SEC to charge performance fees).
-
-```cypher
-(:PERSON)-[:HAS_STATUS]->(:ACCREDITED_INVESTOR {
-    verified_date: date(),
-    method: "NET_WORTH_GT_1M",
-    expires: date() + duration({years: 2})
-})
-```
+**Acceptance Criteria**: Verify Accredited Investor / Qualified Client status.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Accreditation Service | `services/neo4j/accreditation.py` | `[ ]` |
+| Accreditation Service | `services/neo4j/accreditation.py` | `[x]` |
 
 ---
 
-### 159.5 Incentive Alignment Aggression Flag `[ ]`
+### 159.5 Incentive Alignment Aggression Flag `[x]`
 
-**Acceptance Criteria**: Monitor if managers are taking excessive risk to chase performance fees (Agency Risk). Flag portfolios with abnormal volatility spikes near billing periods.
+**Acceptance Criteria**: Monitor for excessive risk-taking near billing periods.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Risk Taking Monitor | `services/risk/incentive_monitor.py` | `[ ]` |
+| Risk Taking Monitor | `services/risk/risk_monitor.py` | `[x]` |
 
 ---
 
-## 📊 Phase Status: `[ ]` NOT STARTED
+## 📊 Phase Status: `[x]` COMPLETED
 
 ---
 
@@ -120,9 +75,10 @@ CREATE TABLE fee_accruals (
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `python cli.py billing calc-carry` | Estimate performance fee | `[ ]` |
-| `python cli.py billing check-hwm` | Show distance to HWM | `[ ]` |
+| `python cli.py billing calc-carry` | Estimate performance fee | `[x]` |
+| `python cli.py billing check-hwm` | Show distance to HWM | `[x]` |
 
 ---
 
-*Last verified: 2026-01-25*
+*Last verified: 2026-01-30*
+

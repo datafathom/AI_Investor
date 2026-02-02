@@ -16,9 +16,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import './WalletConnect.css';
 
-const API_BASE = '/api/v1/ethereum';
+const API_BASE = '/ethereum';
 
 const WalletConnect = ({ onWalletConnected }) => {
     const [address, setAddress] = useState('');
@@ -53,15 +54,8 @@ const WalletConnect = ({ onWalletConnected }) => {
 
         try {
             // Validate address
-            const validateResponse = await fetch(`${API_BASE}/validate-address`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ address: address.trim() })
-            });
-
-            const validateData = await validateResponse.json();
+            const validateResponse = await apiClient.post(`${API_BASE}/validate-address`, { address: address.trim() });
+            const validateData = validateResponse.data;
 
             if (!validateData.valid) {
                 throw new Error('Invalid Ethereum address format');
@@ -69,16 +63,12 @@ const WalletConnect = ({ onWalletConnected }) => {
 
             // Fetch balance and tokens
             const [balanceRes, tokensRes] = await Promise.all([
-                fetch(`${API_BASE}/balance/${address.trim()}`),
-                fetch(`${API_BASE}/tokens/${address.trim()}`)
+                apiClient.get(`${API_BASE}/balance/${address.trim()}`),
+                apiClient.get(`${API_BASE}/tokens/${address.trim()}`)
             ]);
 
-            if (!balanceRes.ok || !tokensRes.ok) {
-                throw new Error('Failed to fetch wallet data');
-            }
-
-            const balanceData = await balanceRes.json();
-            const tokensData = await tokensRes.json();
+            const balanceData = balanceRes.data;
+            const tokensData = tokensRes.data;
 
             setBalance(balanceData);
             setTokens(tokensData.tokens || []);

@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-
-const API_BASE = '/api/v1/web3';
+import apiClient from '../services/apiClient';
 
 const useWeb3Store = create((set, get) => ({
   // State
@@ -10,6 +9,7 @@ const useWeb3Store = create((set, get) => ({
   gasMetrics: {}, // { "ethereum": MetricsObj }
   optimalWindow: null,
   queuedTransactions: [],
+  liquidityDepth: {}, // { poolAddress: depthData }
   activeWalletId: null, // "ledger" or "trezor" etc (mock)
   isLoading: false,
   error: null,
@@ -18,10 +18,9 @@ const useWeb3Store = create((set, get) => ({
   fetchPortfolio: async (userId) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await fetch(`${API_BASE}/portfolio/${userId}`);
-      const result = await response.json();
-      if (result.success) {
-        set({ portfolio: result.data, isLoading: false });
+      const response = await apiClient.get(`/web3/portfolio/${userId}`);
+      if (response.data.success) {
+        set({ portfolio: response.data.data, isLoading: false });
       }
     } catch (error) {
       set({ error: error.message, isLoading: false });
@@ -30,10 +29,9 @@ const useWeb3Store = create((set, get) => ({
 
   fetchLPPositions: async (userId) => {
     try {
-      const response = await fetch(`${API_BASE}/lp/${userId}`);
-      const result = await response.json();
-      if (result.success) {
-        set({ lpPositions: result.data });
+      const response = await apiClient.get(`/web3/lp/${userId}`);
+      if (response.data.success) {
+        set({ lpPositions: response.data.data });
       }
     } catch (error) {
       console.error('LP fetch error:', error);
@@ -42,13 +40,12 @@ const useWeb3Store = create((set, get) => ({
 
   fetchGasMetrics: async (chain = 'ethereum') => {
     try {
-      const response = await fetch(`${API_BASE}/gas/${chain}`);
-      const result = await response.json();
-      if (result.success) {
+      const response = await apiClient.get(`/web3/gas/${chain}`);
+      if (response.data.success) {
         set(state => ({
           gasMetrics: {
             ...state.gasMetrics,
-            [chain]: result.data
+            [chain]: response.data.data
           }
         }));
       }
@@ -59,10 +56,9 @@ const useWeb3Store = create((set, get) => ({
 
   fetchOptimalWindow: async () => {
     try {
-      const response = await fetch(`${API_BASE}/gas/optimal-window`);
-      const result = await response.json();
-      if (result.success) {
-        set({ optimalWindow: result.data });
+      const response = await apiClient.get('/web3/gas/optimal-window');
+      if (response.data.success) {
+        set({ optimalWindow: response.data.data });
       }
     } catch (error) {
       console.error('Window fetch error:', error);
@@ -72,20 +68,35 @@ const useWeb3Store = create((set, get) => ({
   queueTransaction: async (chain, targetGas, ttlHours) => {
     set({ isLoading: true });
     try {
-      const response = await fetch(`${API_BASE}/gas/queue`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chain, target_gas_gwei: targetGas, ttl_hours: ttlHours })
+      const response = await apiClient.post('/web3/gas/queue', {
+        chain,
+        target_gas_gwei: targetGas,
+        ttl_hours: ttlHours
       });
-      const result = await response.json();
-      if (result.success) {
+      if (response.data.success) {
         set(state => ({
-          queuedTransactions: [...state.queuedTransactions, result.data],
+          queuedTransactions: [...state.queuedTransactions, response.data.data],
           isLoading: false
         }));
       }
     } catch (error) {
       set({ error: error.message, isLoading: false });
+    }
+  },
+
+  fetchLiquidityDepth: async (poolAddress) => {
+    try {
+      const response = await apiClient.get(`/web3/liquidity/depth/${poolAddress}`);
+      if (response.data.success) {
+        set(state => ({
+          liquidityDepth: {
+            ...state.liquidityDepth,
+            [poolAddress]: response.data.data
+          }
+        }));
+      }
+    } catch (error) {
+      console.error('Liquidity depth fetch failed:', error);
     }
   },
 

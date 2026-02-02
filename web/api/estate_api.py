@@ -65,7 +65,7 @@ async def create_estate_plan():
         
         return jsonify({
             'success': True,
-            'data': plan.dict()
+            'data': plan.model_dump()
         })
         
     except Exception as e:
@@ -82,11 +82,10 @@ async def get_estate_plan(user_id: str):
     Get estate plan for user.
     """
     try:
-        from services.system.cache_service import get_cache_service
-        cache_service = get_cache_service()
-        plan_data = cache_service.get(f"estate_plan:{user_id}")
+        service = get_estate_planning_service()
+        plan = await service.get_estate_plan_by_user(user_id)
         
-        if not plan_data:
+        if not plan:
             return jsonify({
                 'success': False,
                 'error': 'Estate plan not found'
@@ -94,7 +93,7 @@ async def get_estate_plan(user_id: str):
         
         return jsonify({
             'success': True,
-            'data': plan_data
+            'data': plan.model_dump()
         })
         
     except Exception as e:
@@ -126,7 +125,7 @@ async def update_beneficiary(plan_id: str, beneficiary_id: str):
         
         return jsonify({
             'success': True,
-            'data': beneficiary.dict()
+            'data': beneficiary.model_dump()
         })
         
     except Exception as e:
@@ -190,7 +189,7 @@ async def simulate_inheritance(plan_id: str):
         
         return jsonify({
             'success': True,
-            'data': [p.dict() for p in projections]
+            'data': [p.model_dump() for p in projections]
         })
         
     except Exception as e:
@@ -227,7 +226,7 @@ async def compare_inheritance_scenarios():
         return jsonify({
             'success': True,
             'data': {
-                name: [p.dict() for p in projections]
+                name: [p.model_dump() for p in projections]
                 for name, projections in results.items()
             }
         })

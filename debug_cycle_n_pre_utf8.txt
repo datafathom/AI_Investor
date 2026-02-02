@@ -1,0 +1,557 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.1, pytest-7.4.0, pluggy-1.6.0 -- C:\Users\astir\Desktop\AI_Company\AI_Investor\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\astir\Desktop\AI_Company\AI_Investor
+configfile: pytest.ini
+plugins: anyio-4.12.1, asyncio-0.21.1, base-url-2.1.0
+asyncio: mode=Mode.AUTO
+collecting ... collected 29 items
+
+tests/api/test_analytics_api.py::test_get_attribution_success FAILED     [  3%]
+tests/api/test_analytics_api.py::test_get_attribution_with_benchmark FAILED [  6%]
+tests/api/test_analytics_api.py::test_get_attribution_error FAILED       [ 10%]
+tests/api/test_analytics_api.py::test_get_contribution_success FAILED    [ 13%]
+tests/api/test_analytics_api.py::test_get_factor_risk_success FAILED     [ 17%]
+tests/api/test_analytics_api.py::test_get_concentration_risk_success FAILED [ 20%]
+tests/api/test_analytics_api.py::test_get_correlation_success FAILED     [ 24%]
+tests/api/test_analytics_api.py::test_get_tail_risk_success FAILED       [ 27%]
+tests/api/test_advanced_risk_api.py::test_get_risk_metrics_success FAILED [ 31%]
+tests/api/test_advanced_risk_api.py::test_get_risk_metrics_error FAILED  [ 34%]
+tests/api/test_advanced_risk_api.py::test_run_historical_stress_success FAILED [ 37%]
+tests/api/test_advanced_risk_api.py::test_run_historical_stress_missing_scenario FAILED [ 41%]
+tests/api/test_advanced_risk_api.py::test_run_monte_carlo_stress_success FAILED [ 44%]
+tests/api/test_advanced_risk_api.py::test_run_custom_stress_success FAILED [ 48%]
+tests/api/test_advanced_risk_api.py::test_run_custom_stress_missing_scenario FAILED [ 51%]
+tests/api/test_attribution_api.py::test_get_attribution_success ERROR    [ 55%]
+tests/api/test_attribution_api.py::test_get_benchmarks_success ERROR     [ 58%]
+tests/api/test_attribution_api.py::test_compare_benchmarks_success ERROR [ 62%]
+tests/api/test_risk_api.py::test_get_risk_status_success PASSED          [ 65%]
+tests/api/test_risk_api.py::test_toggle_kill_switch_engage_success PASSED [ 68%]
+tests/api/test_risk_api.py::test_risk_preview_success PASSED             [ 72%]
+tests/api/test_optimization_api.py::test_optimize_portfolio_success FAILED [ 75%]
+tests/api/test_optimization_api.py::test_optimize_portfolio_with_constraints FAILED [ 79%]
+tests/api/test_optimization_api.py::test_optimize_portfolio_error FAILED [ 82%]
+tests/api/test_optimization_api.py::test_check_rebalancing_needed FAILED [ 86%]
+tests/api/test_optimization_api.py::test_recommend_rebalancing_success FAILED [ 89%]
+tests/api/test_optimization_api.py::test_execute_rebalancing_success FAILED [ 93%]
+tests/api/test_optimization_api.py::test_execute_rebalancing_missing_recommendation FAILED [ 96%]
+tests/api/test_optimization_api.py::test_get_rebalancing_history FAILED  [100%]
+
+=================================== ERRORS ====================================
+_______________ ERROR at setup of test_get_attribution_success ________________
+tests\api\test_attribution_api.py:32: in mock_attribution_service
+    from services.analysis.attribution_service import AttributionResult
+E   ImportError: cannot import name 'AttributionResult' from 'services.analysis.attribution_service' (C:\Users\astir\Desktop\AI_Company\AI_Investor\services\analysis\attribution_service.py)
+________________ ERROR at setup of test_get_benchmarks_success ________________
+tests\api\test_attribution_api.py:32: in mock_attribution_service
+    from services.analysis.attribution_service import AttributionResult
+E   ImportError: cannot import name 'AttributionResult' from 'services.analysis.attribution_service' (C:\Users\astir\Desktop\AI_Company\AI_Investor\services\analysis\attribution_service.py)
+______________ ERROR at setup of test_compare_benchmarks_success ______________
+tests\api\test_attribution_api.py:32: in mock_attribution_service
+    from services.analysis.attribution_service import AttributionResult
+E   ImportError: cannot import name 'AttributionResult' from 'services.analysis.attribution_service' (C:\Users\astir\Desktop\AI_Company\AI_Investor\services\analysis\attribution_service.py)
+================================== FAILURES ===================================
+________________________ test_get_attribution_success _________________________
+tests\api\test_analytics_api.py:49: in test_get_attribution_success
+    from models.analytics import PerformanceAttribution
+E   ImportError: cannot import name 'PerformanceAttribution' from 'models.analytics' (C:\Users\astir\Desktop\AI_Company\AI_Investor\models\analytics.py)
+_____________________ test_get_attribution_with_benchmark _____________________
+tests\api\test_analytics_api.py:72: in test_get_attribution_with_benchmark
+    from models.analytics import PerformanceAttribution
+E   ImportError: cannot import name 'PerformanceAttribution' from 'models.analytics' (C:\Users\astir\Desktop\AI_Company\AI_Investor\models\analytics.py)
+_________________________ test_get_attribution_error __________________________
+tests\api\test_analytics_api.py:96: in test_get_attribution_error
+    response = client.get('/api/analytics/attribution/portfolio_1')
+venv\Lib\site-packages\werkzeug\test.py:1162: in get
+    return self.open(*args, **kw)
+venv\Lib\site-packages\flask\testing.py:235: in open
+    response = super().open(
+venv\Lib\site-packages\werkzeug\test.py:1116: in open
+    response_parts = self.run_wsgi_app(request.environ, buffered=buffered)
+venv\Lib\site-packages\werkzeug\test.py:988: in run_wsgi_app
+    rv = run_wsgi_app(self.application, environ, buffered=buffered)
+venv\Lib\site-packages\werkzeug\test.py:1264: in run_wsgi_app
+    app_rv = app(environ, start_response)
+venv\Lib\site-packages\flask\app.py:1536: in __call__
+    return self.wsgi_app(environ, start_response)
+venv\Lib\site-packages\flask\app.py:1514: in wsgi_app
+    response = self.handle_exception(e)
+venv\Lib\site-packages\flask\app.py:1511: in wsgi_app
+    response = self.full_dispatch_request()
+venv\Lib\site-packages\flask\app.py:919: in full_dispatch_request
+    rv = self.handle_user_exception(e)
+venv\Lib\site-packages\flask\app.py:917: in full_dispatch_request
+    rv = self.dispatch_request()
+venv\Lib\site-packages\flask\app.py:902: in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+venv\Lib\site-packages\asgiref\sync.py:233: in __call__
+    raise RuntimeError(
+E   RuntimeError: You cannot use AsyncToSync in the same thread as an async event loop - just await the async function directly.
+________________________ test_get_contribution_success ________________________
+tests\api\test_analytics_api.py:110: in test_get_contribution_success
+    HoldingContribution(
+E   pydantic_core._pydantic_core.ValidationError: 5 validation errors for HoldingContribution
+E   name
+E     Field required [type=missing, input_value={'symbol': 'AAPL', 'contr...on': 2.5, 'weight': 0.3}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   return_pct
+E     Field required [type=missing, input_value={'symbol': 'AAPL', 'contr...on': 2.5, 'weight': 0.3}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   contribution_absolute
+E     Field required [type=missing, input_value={'symbol': 'AAPL', 'contr...on': 2.5, 'weight': 0.3}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   contribution_pct
+E     Field required [type=missing, input_value={'symbol': 'AAPL', 'contr...on': 2.5, 'weight': 0.3}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   rank
+E     Field required [type=missing, input_value={'symbol': 'AAPL', 'contr...on': 2.5, 'weight': 0.3}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+________________________ test_get_factor_risk_success _________________________
+tests\api\test_analytics_api.py:132: in test_get_factor_risk_success
+    mock_risk = FactorRiskDecomposition(
+E   pydantic_core._pydantic_core.ValidationError: 4 validation errors for FactorRiskDecomposition
+E   factor_model
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol....18, 'factor_risks': []}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   factor_exposures
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol....18, 'factor_risks': []}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   idiosyncratic_risk
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol....18, 'factor_risks': []}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   r_squared
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol....18, 'factor_risks': []}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+_____________________ test_get_concentration_risk_success _____________________
+tests\api\test_analytics_api.py:150: in test_get_concentration_risk_success
+    from models.analytics import ConcentrationRisk
+E   ImportError: cannot import name 'ConcentrationRisk' from 'models.analytics' (C:\Users\astir\Desktop\AI_Company\AI_Investor\models\analytics.py)
+________________________ test_get_correlation_success _________________________
+tests\api\test_analytics_api.py:171: in test_get_correlation_success
+    mock_correlation = CorrelationAnalysis(
+E   pydantic_core._pydantic_core.ValidationError: 3 validation errors for CorrelationAnalysis
+E   average_correlation
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...correlation_matrix': {}}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   diversification_ratio
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...correlation_matrix': {}}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   highly_correlated_pairs
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...correlation_matrix': {}}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+_________________________ test_get_tail_risk_success __________________________
+tests\api\test_analytics_api.py:190: in test_get_tail_risk_success
+    mock_tail_risk = TailRiskContributions(
+E   pydantic_core._pydantic_core.ValidationError: 5 validation errors for TailRiskContributions
+E   confidence_level
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...07, 'contributions': {}}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   portfolio_var
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...07, 'contributions': {}}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   portfolio_cvar
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...07, 'contributions': {}}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   contributions
+E     Input should be a valid list [type=list_type, input_value={}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/list_type
+E   method
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...07, 'contributions': {}}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+________________________ test_get_risk_metrics_success ________________________
+tests\api\test_advanced_risk_api.py:50: in test_get_risk_metrics_success
+    mock_metrics = RiskMetrics(
+E   pydantic_core._pydantic_core.ValidationError: 9 validation errors for RiskMetrics
+E   calculation_date
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...12, 'sharpe_ratio': 1.5}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   var_99
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...12, 'sharpe_ratio': 1.5}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   cvar_99
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...12, 'sharpe_ratio': 1.5}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   maximum_drawdown
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...12, 'sharpe_ratio': 1.5}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   maximum_drawdown_duration_days
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...12, 'sharpe_ratio': 1.5}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   sortino_ratio
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...12, 'sharpe_ratio': 1.5}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   calmar_ratio
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...12, 'sharpe_ratio': 1.5}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   volatility
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...12, 'sharpe_ratio': 1.5}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   method
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...12, 'sharpe_ratio': 1.5}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+_________________________ test_get_risk_metrics_error _________________________
+tests\api\test_advanced_risk_api.py:73: in test_get_risk_metrics_error
+    response = client.get('/api/risk/metrics/portfolio_1')
+venv\Lib\site-packages\werkzeug\test.py:1162: in get
+    return self.open(*args, **kw)
+venv\Lib\site-packages\flask\testing.py:235: in open
+    response = super().open(
+venv\Lib\site-packages\werkzeug\test.py:1116: in open
+    response_parts = self.run_wsgi_app(request.environ, buffered=buffered)
+venv\Lib\site-packages\werkzeug\test.py:988: in run_wsgi_app
+    rv = run_wsgi_app(self.application, environ, buffered=buffered)
+venv\Lib\site-packages\werkzeug\test.py:1264: in run_wsgi_app
+    app_rv = app(environ, start_response)
+venv\Lib\site-packages\flask\app.py:1536: in __call__
+    return self.wsgi_app(environ, start_response)
+venv\Lib\site-packages\flask\app.py:1514: in wsgi_app
+    response = self.handle_exception(e)
+venv\Lib\site-packages\flask\app.py:1511: in wsgi_app
+    response = self.full_dispatch_request()
+venv\Lib\site-packages\flask\app.py:919: in full_dispatch_request
+    rv = self.handle_user_exception(e)
+venv\Lib\site-packages\flask\app.py:917: in full_dispatch_request
+    rv = self.dispatch_request()
+venv\Lib\site-packages\flask\app.py:902: in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+venv\Lib\site-packages\asgiref\sync.py:233: in __call__
+    raise RuntimeError(
+E   RuntimeError: You cannot use AsyncToSync in the same thread as an async event loop - just await the async function directly.
+_____________________ test_run_historical_stress_success ______________________
+tests\api\test_advanced_risk_api.py:85: in test_run_historical_stress_success
+    mock_result = StressTestResult(
+E   pydantic_core._pydantic_core.ValidationError: 6 validation errors for StressTestResult
+E   scenario
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 30.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   initial_value
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 30.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   stressed_value
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 30.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   loss_amount
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 30.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   loss_percentage
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 30.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   calculation_date
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 30.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+_________________ test_run_historical_stress_missing_scenario _________________
+tests\api\test_advanced_risk_api.py:106: in test_run_historical_stress_missing_scenario
+    response = client.post('/api/risk/stress/historical/portfolio_1', json={})
+venv\Lib\site-packages\werkzeug\test.py:1167: in post
+    return self.open(*args, **kw)
+venv\Lib\site-packages\flask\testing.py:235: in open
+    response = super().open(
+venv\Lib\site-packages\werkzeug\test.py:1116: in open
+    response_parts = self.run_wsgi_app(request.environ, buffered=buffered)
+venv\Lib\site-packages\werkzeug\test.py:988: in run_wsgi_app
+    rv = run_wsgi_app(self.application, environ, buffered=buffered)
+venv\Lib\site-packages\werkzeug\test.py:1264: in run_wsgi_app
+    app_rv = app(environ, start_response)
+venv\Lib\site-packages\flask\app.py:1536: in __call__
+    return self.wsgi_app(environ, start_response)
+venv\Lib\site-packages\flask\app.py:1514: in wsgi_app
+    response = self.handle_exception(e)
+venv\Lib\site-packages\flask\app.py:1511: in wsgi_app
+    response = self.full_dispatch_request()
+venv\Lib\site-packages\flask\app.py:919: in full_dispatch_request
+    rv = self.handle_user_exception(e)
+venv\Lib\site-packages\flask\app.py:917: in full_dispatch_request
+    rv = self.dispatch_request()
+venv\Lib\site-packages\flask\app.py:902: in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+venv\Lib\site-packages\asgiref\sync.py:233: in __call__
+    raise RuntimeError(
+E   RuntimeError: You cannot use AsyncToSync in the same thread as an async event loop - just await the async function directly.
+_____________________ test_run_monte_carlo_stress_success _____________________
+tests\api\test_advanced_risk_api.py:118: in test_run_monte_carlo_stress_success
+    mock_result = StressTestResult(
+E   pydantic_core._pydantic_core.ValidationError: 6 validation errors for StressTestResult
+E   scenario
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 15.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   initial_value
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 15.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   stressed_value
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 15.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   loss_amount
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 15.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   loss_percentage
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 15.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   calculation_date
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 15.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+_______________________ test_run_custom_stress_success ________________________
+tests\api\test_advanced_risk_api.py:140: in test_run_custom_stress_success
+    mock_result = StressTestResult(
+E   pydantic_core._pydantic_core.ValidationError: 6 validation errors for StressTestResult
+E   scenario
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 10.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   initial_value
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 10.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   stressed_value
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 10.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   loss_amount
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 10.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   loss_percentage
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 10.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   calculation_date
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...0, 'loss_percent': 10.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+___________________ test_run_custom_stress_missing_scenario ___________________
+tests\api\test_advanced_risk_api.py:166: in test_run_custom_stress_missing_scenario
+    response = client.post('/api/risk/stress/custom/portfolio_1', json={})
+venv\Lib\site-packages\werkzeug\test.py:1167: in post
+    return self.open(*args, **kw)
+venv\Lib\site-packages\flask\testing.py:235: in open
+    response = super().open(
+venv\Lib\site-packages\werkzeug\test.py:1116: in open
+    response_parts = self.run_wsgi_app(request.environ, buffered=buffered)
+venv\Lib\site-packages\werkzeug\test.py:988: in run_wsgi_app
+    rv = run_wsgi_app(self.application, environ, buffered=buffered)
+venv\Lib\site-packages\werkzeug\test.py:1264: in run_wsgi_app
+    app_rv = app(environ, start_response)
+venv\Lib\site-packages\flask\app.py:1536: in __call__
+    return self.wsgi_app(environ, start_response)
+venv\Lib\site-packages\flask\app.py:1514: in wsgi_app
+    response = self.handle_exception(e)
+venv\Lib\site-packages\flask\app.py:1511: in wsgi_app
+    response = self.full_dispatch_request()
+venv\Lib\site-packages\flask\app.py:919: in full_dispatch_request
+    rv = self.handle_user_exception(e)
+venv\Lib\site-packages\flask\app.py:917: in full_dispatch_request
+    rv = self.dispatch_request()
+venv\Lib\site-packages\flask\app.py:902: in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+venv\Lib\site-packages\asgiref\sync.py:233: in __call__
+    raise RuntimeError(
+E   RuntimeError: You cannot use AsyncToSync in the same thread as an async event loop - just await the async function directly.
+_______________________ test_optimize_portfolio_success _______________________
+tests\api\test_optimization_api.py:50: in test_optimize_portfolio_success
+    mock_result = OptimizationResult(
+E   pydantic_core._pydantic_core.ValidationError: 7 validation errors for OptimizationResult
+E   optimization_method
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol..., 'expected_risk': 0.15}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   objective
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol..., 'expected_risk': 0.15}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   optimal_weights
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol..., 'expected_risk': 0.15}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   sharpe_ratio
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol..., 'expected_risk': 0.15}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   constraint_satisfaction
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol..., 'expected_risk': 0.15}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   optimization_time_seconds
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol..., 'expected_risk': 0.15}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   optimization_date
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol..., 'expected_risk': 0.15}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+__________________ test_optimize_portfolio_with_constraints ___________________
+tests\api\test_optimization_api.py:73: in test_optimize_portfolio_with_constraints
+    mock_result = OptimizationResult(
+E   pydantic_core._pydantic_core.ValidationError: 7 validation errors for OptimizationResult
+E   optimization_method
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol..., 'expected_risk': 0.15}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   objective
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol..., 'expected_risk': 0.15}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   optimal_weights
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol..., 'expected_risk': 0.15}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   sharpe_ratio
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol..., 'expected_risk': 0.15}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   constraint_satisfaction
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol..., 'expected_risk': 0.15}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   optimization_time_seconds
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol..., 'expected_risk': 0.15}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   optimization_date
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol..., 'expected_risk': 0.15}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+________________________ test_optimize_portfolio_error ________________________
+tests\api\test_optimization_api.py:102: in test_optimize_portfolio_error
+    response = client.post('/api/optimization/optimize/portfolio_1',
+venv\Lib\site-packages\werkzeug\test.py:1167: in post
+    return self.open(*args, **kw)
+venv\Lib\site-packages\flask\testing.py:235: in open
+    response = super().open(
+venv\Lib\site-packages\werkzeug\test.py:1116: in open
+    response_parts = self.run_wsgi_app(request.environ, buffered=buffered)
+venv\Lib\site-packages\werkzeug\test.py:988: in run_wsgi_app
+    rv = run_wsgi_app(self.application, environ, buffered=buffered)
+venv\Lib\site-packages\werkzeug\test.py:1264: in run_wsgi_app
+    app_rv = app(environ, start_response)
+venv\Lib\site-packages\flask\app.py:1536: in __call__
+    return self.wsgi_app(environ, start_response)
+venv\Lib\site-packages\flask\app.py:1514: in wsgi_app
+    response = self.handle_exception(e)
+venv\Lib\site-packages\flask\app.py:1511: in wsgi_app
+    response = self.full_dispatch_request()
+venv\Lib\site-packages\flask\app.py:919: in full_dispatch_request
+    rv = self.handle_user_exception(e)
+venv\Lib\site-packages\flask\app.py:917: in full_dispatch_request
+    rv = self.dispatch_request()
+venv\Lib\site-packages\flask\app.py:902: in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+venv\Lib\site-packages\asgiref\sync.py:233: in __call__
+    raise RuntimeError(
+E   RuntimeError: You cannot use AsyncToSync in the same thread as an async event loop - just await the async function directly.
+________________________ test_check_rebalancing_needed ________________________
+tests\api\test_optimization_api.py:115: in test_check_rebalancing_needed
+    response = client.get('/api/optimization/rebalancing/check/portfolio_1?threshold=0.05')
+venv\Lib\site-packages\werkzeug\test.py:1162: in get
+    return self.open(*args, **kw)
+venv\Lib\site-packages\flask\testing.py:235: in open
+    response = super().open(
+venv\Lib\site-packages\werkzeug\test.py:1116: in open
+    response_parts = self.run_wsgi_app(request.environ, buffered=buffered)
+venv\Lib\site-packages\werkzeug\test.py:988: in run_wsgi_app
+    rv = run_wsgi_app(self.application, environ, buffered=buffered)
+venv\Lib\site-packages\werkzeug\test.py:1264: in run_wsgi_app
+    app_rv = app(environ, start_response)
+venv\Lib\site-packages\flask\app.py:1536: in __call__
+    return self.wsgi_app(environ, start_response)
+venv\Lib\site-packages\flask\app.py:1514: in wsgi_app
+    response = self.handle_exception(e)
+venv\Lib\site-packages\flask\app.py:1511: in wsgi_app
+    response = self.full_dispatch_request()
+venv\Lib\site-packages\flask\app.py:919: in full_dispatch_request
+    rv = self.handle_user_exception(e)
+venv\Lib\site-packages\flask\app.py:917: in full_dispatch_request
+    rv = self.dispatch_request()
+venv\Lib\site-packages\flask\app.py:902: in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+venv\Lib\site-packages\asgiref\sync.py:233: in __call__
+    raise RuntimeError(
+E   RuntimeError: You cannot use AsyncToSync in the same thread as an async event loop - just await the async function directly.
+_____________________ test_recommend_rebalancing_success ______________________
+tests\api\test_optimization_api.py:128: in test_recommend_rebalancing_success
+    mock_recommendation = RebalancingRecommendation(
+E   pydantic_core._pydantic_core.ValidationError: 6 validation errors for RebalancingRecommendation
+E   current_weights
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...quires_approval': False}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   target_weights
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...quires_approval': False}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   recommended_trades
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...quires_approval': False}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   drift_percentage
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...quires_approval': False}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   estimated_tax_impact
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...quires_approval': False}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   recommendation_date
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...quires_approval': False}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+______________________ test_execute_rebalancing_success _______________________
+tests\api\test_optimization_api.py:158: in test_execute_rebalancing_success
+    executed_at=datetime.now(),
+E   NameError: name 'datetime' is not defined. Did you forget to import 'datetime'?
+_______________ test_execute_rebalancing_missing_recommendation _______________
+tests\api\test_optimization_api.py:175: in test_execute_rebalancing_missing_recommendation
+    response = client.post('/api/optimization/rebalancing/execute/portfolio_1',
+venv\Lib\site-packages\werkzeug\test.py:1167: in post
+    return self.open(*args, **kw)
+venv\Lib\site-packages\flask\testing.py:235: in open
+    response = super().open(
+venv\Lib\site-packages\werkzeug\test.py:1116: in open
+    response_parts = self.run_wsgi_app(request.environ, buffered=buffered)
+venv\Lib\site-packages\werkzeug\test.py:988: in run_wsgi_app
+    rv = run_wsgi_app(self.application, environ, buffered=buffered)
+venv\Lib\site-packages\werkzeug\test.py:1264: in run_wsgi_app
+    app_rv = app(environ, start_response)
+venv\Lib\site-packages\flask\app.py:1536: in __call__
+    return self.wsgi_app(environ, start_response)
+venv\Lib\site-packages\flask\app.py:1514: in wsgi_app
+    response = self.handle_exception(e)
+venv\Lib\site-packages\flask\app.py:1511: in wsgi_app
+    response = self.full_dispatch_request()
+venv\Lib\site-packages\flask\app.py:919: in full_dispatch_request
+    rv = self.handle_user_exception(e)
+venv\Lib\site-packages\flask\app.py:917: in full_dispatch_request
+    rv = self.dispatch_request()
+venv\Lib\site-packages\flask\app.py:902: in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+venv\Lib\site-packages\asgiref\sync.py:233: in __call__
+    raise RuntimeError(
+E   RuntimeError: You cannot use AsyncToSync in the same thread as an async event loop - just await the async function directly.
+________________________ test_get_rebalancing_history _________________________
+tests\api\test_optimization_api.py:190: in test_get_rebalancing_history
+    RebalancingHistory(
+E   pydantic_core._pydantic_core.ValidationError: 8 validation errors for RebalancingHistory
+E   rebalancing_id
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...: [], 'total_cost': 0.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   rebalancing_date
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...: [], 'total_cost': 0.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   strategy
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...: [], 'total_cost': 0.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   before_weights
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...: [], 'total_cost': 0.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   after_weights
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...: [], 'total_cost': 0.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   trades_executed
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...: [], 'total_cost': 0.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   tax_impact
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...: [], 'total_cost': 0.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   status
+E     Field required [type=missing, input_value={'portfolio_id': 'portfol...: [], 'total_cost': 0.0}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+=========================== short test summary info ===========================
+FAILED tests/api/test_analytics_api.py::test_get_attribution_success - Import...
+FAILED tests/api/test_analytics_api.py::test_get_attribution_with_benchmark
+FAILED tests/api/test_analytics_api.py::test_get_attribution_error - RuntimeE...
+FAILED tests/api/test_analytics_api.py::test_get_contribution_success - pydan...
+FAILED tests/api/test_analytics_api.py::test_get_factor_risk_success - pydant...
+FAILED tests/api/test_analytics_api.py::test_get_concentration_risk_success
+FAILED tests/api/test_analytics_api.py::test_get_correlation_success - pydant...
+FAILED tests/api/test_analytics_api.py::test_get_tail_risk_success - pydantic...
+FAILED tests/api/test_advanced_risk_api.py::test_get_risk_metrics_success - p...
+FAILED tests/api/test_advanced_risk_api.py::test_get_risk_metrics_error - Run...
+FAILED tests/api/test_advanced_risk_api.py::test_run_historical_stress_success
+FAILED tests/api/test_advanced_risk_api.py::test_run_historical_stress_missing_scenario
+FAILED tests/api/test_advanced_risk_api.py::test_run_monte_carlo_stress_success
+FAILED tests/api/test_advanced_risk_api.py::test_run_custom_stress_success - ...
+FAILED tests/api/test_advanced_risk_api.py::test_run_custom_stress_missing_scenario
+FAILED tests/api/test_optimization_api.py::test_optimize_portfolio_success - ...
+FAILED tests/api/test_optimization_api.py::test_optimize_portfolio_with_constraints
+FAILED tests/api/test_optimization_api.py::test_optimize_portfolio_error - Ru...
+FAILED tests/api/test_optimization_api.py::test_check_rebalancing_needed - Ru...
+FAILED tests/api/test_optimization_api.py::test_recommend_rebalancing_success
+FAILED tests/api/test_optimization_api.py::test_execute_rebalancing_success
+FAILED tests/api/test_optimization_api.py::test_execute_rebalancing_missing_recommendation
+FAILED tests/api/test_optimization_api.py::test_get_rebalancing_history - pyd...
+ERROR tests/api/test_attribution_api.py::test_get_attribution_success - Impor...
+ERROR tests/api/test_attribution_api.py::test_get_benchmarks_success - Import...
+ERROR tests/api/test_attribution_api.py::test_compare_benchmarks_success - Im...
+=================== 23 failed, 3 passed, 3 errors in 6.95s ====================

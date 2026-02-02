@@ -5,10 +5,10 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import axios from 'axios';
+import apiClient from '../../src/services/apiClient';
 import CreditMonitoringDashboard from '../../src/pages/CreditMonitoringDashboard';
 
-vi.mock('axios');
+vi.mock('../../src/services/apiClient');
 
 describe('CreditMonitoringDashboard', () => {
   beforeEach(() => {
@@ -16,7 +16,7 @@ describe('CreditMonitoringDashboard', () => {
   });
 
   it('should render dashboard', async () => {
-    axios.get.mockResolvedValue({ data: { data: {} } });
+    apiClient.get.mockResolvedValue({ data: { data: {} } });
     
     render(<CreditMonitoringDashboard />);
     

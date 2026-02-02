@@ -3,6 +3,7 @@
  * Phase 59: Manages audit logs, SAR workflow, and compliance monitoring.
  */
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useComplianceStore = create((set, get) => ({
     // State
@@ -22,9 +23,8 @@ const useComplianceStore = create((set, get) => ({
     fetchAuditLogs: async (limit = 100) => {
         set({ isLoading: true });
         try {
-            const response = await fetch(`/api/v1/compliance/audit?limit=${limit}`);
-            const data = await response.json();
-            set({ auditLogs: data || [], isLoading: false });
+            const response = await apiClient.get('/compliance/audit', { params: { limit } });
+            set({ auditLogs: response.data || [], isLoading: false });
         } catch (error) {
             set({ error: 'Failed to fetch audit logs', isLoading: false });
         }
@@ -33,10 +33,9 @@ const useComplianceStore = create((set, get) => ({
     fetchSarAlerts: async () => {
         set({ isLoading: true });
         try {
-            const response = await fetch('/api/v1/compliance/sar');
-            const data = await response.json();
+            const response = await apiClient.get('/compliance/sar');
             set({ 
-                sarAlerts: data || [], 
+                sarAlerts: response.data || [], 
                 isLoading: false 
             });
         } catch (error) {
@@ -46,9 +45,8 @@ const useComplianceStore = create((set, get) => ({
 
     fetchOverview: async () => {
         try {
-            const response = await fetch('/api/v1/compliance/overview');
-            const data = await response.json();
-            set({ complianceOverview: data });
+            const response = await apiClient.get('/compliance/overview');
+            set({ complianceOverview: response.data });
         } catch (error) {
             console.error('Failed to fetch overview:', error);
         }
@@ -56,7 +54,7 @@ const useComplianceStore = create((set, get) => ({
 
     updateSarStatus: async (id, status) => {
         try {
-            await fetch(`/api/v1/compliance/sar/${id}/status?status=${status}`, { method: 'POST' });
+            await apiClient.post(`/compliance/sar/${id}/status`, null, { params: { status } });
             set((s) => ({
                 sarAlerts: s.sarAlerts.map(a => a.id === id ? { ...a, status } : a)
             }));
@@ -69,10 +67,9 @@ const useComplianceStore = create((set, get) => ({
     verifyIntegrity: async () => {
         set({ isLoading: true });
         try {
-            const response = await fetch('/api/v1/compliance/verify');
-            const data = await response.json();
-            set({ verificationStatus: data, isLoading: false });
-            return data;
+            const response = await apiClient.get('/compliance/verify');
+            set({ verificationStatus: response.data, isLoading: false });
+            return response.data;
         } catch (error) {
             set({ error: 'Integrity verification failed', isLoading: false });
         }

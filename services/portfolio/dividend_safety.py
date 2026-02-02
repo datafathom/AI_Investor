@@ -1,39 +1,36 @@
 import logging
+from decimal import Decimal
 from typing import List, Dict, Any
 
 logger = logging.getLogger(__name__)
 
-class DividendSafetyService:
+class DividendSafety:
     """
-    dentifies 'Dividend Aristocrats' - companies with consistent dividend growth.
-    Crucial for 'Keep the Lights On' income overlay during bear markets.
+    Identifies 'Dividend Aristocrats' and assesses safety of payouts.
     """
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(DividendSafetyService, cls).__new__(cls)
-        return cls._instance
-
-    def __init__(self):
-        if hasattr(self, '_initialized') and self._initialized:
-            return
-        self._initialized = True
-        logger.info("DividendSafetyService initialized")
-
-    def filter_aristocrats(self, assets: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    
+    def analyze_dividend_safety(self, stocks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """
-        Filters for stocks with > 25 years of dividend growth.
+        Assesses safety based on payout ratio and years of growth.
         """
-        aristocrats = []
-        
-        for asset in assets:
-            years_growing = asset.get('dividend_growth_years', 0)
-            yield_pct = asset.get('dividend_yield', 0.0)
+        results = []
+        for stock in stocks:
+            payout_ratio = stock.get("payout_ratio", 0.5) # Default 50%
+            years_growth = stock.get("dividend_years_growth", 0)
             
-            # Simple Aristocrat Definition
-            if years_growing >= 25 and yield_pct > 0.02:
-                aristocrats.append(asset)
-                
-        logger.info(f"Dividend Safety: Found {len(aristocrats)} Aristocrats out of {len(assets)} candidates.")
-        return aristocrats
+            # Policy: Safety = (1 - PayoutRatio) * (YearsGrowth / 25)
+            # Payout ratio < 60% is preferred.
+            safety_score = (1 - payout_ratio) * 10 
+            if years_growth >= 25:
+                safety_score += 5 # Aristocrat bonus
+            
+            results.append({
+                "ticker": stock["ticker"],
+                "payout_ratio": payout_ratio,
+                "years_growth": years_growth,
+                "safety_score": round(safety_score, 2),
+                "is_aristocrat": years_growth >= 25,
+                "status": "SECURE" if safety_score > 7 else "CAUTION"
+            })
+            
+        return sorted(results, key=lambda x: x["safety_score"], reverse=True)

@@ -22,8 +22,8 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
-from typing import Dict, List, Optional
+from datetime import datetime, timedelta, timezone
+from typing import Dict, List, Optional, Any
 from models.paper_trading import SimulationResult, VirtualPortfolio
 from services.trading.paper_trading_service import get_paper_trading_service
 from services.system.cache_service import get_cache_service
@@ -90,7 +90,7 @@ class SimulationService:
         win_rate = await self._calculate_win_rate(trades)
         
         result = SimulationResult(
-            simulation_id=f"sim_{strategy_name}_{datetime.utcnow().timestamp()}",
+            simulation_id=f"sim_{strategy_name}_{datetime.now(timezone.utc).timestamp()}",
             strategy_name=strategy_name,
             start_date=start_date,
             end_date=end_date,
@@ -104,6 +104,51 @@ class SimulationService:
         )
         
         return result
+
+    async def get_simulation_results(
+        self,
+        user_id: str,
+        limit: int = 10
+    ) -> List[Dict]:
+        """
+        Get recent simulation results.
+        """
+        # In production, query database
+        return await self._get_simulations_from_db(user_id, limit)
+
+    async def _get_simulations_from_db(self, user_id: str, limit: int) -> List[Dict]:
+        """Get simulations from DB (mockable)."""
+        return []
+
+    async def compare_simulations(
+        self,
+        simulations: List[SimulationResult]
+    ) -> Dict[str, Any]:
+        """
+        Compare performance of multiple simulations.
+        """
+        if not simulations:
+            return {}
+            
+        best_return = max(simulations, key=lambda s: s.total_return)
+        best_sharpe = max(simulations, key=lambda s: s.sharpe_ratio)
+        lowest_drawdown = min(simulations, key=lambda s: s.max_drawdown)
+        
+        return {
+            "best_return": {
+                "strategy": best_return.strategy_name,
+                "value": best_return.total_return
+            },
+            "best_sharpe": {
+                "strategy": best_sharpe.strategy_name,
+                "value": best_sharpe.sharpe_ratio
+            },
+            "lowest_drawdown": {
+                "strategy": lowest_drawdown.strategy_name,
+                "value": lowest_drawdown.max_drawdown
+            },
+            "comparison_count": len(simulations)
+        }
     
     async def _simulate_strategy(
         self,

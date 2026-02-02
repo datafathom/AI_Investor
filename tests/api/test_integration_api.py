@@ -65,7 +65,7 @@ def mock_integration_service():
             )
         ]
         service.get_user_integrations.return_value = mock_integrations
-        service.sync_integration.return_value = {'status': 'success', 'records_synced': 100}
+        service.sync_data.return_value = {'status': 'success', 'records_synced': 100}
         mock.return_value = service
         yield service
 
@@ -106,7 +106,7 @@ def test_get_user_integrations_success(client, mock_integration_service):
 
 def test_sync_integration_success(client, mock_integration_service):
     """Test successful integration sync."""
-    response = client.post('/api/integration/int_1/sync')
+    response = client.post('/api/integration/int_1/sync', json={})
     
     assert response.status_code == 200
     data = response.get_json()

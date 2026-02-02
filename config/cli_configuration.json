@@ -2,23 +2,28 @@
     "commands": {
         "start-all": {
             "description": "Start all AI Investor services and agents.",
-            "handler": "scripts.runners.system_control:start_all"
+            "handler": "scripts.runners.system_control:start_all",
+            "category": "System Control"
         },
         "seed-db": {
             "description": "Seed the database with initial user and test data.",
-            "handler": "scripts.runners.seed_db:run_seed_db"
+            "handler": "scripts.runners.seed_db:run_seed_db",
+            "category": "General"
         },
         "check-backend": {
             "description": "Quickly check backend health status via HTTP.",
-            "handler": "scripts.runners.system_control:check_backend"
+            "handler": "scripts.runners.system_control:check_backend",
+            "category": "System Control"
         },
         "start-backend": {
             "description": "Start the Flask backend on the host (Windows).",
-            "handler": "scripts.runners.system_control:start_backend"
+            "handler": "scripts.runners.system_control:start_backend",
+            "category": "General"
         },
         "start-frontend": {
             "description": "Start the React frontend on the host (Windows).",
-            "handler": "scripts.runners.system_control:start_frontend"
+            "handler": "scripts.runners.system_control:start_frontend",
+            "category": "General"
         },
         "check-port": {
             "description": "Check if a specific port is listening on the host.",
@@ -30,35 +35,43 @@
                     "help": "Port to check"
                 }
             ],
-            "handler": "scripts.runners.system_control:check_port"
+            "handler": "scripts.runners.system_control:check_port",
+            "category": "System Control"
         },
         "check-runtimes": {
             "description": "Check if dev ports (5050, 5173) are listening.",
-            "handler": "scripts.runners.system_control:check_runtimes"
+            "handler": "scripts.runners.system_control:check_runtimes",
+            "category": "System Control"
         },
         "stop-all": {
             "description": "Gracefully stop all services.",
-            "handler": "scripts.runners.system_control:stop_all"
+            "handler": "scripts.runners.system_control:stop_all",
+            "category": "System Control"
         },
         "reset-dev": {
             "description": "Unified Reset: Stop/Prune, Start, and Seed.",
-            "handler": "scripts.runners.system_control:reset_dev"
+            "handler": "scripts.runners.system_control:reset_dev",
+            "category": "System Control"
         },
         "demo-start": {
             "description": "Stop prev runtimes and start Backend/Frontend in new windows.",
-            "handler": "scripts.runners.system_control:run_demo_mode"
+            "handler": "scripts.runners.system_control:run_demo_mode",
+            "category": "System Control"
         },
         "dev": {
             "description": "Developer Mode: Hot-Reload for Backend & Frontend (Auto-check local infra).",
-            "handler": "scripts.runners.dev_runner:start_dev_mode"
+            "handler": "scripts.runners.dev_runner:start_dev_mode",
+            "category": "Development & Infrastructure"
         },
         "dev-full": {
             "description": "Full Dev Mode: Starts Docker Containers + Backend + Frontend locally.",
-            "handler": "scripts.runners.dev_runner:start_dev_full"
+            "handler": "scripts.runners.dev_runner:start_dev_full",
+            "category": "Development & Infrastructure"
         },
         "dev-no-db": {
             "description": "Light Dev Mode: Backend + Frontend ONLY (For 2-Node setups).",
-            "handler": "scripts.runners.dev_runner:start_dev_no_db"
+            "handler": "scripts.runners.dev_runner:start_dev_no_db",
+            "category": "Development & Infrastructure"
         },
         "speedtest": {
             "description": "Speed test for remote services.",
@@ -75,19 +88,23 @@
                     ],
                     "handler": "scripts.runners.speed_test_runner:run_speed_test"
                 }
-            }
+            },
+            "category": "System Control"
         },
         "verify-pipeline": {
             "description": "Run End-to-End verification of the Data->Signal->Trade pipeline.",
-            "handler": "scripts.runners.system_control:verify_pipeline"
+            "handler": "scripts.runners.system_control:verify_pipeline",
+            "category": "System Control"
         },
         "build-frontend": {
             "description": "Build the frontend2 production bundle.",
-            "handler": "scripts.runners.frontend_control:run_frontend_build"
+            "handler": "scripts.runners.frontend_control:run_frontend_build",
+            "category": "Development & Infrastructure"
         },
         "clean-build": {
             "description": "Sanitize JSX files and build the frontend.",
-            "handler": "scripts.runners.frontend_control:run_clean_build"
+            "handler": "scripts.runners.frontend_control:run_clean_build",
+            "category": "Development & Infrastructure"
         },
         "docker": {
             "description": "Docker infrastructure management",
@@ -140,7 +157,8 @@
                     "description": "Show Docker container status (formatted table)",
                     "handler": "scripts.runners.docker_control:docker_ps"
                 }
-            }
+            },
+            "category": "Development & Infrastructure"
         },
         "api": {
             "description": "API Documentation and interaction tools",
@@ -153,7 +171,8 @@
                     "description": "Serve interactive Swagger UI",
                     "handler": "scripts.runners.api_docs:serve_docs"
                 }
-            }
+            },
+            "category": "API & Documentation"
         },
         "infra": {
             "description": "Infrastructure and LAN distribution management",
@@ -226,11 +245,686 @@
                     ],
                     "handler": "scripts.runners.cert_runner:init_node"
                 }
-            }
+            },
+            "category": "Development & Infrastructure"
+        },
+        "rule144": {
+            "description": "Rule 144 Compliance & Market Anomaly Detection.",
+            "subcommands": {
+                "scan-anomalies": {
+                    "description": "Scan watchlist for pump-and-dump anomalies.",
+                    "handler": "scripts.runners.rule144_runner:scan_anomalies"
+                },
+                "check-bots": {
+                    "description": "Analyze social volume for bot attacks.",
+                    "arguments": [
+                        {
+                            "name": "ticker",
+                            "type": "string",
+                            "required": true,
+                            "help": "Stock Ticker"
+                        }
+                    ],
+                    "handler": "scripts.runners.rule144_runner:check_bots"
+                },
+                "audit": {
+                    "description": "Audit insider status and promo spikes.",
+                    "arguments": [
+                        {
+                            "name": "ticker",
+                            "type": "string",
+                            "required": true,
+                            "help": "Stock Ticker"
+                        }
+                    ],
+                    "handler": "scripts.runners.rule144_runner:audit_insider"
+                },
+                "check-limit": {
+                    "description": "Check Rule 144(e) volume limits.",
+                    "arguments": [
+                        {
+                            "name": "ticker",
+                            "type": "string",
+                            "required": true,
+                            "help": "Stock Ticker"
+                        },
+                        {
+                            "name": "shares",
+                            "type": "integer",
+                            "required": true,
+                            "help": "Shares to sell"
+                        },
+                        {
+                            "name": "outstanding",
+                            "type": "integer",
+                            "required": true,
+                            "help": "Total outstanding shares"
+                        },
+                        {
+                            "name": "vol",
+                            "type": "integer",
+                            "required": true,
+                            "help": "Average weekly volume"
+                        }
+                    ],
+                    "handler": "scripts.runners.rule144_runner:check_limit"
+                }
+            },
+            "category": "Risk & Compliance"
+        },
+        "defense": {
+            "description": "Bear Market Defensive Protocol (Phase 198).",
+            "subcommands": {
+                "status": {
+                    "description": "Show current Defensive Shield status.",
+                    "handler": "scripts.runners.defense_runner:status"
+                },
+                "activate": {
+                    "description": "Manually force Defensive Protocol activation.",
+                    "handler": "scripts.runners.defense_runner:activate"
+                }
+            },
+            "category": "Advanced AI Engines"
+        },
+        "research": {
+            "description": "Automated Fundamental Research (Phase 199).",
+            "subcommands": {
+                "analyze": {
+                    "description": "Run AI Due Diligence on a ticker.",
+                    "arguments": [
+                        {
+                            "name": "ticker",
+                            "type": "string",
+                            "required": true,
+                            "help": "Stock Ticker"
+                        }
+                    ],
+                    "handler": "scripts.runners.research_runner:analyze"
+                },
+                "calc-dcf": {
+                    "description": "Calculate Intrinsic Value (DCF).",
+                    "arguments": [
+                        {
+                            "name": "ticker",
+                            "type": "string",
+                            "default": "AAPL",
+                            "help": "Stock Ticker"
+                        }
+                    ],
+                    "handler": "scripts.runners.research_runner:calc_dcf"
+                }
+            },
+            "category": "Advanced AI Engines"
+        },
+        "orch": {
+            "description": "AI Wealth Orchestrator Control (Phase 200).",
+            "subcommands": {
+                "status": {
+                    "description": "Show Orchestrator and Subsystem health.",
+                    "handler": "scripts.runners.orchestrator_runner:status"
+                },
+                "boot": {
+                    "description": "Initialize the Master Orchestrator loop.",
+                    "handler": "scripts.runners.orchestrator_runner:boot"
+                }
+            },
+            "category": "Advanced AI Engines"
         },
         "docker-ps": {
             "description": "Quickly show Docker container status (shorthand for docker ps)",
-            "handler": "scripts.runners.docker_control:docker_ps"
+            "handler": "scripts.runners.docker_control:docker_ps",
+            "category": "System Control"
+        },
+        "sfo": {
+            "description": "Single Family Office (SFO) Economics & Strategy.",
+            "subcommands": {
+                "analyze": {
+                    "description": "Analyze SFO economic viability vs external fees.",
+                    "arguments": [
+                        {
+                            "name": "aum",
+                            "type": "string",
+                            "required": true,
+                            "help": "Total Assets Under Management (e.g. 150,000,000)"
+                        }
+                    ],
+                    "flags": [
+                        {
+                            "name": "external-bps",
+                            "type": "integer",
+                            "default": 100,
+                            "help": "External advisor fee in basis points (default 100)"
+                        }
+                    ],
+                    "handler": "scripts.runners.sfo_runner:analyze_sfo"
+                },
+                "budget-template": {
+                    "description": "Output a standard SFO operating budget template.",
+                    "handler": "scripts.runners.sfo_runner:budget_template"
+                },
+                "lockdown": {
+                    "description": "Enable 'Black Hole' mode (Full privacy).",
+                    "arguments": [
+                        {
+                            "name": "office-id",
+                            "type": "string",
+                            "required": true,
+                            "help": "Account identifier"
+                        }
+                    ],
+                    "handler": "scripts.runners.privacy_runner:enable_lockdown"
+                },
+                "audit-access": {
+                    "description": "Audit privacy advantages and access logs.",
+                    "handler": "scripts.runners.privacy_runner:check_privacy_status"
+                },
+                "calc-spending": {
+                    "description": "Calculate sustainable spending based on real returns.",
+                    "arguments": [
+                        {
+                            "name": "aum",
+                            "type": "float",
+                            "required": true,
+                            "help": "Total Portfolio Value"
+                        },
+                        {
+                            "name": "returns",
+                            "type": "float",
+                            "required": true,
+                            "help": "Nominal annual return %"
+                        },
+                        {
+                            "name": "inflation",
+                            "type": "float",
+                            "required": true,
+                            "help": "Annual inflation rate %"
+                        }
+                    ],
+                    "handler": "scripts.runners.sfo_runner:calc_spending"
+                },
+                "audit-governance": {
+                    "description": "Audit and ratify family constitution and mission.",
+                    "arguments": [
+                        {
+                            "name": "family-id",
+                            "type": "string",
+                            "required": true,
+                            "help": "UUID of the family office"
+                        }
+                    ],
+                    "handler": "scripts.runners.sfo_runner:audit_governance"
+                }
+            },
+            "category": "Unified Family Office (UFO)"
+        },
+        "network": {
+            "description": "High-Value Relationship & CRM Management.",
+            "subcommands": {
+                "find-path": {
+                    "description": "Find the shortest connection path to a target person.",
+                    "arguments": [
+                        {
+                            "name": "target",
+                            "type": "string",
+                            "required": true,
+                            "help": "Name of the target person"
+                        }
+                    ],
+                    "flags": [
+                        {
+                            "name": "office-id",
+                            "type": "string",
+                            "help": "Specific SFO UUID"
+                        }
+                    ],
+                    "handler": "scripts.runners.network_runner:find_connection"
+                },
+                "sync-crm": {
+                    "description": "Sync contacts from Salesforce CRM.",
+                    "arguments": [
+                        {
+                            "name": "office-id",
+                            "type": "string",
+                            "required": true,
+                            "help": "SFO UUID"
+                        }
+                    ],
+                    "handler": "scripts.runners.network_runner:sync_crm"
+                }
+            },
+            "category": "Unified Family Office (UFO)"
+        },
+        "deal": {
+            "description": "Private Market Deal Allocation & Waitlist Priority.",
+            "subcommands": {
+                "allocate": {
+                    "description": "Run the AUM-weighted allocation algorithm for oversubscribed deals.",
+                    "arguments": [
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "required": true,
+                            "help": "Deal identifier"
+                        },
+                        {
+                            "name": "capacity",
+                            "type": "float",
+                            "required": true,
+                            "help": "Total deal capacity in dollars"
+                        }
+                    ],
+                    "handler": "scripts.runners.deal_runner:allocate"
+                },
+                "waitlist": {
+                    "description": "Show the current priority waitlist for scarce deals.",
+                    "handler": "scripts.runners.deal_runner:show_waitlist"
+                }
+            },
+            "category": "Unified Family Office (UFO)"
+        },
+        "mfo": {
+            "description": "Multi-Family Office Shared Resource Management.",
+            "subcommands": {
+                "request": {
+                    "description": "Create a shared concierge lifestyle request.",
+                    "arguments": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "required": true,
+                            "help": "Request detail"
+                        }
+                    ],
+                    "handler": "scripts.runners.mfo_runner:create_request"
+                },
+                "check-pricing": {
+                    "description": "Verify institutional fee tiers across funds.",
+                    "handler": "scripts.runners.mfo_runner:check_pricing"
+                }
+            },
+            "category": "Unified Family Office (UFO)"
+        },
+        "hr": {
+            "description": "Family Office HR, Compensation & Staff Performance.",
+            "subcommands": {
+                "check-comp": {
+                    "description": "Show market rate benchmarking for a FO role.",
+                    "arguments": [
+                        {
+                            "name": "role",
+                            "type": "string",
+                            "required": true,
+                            "help": "Role name (e.g. CIO, PM, Analyst)"
+                        }
+                    ],
+                    "handler": "scripts.runners.hr_runner:check_comp"
+                },
+                "calc-bonus": {
+                    "description": "Calculate projected EOY performance bonus.",
+                    "arguments": [
+                        {
+                            "name": "staff-id",
+                            "type": "string",
+                            "required": true,
+                            "help": "Professional ID or Name"
+                        }
+                    ],
+                    "flags": [
+                        {
+                            "name": "alpha-bps",
+                            "type": "integer",
+                            "default": 0,
+                            "help": "Alpha generated in basis points"
+                        }
+                    ],
+                    "handler": "scripts.runners.hr_runner:calc_bonus"
+                }
+            },
+            "category": "Unified Family Office (UFO)"
+        },
+        "pe": {
+            "description": "Private Equity (PE) LBO Modeling & Portfolio Insights.",
+            "subcommands": {
+                "calc-lbo": {
+                    "description": "Run a quick LBO model (IRR/MOIC).",
+                    "arguments": [
+                        {
+                            "name": "ebitda",
+                            "type": "string",
+                            "required": true,
+                            "help": "Entry EBITDA (e.g. 50,000,000)"
+                        },
+                        {
+                            "name": "multiple",
+                            "type": "float",
+                            "required": true,
+                            "help": "Entry EBITDA Multiple (e.g. 8.5)"
+                        }
+                    ],
+                    "flags": [
+                        {
+                            "name": "equity-pct",
+                            "type": "float",
+                            "default": 0.3,
+                            "help": "Equity contribution percentage (default 0.3)"
+                        }
+                    ],
+                    "handler": "scripts.runners.pe_runner:calc_lbo"
+                },
+                "vintage-stats": {
+                    "description": "Show historical performance for a PE vintage year.",
+                    "arguments": [
+                        {
+                            "name": "year",
+                            "type": "integer",
+                            "required": true,
+                            "help": "Vintage year (e.g. 2008)"
+                        }
+                    ],
+                    "handler": "scripts.runners.pe_runner:vintage_stats"
+                },
+                "sim-cuts": {
+                    "description": "Run an operational efficiency simulation (SG&A cuts).",
+                    "arguments": [
+                        {
+                            "name": "ebitda",
+                            "type": "float",
+                            "required": true,
+                            "help": "Starting EBITDA"
+                        },
+                        {
+                            "name": "opex",
+                            "type": "float",
+                            "required": true,
+                            "help": "Baseline OpEx"
+                        },
+                        {
+                            "name": "cut-pct",
+                            "type": "float",
+                            "required": true,
+                            "help": "Percentage of OpEx to cut (e.g. 15)"
+                        }
+                    ],
+                    "handler": "scripts.runners.pe_ops_runner:run_ops_sim"
+                },
+                "sensitize": {
+                    "description": "Run a Monte Carlo sensitivity analysis on the business plan.",
+                    "arguments": [
+                        {
+                            "name": "ebitda",
+                            "type": "float",
+                            "required": true,
+                            "help": "Projected EBITDA"
+                        },
+                        {
+                            "name": "multiple",
+                            "type": "float",
+                            "required": true,
+                            "help": "Exit Multiple"
+                        }
+                    ],
+                    "handler": "scripts.runners.pe_ops_runner:run_sensitivity"
+                }
+            },
+            "category": "Private Markets"
+        },
+        "vc": {
+            "description": "Venture Capital (VC) Deal Flow & Power Law Simulation.",
+            "subcommands": {
+                "list-deals": {
+                    "description": "List active accredited investor VC deals.",
+                    "flags": [
+                        {
+                            "name": "min-ticket",
+                            "type": "integer",
+                            "default": 50,
+                            "help": "Minimum ticket size in k (default 50)"
+                        }
+                    ],
+                    "handler": "scripts.runners.vc_runner:list_deals"
+                },
+                "simulate": {
+                    "description": "Run a VC power law simulation for a portfolio.",
+                    "arguments": [
+                        {
+                            "name": "count",
+                            "type": "integer",
+                            "default": 20,
+                            "help": "Number of investments to simulate"
+                        }
+                    ],
+                    "handler": "scripts.runners.vc_runner:simulate_power_law"
+                }
+            },
+            "category": "Private Markets"
+        },
+        "syndication": {
+            "description": "Private Market Syndications & LP/GP Network.",
+            "subcommands": {
+                "list": {
+                    "description": "List open private syndication opportunities.",
+                    "handler": "scripts.runners.syndication_runner:list_syndications"
+                },
+                "commit": {
+                    "description": "Soft circle (commit) capital to a syndication deal.",
+                    "arguments": [
+                        {
+                            "name": "deal-id",
+                            "type": "string",
+                            "required": true,
+                            "help": "Deal identifier (e.g. RE-SYND-01)"
+                        },
+                        {
+                            "name": "amount",
+                            "type": "string",
+                            "required": true,
+                            "help": "Amount to commit (e.g. 100,000)"
+                        }
+                    ],
+                    "handler": "scripts.runners.syndication_runner:commit_deal"
+                }
+            },
+            "category": "Unified Family Office (UFO)"
+        },
+        "lend": {
+            "description": "UHNW Stock-Based Lending & Margin Management.",
+            "subcommands": {
+                "calc-capacity": {
+                    "description": "Check borrowing capacity against a stock position.",
+                    "arguments": [
+                        {
+                            "name": "symbol",
+                            "type": "string",
+                            "required": true,
+                            "help": "Ticker symbol (e.g. AAPL)"
+                        },
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "required": true,
+                            "help": "Current position value (e.g. 10,000,000)"
+                        }
+                    ],
+                    "flags": [
+                        {
+                            "name": "vol",
+                            "type": "float",
+                            "default": 20.0,
+                            "help": "Symbol volatility %"
+                        }
+                    ],
+                    "handler": "scripts.runners.lend_runner:calc_capacity"
+                },
+                "analyze-spread": {
+                    "description": "Compare cost of borrowing vs. taxes from liquidation.",
+                    "arguments": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "required": true,
+                            "help": "Total position value"
+                        },
+                        {
+                            "name": "basis",
+                            "type": "string",
+                            "required": true,
+                            "help": "Original cost basis"
+                        }
+                    ],
+                    "handler": "scripts.runners.lend_runner:analyze_spread"
+                }
+            },
+            "category": "Unified Family Office (UFO)"
+        },
+        "ppli": {
+            "description": "Private Placement Life Insurance (PPLI) & MEC Testing.",
+            "subcommands": {
+                "check-mec": {
+                    "description": "Run the IRS 7-pay test to avoid MEC status.",
+                    "arguments": [
+                        {
+                            "name": "premium",
+                            "type": "float",
+                            "required": true,
+                            "help": "Cumulative premium paid"
+                        },
+                        {
+                            "name": "limit",
+                            "type": "float",
+                            "required": true,
+                            "help": "IRS 7-pay premium limit"
+                        }
+                    ],
+                    "handler": "scripts.runners.ppli_runner:check_mec"
+                },
+                "value": {
+                    "description": "Check cash value and borrowing headroom for a policy.",
+                    "arguments": [
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "required": true,
+                            "help": "Policy ID"
+                        }
+                    ],
+                    "handler": "scripts.runners.ppli_runner:get_ppli_value"
+                },
+                "optimize-premium": {
+                    "description": "Optimize premium cadence to maximize IRR within MEC limits.",
+                    "arguments": [
+                        {
+                            "name": "total",
+                            "type": "float",
+                            "required": true,
+                            "help": "Total planned investment"
+                        },
+                        {
+                            "name": "years",
+                            "type": "integer",
+                            "required": true,
+                            "help": "Number of years to spread payments"
+                        }
+                    ],
+                    "flags": [
+                        {
+                            "name": "rate",
+                            "type": "float",
+                            "default": 6.0,
+                            "help": "Projected ROI percentage (default 6.0)"
+                        }
+                    ],
+                    "handler": "scripts.runners.ppli_runner:optimize_premium"
+                },
+                "rank-assets": {
+                    "description": "Rank portfolio assets by tax drag to identify PPLI candidates.",
+                    "handler": "scripts.runners.ppli_runner:rank_assets"
+                }
+            },
+            "category": "Unified Family Office (UFO)"
+        },
+        "governance": {
+            "description": "Family Office Governance & Heir Employment Audits.",
+            "subcommands": {
+                "list-heirs": {
+                    "description": "Show list of employed family members and nepotism status.",
+                    "handler": "scripts.runners.governance_runner:list_heirs"
+                },
+                "audit-kpi": {
+                    "description": "Calculate final performance score with discretionary overrides.",
+                    "arguments": [
+                        {
+                            "name": "staff-id",
+                            "type": "string",
+                            "required": true,
+                            "help": "Staff identifier"
+                        },
+                        {
+                            "name": "hard-score",
+                            "type": "float",
+                            "required": true,
+                            "help": "Literal productivity score (0-100)"
+                        },
+                        {
+                            "name": "discretion",
+                            "type": "float",
+                            "required": true,
+                            "help": "Family discretionary score (0-100)"
+                        }
+                    ],
+                    "handler": "scripts.runners.governance_runner:audit_kpi"
+                }
+            },
+            "category": "Unified Family Office (UFO)"
+        },
+        "credit": {
+            "description": "Private Credit & Debt Syndication Tracker.",
+            "subcommands": {
+                "ingest-tape": {
+                    "description": "Ingest detailed loan tape from a credit manager.",
+                    "arguments": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "required": true,
+                            "help": "Path to loan tape CSV/XLS"
+                        }
+                    ],
+                    "handler": "scripts.runners.credit_runner:ingest_tape"
+                },
+                "calc-risk": {
+                    "description": "Calculate projected net yield after defaults.",
+                    "handler": "scripts.runners.credit_runner:calc_risk"
+                }
+            },
+            "category": "Alternative Assets"
+        },
+        "priv": {
+            "description": "Private Markets Illiquidity & Performance Smoothing.",
+            "subcommands": {
+                "calc-premium": {
+                    "description": "Calculate illiquidity premium over public benchmarks.",
+                    "handler": "scripts.runners.priv_runner:calc_premium"
+                },
+                "unsmooth": {
+                    "description": "Expose true volatility via Geltner return unsmoothing.",
+                    "handler": "scripts.runners.priv_runner:unsmooth"
+                }
+            },
+            "category": "Alternative Assets"
+        },
+        "alts": {
+            "description": "Alternative Asset Diversification (Art, Watches, Crypto, K-1s).",
+            "subcommands": {
+                "update-prices": {
+                    "description": "Fetch external valuations for collectibles and private assets.",
+                    "handler": "scripts.runners.alts_runner:update_prices"
+                },
+                "list-k1s": {
+                    "description": "Show the status of pending Schedule K-1 tax forms.",
+                    "handler": "scripts.runners.alts_runner:list_k1s"
+                }
+            },
+            "category": "Alternative Assets"
         },
         "test-ingestion": {
             "description": "Test Phase 6 data ingestion pipeline.",
@@ -242,11 +936,13 @@
                     "help": "Ticker symbol to fetch"
                 }
             ],
-            "handler": "scripts.runners.test_data_ingestion:run_test_ingestion"
+            "handler": "scripts.runners.test_data_ingestion:run_test_ingestion",
+            "category": "Verification & Testing"
         },
         "test-crowd": {
             "description": "Test Phase 7 Crowd Wisdom (Google Trends) logic.",
-            "handler": "scripts.runners.test_crowd_wisdom:run_test_crowd_wisdom"
+            "handler": "scripts.runners.test_crowd_wisdom:run_test_crowd_wisdom",
+            "category": "Verification & Testing"
         },
         "test-broker": {
             "description": "Test Phase 24 Broker (Robinhood) integration.",
@@ -258,7 +954,8 @@
                     "help": "Run in simulation mode"
                 }
             ],
-            "handler": "scripts.runners.test_broker:run_test_broker"
+            "handler": "scripts.runners.test_broker:run_test_broker",
+            "category": "Verification & Testing"
         },
         "backfill-history": {
             "description": "Backfill historical OHLCV data from Alpha Vantage.",
@@ -278,7 +975,8 @@
                     "help": "Output size: 'compact' or 'full'"
                 }
             ],
-            "handler": "scripts.runners.historical_backfill:run_historical_backfill"
+            "handler": "scripts.runners.historical_backfill:run_historical_backfill",
+            "category": "Data & Analytics"
         },
         "persist-trends": {
             "description": "Fetch and persist Google Trends scores to Neo4j.",
@@ -290,277 +988,8 @@
                     "help": "Comma-separated keywords"
                 }
             ],
-            "handler": "scripts.runners.persist_trends:run_persist_trends"
-        },
-        "test-reddit": {
-            "description": "Test Phase 8 Social NLP (Reddit + FinBERT) logic.",
-            "flags": [
-                {
-                    "name": "tickers",
-                    "type": "string",
-                    "default": "TSLA,NVDA,SPY",
-                    "help": "Comma-separated tickers"
-                }
-            ],
-            "handler": "scripts.runners.test_reddit:run_test_reddit"
-        },
-        "test-options": {
-            "description": "Test Phase 9 Options Flow Tracking logic.",
-            "arguments": [
-                {
-                    "name": "symbol",
-                    "type": "string",
-                    "default": "TSLA",
-                    "help": "Ticker symbol to fetch options for"
-                }
-            ],
-            "flags": [
-                {
-                    "name": "mock",
-                    "type": "boolean",
-                    "default": false,
-                    "help": "Run in simulation mode"
-                }
-            ],
-            "handler": "scripts.runners.test_options_flow:run_test_options_flow"
-        },
-        "test-macro": {
-            "description": "Test Phase 10 Macro Data Integration (FRED).",
-            "flags": [
-                {
-                    "name": "mock",
-                    "type": "boolean",
-                    "default": false,
-                    "help": "Run with simulated macro data"
-                }
-            ],
-            "handler": "scripts.runners.test_macro:run_test_macro"
-        },
-        "test-fusion": {
-            "description": "Test Phase 11 Data Fusion & Normalization.",
-            "arguments": [
-                {
-                    "name": "symbol",
-                    "type": "string",
-                    "default": "TSLA",
-                    "help": "Ticker symbol"
-                }
-            ],
-            "flags": [
-                {
-                    "name": "mock",
-                    "type": "boolean",
-                    "default": false,
-                    "help": "Run with simulated data"
-                }
-            ],
-            "handler": "scripts.runners.test_fusion:run_test_fusion"
-        },
-        "test-fear-greed": {
-            "description": "Test Phase 12 Fear & Greed Composite Index.",
-            "flags": [
-                {
-                    "name": "symbols",
-                    "type": "string",
-                    "default": "SPY,QQQ,AAPL,TSLA,NVDA",
-                    "help": "Comma-separated ticker symbols"
-                },
-                {
-                    "name": "mock",
-                    "type": "boolean",
-                    "default": false,
-                    "help": "Run with simulated data"
-                }
-            ],
-            "handler": "scripts.runners.test_fear_greed:run_test_fear_greed"
-        },
-        "test-features": {
-            "description": "Test Phase 13 Feature Engineering Pipeline.",
-            "arguments": [
-                {
-                    "name": "symbol",
-                    "type": "string",
-                    "default": "SPY",
-                    "help": "Ticker symbol to analyze"
-                }
-            ],
-            "flags": [
-                {
-                    "name": "benchmark",
-                    "type": "boolean",
-                    "default": false,
-                    "help": "Run performance benchmark"
-                }
-            ],
-            "handler": "scripts.runners.test_feature_engineering:run_test_features"
-        },
-        "test-prediction": {
-            "description": "Test Phase 14 Predictive Modeling.",
-            "arguments": [
-                {
-                    "name": "symbol",
-                    "type": "string",
-                    "default": "SPY",
-                    "help": "Ticker symbol"
-                }
-            ],
-            "flags": [
-                {
-                    "name": "train",
-                    "type": "boolean",
-                    "default": false,
-                    "help": "Force retraining"
-                }
-            ],
-            "handler": "scripts.runners.test_prediction:run_test_prediction"
-        },
-        "test-factors": {
-            "description": "Test Phase 15 Factor Analysis.",
-            "handler": "scripts.runners.test_factor_analysis:run_test_factors"
-        },
-        "test-defensive-shield": {
-            "description": "Test Phase 16 Defensive Shield.",
-            "handler": "scripts.runners.test_defensive_shield:run_test_shield"
-        },
-        "test-aggressive-alpha": {
-            "description": "Test Phase 17 Aggressive Alpha.",
-            "handler": "scripts.runners.test_aggressive_alpha:run_test_aggressive"
-        },
-        "test-dynamic-allocator": {
-            "description": "Test Phase 18 Dynamic Allocator.",
-            "handler": "scripts.runners.test_dynamic_allocator:run_test_allocator"
-        },
-        "test-tax-harvesting": {
-            "description": "Test Phase 19 Tax Loss Harvesting.",
-            "handler": "scripts.runners.test_tax_harvesting:run_test_harvesting"
-        },
-        "test-risk-monitor": {
-            "description": "Test Phase 20 Real-time Risk Monitor.",
-            "handler": "scripts.runners.test_risk_monitor:run_test_risk"
-        },
-        "test-circuit-breaker": {
-            "description": "Test Phase 21 Volatility Circuit Breakers.",
-            "handler": "scripts.runners.test_circuit_breaker:run_test_circuit_breaker"
-        },
-        "test-stress-test": {
-            "description": "Test Phase 22 Stress Testing Suite.",
-            "handler": "scripts.runners.test_stress_test:run_test_stress"
-        },
-        "test-paper-trading": {
-            "description": "Test Phase 23 Paper Trading Simulator.",
-            "handler": "scripts.runners.test_paper_trading:run_test_paper"
-        },
-        "test-broker-integration": {
-            "description": "Test Phase 24 Broker Integration.",
-            "handler": "scripts.runners.test_broker_integration:run_test_broker"
-        },
-        "test-sor": {
-            "description": "Test Phase 25 Smart Order Routing.",
-            "handler": "scripts.runners.test_sor:run_test_sor"
-        },
-        "test-algo-execution": {
-            "description": "Test Phase 26 Algorithmic Execution.",
-            "handler": "scripts.runners.test_algo_execution:run_test_algo"
-        },
-        "test-morning-briefing": {
-            "description": "Test Phase 29 Morning Briefing Generation.",
-            "handler": "scripts.runners.test_morning_briefing:run_test_briefing"
-        },
-        "test-health-check": {
-            "description": "Test Phase 31 System Health Monitor.",
-            "handler": "scripts.runners.test_health_check:run_health_check"
-        },
-        "test-security": {
-            "description": "Test Phase 32 Encryption Service.",
-            "handler": "scripts.runners.test_security_service:run_test_security"
-        },
-        "test-rebalance": {
-            "description": "Test Phase 33 Autonomous Rebalancing.",
-            "handler": "scripts.runners.test_rebalancing:run_test_rebalance"
-        },
-        "test-backtest-v2": {
-            "description": "Test Phase 34 Event-Driven Backtesting Engine.",
-            "handler": "scripts.runners.test_backtesting_v2:run_backtest_v2"
-        },
-        "test-hype": {
-            "description": "Test Phase 35 Visual Hype Tracking.",
-            "handler": "scripts.runners.test_hype_tracking:run_test_hype"
-        },
-        "test-politics": {
-            "description": "Test Phase 36 Political Alpha Tracker.",
-            "handler": "scripts.runners.test_politics:run_test_politics"
-        },
-        "test-quandl": {
-            "description": "Test Phase 4 Quandl Integration (Short Interest).",
-            "arguments": [
-                {
-                    "name": "symbol",
-                    "type": "string",
-                    "default": "TSLA",
-                    "help": "Ticker symbol to test"
-                }
-            ],
-            "flags": [
-                {
-                    "name": "mock",
-                    "type": "boolean",
-                    "default": false,
-                    "help": "Run in simulation mode"
-                }
-            ],
-            "handler": "scripts.runners.test_quandl:run_test_quandl"
-        },
-        "test-finnhub": {
-            "description": "Test Phase 5 Finnhub Integration (IPO & News).",
-            "flags": [
-                {
-                    "name": "mock",
-                    "type": "boolean",
-                    "default": false,
-                    "help": "Run in simulation mode"
-                }
-            ],
-            "handler": "scripts.runners.test_finnhub:run_test_finnhub"
-        },
-        "test-news": {
-            "description": "Test Phase 6 NewsAPI Integration (Sentiment).",
-            "arguments": [
-                {
-                    "name": "topic",
-                    "type": "string",
-                    "default": "market",
-                    "help": "Keyword or ticker to search"
-                }
-            ],
-            "flags": [
-                {
-                    "name": "mock",
-                    "type": "boolean",
-                    "default": false,
-                    "help": "Run in simulation mode"
-                }
-            ],
-            "handler": "scripts.runners.test_news:run_test_news"
-        },
-        "test-crypto": {
-            "description": "Test Phase 7 CryptoCompare Integration.",
-            "arguments": [
-                {
-                    "name": "symbols",
-                    "type": "string",
-                    "default": "BTC,ETH",
-                    "help": "Comma-separated list of symbols"
-                }
-            ],
-            "flags": [
-                {
-                    "name": "mock",
-                    "type": "boolean",
-                    "default": false,
-                    "help": "Run in simulation mode"
-                }
-            ],
-            "handler": "scripts.runners.test_crypto:run_test_crypto"
+            "handler": "scripts.runners.persist_trends:run_persist_trends",
+            "category": "Data & Analytics"
         },
         "test-reddit": {
             "description": "Test Phase 8 Reddit Integration (Mock).",
@@ -580,7 +1009,311 @@
                     "help": "Force simulation mode"
                 }
             ],
-            "handler": "scripts.runners.test_reddit:run_test_reddit"
+            "handler": "scripts.runners.test_reddit:run_test_reddit",
+            "category": "Verification & Testing"
+        },
+        "test-options": {
+            "description": "Test Phase 9 Options Flow Tracking logic.",
+            "arguments": [
+                {
+                    "name": "symbol",
+                    "type": "string",
+                    "default": "TSLA",
+                    "help": "Ticker symbol to fetch options for"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run in simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_options_flow:run_test_options_flow",
+            "category": "Verification & Testing"
+        },
+        "test-macro": {
+            "description": "Test Phase 10 Macro Data Integration (FRED).",
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run with simulated macro data"
+                }
+            ],
+            "handler": "scripts.runners.test_macro:run_test_macro",
+            "category": "Verification & Testing"
+        },
+        "test-fusion": {
+            "description": "Test Phase 11 Data Fusion & Normalization.",
+            "arguments": [
+                {
+                    "name": "symbol",
+                    "type": "string",
+                    "default": "TSLA",
+                    "help": "Ticker symbol"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run with simulated data"
+                }
+            ],
+            "handler": "scripts.runners.test_fusion:run_test_fusion",
+            "category": "Verification & Testing"
+        },
+        "test-fear-greed": {
+            "description": "Test Phase 12 Fear & Greed Composite Index.",
+            "flags": [
+                {
+                    "name": "symbols",
+                    "type": "string",
+                    "default": "SPY,QQQ,AAPL,TSLA,NVDA",
+                    "help": "Comma-separated ticker symbols"
+                },
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run with simulated data"
+                }
+            ],
+            "handler": "scripts.runners.test_fear_greed:run_test_fear_greed",
+            "category": "Verification & Testing"
+        },
+        "test-features": {
+            "description": "Test Phase 13 Feature Engineering Pipeline.",
+            "arguments": [
+                {
+                    "name": "symbol",
+                    "type": "string",
+                    "default": "SPY",
+                    "help": "Ticker symbol to analyze"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "benchmark",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run performance benchmark"
+                }
+            ],
+            "handler": "scripts.runners.test_feature_engineering:run_test_features",
+            "category": "Verification & Testing"
+        },
+        "test-prediction": {
+            "description": "Test Phase 14 Predictive Modeling.",
+            "arguments": [
+                {
+                    "name": "symbol",
+                    "type": "string",
+                    "default": "SPY",
+                    "help": "Ticker symbol"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "train",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Force retraining"
+                }
+            ],
+            "handler": "scripts.runners.test_prediction:run_test_prediction",
+            "category": "Verification & Testing"
+        },
+        "test-factors": {
+            "description": "Test Phase 15 Factor Analysis.",
+            "handler": "scripts.runners.test_factor_analysis:run_test_factors",
+            "category": "Verification & Testing"
+        },
+        "test-defensive-shield": {
+            "description": "Test Phase 16 Defensive Shield.",
+            "handler": "scripts.runners.test_defensive_shield:run_test_shield",
+            "category": "Verification & Testing"
+        },
+        "test-aggressive-alpha": {
+            "description": "Test Phase 17 Aggressive Alpha.",
+            "handler": "scripts.runners.test_aggressive_alpha:run_test_aggressive",
+            "category": "Verification & Testing"
+        },
+        "test-dynamic-allocator": {
+            "description": "Test Phase 18 Dynamic Allocator.",
+            "handler": "scripts.runners.test_dynamic_allocator:run_test_allocator",
+            "category": "Verification & Testing"
+        },
+        "test-tax-harvesting": {
+            "description": "Test Phase 19 Tax Loss Harvesting (Mock).",
+            "arguments": [
+                {
+                    "name": "action",
+                    "type": "string",
+                    "default": "analyze",
+                    "help": "Action to test: analyze"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Force simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_tax_harvesting:run_test_tax_harvesting",
+            "category": "Verification & Testing"
+        },
+        "test-risk-monitor": {
+            "description": "Test Phase 20 Real-time Risk Monitor.",
+            "handler": "scripts.runners.test_risk_monitor:run_test_risk",
+            "category": "Verification & Testing"
+        },
+        "test-circuit-breaker": {
+            "description": "Test Phase 21 Volatility Circuit Breakers.",
+            "handler": "scripts.runners.test_circuit_breaker:run_test_circuit_breaker",
+            "category": "Verification & Testing"
+        },
+        "test-stress-test": {
+            "description": "Test Phase 22 Stress Testing Suite.",
+            "handler": "scripts.runners.test_stress_test:run_test_stress",
+            "category": "Verification & Testing"
+        },
+        "test-paper-trading": {
+            "description": "Test Phase 23 Paper Trading Simulator.",
+            "handler": "scripts.runners.test_paper_trading:run_test_paper",
+            "category": "Verification & Testing"
+        },
+        "test-broker-integration": {
+            "description": "Test Phase 24 Broker Integration.",
+            "handler": "scripts.runners.test_broker_integration:run_test_broker",
+            "category": "Verification & Testing"
+        },
+        "test-sor": {
+            "description": "Test Phase 25 Smart Order Routing.",
+            "handler": "scripts.runners.test_sor:run_test_sor",
+            "category": "Verification & Testing"
+        },
+        "test-algo-execution": {
+            "description": "Test Phase 26 Algorithmic Execution.",
+            "handler": "scripts.runners.test_algo_execution:run_test_algo",
+            "category": "Verification & Testing"
+        },
+        "test-morning-briefing": {
+            "description": "Test Phase 29 Morning Briefing Generation.",
+            "handler": "scripts.runners.test_morning_briefing:run_test_briefing",
+            "category": "Verification & Testing"
+        },
+        "test-health-check": {
+            "description": "Test Phase 31 System Health Monitor.",
+            "handler": "scripts.runners.test_health_check:run_health_check",
+            "category": "Verification & Testing"
+        },
+        "test-security": {
+            "description": "Test Phase 32 Encryption Service.",
+            "handler": "scripts.runners.test_security_service:run_test_security",
+            "category": "Verification & Testing"
+        },
+        "test-rebalance": {
+            "description": "Test Phase 33 Autonomous Rebalancing.",
+            "handler": "scripts.runners.test_rebalancing:run_test_rebalance",
+            "category": "Verification & Testing"
+        },
+        "test-backtest-v2": {
+            "description": "Test Phase 34 Event-Driven Backtesting Engine.",
+            "handler": "scripts.runners.test_backtesting_v2:run_backtest_v2",
+            "category": "Verification & Testing"
+        },
+        "test-hype": {
+            "description": "Test Phase 35 Visual Hype Tracking.",
+            "handler": "scripts.runners.test_hype_tracking:run_test_hype",
+            "category": "Verification & Testing"
+        },
+        "test-politics": {
+            "description": "Test Phase 36 Political Alpha Tracker.",
+            "handler": "scripts.runners.test_politics:run_test_politics",
+            "category": "Verification & Testing"
+        },
+        "test-quandl": {
+            "description": "Test Phase 4 Quandl Integration (Short Interest).",
+            "arguments": [
+                {
+                    "name": "symbol",
+                    "type": "string",
+                    "default": "TSLA",
+                    "help": "Ticker symbol to test"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run in simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_quandl:run_test_quandl",
+            "category": "Verification & Testing"
+        },
+        "test-finnhub": {
+            "description": "Test Phase 5 Finnhub Integration (IPO & News).",
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run in simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_finnhub:run_test_finnhub",
+            "category": "Verification & Testing"
+        },
+        "test-news": {
+            "description": "Test Phase 6 NewsAPI Integration (Sentiment).",
+            "arguments": [
+                {
+                    "name": "topic",
+                    "type": "string",
+                    "default": "market",
+                    "help": "Keyword or ticker to search"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run in simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_news:run_test_news",
+            "category": "Verification & Testing"
+        },
+        "test-crypto": {
+            "description": "Test Phase 7 CryptoCompare Integration.",
+            "arguments": [
+                {
+                    "name": "symbols",
+                    "type": "string",
+                    "default": "BTC,ETH",
+                    "help": "Comma-separated list of symbols"
+                }
+            ],
+            "flags": [
+                {
+                    "name": "mock",
+                    "type": "boolean",
+                    "default": false,
+                    "help": "Run in simulation mode"
+                }
+            ],
+            "handler": "scripts.runners.test_crypto:run_test_crypto",
+            "category": "Verification & Testing"
         },
         "test-debate": {
             "description": "Test Phase 9 Anthropic Debate Chamber (Mock).",
@@ -600,7 +1333,8 @@
                     "help": "Force simulation mode"
                 }
             ],
-            "handler": "scripts.runners.test_debate:run_test_debate"
+            "handler": "scripts.runners.test_debate:run_test_debate",
+            "category": "Verification & Testing"
         },
         "test-gemini": {
             "description": "Test Phase 10 Gemini Briefing (Mock).",
@@ -613,7 +1347,8 @@
                     "help": "Force simulation mode"
                 }
             ],
-            "handler": "scripts.runners.test_gemini:run_test_gemini"
+            "handler": "scripts.runners.test_gemini:run_test_gemini",
+            "category": "Verification & Testing"
         },
         "test-research": {
             "description": "Test Phase 11 Perplexity Research (Mock).",
@@ -633,7 +1368,8 @@
                     "help": "Force simulation mode"
                 }
             ],
-            "handler": "scripts.runners.test_research:run_test_research"
+            "handler": "scripts.runners.test_research:run_test_research",
+            "category": "Verification & Testing"
         },
         "test-stripe": {
             "description": "Test Phase 12 Stripe Billing (Mock).",
@@ -653,7 +1389,8 @@
                     "help": "Force simulation mode"
                 }
             ],
-            "handler": "scripts.runners.test_stripe:run_test_stripe"
+            "handler": "scripts.runners.test_stripe:run_test_stripe",
+            "category": "Verification & Testing"
         },
         "test-paypal": {
             "description": "Test Phase 13 PayPal (Mock).",
@@ -673,7 +1410,8 @@
                     "help": "Force simulation mode"
                 }
             ],
-            "handler": "scripts.runners.test_paypal:run_test_paypal"
+            "handler": "scripts.runners.test_paypal:run_test_paypal",
+            "category": "Verification & Testing"
         },
         "test-venmo": {
             "description": "Test Phase 14 Venmo (Mock).",
@@ -681,7 +1419,7 @@
                 {
                     "name": "amount",
                     "type": "float",
-                    "default": 29.00,
+                    "default": 29.0,
                     "help": "Amount to pay"
                 }
             ],
@@ -693,7 +1431,8 @@
                     "help": "Force simulation mode"
                 }
             ],
-            "handler": "scripts.runners.test_venmo:run_test_venmo"
+            "handler": "scripts.runners.test_venmo:run_test_venmo",
+            "category": "Verification & Testing"
         },
         "test-square": {
             "description": "Test Phase 15 Square Merchant (Mock).",
@@ -713,7 +1452,8 @@
                     "help": "Force simulation mode"
                 }
             ],
-            "handler": "scripts.runners.test_square:run_test_square"
+            "handler": "scripts.runners.test_square:run_test_square",
+            "category": "Verification & Testing"
         },
         "test-plaid": {
             "description": "Test Phase 16 Plaid Banking (Mock).",
@@ -733,7 +1473,8 @@
                     "help": "Force simulation mode"
                 }
             ],
-            "handler": "scripts.runners.test_plaid:run_test_plaid"
+            "handler": "scripts.runners.test_plaid:run_test_plaid",
+            "category": "Verification & Testing"
         },
         "test-coinbase": {
             "description": "Test Phase 17 Coinbase Wallet (Mock).",
@@ -753,7 +1494,8 @@
                     "help": "Force simulation mode"
                 }
             ],
-            "handler": "scripts.runners.test_coinbase:run_test_coinbase"
+            "handler": "scripts.runners.test_coinbase:run_test_coinbase",
+            "category": "Verification & Testing"
         },
         "test-binance": {
             "description": "Test Phase 18 Binance Exchange (Mock).",
@@ -779,27 +1521,8 @@
                     "help": "Symbol to trade/query"
                 }
             ],
-            "handler": "scripts.runners.test_binance:run_test_binance"
-        },
-        "test-tax-harvesting": {
-            "description": "Test Phase 19 Tax Loss Harvesting (Mock).",
-            "arguments": [
-                {
-                    "name": "action",
-                    "type": "string",
-                    "default": "analyze",
-                    "help": "Action to test: analyze"
-                }
-            ],
-            "flags": [
-                {
-                    "name": "mock",
-                    "type": "boolean",
-                    "default": true,
-                    "help": "Force simulation mode"
-                }
-            ],
-            "handler": "scripts.runners.test_tax_harvesting:run_test_tax_harvesting"
+            "handler": "scripts.runners.test_binance:run_test_binance",
+            "category": "Verification & Testing"
         },
         "test-twilio": {
             "description": "Test Phase 20 Twilio SMS (Mock).",
@@ -825,7 +1548,8 @@
                     "help": "Recipient phone number"
                 }
             ],
-            "handler": "scripts.runners.test_twilio:run_test_twilio"
+            "handler": "scripts.runners.test_twilio:run_test_twilio",
+            "category": "Verification & Testing"
         },
         "test-sendgrid": {
             "description": "Test Phase 21 SendGrid Email (Mock).",
@@ -851,7 +1575,8 @@
                     "help": "Recipient email"
                 }
             ],
-            "handler": "scripts.runners.test_sendgrid:run_test_sendgrid"
+            "handler": "scripts.runners.test_sendgrid:run_test_sendgrid",
+            "category": "Verification & Testing"
         },
         "test-pagerduty": {
             "description": "Test Phase 22 PagerDuty Incidents (Mock).",
@@ -871,7 +1596,8 @@
                     "help": "Force simulation mode"
                 }
             ],
-            "handler": "scripts.runners.test_pagerduty:run_test_pagerduty"
+            "handler": "scripts.runners.test_pagerduty:run_test_pagerduty",
+            "category": "Verification & Testing"
         },
         "test-slack": {
             "description": "Test Phase 23 Slack Integration (Mock).",
@@ -897,7 +1623,8 @@
                     "help": "Target channel"
                 }
             ],
-            "handler": "scripts.runners.test_slack:run_test_slack"
+            "handler": "scripts.runners.test_slack:run_test_slack",
+            "category": "Verification & Testing"
         },
         "test": {
             "description": "Run test suites by category",
@@ -1134,7 +1861,8 @@
                         }
                     ]
                 }
-            }
+            },
+            "category": "Verification & Testing"
         },
         "test-category": {
             "description": "Run tests for a specific category (use test list to see all categories)",
@@ -1181,7 +1909,8 @@
                     "help": "Generate HTML test report"
                 }
             ],
-            "handler": "scripts.runners.test_runner:run_test_category"
+            "handler": "scripts.runners.test_runner:run_test_category",
+            "category": "Verification & Testing"
         },
         "frontend": {
             "description": "Frontend operations (React/Vite)",
@@ -1260,7 +1989,8 @@
                         }
                     ]
                 }
-            }
+            },
+            "category": "General"
         },
         "backend": {
             "description": "Backend operations (Flask/Python)",
@@ -1337,7 +2067,8 @@
                         }
                     ]
                 }
-            }
+            },
+            "category": "General"
         },
         "deploy": {
             "description": "Deployment operations",
@@ -1393,7 +2124,8 @@
                         }
                     ]
                 }
-            }
+            },
+            "category": "General"
         },
         "db": {
             "description": "Database operations",
@@ -1477,7 +2209,8 @@
                         }
                     ]
                 }
-            }
+            },
+            "category": "General"
         },
         "pip-test": {
             "description": "Test pip calculation for a specific pair.",
@@ -1501,15 +2234,18 @@
                     "help": "End price"
                 }
             ],
-            "handler": "scripts.runners.pip_runner:run_pip_test"
+            "handler": "scripts.runners.pip_runner:run_pip_test",
+            "category": "Data & Analytics"
         },
         "pip-benchmark": {
             "description": "Run accuracy benchmarks for pip calculations.",
-            "handler": "scripts.runners.pip_runner:run_pip_benchmark"
+            "handler": "scripts.runners.pip_runner:run_pip_benchmark",
+            "category": "Data & Analytics"
         },
         "demo-reset": {
             "description": "Reset demo account balance.",
-            "handler": "scripts.runners.demo_runner:run_demo_reset"
+            "handler": "scripts.runners.demo_runner:run_demo_reset",
+            "category": "Demo & Simulation"
         },
         "demo-trade": {
             "description": "Execute a demo trade.",
@@ -1539,11 +2275,13 @@
                     "help": "Current Price"
                 }
             ],
-            "handler": "scripts.runners.demo_runner:run_demo_trade"
+            "handler": "scripts.runners.demo_runner:run_demo_trade",
+            "category": "Demo & Simulation"
         },
         "test-searcher": {
             "description": "Run Searcher Agent manual scan.",
-            "handler": "scripts.runners.searcher_runner:run_test_searcher"
+            "handler": "scripts.runners.searcher_runner:run_test_searcher",
+            "category": "Verification & Testing"
         },
         "test-protector": {
             "description": "Test Protector Agent validation.",
@@ -1554,7 +2292,7 @@
                     "required": true,
                     "help": "Risk amount"
                 },
-                 {
+                {
                     "name": "daily_loss",
                     "type": "string",
                     "required": false,
@@ -1562,7 +2300,273 @@
                     "help": "Current daily loss"
                 }
             ],
-            "handler": "scripts.runners.protector_runner:run_test_protector"
+            "handler": "scripts.runners.protector_runner:run_test_protector",
+            "category": "Verification & Testing"
+        },
+        "bridge": {
+            "description": "Epoch Sovereign Transition & Global Risk Audits.",
+            "subcommands": {
+                "global-status": {
+                    "description": "Check Epoch X preparedness and bridge status.",
+                    "handler": "scripts.runners.bridge_runner:check_global_status"
+                },
+                "audit-epoch-ix": {
+                    "description": "Run full completion audit for Epoch IX.",
+                    "handler": "scripts.runners.bridge_runner:run_audit"
+                }
+            },
+            "category": "Risk & Compliance"
+        },
+        "risk": {
+            "description": "Hidden Volatility & Gap Analysis for Private Assets.",
+            "subcommands": {
+                "calc-gap": {
+                    "description": "Analyze valuation gaps between private NAV and public proxies.",
+                    "arguments": [
+                        {
+                            "name": "asset_name",
+                            "type": "string",
+                            "required": true,
+                            "help": "Name of the private asset"
+                        },
+                        {
+                            "name": "nav",
+                            "type": "float",
+                            "required": true,
+                            "help": "Current reported NAV"
+                        },
+                        {
+                            "name": "ticker",
+                            "type": "string",
+                            "required": true,
+                            "help": "Public proxy ticker (e.g. QQQ)"
+                        }
+                    ],
+                    "handler": "scripts.runners.risk_runner:calc_gap"
+                },
+                "true-vol": {
+                    "description": "Calculate 'True' volatility by unsmoothing private returns.",
+                    "arguments": [
+                        {
+                            "name": "vol",
+                            "type": "float",
+                            "required": true,
+                            "help": "Reported volatility (e.g. 0.12)"
+                        },
+                        {
+                            "name": "gap",
+                            "type": "float",
+                            "required": true,
+                            "help": "Valuation gap (e.g. 0.25)"
+                        },
+                        {
+                            "name": "lockup",
+                            "type": "integer",
+                            "required": true,
+                            "help": "Liquidity lockup years"
+                        }
+                    ],
+                    "handler": "scripts.runners.risk_runner:true_vol"
+                }
+            },
+            "category": "Risk & Compliance"
+        },
+        "reflex": {
+            "description": "Michael Green Reflexivity & Passive Bubble Analysis.",
+            "subcommands": {
+                "check-stock": {
+                    "description": "Analyze passive ownership saturation for a ticker.",
+                    "arguments": [
+                        {
+                            "name": "ticker",
+                            "type": "string",
+                            "required": true,
+                            "help": "Stock ticker (e.g. AAPL)"
+                        }
+                    ],
+                    "handler": "scripts.runners.reflex_runner:check_stock"
+                },
+                "sim-crash": {
+                    "description": "Simulate a passive liquidity unwind (The Ticking Time Bomb).",
+                    "handler": "scripts.runners.reflex_runner:sim_crash"
+                }
+            },
+            "category": "Risk & Compliance"
+        },
+        "fatca": {
+            "description": "FATCA & FBAR International Tax Compliance.",
+            "subcommands": {
+                "list-assets": {
+                    "description": "List known foreign assets and check reporting thresholds.",
+                    "handler": "scripts.runners.fatca_runner:list_assets"
+                },
+                "gen-fbar": {
+                    "description": "Generate draft FinCEN Form 114 (FBAR).",
+                    "handler": "scripts.runners.fatca_runner:gen_fbar"
+                }
+            },
+            "category": "Risk & Compliance"
+        },
+        "expat": {
+            "description": "US Expatriation Tax (Section 877A) Management.",
+            "subcommands": {
+                "check-status": {
+                    "description": "Check if you qualify as a 'Covered Expatriate'.",
+                    "handler": "scripts.runners.expat_runner:check_status"
+                },
+                "calc-bill": {
+                    "description": "Estimate total 'Exit Tax' on global assets.",
+                    "handler": "scripts.runners.expat_runner:calc_bill"
+                }
+            },
+            "category": "Risk & Compliance"
+        },
+        "plan": {
+            "description": "Executive 10b5-1 Preset Selling Plan Management.",
+            "subcommands": {
+                "create": {
+                    "description": "Establish a new 10b5-1 pre-scripted selling plan.",
+                    "handler": "scripts.runners.plan_runner:create_plan"
+                },
+                "status": {
+                    "description": "Check the status and next execution date of active plans.",
+                    "handler": "scripts.runners.plan_runner:check_status"
+                },
+                "execute": {
+                    "description": "Simulate/Trigger a scheduled plan execution (Fiduciary).",
+                    "handler": "scripts.runners.plan_runner:execute_plan"
+                }
+            },
+            "category": "Risk & Compliance"
+        },
+        "georisk": {
+            "description": "Geopolitical Risk & Total War Event Simulation.",
+            "subcommands": {
+                "sim-war": {
+                    "description": "Simulate 'Left Tail' risk outcomes for diverse portfolios.",
+                    "handler": "scripts.runners.georisk_runner:sim_war"
+                },
+                "fear-score": {
+                    "description": "Calculate if geopolitical fear is over-bid in options.",
+                    "handler": "scripts.runners.georisk_runner:fear_score"
+                }
+            },
+            "category": "Risk & Compliance"
+        },
+        "mobility": {
+            "description": "Global Citizenship & Mobility Management.",
+            "subcommands": {
+                "check-visa": {
+                    "description": "Get details on a specific Golden Visa program.",
+                    "arguments": [
+                        {
+                            "name": "country",
+                            "type": "string",
+                            "required": true,
+                            "help": "Country name (e.g. Portugal)"
+                        }
+                    ],
+                    "handler": "scripts.runners.mobility_runner:check_visa"
+                },
+                "renunciation-risk": {
+                    "description": "Score the risk of renouncing citizenship.",
+                    "arguments": [
+                        {
+                            "name": "has-pass",
+                            "type": "string",
+                            "required": true,
+                            "help": "True if user has replacement passport"
+                        },
+                        {
+                            "name": "stability",
+                            "type": "float",
+                            "required": true,
+                            "help": "Home country stability (0-1)"
+                        }
+                    ],
+                    "handler": "scripts.runners.mobility_runner:renunciation_risk"
+                }
+            },
+            "category": "General"
+        },
+        "hedge": {
+            "description": "Volatility Strategy & Forced Seller Liquidity Engine.",
+            "subcommands": {
+                "recommend": {
+                    "description": "Get optimal hedging recommendations based on VIX and tax.",
+                    "handler": "scripts.runners.hedging_runner:recommend"
+                },
+                "forced-seller-status": {
+                    "description": "Check fragility and passive ownership of a ticker.",
+                    "handler": "scripts.runners.hedging_runner:forced_seller_status"
+                }
+            },
+            "category": "Advanced AI Engines"
+        },
+        "sentinel": {
+            "description": "Institutional Flows, PE Secondaries & Tax Harvesting.",
+            "subcommands": {
+                "whale-watch": {
+                    "description": "Track aggressive institutional 'Whale' selling.",
+                    "arguments": [
+                        {
+                            "name": "ticker",
+                            "type": "string",
+                            "required": true,
+                            "help": "Stock ticker"
+                        }
+                    ],
+                    "handler": "scripts.runners.sentinel_runner:whale_watch"
+                },
+                "pe-status": {
+                    "description": "Check PE secondary market discounts and lock-ups.",
+                    "arguments": [
+                        {
+                            "name": "fund-id",
+                            "type": "string",
+                            "required": true,
+                            "help": "PE Fund ID"
+                        }
+                    ],
+                    "handler": "scripts.runners.sentinel_runner:pe_status"
+                },
+                "harvest-scan": {
+                    "description": "Identify tax-loss harvesting alpha opportunities.",
+                    "handler": "scripts.runners.sentinel_runner:harvest_scan"
+                }
+            },
+            "category": "Advanced AI Engines"
+        },
+        "legacy": {
+            "description": "Treasury, Philanthropy & Social Impact Legacy Engine.",
+            "subcommands": {
+                "cash-opt": {
+                    "description": "Optimize cash yield across various liquid instruments.",
+                    "handler": "scripts.runners.legacy_runner:cash_opt"
+                },
+                "donate": {
+                    "description": "Calculate charitable tax deduction limits.",
+                    "arguments": [
+                        {
+                            "name": "amount",
+                            "type": "float",
+                            "required": true,
+                            "help": "Donation amount"
+                        }
+                    ],
+                    "handler": "scripts.runners.legacy_runner:donate"
+                },
+                "impact-report": {
+                    "description": "Generate a social impact and legacy tier report.",
+                    "handler": "scripts.runners.legacy_runner:impact_report"
+                }
+            },
+            "category": "General"
+        },
+        "git-leaks": {
+            "description": "Run the gitleaks audit tool for the project .git repo.",
+            "handler": "scripts.runners.git_leaks_runner:run_gitleaks_audit",
+            "category": "Development & Infrastructure"
         }
     }
 }

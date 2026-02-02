@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
-import { PieChart as PieIcon, RefreshCw, TrendingDown, TrendingUp, Minus } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { PieChart as PieIcon, RefreshCw, TrendingDown, TrendingUp, Minus, Loader2 } from 'lucide-react';
 import useInstitutionalStore from '../../stores/institutionalStore';
 import './AssetAllocationWheel.css';
 
 const AssetAllocationWheel = ({ clientId }) => {
-    const { assetAllocation, fetchAssetAllocation, loading } = useInstitutionalStore();
+    const { assetAllocation, fetchAssetAllocation, triggerRebalance, loading } = useInstitutionalStore();
+    const [rebalancing, setRebalancing] = useState(false);
+    const [lastResult, setLastResult] = useState(null);
 
     useEffect(() => {
         if (clientId) fetchAssetAllocation(clientId);
@@ -92,8 +94,30 @@ const AssetAllocationWheel = ({ clientId }) => {
                     <span className="text-slate-500 uppercase font-bold">Last Rebalanced</span>
                     <span className="text-slate-300 font-bold">{data.last_rebalanced}</span>
                 </div>
-                <button className="w-full py-3 rounded-xl bg-white/5 border border-white/10 text-white text-xs font-bold hover:bg-primary hover:border-primary transition-all">
-                    AUTO-REBALANCE DRIFT
+                {lastResult && (
+                    <div className="mb-3 p-2 rounded-lg bg-success/10 border border-success/30 text-[10px] text-success">
+                        ✓ {lastResult.message}
+                    </div>
+                )}
+                <button 
+                    onClick={async () => {
+                        if (!clientId || rebalancing) return;
+                        setRebalancing(true);
+                        const result = await triggerRebalance(clientId);
+                        if (result) setLastResult(result);
+                        setRebalancing(false);
+                    }}
+                    disabled={rebalancing || !clientId}
+                    className="w-full py-3 rounded-xl bg-white/5 border border-white/10 text-white text-xs font-bold hover:bg-primary hover:border-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                    {rebalancing ? (
+                        <>
+                            <Loader2 size={14} className="animate-spin" />
+                            REBALANCING...
+                        </>
+                    ) : (
+                        'AUTO-REBALANCE DRIFT'
+                    )}
                 </button>
             </div>
         </div>

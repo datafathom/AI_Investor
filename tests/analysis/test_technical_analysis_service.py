@@ -13,7 +13,26 @@ from services.analysis.technical_analysis_service import TechnicalAnalysisServic
 @pytest.fixture
 def service():
     """Create service instance with mocked dependencies."""
-    with patch('services.analysis.technical_analysis_service.FeatureEngineeringService'):
+    with patch('services.analysis.technical_analysis_service.FeatureEngineeringService') as MockService:
+        mock_instance = MockService.return_value
+        
+        # Configure RSI mock
+        mock_instance._calculate_rsi.return_value = {'rsi': pd.Series([50.0] * 100)}
+        
+        # Configure MACD mock
+        mock_instance._calculate_macd.return_value = pd.DataFrame({
+            'macd': [0.5] * 100,
+            'macd_signal': [0.4] * 100,
+            'macd_hist': [0.1] * 100
+        })
+        
+        # Configure Bollinger mock
+        mock_instance._calculate_bollinger_bands.return_value = pd.DataFrame({
+            'upper': [155.0] * 100,
+            'middle': [150.0] * 100,
+            'lower': [145.0] * 100
+        })
+        
         return TechnicalAnalysisService()
 
 
@@ -83,8 +102,13 @@ async def test_recognize_patterns(service, mock_ohlcv_data):
 async def test_generate_trading_signals(service, mock_ohlcv_data):
     """Test trading signal generation."""
     service.calculate_indicators = AsyncMock(return_value={
-        'RSI': pd.Series([30.0] * 100),  # Oversold
-        'MACD': pd.Series([0.5] * 100)
+        'RSI': pd.Series([25.0] * 100),  # Oversold (< 30)
+        'MACD': pd.DataFrame({
+            'macd': [0.6] * 100,
+            'macd_signal': [0.5] * 100
+        }),
+        'SMA_50': pd.Series([150.0] * 100),
+        'SMA_200': pd.Series([140.0] * 100) # Gold cross condition
     })
     
     result = await service.generate_trading_signals(mock_ohlcv_data)

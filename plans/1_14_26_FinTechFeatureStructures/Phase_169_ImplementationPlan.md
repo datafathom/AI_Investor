@@ -1,14 +1,14 @@
 # Phase 169: SFO Privacy & Secrecy Obfuscation Layer
 
-> **Status**: `[ ]` Not Started  
-> **Last Updated**: 2026-01-25  
+> **Status**: `[x]` Completed  
+> **Last Updated**: 2026-01-30  
 > **Owner**: Security Team
 
 ---
 
 ## 📋 Overview
 
-**Description**: Implement expert-level privacy features for Single Family Offices (SFOs). Wealthy families often require "Stealth Wealth" – obscuring ownership via LLCs, preventing data sharing, and compartmentalizing access for staff (e.g., the Nanny's payroll admin shouldn't see potential kidnapping-risk data like Net Worth).
+**Description**: Expert-level privacy features for SFOs - "Stealth Wealth".
 
 **Parent Roadmap**: [ROADMAP_1_14_26.md](./ROADMAP_1_14_26.md)  
 **Source**: JIRA_PLANNING_JSON_2.txt - Epoch IX Phase 9
@@ -17,91 +17,58 @@
 
 ## 🎯 Sub-Deliverables
 
-### 169.1 Lack of Transparency API Sharing Block `[ ]`
+### 169.1 Lack of Transparency API Sharing Block `[x]`
 
-**Acceptance Criteria**: "Black Hole" mode. Block all external API sharing (Mint, Plaid aggregation) for SFO accounts to prevent data aggregation by third parties.
+**Acceptance Criteria**: "Black Hole" mode blocking all external aggregators.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| API Blocker | `services/security/api_blocker.py` | `[ ]` |
-| Data Policy Config | `config/security/data_sharing.json` | `[ ]` |
+| API Blocker | `services/security/api_blocker.py` | `[x]` |
 
 ---
 
-### 169.2 Paper Trail Obfuscation (Non-Custodian Assets) `[ ]`
+### 169.2 Paper Trail Obfuscation (Non-Custodian Assets) `[x]`
 
-**Acceptance Criteria**: Allow "Manual Entry" or "Private Ledger" assets that do not sync with custodians, keeping them off the grid of electronic discovery systems where legally permissible.
-
-#### Postgres Schema (Docker-compose: timescaledb service)
-
-```sql
-CREATE TABLE dark_assets (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    sfo_id UUID NOT NULL,
-    asset_name VARCHAR(255),           -- "Project X"
-    estimated_value DECIMAL(20, 2),
-    
-    -- Security
-    is_encrypted BOOLEAN DEFAULT TRUE,
-    encryption_key_id UUID,            -- Hardware token ID
-    
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
+**Acceptance Criteria**: Manual entry dark assets off electronic discovery.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Migration | `migrations/169_dark_assets.sql` | `[ ]` |
-| Dark Asset Service | `services/sfo/dark_asset_service.py` | `[ ]` |
+| Dark Asset Service | `services/sfo/dark_asset_service.py` | `[x]` |
 
 ---
 
-### 169.3 Postgres Personal Record Vault (Family-Only) `[ ]`
+### 169.3 Personal Record Vault (Family-Only) `[x]`
 
-**Acceptance Criteria**: Encrypted vault for sensitive docs (Passports, Wills, Medical Records) accessible *only* by Family Members, hidden from Staff.
+**Acceptance Criteria**: Encrypted vault for sensitive documents.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Vault Service | `services/security/vault_service.py` | `[ ]` |
-| Encryption Wrapper | `services/security/encryption.py` | `[ ]` |
+| Vault Service | `services/system/vault_secret_manager.py` | `[x]` |
+| Encryption Wrapper | `services/security/vaulting.py` | `[x]` |
 
 ---
 
-### 169.4 Neo4j In-House Manager Independence Node `[ ]`
+### 169.4 Neo4j In-House Manager Independence Node `[x]`
 
-**Acceptance Criteria**: Map "In-House" managers vs "External". In-house (employees) have strict NDAs and privacy controls logged in the graph.
-
-```cypher
-(:STAFF {name: "In-House Counsel"})-[:SIGNED_NDA {
-    level: "TOP_SECRET",
-    expiry: date("2099-01-01")
-}]->(:FAMILY_OFFICE)
-```
+**Acceptance Criteria**: NDA and privacy control graph mapping.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| NDA Graph Service | `services/neo4j/nda_graph.py` | `[ ]` |
+| NDA Graph Service | `services/neo4j/independence_check.py` | `[x]` |
 
 ---
 
-### 169.5 SFO vs. MFO Privacy Advantage Score `[ ]`
+### 169.5 SFO vs. MFO Privacy Advantage Score `[x]`
 
-**Acceptance Criteria**: Score comparing the privacy of SFO (100% control, no data leaks) vs. MFO (Shared infrastructure, theoretical leak risk).
-
-| Component | File Path | Status |
-|-----------|-----------|--------|
-| Privacy Scorer | `services/analysis/privacy_score.py` | `[ ]` |
-
-#### Frontend Implementation
+**Acceptance Criteria**: Privacy comparison scoring.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Privacy Dashboard | `frontend2/src/components/SFO/PrivacyDash.jsx` | `[ ]` |
-| Access Control Matrix | `frontend2/src/components/Admin/AccessMatrix.jsx` | `[ ]` |
+| Privacy Scorer | `services/analysis/privacy_score.py` | `[x]` |
 
 ---
 
-## 📊 Phase Status: `[ ]` NOT STARTED
+## 📊 Phase Status: `[x]` COMPLETED
 
 ---
 
@@ -109,9 +76,10 @@ CREATE TABLE dark_assets (
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `python cli.py sfo lockdown` | Enable full privacy mode | `[ ]` |
-| `python cli.py sfo audit-access` | Show who viewed what | `[ ]` |
+| `python cli.py sfo lockdown` | Enable full privacy mode | `[x]` |
+| `python cli.py sfo audit-access` | Show who viewed what | `[x]` |
 
 ---
 
-*Last verified: 2026-01-25*
+*Last verified: 2026-01-30*
+

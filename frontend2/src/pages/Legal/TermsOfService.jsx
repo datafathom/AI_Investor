@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import './Legal.css';
 
 const TermsOfService = () => {
@@ -12,7 +12,7 @@ const TermsOfService = () => {
   useEffect(() => {
     const fetchDocument = async () => {
       try {
-        const response = await axios.get('/api/v1/legal/documents/terms_of_service');
+        const response = await apiClient.get('/legal/documents/terms_of_service');
         if (response.data.success) {
           setContent(response.data.data.content);
           setVersion(response.data.data.version);

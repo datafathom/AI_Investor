@@ -61,6 +61,13 @@ class PredictionEngine:
         """
         logger.info(f"Predicting price for {symbol} with horizon {time_horizon}")
         
+        # Check cache first (simplified cache key for mock)
+        cache_key = f"prediction:{symbol}:{time_horizon}"
+        cached_data = self.cache_service.get(cache_key)
+        if cached_data:
+            logger.info(f"Returning cached prediction for {symbol}")
+            return PricePrediction(**cached_data)
+        
         # In production, would use trained ML model
         # For now, use simplified prediction
         current_price = await self._get_current_price(symbol)
@@ -137,8 +144,13 @@ class PredictionEngine:
     
     async def _save_prediction(self, prediction: PricePrediction):
         """Save prediction to cache."""
-        cache_key = f"prediction:{prediction.prediction_id}"
+        # Use a more consistent cache key that includes symbol and horizon
+        cache_key = f"prediction:{prediction.symbol}:{prediction.time_horizon}"
         self.cache_service.set(cache_key, prediction.dict(), ttl=86400 * 7)  # 7 days
+        
+        # Also save by prediction_id
+        id_key = f"prediction:{prediction.prediction_id}"
+        self.cache_service.set(id_key, prediction.dict(), ttl=86400 * 7)
 
 
 # Singleton instance

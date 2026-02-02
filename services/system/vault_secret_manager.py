@@ -9,6 +9,13 @@ from typing import Optional, Dict, Any
 from abc import ABC, abstractmethod
 
 logger = logging.getLogger(__name__)
+try:
+    import hvac
+    HVAC_AVAILABLE = True
+except ImportError:
+    hvac = None
+    HVAC_AVAILABLE = False
+
 
 
 class SecretManagerInterface(ABC):
@@ -38,19 +45,18 @@ class VaultSecretManager(SecretManagerInterface):
         self.vault_token = vault_token or os.getenv('VAULT_TOKEN')
         self._client = None
         
-        if self.vault_token:
+        if self.vault_token and HVAC_AVAILABLE:
             try:
-                import hvac
                 self._client = hvac.Client(url=self.vault_addr, token=self.vault_token)
                 # Verify connection
                 if not self._client.is_authenticated():
                     logger.warning("Vault authentication failed")
                     self._client = None
-            except ImportError:
-                logger.warning("hvac library not installed. Install with: pip install hvac")
             except Exception as e:
                 logger.error(f"Failed to initialize Vault client: {e}")
                 self._client = None
+        elif self.vault_token and not HVAC_AVAILABLE:
+            logger.warning("hvac library not installed. Install with: pip install hvac")
     
     def get_secret(self, key: str, default: Optional[str] = None) -> Optional[str]:
         """Get secret from Vault."""

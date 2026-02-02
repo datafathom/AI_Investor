@@ -15,9 +15,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import './SquareStats.css';
 
-const API_BASE = '/api/v1/square';
+const API_BASE = '/square';
 
 const SquareStats = () => {
     const [stats, setStats] = useState(null);
@@ -35,11 +36,9 @@ const SquareStats = () => {
     const loadStats = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`${API_BASE}/stats?range=${timeRange}`);
-            if (response.ok) {
-                const data = await response.json();
-                setStats(data);
-            }
+        try {
+            const response = await apiClient.get(`${API_BASE}/stats`, { params: { range: timeRange } });
+            setStats(response.data);
         } catch (err) {
             console.error('Failed to load stats:', err);
         } finally {
@@ -49,11 +48,10 @@ const SquareStats = () => {
 
     const loadTransactions = async () => {
         try {
-            const response = await fetch(`${API_BASE}/transactions`);
-            if (response.ok) {
-                const data = await response.json();
-                setTransactions(data.transactions || []);
-            }
+        try {
+            const response = await apiClient.get(`${API_BASE}/transactions`);
+            const data = response.data;
+            setTransactions(data.transactions || []);
         } catch (err) {
             console.error('Failed to load transactions:', err);
         }
@@ -61,11 +59,10 @@ const SquareStats = () => {
 
     const loadRefunds = async () => {
         try {
-            const response = await fetch(`${API_BASE}/refunds`);
-            if (response.ok) {
-                const data = await response.json();
-                setRefunds(data.refunds || []);
-            }
+        try {
+            const response = await apiClient.get(`${API_BASE}/refunds`);
+            const data = response.data;
+            setRefunds(data.refunds || []);
         } catch (err) {
             console.error('Failed to load refunds:', err);
         }

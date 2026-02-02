@@ -24,7 +24,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 from models.orders import ExecutionStrategy, ExecutionResult
 from services.system.cache_service import get_cache_service
@@ -62,7 +62,7 @@ class SmartExecutionService:
         """
         logger.info(f"Executing TWAP for {symbol}, quantity {total_quantity}")
         
-        start = start_time or datetime.utcnow()
+        start = start_time or datetime.now(timezone.utc)
         end = start + timedelta(minutes=time_window_minutes)
         
         # Split order evenly across time window
@@ -120,7 +120,7 @@ class SmartExecutionService:
         total_volume = sum(volume_profile.values())
         
         executions = []
-        start = start_time or datetime.utcnow()
+        start = start_time or datetime.now(timezone.utc)
         current_time = start
         remaining_quantity = total_quantity
         
@@ -189,7 +189,7 @@ class SmartExecutionService:
         remainder = total_quantity % num_slices
         
         executions = []
-        current_time = datetime.utcnow()
+        current_time = datetime.now(timezone.utc)
         
         for i in range(num_slices):
             slice_quantity = quantity_per_slice + (remainder if i == num_slices - 1 else 0)

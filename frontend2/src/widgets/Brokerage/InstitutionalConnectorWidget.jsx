@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Plus, ExternalLink, RefreshCw, CheckCircle2, AlertCircle, Search } from 'lucide-react';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import './InstitutionalConnectorWidget.css';
 
 const InstitutionalConnectorWidget = () => {
@@ -14,8 +14,8 @@ const InstitutionalConnectorWidget = () => {
         const fetchData = async () => {
             try {
                 const [pRes, sRes] = await Promise.all([
-                    axios.get('/api/v1/brokerage/providers'),
-                    axios.get('/api/v1/brokerage/status')
+                    apiClient.get('/brokerage/providers'),
+                    apiClient.get('/brokerage/status')
                 ]);
                 setProviders(pRes.data);
                 setStatus(sRes.data);

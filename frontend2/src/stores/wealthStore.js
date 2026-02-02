@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 // No persistence middleware - we fetch from backend
 export const useWealthStore = create((set, get) => ({
@@ -11,10 +12,8 @@ export const useWealthStore = create((set, get) => ({
   fetchAssets: async () => {
     set({ isLoading: true });
     try {
-      const response = await fetch('/api/v1/assets/');
-      if (!response.ok) throw new Error('Failed to fetch assets');
-      const data = await response.json();
-      set({ assets: data, isLoading: false });
+      const response = await apiClient.get('/assets/');
+      set({ assets: response.data, isLoading: false });
     } catch (err) {
       console.error(err);
       set({ error: err.message, isLoading: false });
@@ -23,18 +22,11 @@ export const useWealthStore = create((set, get) => ({
 
   addAsset: async (asset) => {
     try {
-        const response = await fetch('/api/v1/assets/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(asset)
-        });
-        if (!response.ok) throw new Error('Failed to add asset');
-        const newAsset = await response.json();
-        
+        const response = await apiClient.post('/assets/', asset);
         set((state) => ({ 
-            assets: [...state.assets, newAsset] 
+            assets: [...state.assets, response.data] 
         }));
-        return newAsset;
+        return response.data;
     } catch (err) {
         console.error(err);
     }
@@ -42,16 +34,9 @@ export const useWealthStore = create((set, get) => ({
   
   updateAsset: async (id, updates) => {
     try {
-        const response = await fetch(`/api/v1/assets/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updates)
-        });
-        if (!response.ok) throw new Error('Failed to update asset');
-        const updatedAsset = await response.json();
-        
+        const response = await apiClient.put(`/assets/${id}`, updates);
         set((state) => ({
-            assets: state.assets.map((a) => (a.id === id ? updatedAsset : a))
+            assets: state.assets.map((a) => (a.id === id ? response.data : a))
         }));
     } catch (err) {
         console.error(err);
@@ -60,7 +45,7 @@ export const useWealthStore = create((set, get) => ({
   
   removeAsset: async (id) => {
     try {
-        await fetch(`/api/v1/assets/${id}`, { method: 'DELETE' });
+        await apiClient.delete(`/assets/${id}`);
         set((state) => ({
             assets: state.assets.filter((a) => a.id !== id)
         }));
@@ -79,9 +64,8 @@ export const useWealthStore = create((set, get) => ({
   fetchGoals: async (userId) => {
     set({ isLoading: true });
     try {
-        const response = await fetch(`/api/v1/financial-planning/goals?user_id=${userId}`);
-        const result = await response.json();
-        set({ goals: result.data || [], isLoading: false });
+        const response = await apiClient.get('/financial-planning/goals', { params: { user_id: userId } });
+        set({ goals: response.data.data || [], isLoading: false });
     } catch (err) {
         set({ error: err.message, isLoading: false });
     }
@@ -90,13 +74,7 @@ export const useWealthStore = create((set, get) => ({
   createGoal: async (userId, goalData) => {
     set({ isLoading: true });
     try {
-        const response = await fetch('/api/v1/financial-planning/goals/create', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: userId, ...goalData })
-        });
-        if (!response.ok) throw new Error('Failed to create goal');
-        
+        await apiClient.post('/financial-planning/goals/create', { user_id: userId, ...goalData });
         // Refresh goals
         await get().fetchGoals(userId);
         set({ isLoading: false });
@@ -107,9 +85,8 @@ export const useWealthStore = create((set, get) => ({
 
   fetchRecommendations: async (userId) => {
     try {
-        const response = await fetch(`/api/v1/financial-planning/recommendations?user_id=${userId}`);
-        const result = await response.json();
-        set({ recommendations: result.data || [] });
+        const response = await apiClient.get('/financial-planning/recommendations', { params: { user_id: userId } });
+        set({ recommendations: response.data.data || [] });
     } catch (err) {
         console.error(err);
     }
@@ -119,13 +96,8 @@ export const useWealthStore = create((set, get) => ({
   runRetirementProjection: async (userId, params) => {
       set({ isLoading: true });
       try {
-          const response = await fetch('/api/v1/retirement/projection', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ user_id: userId, ...params })
-          });
-          const result = await response.json();
-          set({ retirementProjection: result.data, isLoading: false });
+          const response = await apiClient.post('/retirement/projection', { user_id: userId, ...params });
+          set({ retirementProjection: response.data.data, isLoading: false });
       } catch (err) {
           set({ error: err.message, isLoading: false });
       }
@@ -133,9 +105,8 @@ export const useWealthStore = create((set, get) => ({
 
   fetchWithdrawalStrategy: async (userId) => {
       try {
-          const response = await fetch(`/api/v1/retirement/withdrawal-strategy?user_id=${userId}`);
-          const result = await response.json();
-          set({ withdrawalStrategy: result.data });
+          const response = await apiClient.get('/retirement/withdrawal-strategy', { params: { user_id: userId } });
+          set({ withdrawalStrategy: response.data.data });
       } catch (err) {
           console.error(err);
       }

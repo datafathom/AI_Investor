@@ -4,7 +4,7 @@ Comprehensive test coverage for virtual portfolios and order execution
 """
 
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.trading.paper_trading_service import PaperTradingService
 from models.paper_trading import VirtualPortfolio, PaperOrder
@@ -47,15 +47,14 @@ async def test_execute_paper_order_market(service):
         current_cash=100000.0,
         total_value=100000.0,
         positions={},
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_portfolio = AsyncMock(return_value=portfolio)
-    service._get_current_price = AsyncMock(return_value=150.0)
-    service._calculate_commission = AsyncMock(return_value=1.0)
-    service._update_portfolio = AsyncMock()
-    service._save_order = AsyncMock()
+    service._get_market_price = AsyncMock(return_value=150.0)
+    service._calculate_commission = Mock(return_value=1.0)
+    service._update_portfolio_positions = AsyncMock()
     
     result = await service.execute_paper_order(
         portfolio_id="portfolio_123",
@@ -81,15 +80,14 @@ async def test_execute_paper_order_limit(service):
         current_cash=100000.0,
         total_value=100000.0,
         positions={},
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_portfolio = AsyncMock(return_value=portfolio)
-    service._get_current_price = AsyncMock(return_value=145.0)  # Below limit
-    service._calculate_commission = AsyncMock(return_value=1.0)
-    service._update_portfolio = AsyncMock()
-    service._save_order = AsyncMock()
+    service._get_market_price = AsyncMock(return_value=145.0)  # Below limit
+    service._calculate_commission = Mock(return_value=1.0)
+    service._update_portfolio_positions = AsyncMock()
     
     result = await service.execute_paper_order(
         portfolio_id="portfolio_123",
@@ -101,7 +99,7 @@ async def test_execute_paper_order_limit(service):
     
     assert result is not None
     assert result.order_type == "limit"
-    assert result.limit_price == 150.0
+    assert result.price == 150.0
 
 
 @pytest.mark.asyncio
@@ -115,14 +113,14 @@ async def test_execute_paper_order_insufficient_cash(service):
         current_cash=1000.0,
         total_value=1000.0,
         positions={},
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_portfolio = AsyncMock(return_value=portfolio)
-    service._get_current_price = AsyncMock(return_value=150.0)
+    service._get_market_price = AsyncMock(return_value=150.0)
     
-    with pytest.raises(ValueError, match="insufficient"):
+    with pytest.raises(ValueError, match="Insufficient"):
         await service.execute_paper_order(
             portfolio_id="portfolio_123",
             symbol="AAPL",
@@ -141,9 +139,9 @@ async def test_get_portfolio_performance(service):
         initial_cash=100000.0,
         current_cash=50000.0,
         total_value=120000.0,
-        positions={'AAPL': {'quantity': 100, 'avg_price': 150.0}},
-        created_date=datetime(2024, 1, 1),
-        updated_date=datetime.utcnow()
+        positions={'AAPL': {'quantity': 100, 'avg_price': 150.0, 'current_price': 160.0}},
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_portfolio = AsyncMock(return_value=portfolio)
@@ -151,8 +149,9 @@ async def test_get_portfolio_performance(service):
     result = await service.get_portfolio_performance("portfolio_123")
     
     assert result is not None
-    assert 'total_return' in result or hasattr(result, 'total_return')
-    assert 'total_value' in result or hasattr(result, 'total_value')
+    assert 'total_return' in result
+    assert 'total_value' in result
+    assert result['num_positions'] == 1
 
 
 @pytest.mark.asyncio
@@ -169,8 +168,8 @@ async def test_get_portfolio_positions(service):
             'AAPL': {'quantity': 100, 'avg_price': 150.0},
             'MSFT': {'quantity': 50, 'avg_price': 300.0}
         },
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_portfolio = AsyncMock(return_value=portfolio)

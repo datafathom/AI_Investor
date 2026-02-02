@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Lock, ShieldCheck, AlertTriangle } from 'lucide-react';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import './SecretsStatus.css';
 
 const SecretsStatus = () => {
@@ -11,7 +11,7 @@ const SecretsStatus = () => {
     useEffect(() => {
         const fetchStatus = async () => {
             try {
-                const res = await axios.get('/api/v1/system/secrets');
+                const res = await apiClient.get('/system/secrets');
                 setStatus(res.data);
             } catch (err) {
                 console.error("Failed to fetch secrets status", err);

@@ -22,9 +22,10 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
+import apiClient from '../../services/apiClient';
 import './DocumentLibrary.css';
 
-const API_BASE = '/api/v1/documents';
+const API_BASE = '/documents';
 
 /**
  * Format file size for display
@@ -98,12 +99,8 @@ const DocumentLibrary = () => {
                 params.set('category', category);
             }
             
-            const response = await fetch(`${API_BASE}?${params}`);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch documents: ${response.statusText}`);
-            }
-            
-            const data = await response.json();
+            const response = await apiClient.get(API_BASE, { params: Object.fromEntries(params) });
+            const data = response.data;
             setDocuments(data.data.documents || []);
             setPagination(data.data.pagination || {});
         } catch (err) {
@@ -141,18 +138,12 @@ const DocumentLibrary = () => {
                 setUploadProgress(prev => Math.min(prev + 10, 90));
             }, 100);
             
-            const response = await fetch(`${API_BASE}`, {
-                method: 'POST',
-                body: formData
+            const response = await apiClient.post(API_BASE, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
             });
-            
+
             clearInterval(progressInterval);
             setUploadProgress(100);
-            
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.errors?.[0]?.message || 'Upload failed');
-            }
             
             // Refresh document list
             await fetchDocuments();
@@ -169,12 +160,9 @@ const DocumentLibrary = () => {
 
     const handleDownload = async (documentId, filename) => {
         try {
-            const response = await fetch(`${API_BASE}/${documentId}?expires_in=3600`);
-            if (!response.ok) {
-                throw new Error('Failed to get download URL');
-            }
+            const response = await apiClient.get(`${API_BASE}/${documentId}`, { params: { expires_in: 3600 } });
             
-            const data = await response.json();
+            const data = response.data;
             const downloadUrl = data.data.download_url;
             
             // Open in new tab
@@ -187,13 +175,7 @@ const DocumentLibrary = () => {
 
     const handleDelete = async (documentId) => {
         try {
-            const response = await fetch(`${API_BASE}/${documentId}`, {
-                method: 'DELETE'
-            });
-            
-            if (!response.ok) {
-                throw new Error('Delete failed');
-            }
+            await apiClient.delete(`${API_BASE}/${documentId}`);
             
             // Refresh document list
             await fetchDocuments();

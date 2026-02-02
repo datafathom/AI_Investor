@@ -26,7 +26,7 @@ LAST_MODIFIED: 2026-01-21
 
 import logging
 import secrets
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from models.public_api import APIKey, APITier, APIUsage
 from services.system.cache_service import get_cache_service
@@ -72,12 +72,12 @@ class PublicAPIService:
         rate_limit = rate_limits.get(tier, 100)
         
         api_key = APIKey(
-            api_key_id=f"key_{user_id}_{datetime.utcnow().timestamp()}",
+            api_key_id=f"key_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             api_key=api_key_value,
             tier=APITier(tier),
             rate_limit=rate_limit,
-            created_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc)
         )
         
         # Save API key
@@ -119,10 +119,10 @@ class PublicAPIService:
             status_code: HTTP status code
         """
         usage = APIUsage(
-            usage_id=f"usage_{api_key_id}_{datetime.utcnow().timestamp()}",
+            usage_id=f"usage_{api_key_id}_{datetime.now(timezone.utc).timestamp()}",
             api_key_id=api_key_id,
             endpoint=endpoint,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             response_time_ms=response_time_ms,
             status_code=status_code
         )
@@ -134,8 +134,32 @@ class PublicAPIService:
         api_key = await self._get_api_key(api_key_id)
         if api_key:
             api_key.usage_count += 1
-            api_key.last_used_date = datetime.utcnow()
+            api_key.last_used_date = datetime.now(timezone.utc)
             await self._save_api_key(api_key)
+            
+        return usage
+    
+    async def get_api_usage(
+        self,
+        api_key_id: str,
+        limit: int = 100
+    ) -> List[APIUsage]:
+        """
+        Get API usage stats.
+        
+        Args:
+            api_key_id: API key identifier
+            limit: Maximum number of records
+            
+        Returns:
+            List of APIUsage objects
+        """
+        logger.info(f"Getting usage for API key {api_key_id}")
+        return await self._get_usage_from_db(api_key_id, limit)
+
+    async def _get_usage_from_db(self, api_key_id: str, limit: int) -> List[APIUsage]:
+        """Internal method to get usage from DB."""
+        return []
     
     async def _get_api_key(self, api_key_id: str) -> Optional[APIKey]:
         """Get API key from cache."""

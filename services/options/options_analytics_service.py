@@ -74,7 +74,7 @@ class OptionsAnalyticsService:
         
         leg_greeks = {}
         
-        for leg in strategy.legs:
+        for i, leg in enumerate(strategy.legs):
             greeks = await self._calculate_leg_greeks(
                 leg, underlying_price, days_to_expiration, volatility
             )
@@ -89,7 +89,9 @@ class OptionsAnalyticsService:
             if greeks.rho:
                 total_rho += greeks.rho * multiplier
             
-            leg_greeks[leg.symbol] = greeks
+            # Use unique key for each leg
+            leg_key = f"{leg.symbol}_{leg.option_type.value}_{leg.strike}_{i}"
+            leg_greeks[leg_key] = greeks
         
         return StrategyGreeks(
             strategy_id=strategy.strategy_id,

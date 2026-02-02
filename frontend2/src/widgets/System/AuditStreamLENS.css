@@ -1,0 +1,80 @@
+/**
+ * ==============================================================================
+ * AuditStreamLENS Styling
+ * ==============================================================================
+ */
+
+.audit-lens {
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    background: rgba(13, 17, 23, 0.4);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.audit-lens__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.audit-lens__stream {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.audit-lens__row {
+    display: grid;
+    grid-template-columns: 70px 100px 1fr 100px;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    transition: background 0.2s;
+}
+
+.audit-lens__row:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.audit-lens__timestamp {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.audit-lens__type {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: white;
+    font-weight: bold;
+}
+
+.audit-lens__hash {
+    text-align: right;
+    font-size: 9px;
+}
+
+.audit-lens__footer {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Hide scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

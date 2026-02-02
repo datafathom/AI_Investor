@@ -3,40 +3,37 @@
  * FILE: frontend2/src/pages/EstatePlanningDashboard.jsx
  * ROLE: Estate Planning Dashboard
  * PURPOSE: Phase 9 - Estate Planning & Inheritance Tools
- *          Displays estate plans, beneficiaries, and inheritance projections.
  * 
  * INTEGRATION POINTS:
- *    - EstateAPI: /api/v1/estate endpoints
- * 
- * FEATURES:
- *    - Estate plan management
- *    - Beneficiary management
- *    - Inheritance simulation
- *    - Estate tax calculations
+ *    - EstateStore: Uses apiClient for all API calls (User Rule 6)
  * 
  * AUTHOR: AI Investor Team
  * CREATED: 2026-01-21
- * LAST_MODIFIED: 2026-01-21
+ * LAST_MODIFIED: 2026-01-30
  * ==============================================================================
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import useEstateStore from '../stores/estateStore';
 import './EstatePlanningDashboard.css';
-
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const EstatePlanningDashboard = () => {
-  const [estatePlan, setEstatePlan] = useState(null);
-  const [beneficiaries, setBeneficiaries] = useState([]);
-  const [inheritanceSim, setInheritanceSim] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [userId] = useState('user_1');
+  const userId = 'user_1'; // TODO: Get from authStore
+  
+  const {
+    estatePlan,
+    beneficiaries,
+    inheritanceSim,
+    isLoading,
+    fetchEstatePlan,
+    fetchBeneficiaries,
+    addBeneficiary,
+    runInheritanceSimulation
+  } = useEstateStore();
+
   const [newBeneficiary, setNewBeneficiary] = useState({ name: '', relationship: '', allocation_percent: '' });
 
   const DEFAULT_LAYOUT = {
@@ -63,63 +60,25 @@ const EstatePlanningDashboard = () => {
   };
 
   useEffect(() => {
-    loadEstatePlan();
-    loadBeneficiaries();
-  }, []);
+    fetchEstatePlan(userId);
+    fetchBeneficiaries(userId);
+  }, [fetchEstatePlan, fetchBeneficiaries]);
 
-  const loadEstatePlan = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/estate/plan`, {
-        params: { user_id: userId }
-      });
-      setEstatePlan(res.data.data);
-    } catch (error) {
-      console.error('Error loading estate plan:', error);
-    }
-  };
-
-  const loadBeneficiaries = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/estate/beneficiaries`, {
-        params: { user_id: userId }
-      });
-      setBeneficiaries(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading beneficiaries:', error);
-    }
-  };
-
-  const addBeneficiary = async () => {
+  const handleAddBeneficiary = async () => {
     if (!newBeneficiary.name || !newBeneficiary.allocation_percent) return;
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/estate/beneficiary/add`, {
-        user_id: userId,
-        beneficiary_name: newBeneficiary.name,
-        relationship: newBeneficiary.relationship,
-        allocation_percent: parseFloat(newBeneficiary.allocation_percent)
-      });
+    const success = await addBeneficiary({
+      user_id: userId,
+      beneficiary_name: newBeneficiary.name,
+      relationship: newBeneficiary.relationship,
+      allocation_percent: parseFloat(newBeneficiary.allocation_percent)
+    });
+    if (success) {
       setNewBeneficiary({ name: '', relationship: '', allocation_percent: '' });
-      loadBeneficiaries();
-    } catch (error) {
-      console.error('Error adding beneficiary:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const runInheritanceSimulation = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.post(`${API_BASE}/api/v1/estate/inheritance/simulate`, {
-        user_id: userId
-      });
-      setInheritanceSim(res.data.data);
-    } catch (error) {
-      console.error('Error running inheritance simulation:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleRunSimulation = async () => {
+    await runInheritanceSimulation(userId);
   };
 
   return (
@@ -208,7 +167,7 @@ const EstatePlanningDashboard = () => {
                 />
               </div>
               <div className="form-group" style={{ justifyContent: 'flex-end' }}>
-                <button onClick={addBeneficiary} disabled={loading} className="add-button">
+                <button onClick={handleAddBeneficiary} disabled={isLoading} className="add-button">
                   Add Beneficiary
                 </button>
               </div>
@@ -240,8 +199,8 @@ const EstatePlanningDashboard = () => {
           {/* Inheritance Simulation */}
           <div key="simulation" className="simulation-panel">
             <h2>Inheritance Simulation</h2>
-            <button onClick={runInheritanceSimulation} disabled={loading} className="simulate-button">
-              {loading ? 'Running Simulation...' : 'Run Simulation'}
+            <button onClick={handleRunSimulation} disabled={isLoading} className="simulate-button">
+              {isLoading ? 'Running Simulation...' : 'Run Simulation'}
             </button>
             {inheritanceSim ? (
               <div className="simulation-results">

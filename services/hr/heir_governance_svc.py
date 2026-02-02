@@ -37,3 +37,11 @@ class HeirGovernanceService:
             "status": "CUSHY_JOB" if is_nepotism else "MARKET_ALIGNED",
             "social_maintenance_value": "HIGH" if is_nepotism else "STANDARD"
         }
+
+    def apply_discretionary_kpi_override(self, staff_id: str, hard_kpi_score: float, family_discretion: float) -> float:
+        """
+        Phase 170.3: Soft vs Hard KPI tracking for family members.
+        """
+        final_score = (hard_kpi_score * 0.4) + (family_discretion * 0.6)
+        logger.info(f"HR_LOG: Discretionary override for {staff_id}. Final: {final_score:.2f}")
+        return float(round(final_score, 2))

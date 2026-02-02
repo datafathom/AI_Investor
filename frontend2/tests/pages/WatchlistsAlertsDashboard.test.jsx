@@ -5,23 +5,30 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import axios from 'axios';
+import apiClient from '../../src/services/apiClient';
 import WatchlistsAlertsDashboard from '../../src/pages/WatchlistsAlertsDashboard';
 
-vi.mock('axios');
+vi.mock('../../src/services/apiClient', () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+  },
+}));
 
 describe('WatchlistsAlertsDashboard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should render dashboard', async () => {
-    axios.get.mockResolvedValue({ data: { data: {} } });
+  it('should render dashboard with watchlists', async () => {
+    apiClient.get.mockResolvedValue([
+      { id: 1, name: 'Tech Giants', symbols: ['AAPL', 'MSFT', 'GOOGL'] },
+      { id: 2, name: 'Growth', symbols: ['TSLA', 'NVDA'] }
+    ]);
     
     render(<WatchlistsAlertsDashboard />);
     
-    await waitFor(() => {
-      expect(screen.getByText(/Watchlists/i)).toBeInTheDocument();
-    });
+    // Use role for specificity
+    expect(await screen.findByRole('heading', { name: /Watchlists & Price Alerts/i, level: 1 })).toBeInTheDocument();
   });
 });

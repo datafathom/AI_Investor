@@ -6,6 +6,7 @@ Phase 13: Advanced Order Types & Smart Execution
 import pytest
 from unittest.mock import AsyncMock, patch
 from flask import Flask
+from datetime import datetime, timezone
 from web.api.advanced_orders_api import advanced_orders_bp, execution_bp
 
 
@@ -43,18 +44,19 @@ def mock_smart_execution_service():
         yield service
 
 
-@pytest.mark.asyncio
-async def test_create_trailing_stop_success(client, mock_advanced_order_service):
+def test_create_trailing_stop_success(client, mock_advanced_order_service):
     """Test successful trailing stop order creation."""
-    from models.orders import Order
+    from models.orders import TrailingStopOrder
     
-    mock_order = Order(
+    mock_order = TrailingStopOrder(
         order_id='order_1',
-        user_id='user_1',
         symbol='AAPL',
         quantity=100,
-        order_type='trailing_stop',
-        status='pending'
+        trailing_type='percentage',
+        trailing_value=5.0,
+        initial_stop_price=145.0,
+        current_stop_price=145.0,
+        highest_price=150.0
     )
     mock_advanced_order_service.create_trailing_stop.return_value = mock_order
     
@@ -70,11 +72,10 @@ async def test_create_trailing_stop_success(client, mock_advanced_order_service)
     assert response.status_code == 200
     data = response.get_json()
     assert data['success'] is True
-    assert data['data']['order_type'] == 'trailing_stop'
+    assert data['data']['trailing_type'] == 'percentage'
 
 
-@pytest.mark.asyncio
-async def test_create_trailing_stop_missing_params(client):
+def test_create_trailing_stop_missing_params(client):
     """Test trailing stop creation with missing parameters."""
     response = client.post('/api/orders/trailing-stop',
                           json={'user_id': 'user_1', 'symbol': 'AAPL'})
@@ -84,18 +85,17 @@ async def test_create_trailing_stop_missing_params(client):
     assert data['success'] is False
 
 
-@pytest.mark.asyncio
-async def test_create_bracket_order_success(client, mock_advanced_order_service):
+def test_create_bracket_order_success(client, mock_advanced_order_service):
     """Test successful bracket order creation."""
-    from models.orders import Order
+    from models.orders import BracketOrder
     
-    mock_order = Order(
-        order_id='order_1',
-        user_id='user_1',
-        symbol='AAPL',
-        quantity=100,
-        order_type='bracket',
-        status='pending'
+    mock_order = BracketOrder(
+        bracket_id='bracket_1',
+        entry_order_id='order_1',
+        profit_target_order_id='order_2',
+        stop_loss_order_id='order_3',
+        profit_target_price=160.0,
+        stop_loss_price=145.0
     )
     mock_advanced_order_service.create_bracket_order.return_value = mock_order
     
@@ -114,24 +114,25 @@ async def test_create_bracket_order_success(client, mock_advanced_order_service)
     assert data['success'] is True
 
 
-@pytest.mark.asyncio
-async def test_execute_twap_success(client, mock_smart_execution_service):
+def test_execute_twap_success(client, mock_smart_execution_service):
     """Test successful TWAP execution."""
     from models.orders import ExecutionResult
     
     mock_result = ExecutionResult(
         execution_id='exec_1',
         order_id='order_1',
-        total_filled=100,
-        avg_price=150.0
+        filled_quantity=100,
+        average_price=150.0,
+        execution_time=datetime.now(timezone.utc),
+        execution_strategy='twap'
     )
-    mock_smart_execution_service.execute_twap.return_value = mock_result
+    mock_smart_execution_service.execute_twap.return_value = [mock_result]
     
     response = client.post('/api/execution/twap',
                           json={
-                              'order_id': 'order_1',
-                              'duration_minutes': 60,
-                              'interval_minutes': 5
+                              'symbol': 'AAPL',
+                              'total_quantity': 100,
+                              'time_window_minutes': 60
                           })
     
     assert response.status_code == 200

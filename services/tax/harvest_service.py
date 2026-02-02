@@ -17,10 +17,12 @@ Usage:
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 from enum import Enum
 import logging
+import uuid
+from utils.database_manager import db_manager
 
 logger = logging.getLogger(__name__)
 
@@ -122,15 +124,22 @@ class TaxHarvestService:
         Returns:
             List of harvest candidates with tax savings
         """
-        # Mock portfolio positions with losses
-        positions = self._get_mock_positions(portfolio_id)
+        # REAL QUERY: pull from tax_lots table
+        positions = await self._get_db_positions(portfolio_id)
+        
+        # Fallback for dev: if no lots in DB, seed some
+        if not positions:
+             logger.warning(f"No tax lots found in DB for {portfolio_id}. Seeding dummy data for development.")
+             await self._seed_tax_lots(portfolio_id)
+             positions = await self._get_db_positions(portfolio_id)
         
         candidates = []
         for pos in positions:
-            if pos["unrealized_gain"] >= 0:
+            # Note: in DB, unrealized_pl is the loss/gain
+            if pos["unrealized_pl"] >= 0:
                 continue  # Only harvest losses
             
-            loss = abs(pos["unrealized_gain"])
+            loss = abs(pos["unrealized_pl"])
             if loss < min_loss:
                 continue
             
@@ -190,12 +199,14 @@ class TaxHarvestService:
         trades = self._trade_history.get(f"{user_id}:{ticker}", [])
         
         # Check for recent purchases (within 30 days)
-        now = datetime.now()
+        now = datetime.now(timezone.utc)
         thirty_days_ago = now - timedelta(days=30)
         
         blocking_trades = []
         for trade in trades:
             trade_date = datetime.fromisoformat(trade["date"])
+            if trade_date.tzinfo is None:
+                trade_date = trade_date.replace(tzinfo=timezone.utc)
             if trade["action"] == "BUY" and trade_date >= thirty_days_ago:
                 blocking_trades.append(trade)
         
@@ -205,7 +216,8 @@ class TaxHarvestService:
         if blocking_trades:
             # Latest buy + 31 days
             latest_buy = max(
-                datetime.fromisoformat(t["date"]) for t in blocking_trades
+                datetime.fromisoformat(t["date"]).replace(tzinfo=timezone.utc) if datetime.fromisoformat(t["date"]).tzinfo is None else datetime.fromisoformat(t["date"])
+                for t in blocking_trades
             )
             safe_date = (latest_buy + timedelta(days=31)).strftime("%Y-%m-%d")
         
@@ -323,16 +335,73 @@ class TaxHarvestService:
             effective_rate=round(effective_rate, 4)
         )
     
-    def _get_mock_positions(self, portfolio_id: str) -> List[Dict]:
-        """Get mock portfolio positions."""
-        return [
-            {"id": "pos-1", "ticker": "AAPL", "cost_basis": 15000, "current_value": 14200, "unrealized_gain": -800, "holding_days": 180},
-            {"id": "pos-2", "ticker": "MSFT", "cost_basis": 12000, "current_value": 13500, "unrealized_gain": 1500, "holding_days": 400},
-            {"id": "pos-3", "ticker": "TSLA", "cost_basis": 8000, "current_value": 5500, "unrealized_gain": -2500, "holding_days": 90},
-            {"id": "pos-4", "ticker": "XOM", "cost_basis": 6000, "current_value": 5800, "unrealized_gain": -200, "holding_days": 450},
-            {"id": "pos-5", "ticker": "JPM", "cost_basis": 10000, "current_value": 8500, "unrealized_gain": -1500, "holding_days": 250},
-        ]
-    
+    async def _get_db_positions(self, portfolio_id: str) -> List[Dict]:
+        """Fetch tax lots from TimescaleDB."""
+        positions = []
+        try:
+            with db_manager.pg_cursor() as cur:
+                # We use portfolio_id as account_id if UUID-like, else fallback
+                try:
+                    account_uuid = uuid.UUID(portfolio_id)
+                except ValueError:
+                    # For demo 'default' etc, we use a fixed UUID for seeding
+                    account_uuid = uuid.UUID("00000000-0000-0000-0000-000000000001")
+                
+                cur.execute("""
+                    SELECT id, ticker, cost_basis_per_share * quantity as cost_basis, 
+                           current_price * quantity as current_value, unrealized_pl,
+                           (CURRENT_DATE - purchase_date) as holding_days
+                    FROM tax_lots
+                    WHERE account_id = %s
+                """, (account_uuid,))
+                
+                rows = cur.fetchall()
+                for row in rows:
+                    positions.append({
+                        "id": str(row[0]),
+                        "ticker": row[1],
+                        "cost_basis": float(row[2]),
+                        "current_value": float(row[3]),
+                        "unrealized_pl": float(row[4]),
+                        "holding_days": row[5] if row[5] is not None else 0
+                    })
+        except Exception as e:
+            logger.error(f"Error fetching from tax_lots table: {e}")
+            
+        return positions
+
+    async def _seed_tax_lots(self, portfolio_id: str):
+        """Seed the database with initial tax lots for testing."""
+        try:
+             try:
+                account_uuid = uuid.UUID(portfolio_id)
+             except ValueError:
+                account_uuid = uuid.UUID("00000000-0000-0000-0000-000000000001")
+                
+             with db_manager.pg_cursor() as cur:
+                 # Check if already seeded
+                 cur.execute("SELECT COUNT(*) FROM tax_lots WHERE account_id = %s", (account_uuid,))
+                 if cur.fetchone()[0] > 0:
+                     return
+                 
+                 seed_data = [
+                    ("AAPL", 100, 150.0, 142.0, -800.0, -5.3, datetime.now(timezone.utc) - timedelta(days=180)),
+                    ("TSLA", 50, 160.0, 110.0, -2500.0, -31.2, datetime.now(timezone.utc) - timedelta(days=90)),
+                    ("JPM", 120, 166.0, 153.5, -1500.0, -7.5, datetime.now(timezone.utc) - timedelta(days=250)),
+                    ("MSFT", 80, 420.0, 438.75, 1500.0, 4.4, datetime.now(timezone.utc) - timedelta(days=400)), # Gain (won't be harvested)
+                    ("XOM", 200, 110.0, 109.0, -200.0, -0.9, datetime.now(timezone.utc) - timedelta(days=450)), # LTCG loss
+                 ]
+                 
+                 for ticker, qty, basis, price, pl, pl_pct, p_date in seed_data:
+                     cur.execute("""
+                        INSERT INTO tax_lots (account_id, ticker, quantity, cost_basis_per_share, purchase_date, current_price, unrealized_pl, unrealized_pl_pct)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                     """, (account_uuid, ticker, qty, basis, p_date, price, pl, pl_pct))
+                 
+                 logger.info(f"Seeded {len(seed_data)} tax lots into DB for {portfolio_id}")
+        except Exception as e:
+            logger.error(f"Error seeding tax_lots: {e}")
+
     def get_tax_rate_presets(self) -> List[Dict]:
         """Get available tax rate presets."""
         return [

@@ -24,12 +24,15 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
+import json
+import uuid
 from datetime import datetime
 from typing import Dict, List, Optional, Any
 from models.strategy import (
     TradingStrategy, StrategyRule, ConditionType, StrategyStatus
 )
 from services.system.cache_service import get_cache_service
+from utils.database_manager import db_manager
 
 logger = logging.getLogger(__name__)
 
@@ -255,17 +258,95 @@ class StrategyBuilderService:
         }
     
     async def _get_strategy(self, strategy_id: str) -> Optional[TradingStrategy]:
-        """Get strategy from cache."""
+        """Get strategy from DB with cache fallback."""
         cache_key = f"strategy:{strategy_id}"
         strategy_data = self.cache_service.get(cache_key)
         if strategy_data:
             return TradingStrategy(**strategy_data)
+        
+        # Hit DB
+        try:
+            with db_manager.pg_cursor() as cur:
+                cur.execute("""
+                    SELECT strategy_id, user_id, strategy_name, description, rules, 
+                           status, portfolio_id, risk_limits, created_date, updated_date, last_executed
+                    FROM strategies WHERE strategy_id = %s
+                """, (strategy_id,))
+                row = cur.fetchone()
+                if row:
+                    data = {
+                        "strategy_id": row[0],
+                        "user_id": str(row[1]),
+                        "strategy_name": row[2],
+                        "description": row[3],
+                        "rules": row[4],
+                        "status": row[5],
+                        "portfolio_id": row[6],
+                        "risk_limits": row[7],
+                        "created_date": row[8],
+                        "updated_date": row[9],
+                        "last_executed": row[10]
+                    }
+                    strategy = TradingStrategy(**data)
+                    self.cache_service.set(cache_key, strategy.dict(), ttl=3600)
+                    return strategy
+        except Exception as e:
+            logger.error(f"Error fetching strategy from DB: {e}")
+            
         return None
     
     async def _save_strategy(self, strategy: TradingStrategy):
-        """Save strategy to cache."""
-        cache_key = f"strategy:{strategy.strategy_id}"
-        self.cache_service.set(cache_key, strategy.dict(), ttl=86400 * 365)
+        """Save strategy to DB and update cache."""
+        try:
+            # Convert UUID string to UUID object if needed
+            user_id = strategy.user_id
+            try:
+                user_id_uuid = uuid.UUID(user_id)
+            except ValueError:
+                # Fallback for dev/mock IDs
+                 user_id_uuid = uuid.UUID("00000000-0000-0000-0000-000000000001")
+
+            with db_manager.pg_cursor() as cur:
+                cur.execute("""
+                    INSERT INTO strategies (
+                        strategy_id, user_id, strategy_name, description, rules, 
+                        status, portfolio_id, risk_limits, last_executed, created_date, updated_date
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    ON CONFLICT (strategy_id) DO UPDATE SET
+                        strategy_name = EXCLUDED.strategy_name,
+                        description = EXCLUDED.description,
+                        rules = EXCLUDED.rules,
+                        status = EXCLUDED.status,
+                        portfolio_id = EXCLUDED.portfolio_id,
+                        risk_limits = EXCLUDED.risk_limits,
+                        last_executed = EXCLUDED.last_executed,
+                        updated_date = NOW()
+                """, (
+                    strategy.strategy_id, user_id_uuid, strategy.strategy_name,
+                    strategy.description, json.dumps([r.dict() for r in strategy.rules]),
+                    strategy.status.value, strategy.portfolio_id,
+                    json.dumps(strategy.risk_limits), strategy.last_executed,
+                    strategy.created_date, strategy.updated_date
+                ))
+            
+            # Update cache
+            cache_key = f"strategy:{strategy.strategy_id}"
+            self.cache_service.set(cache_key, strategy.dict(), ttl=3600)
+            
+        except Exception as e:
+            logger.error(f"Error saving strategy to DB: {e}")
+
+    async def seed_strategies(self, user_id: str):
+        """Seed some initial strategies for development UI."""
+        templates = await self.get_strategy_templates()
+        for i, template in enumerate(templates):
+            await self.create_strategy(
+                user_id=user_id,
+                strategy_name=f"{template['name']} Beta",
+                description=template['description'],
+                rules=template['rules']
+            )
+        logger.info(f"Seeded {len(templates)} strategies for user {user_id}")
 
 
 # Singleton instance

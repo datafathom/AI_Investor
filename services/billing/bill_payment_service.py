@@ -25,7 +25,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 from models.billing import Bill, BillStatus, RecurrenceType, PaymentHistory
 from services.system.cache_service import get_cache_service
@@ -70,7 +70,7 @@ class BillPaymentService:
         logger.info(f"Creating bill {bill_name} for user {user_id}")
         
         bill = Bill(
-            bill_id=f"bill_{user_id}_{datetime.utcnow().timestamp()}",
+            bill_id=f"bill_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             bill_name=bill_name,
             merchant=merchant,
@@ -79,8 +79,8 @@ class BillPaymentService:
             status=BillStatus.PENDING,
             recurrence=RecurrenceType(recurrence),
             account_id=account_id,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Save bill
@@ -114,12 +114,12 @@ class BillPaymentService:
         
         # Update bill status
         bill.status = BillStatus.SCHEDULED
-        bill.updated_date = datetime.utcnow()
+        bill.updated_date = datetime.now(timezone.utc)
         await self._save_bill(bill)
         
         # Create payment history record
         payment = PaymentHistory(
-            payment_id=f"payment_{bill_id}_{datetime.utcnow().timestamp()}",
+            payment_id=f"payment_{bill_id}_{datetime.now(timezone.utc).timestamp()}",
             bill_id=bill_id,
             amount=bill.amount,
             payment_date=payment_date,
@@ -176,12 +176,12 @@ class BillPaymentService:
     async def _save_bill(self, bill: Bill):
         """Save bill to cache."""
         cache_key = f"bill:{bill.user_id}:{bill.bill_id}"
-        self.cache_service.set(cache_key, bill.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, bill.model_dump(), ttl=86400 * 365)
     
     async def _save_payment(self, payment: PaymentHistory):
         """Save payment to cache."""
         cache_key = f"payment:{payment.bill_id}:{payment.payment_id}"
-        self.cache_service.set(cache_key, payment.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, payment.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

@@ -4,24 +4,24 @@ import useSymbolLinkStore from '../symbolLinkStore';
 describe('symbolLinkStore', () => {
   beforeEach(() => {
     useSymbolLinkStore.setState({
-      groups: {
-        'red': { symbol: 'SPY' },
-        'blue': { symbol: 'QQQ' },
-        'green': { symbol: 'IWM' }
+      links: {
+        'red': 'SPY',
+        'blue': 'QQQ',
+        'green': 'IWM'
       }
     });
   });
 
   it('updates group ticker', () => {
-    const { setGroupTicker } = useSymbolLinkStore.getState();
-    setGroupTicker('red', 'NVDA');
+    const { updateSymbol } = useSymbolLinkStore.getState();
+    updateSymbol('red', 'NVDA');
     
-    const { groups } = useSymbolLinkStore.getState();
-    expect(groups['red'].symbol).toBe('NVDA');
+    const { links } = useSymbolLinkStore.getState();
+    expect(links['red']).toBe('NVDA');
   });
 
   it('retrieves group ticker', () => {
-    const { getGroupTicker } = useSymbolLinkStore.getState();
-    expect(getGroupTicker('blue')).toBe('QQQ');
+    const { getSymbol } = useSymbolLinkStore.getState();
+    expect(getSymbol('blue')).toBe('QQQ');
   });
 });

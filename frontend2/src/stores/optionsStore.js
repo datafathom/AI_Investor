@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-
-const API_BASE = '/api/v1/options';
+import apiClient from '../services/apiClient';
 
 const useOptionsStore = create((set, get) => ({
     // State
@@ -19,9 +18,8 @@ const useOptionsStore = create((set, get) => ({
     fetchOptionsChain: async (symbol) => {
         set({ isLoading: true, error: null });
         try {
-            const response = await fetch(`${API_BASE}/chain?symbol=${symbol}`);
-            const result = await response.json();
-            set({ optionsChain: result.data || [], isLoading: false });
+            const response = await apiClient.get('/options/chain', { params: { symbol } });
+            set({ optionsChain: response.data.data || [], isLoading: false });
         } catch (err) {
             set({ error: err.message, isLoading: false });
         }
@@ -30,20 +28,17 @@ const useOptionsStore = create((set, get) => ({
     buildStrategy: async (symbol, strategyType, legs = []) => {
         set({ isLoading: true, error: null });
         try {
-            const response = await fetch(`${API_BASE}/strategy/build`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ symbol, strategy_type: strategyType, legs })
+            const response = await apiClient.post('/options/strategy/build', {
+                symbol,
+                strategy_type: strategyType,
+                legs
             });
-            const result = await response.json();
             
-            if (!response.ok) throw new Error(result.error || 'Failed to build strategy');
-            
-            set({ strategy: result.data });
+            set({ strategy: response.data.data });
             
             // Auto analyze if strategy created
-            if (result.data?.strategy_id) {
-                await get().analyzeStrategy(result.data.strategy_id);
+            if (response.data.data?.strategy_id) {
+                await get().analyzeStrategy(response.data.data.strategy_id);
             }
             
             set({ isLoading: false });
@@ -54,13 +49,8 @@ const useOptionsStore = create((set, get) => ({
 
     analyzeStrategy: async (strategyId) => {
         try {
-            const response = await fetch(`${API_BASE}/strategy/analyze`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ strategy_id: strategyId })
-            });
-            const result = await response.json();
-            set({ greeks: result.data });
+            const response = await apiClient.post('/options/strategy/analyze', { strategy_id: strategyId });
+            set({ greeks: response.data.data });
         } catch (err) {
             console.error('Analysis error:', err);
         }

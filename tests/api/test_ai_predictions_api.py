@@ -7,6 +7,7 @@ import pytest
 from unittest.mock import AsyncMock, patch
 from flask import Flask
 from web.api.ai_predictions_api import ai_predictions_bp
+from datetime import datetime, timezone
 
 
 @pytest.fixture
@@ -42,17 +43,20 @@ def mock_ai_analytics_service():
         yield service
 
 
-@pytest.mark.asyncio
-async def test_predict_price_success(client, mock_prediction_engine):
+def test_predict_price_success(client, mock_prediction_engine):
     """Test successful price prediction."""
     from models.ai_predictions import PricePrediction
     
+    from datetime import datetime
     mock_prediction = PricePrediction(
+        prediction_id='pred_1',
         symbol='AAPL',
         predicted_price=150.0,
         current_price=145.0,
         confidence=0.85,
-        time_horizon='1m'
+        prediction_date=datetime.now(timezone.utc),
+        time_horizon='1m',
+        model_version='v1.0'
     )
     mock_prediction_engine.predict_price.return_value = mock_prediction
     
@@ -69,8 +73,7 @@ async def test_predict_price_success(client, mock_prediction_engine):
     assert data['data']['symbol'] == 'AAPL'
 
 
-@pytest.mark.asyncio
-async def test_predict_price_missing_symbol(client):
+def test_predict_price_missing_symbol(client):
     """Test price prediction without symbol."""
     response = client.post('/api/ai-predictions/price', json={})
     
@@ -79,14 +82,16 @@ async def test_predict_price_missing_symbol(client):
     assert data['success'] is False
 
 
-@pytest.mark.asyncio
-async def test_predict_trend_success(client, mock_prediction_engine):
+def test_predict_trend_success(client, mock_prediction_engine):
     """Test successful trend prediction."""
     from models.ai_predictions import TrendPrediction
     
     mock_trend = TrendPrediction(
+        prediction_id='trend_1',
         symbol='AAPL',
         trend_direction='bullish',
+        trend_strength=0.8,
+        predicted_change=5.0,
         confidence=0.75,
         time_horizon='1m'
     )
@@ -100,14 +105,16 @@ async def test_predict_trend_success(client, mock_prediction_engine):
     assert data['success'] is True
 
 
-@pytest.mark.asyncio
-async def test_get_market_regime_success(client, mock_ai_analytics_service):
+def test_get_market_regime_success(client, mock_ai_analytics_service):
     """Test successful market regime detection."""
     from models.ai_predictions import MarketRegime
     
+    from datetime import datetime
     mock_regime = MarketRegime(
+        regime_id='reg_1',
         regime_type='bull',
         confidence=0.8,
+        detected_date=datetime.now(timezone.utc),
         indicators={}
     )
     mock_ai_analytics_service.detect_market_regime.return_value = mock_regime

@@ -7,6 +7,7 @@
  */
 
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useIncidentStore = create((set) => ({
     incidents: [],
@@ -18,10 +19,8 @@ const useIncidentStore = create((set) => ({
     fetchIncidents: async (mock = true) => {
         set({ loading: true, error: null });
         try {
-            const response = await fetch(`/api/v1/ops/incidents?mock=${mock}`);
-            if (!response.ok) throw new Error('Failed to fetch incidents');
-            const data = await response.json();
-            set({ incidents: data, loading: false });
+            const response = await apiClient.get('/ops/incidents', { params: { mock } });
+            set({ incidents: response.data, loading: false });
         } catch (error) {
             console.error('Fetch incidents failed:', error);
             set({ error: error.message, loading: false });
@@ -31,21 +30,17 @@ const useIncidentStore = create((set) => ({
     triggerIncident: async (title, urgency = "high", mock = true) => {
         set({ triggering: true, error: null });
         try {
-            const response = await fetch(`/api/v1/ops/incidents/trigger?mock=${mock}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, urgency })
-            });
-            
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error || 'Failed to trigger incident');
+            const response = await apiClient.post('/ops/incidents/trigger', 
+                { title, urgency },
+                { params: { mock } }
+            );
             
             set(state => ({ 
-                incidents: [data, ...state.incidents],
-                lastTriggered: data,
+                incidents: [response.data, ...state.incidents],
+                lastTriggered: response.data,
                 triggering: false 
             }));
-            return data;
+            return response.data;
         } catch (error) {
             console.error('Trigger incident failed:', error);
             set({ error: error.message, triggering: false });

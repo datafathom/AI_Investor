@@ -1,0 +1,74 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.1, pytest-7.4.0, pluggy-1.6.0 -- C:\Users\astir\Desktop\AI_Company\AI_Investor\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\astir\Desktop\AI_Company\AI_Investor
+configfile: pytest.ini
+plugins: anyio-4.12.1, asyncio-0.21.1, base-url-2.1.0
+asyncio: mode=Mode.AUTO
+collecting ... collected 13 items
+
+tests/api/test_ai_assistant_api.py::test_create_conversation_success PASSED [  7%]
+tests/api/test_ai_assistant_api.py::test_create_conversation_missing_user_id PASSED [ 15%]
+tests/api/test_ai_assistant_api.py::test_get_conversation_success PASSED [ 23%]
+tests/api/test_ai_assistant_api.py::test_send_message_success PASSED     [ 30%]
+tests/api/test_ai_assistant_api.py::test_get_recommendations_success PASSED [ 38%]
+tests/api/test_ai_predictions_api.py::test_predict_price_success PASSED  [ 46%]
+tests/api/test_ai_predictions_api.py::test_predict_price_missing_symbol PASSED [ 53%]
+tests/api/test_ai_predictions_api.py::test_predict_trend_success PASSED  [ 61%]
+tests/api/test_ai_predictions_api.py::test_get_market_regime_success PASSED [ 69%]
+tests/api/test_integration_api.py::test_create_integration_success PASSED [ 76%]
+tests/api/test_integration_api.py::test_create_integration_missing_params PASSED [ 84%]
+tests/api/test_integration_api.py::test_get_user_integrations_success PASSED [ 92%]
+tests/api/test_integration_api.py::test_sync_integration_success PASSED  [100%]
+
+============================== warnings summary ===============================
+tests/api/test_ai_assistant_api.py::test_create_conversation_success
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\api\test_ai_assistant_api.py:54: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    created_date=datetime.utcnow(),
+
+tests/api/test_ai_assistant_api.py::test_create_conversation_success
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\api\test_ai_assistant_api.py:55: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    updated_date=datetime.utcnow()
+
+tests/api/test_ai_assistant_api.py::test_create_conversation_success
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\web\api\ai_assistant_api.py:59: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    'data': conversation.dict()
+
+tests/api/test_ai_assistant_api.py::test_get_conversation_success
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\api\test_ai_assistant_api.py:89: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    created_date=datetime.utcnow(),
+
+tests/api/test_ai_assistant_api.py::test_get_conversation_success
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\api\test_ai_assistant_api.py:90: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    updated_date=datetime.utcnow()
+
+tests/api/test_ai_assistant_api.py::test_get_conversation_success
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\web\api\ai_assistant_api.py:87: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    'data': conversation.dict()
+
+tests/api/test_ai_assistant_api.py::test_send_message_success
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\api\test_ai_assistant_api.py:111: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    timestamp=datetime.utcnow()
+
+tests/api/test_ai_assistant_api.py::test_get_recommendations_success
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\api\test_ai_assistant_api.py:139: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    created_date=datetime.utcnow()
+
+tests/api/test_ai_predictions_api.py::test_predict_price_success
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\api\test_ai_predictions_api.py:56: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    prediction_date=datetime.utcnow(),
+
+tests/api/test_ai_predictions_api.py::test_predict_price_success
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\web\api\ai_predictions_api.py:61: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    'data': prediction.dict()
+
+tests/api/test_ai_predictions_api.py::test_predict_trend_success
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\web\api\ai_predictions_api.py:97: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+    'data': prediction.dict()
+
+tests/api/test_ai_predictions_api.py::test_get_market_regime_success
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\tests\api\test_ai_predictions_api.py:116: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    detected_date=datetime.utcnow(),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 13 passed, 12 warnings in 2.55s =======================

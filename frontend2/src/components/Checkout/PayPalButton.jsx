@@ -8,6 +8,7 @@
  */
 
 import React, { useState } from 'react';
+import apiClient from '../../services/apiClient';
 import PropTypes from 'prop-types';
 import './PayPalButton.css';
 
@@ -18,15 +19,9 @@ const PayPalButton = ({ amount, currency = "USD", onSuccess, onError, mock = tru
         setLoading(true);
         try {
             // Step 1: Create Order
-            const createRes = await fetch(`/api/v1/payment/paypal/create-order?mock=${mock}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount, currency })
-            });
-            const order = await createRes.json();
+            const createRes = await apiClient.post(`/payment/paypal/create-order?mock=${mock}`, { amount, currency });
+            const order = createRes.data;
             
-            if (!createRes.ok) throw new Error(order.error || 'Failed to create order');
-
             // Step 2: Simulate User Approval (Popup)
             // In real integration, we'd use the PayPal JS SDK which handles the popup
             const userApproved = window.confirm(`[MOCK PAYPAL]\n\nPay $${amount} to AI Investor?\n\n(Click OK to Approve, Cancel to Reject)`);
@@ -37,14 +32,8 @@ const PayPalButton = ({ amount, currency = "USD", onSuccess, onError, mock = tru
             }
 
             // Step 3: Capture Order
-            const captureRes = await fetch('/api/v1/payment/paypal/capture-order', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ order_id: order.id })
-            });
-            const capture = await captureRes.json();
-
-            if (!captureRes.ok) throw new Error(capture.error || 'Failed to capture order');
+            const captureRes = await apiClient.post('/payment/paypal/capture-order', { order_id: order.id });
+            const capture = captureRes.data;
 
             if (onSuccess) onSuccess(capture);
 

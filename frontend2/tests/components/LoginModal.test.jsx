@@ -5,6 +5,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import LoginModal from '../../src/components/LoginModal';
 import { authService } from '../../src/utils/authService';
 
@@ -18,6 +19,10 @@ vi.mock('../../src/utils/authService', () => ({
   },
 }));
 
+const renderWithRouter = (ui) => {
+  return render(<MemoryRouter>{ui}</MemoryRouter>);
+};
+
 describe('LoginModal', () => {
   const mockOnClose = vi.fn();
   const mockOnLoginSuccess = vi.fn();
@@ -29,7 +34,7 @@ describe('LoginModal', () => {
   });
 
   it('should render login form when open', () => {
-    render(
+    renderWithRouter(
       <LoginModal
         isOpen={true}
         onClose={mockOnClose}
@@ -43,7 +48,7 @@ describe('LoginModal', () => {
   });
 
   it('should not render when closed', () => {
-    render(
+    renderWithRouter(
       <LoginModal
         isOpen={false}
         onClose={mockOnClose}
@@ -56,7 +61,7 @@ describe('LoginModal', () => {
 
   it('should show error when username and password are empty', async () => {
     const user = userEvent.setup();
-    render(
+    renderWithRouter(
       <LoginModal
         isOpen={true}
         onClose={mockOnClose}
@@ -79,7 +84,7 @@ describe('LoginModal', () => {
       user: { id: 1, username: 'testuser' },
     });
 
-    render(
+    renderWithRouter(
       <LoginModal
         isOpen={true}
         onClose={mockOnClose}
@@ -106,7 +111,7 @@ describe('LoginModal', () => {
     const user = userEvent.setup();
     authService.login.mockRejectedValue(new Error('Invalid credentials'));
 
-    render(
+    renderWithRouter(
       <LoginModal
         isOpen={true}
         onClose={mockOnClose}
@@ -132,7 +137,7 @@ describe('LoginModal', () => {
 
   it('should toggle between login and register modes', async () => {
     const user = userEvent.setup();
-    render(
+    renderWithRouter(
       <LoginModal
         isOpen={true}
         onClose={mockOnClose}
@@ -171,7 +176,7 @@ describe('LoginModal', () => {
       user: { id: 1, username: 'newuser' },
     });
 
-    render(
+    renderWithRouter(
       <LoginModal
         isOpen={true}
         onClose={mockOnClose}
@@ -204,7 +209,7 @@ describe('LoginModal', () => {
 
   it('should close modal when close button is clicked', async () => {
     const user = userEvent.setup();
-    render(
+    renderWithRouter(
       <LoginModal
         isOpen={true}
         onClose={mockOnClose}
@@ -229,7 +234,7 @@ describe('LoginModal', () => {
       user: { id: 1, username: 'testuser' },
     });
 
-    render(
+    renderWithRouter(
       <LoginModal
         isOpen={true}
         onClose={mockOnClose}

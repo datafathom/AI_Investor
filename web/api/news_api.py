@@ -169,3 +169,24 @@ async def get_market_impact(symbol: str):
             'success': False,
             'error': str(e)
         }), 500
+
+
+@news_bp.route('/sectors', methods=['GET'])
+async def get_sector_sentiment():
+    """
+    Get sentiment across all market sectors for the Flow Radar.
+    """
+    try:
+        service = get_sentiment_analysis_service()
+        sectors = await service.get_all_sectors_sentiment()
+        
+        return jsonify({
+            'success': True,
+            'data': [s.dict() for s in sectors]
+        })
+    except Exception as e:
+        logger.error(f"Error getting sector sentiment: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500

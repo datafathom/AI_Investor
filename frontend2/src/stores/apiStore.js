@@ -3,6 +3,7 @@
  * Phase 66: Manages data connectors, API keys, and webhooks.
  */
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useAPIStore = create((set, get) => ({
     // State
@@ -30,9 +31,8 @@ const useAPIStore = create((set, get) => ({
     // Async: Fetch connectors
     fetchConnectors: async () => {
         try {
-            const response = await fetch('/api/v1/integrations/connectors');
-            const data = await response.json();
-            set({ connectors: data || [] });
+            const response = await apiClient.get('/integrations/connectors');
+            set({ connectors: response.data || [] });
         } catch (error) {
             console.error('Fetch connectors failed:', error);
         }
@@ -41,9 +41,8 @@ const useAPIStore = create((set, get) => ({
     // Async: Fetch webhooks
     fetchWebhooks: async () => {
         try {
-            const response = await fetch('/api/v1/integrations/webhooks');
-            const data = await response.json();
-            set({ webhooks: data || [] });
+            const response = await apiClient.get('/integrations/webhooks');
+            set({ webhooks: response.data || [] });
         } catch (error) {
             console.error('Fetch webhooks failed:', error);
         }
@@ -52,8 +51,8 @@ const useAPIStore = create((set, get) => ({
     // Async: Test connector
     testConnector: async (connectorId) => {
         try {
-            const response = await fetch(`/api/v1/integrations/connectors/${connectorId}/test`, { method: 'POST' });
-            return await response.json();
+            const response = await apiClient.post(`/integrations/connectors/${connectorId}/test`);
+            return response.data;
         } catch (error) {
             console.error('Test connector failed:', error);
             throw error;
@@ -64,8 +63,8 @@ const useAPIStore = create((set, get) => ({
     testWebhook: async (webhookId) => {
         try {
             // Assuming endpoint for testing a specific webhook
-            const response = await fetch(`/api/v1/integrations/webhooks/${webhookId}/test`, { method: 'POST' });
-            return await response.json();
+            const response = await apiClient.post(`/integrations/webhooks/${webhookId}/test`);
+            return response.data;
         } catch (error) {
             console.error('Test webhook failed:', error);
             throw error;

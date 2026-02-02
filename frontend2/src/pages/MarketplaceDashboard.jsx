@@ -6,7 +6,7 @@
  *          Displays extension marketplace, installation management, and reviews.
  * 
  * INTEGRATION POINTS:
- *    - MarketplaceAPI: /api/v1/marketplace endpoints
+ *    - MarketplaceStore: Uses apiClient for all API calls (User Rule 6)
  * 
  * FEATURES:
  *    - Extension browsing
@@ -16,78 +16,44 @@
  * 
  * AUTHOR: AI Investor Team
  * CREATED: 2026-01-21
- * LAST_MODIFIED: 2026-01-21
+ * LAST_MODIFIED: 2026-01-30
  * ==============================================================================
  */
 
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect } from 'react';
+import useMarketplaceStore from '../stores/marketplaceStore';
 import './MarketplaceDashboard.css';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 const MarketplaceDashboard = () => {
-  const [extensions, setExtensions] = useState([]);
-  const [installedExtensions, setInstalledExtensions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [userId] = useState('user_1');
-  const [searchQuery, setSearchQuery] = useState('');
+  const userId = 'user_1'; // TODO: Get from authStore
+  
+  const {
+    extensions,
+    installedExtensions,
+    loading,
+    searchQuery,
+    setSearchQuery,
+    fetchExtensions,
+    fetchInstalledExtensions,
+    installExtension,
+    uninstallExtension
+  } = useMarketplaceStore();
 
   useEffect(() => {
-    loadExtensions();
-    loadInstalledExtensions();
-  }, []);
+    fetchExtensions();
+    fetchInstalledExtensions(userId);
+  }, [fetchExtensions, fetchInstalledExtensions]);
 
-  const loadExtensions = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/marketplace/extensions`, {
-        params: { search: searchQuery }
-      });
-      setExtensions(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading extensions:', error);
-    }
+  const handleSearch = () => {
+    fetchExtensions(searchQuery);
   };
 
-  const loadInstalledExtensions = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/marketplace/installed`, {
-        params: { user_id: userId }
-      });
-      setInstalledExtensions(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading installed extensions:', error);
-    }
+  const handleInstall = async (extensionId) => {
+    await installExtension(userId, extensionId);
   };
 
-  const installExtension = async (extensionId) => {
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/marketplace/install`, {
-        user_id: userId,
-        extension_id: extensionId
-      });
-      loadInstalledExtensions();
-    } catch (error) {
-      console.error('Error installing extension:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const uninstallExtension = async (extensionId) => {
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/marketplace/uninstall`, {
-        extension_id: extensionId
-      });
-      loadInstalledExtensions();
-    } catch (error) {
-      console.error('Error uninstalling extension:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleUninstall = async (extensionId) => {
+    await uninstallExtension(userId, extensionId);
   };
 
   const renderStars = (rating) => {
@@ -115,10 +81,10 @@ const MarketplaceDashboard = () => {
           placeholder="Search extensions..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && loadExtensions()}
+          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
           className="search-input"
         />
-        <button onClick={loadExtensions} className="search-button">
+        <button onClick={handleSearch} className="search-button">
           Search
         </button>
       </div>
@@ -157,7 +123,7 @@ const MarketplaceDashboard = () => {
                       </button>
                     ) : (
                       <button
-                        onClick={() => installExtension(extension.extension_id)}
+                        onClick={() => handleInstall(extension.extension_id)}
                         disabled={loading}
                         className="install-button"
                       >
@@ -188,7 +154,7 @@ const MarketplaceDashboard = () => {
                   <div className="installed-actions">
                     <button className="update-button">Update</button>
                     <button
-                      onClick={() => uninstallExtension(extension.extension_id)}
+                      onClick={() => handleUninstall(extension.extension_id)}
                       disabled={loading}
                       className="uninstall-button"
                     >

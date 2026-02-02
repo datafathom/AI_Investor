@@ -16,9 +16,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import './EmailPreferences.css';
 
-const API_BASE = '/api/v1/gmail';
+const API_BASE = '/email';
 
 const EMAIL_TYPES = [
     {
@@ -52,7 +53,6 @@ const EMAIL_TYPES = [
     {
         id: 'dividend_notification',
         name: 'Dividend Notifications',
-        description: 'Notifications when dividends are paid',
         defaultEnabled: true,
         frequency: 'instant'
     },
@@ -99,11 +99,9 @@ const EmailPreferences = () => {
 
     const loadStats = async () => {
         try {
-            const response = await fetch(`${API_BASE}/stats`);
-            if (response.ok) {
-                const data = await response.json();
-                setStats(data);
-            }
+            const response = await apiClient.get(`${API_BASE}/stats`);
+            const data = response.data;
+            setStats(data);
         } catch (err) {
             console.error('Failed to load stats:', err);
         }
@@ -151,23 +149,9 @@ const EmailPreferences = () => {
             // Get user's email from profile or use default
             const userEmail = localStorage.getItem('user_email') || 'user@example.com';
             
-            const response = await fetch(`${API_BASE}/send-template`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    to: userEmail,
-                    template_name: emailTypeId,
-                    template_context: {
-                        // Mock context for testing
-                        portfolio_value: 100000,
-                        margin_level: 150,
-                        symbol: 'AAPL',
-                        price: 150.25,
-                        quantity: 10
-                    }
-                })
+            await apiClient.post(`${API_BASE}/send-template`, {
+                template_name: emailTypeId,
+                email: userEmail
             });
 
             if (response.ok) {

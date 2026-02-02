@@ -83,11 +83,8 @@ const TaxOptimizationDashboard = () => {
 
   const checkWashSale = async (symbol) => {
     try {
-      const res = await axios.post(`${API_BASE}/api/v1/tax-optimization/check-wash-sale`, {
-        portfolio_id: portfolioId,
-        symbol: symbol
-      });
-      alert(`Wash Sale Check: ${res.data.data.is_wash_sale ? 'WASH SALE DETECTED' : 'No wash sale'}`);
+      const result = await analyticsService.checkWashSale(portfolioId, symbol);
+      alert(`Wash Sale Check: ${result?.is_wash_sale ? 'WASH SALE DETECTED' : 'No wash sale'}`);
     } catch (error) {
       console.error('Error checking wash sale:', error);
     }

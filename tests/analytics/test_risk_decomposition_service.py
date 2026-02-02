@@ -37,8 +37,8 @@ def mock_portfolio_data():
 async def test_decompose_factor_risk_basic(service, mock_portfolio_data):
     """Test basic factor risk decomposition."""
     service.portfolio_aggregator.get_portfolio = AsyncMock(return_value=mock_portfolio_data)
-    service.cache_service.get = AsyncMock(return_value=None)
-    service.cache_service.set = AsyncMock()
+    service.cache_service.get = Mock(return_value=None)
+    service.cache_service.set = Mock()
     service._get_portfolio_data = AsyncMock(return_value=mock_portfolio_data)
     service._calculate_factor_exposures = AsyncMock(return_value=[])
     service._calculate_portfolio_volatility = AsyncMock(return_value=0.15)
@@ -69,7 +69,7 @@ async def test_decompose_factor_risk_cached(service):
         'r_squared': 0.7
     }
     
-    service.cache_service.get = AsyncMock(return_value=cached_data)
+    service.cache_service.get = Mock(return_value=cached_data)
     
     result = await service.decompose_factor_risk(
         portfolio_id="test_portfolio",
@@ -93,7 +93,8 @@ async def test_calculate_concentration_risk(service, mock_portfolio_data):
     
     assert result is not None
     assert isinstance(result, ConcentrationRiskAnalysis)
-    assert len(result.concentration_metrics) > 0
+    assert result.by_holding is not None
+    assert result.by_sector is not None
 
 
 @pytest.mark.asyncio
@@ -106,7 +107,7 @@ async def test_calculate_concentration_risk_empty_portfolio(service):
     )
     
     assert result is not None
-    assert len(result.concentration_metrics) >= 0
+    assert result.by_holding.max_weight == 0.0
 
 
 @pytest.mark.asyncio
@@ -151,8 +152,8 @@ async def test_calculate_tail_risk_contributions(service, mock_portfolio_data):
 async def test_decompose_factor_risk_different_models(service, mock_portfolio_data):
     """Test factor risk decomposition with different factor models."""
     service._get_portfolio_data = AsyncMock(return_value=mock_portfolio_data)
-    service.cache_service.get = AsyncMock(return_value=None)
-    service.cache_service.set = AsyncMock()
+    service.cache_service.get = Mock(return_value=None)
+    service.cache_service.set = Mock()
     service._calculate_factor_exposures = AsyncMock(return_value=[])
     service._calculate_portfolio_volatility = AsyncMock(return_value=0.15)
     
@@ -176,7 +177,10 @@ async def test_calculate_concentration_risk_all_dimensions(service, mock_portfol
     )
     
     assert result is not None
-    assert len(result.concentration_metrics) == 4
+    assert result.by_holding is not None
+    assert result.by_sector is not None
+    assert result.by_geography is not None
+    assert result.by_asset_class is not None
 
 
 @pytest.mark.asyncio
@@ -206,6 +210,5 @@ async def test_calculate_concentration_risk_single_holding(service):
     
     assert result is not None
     # Single holding should have high concentration
-    holding_metric = next((m for m in result.concentration_metrics if m.dimension == "holding"), None)
-    assert holding_metric is not None
-    assert holding_metric.max_weight == 1.0
+    assert result.by_holding is not None
+    assert result.by_holding.max_weight == 1.0

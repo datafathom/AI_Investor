@@ -5,10 +5,15 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import axios from 'axios';
+import apiClient from '../../src/services/apiClient';
 import SocialTradingDashboard from '../../src/pages/SocialTradingDashboard';
 
-vi.mock('axios');
+vi.mock('../../src/services/apiClient', () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+  },
+}));
 
 describe('SocialTradingDashboard', () => {
   beforeEach(() => {
@@ -16,12 +21,11 @@ describe('SocialTradingDashboard', () => {
   });
 
   it('should render dashboard', async () => {
-    axios.get.mockResolvedValue({ data: { data: {} } });
+    // socialTradingStore expects response.data?.data or response.data
+    apiClient.get.mockResolvedValue({ data: { data: [] } });
     
     render(<SocialTradingDashboard />);
     
-    await waitFor(() => {
-      expect(screen.getByText(/Social Trading/i)).toBeInTheDocument();
-    });
+    expect(await screen.findByRole('heading', { name: /Social Trading/i, level: 1 })).toBeInTheDocument();
   });
 });

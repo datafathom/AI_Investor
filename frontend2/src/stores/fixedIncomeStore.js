@@ -6,8 +6,7 @@
  */
 
 import { create } from 'zustand';
-
-const API_BASE = 'http://localhost:5050/api/v1/fixed-income';
+import apiClient from '../services/apiClient';
 
 const useFixedIncomeStore = create((set, get) => ({
   // State
@@ -24,11 +23,9 @@ const useFixedIncomeStore = create((set, get) => ({
   fetchYieldCurve: async () => {
     set({ isLoading: true, error: null });
     try {
-      const response = await fetch(`${API_BASE}/yield-curve`);
-      const result = await response.json();
-      
-      if (result.success) {
-        set({ yieldCurve: result.data, isLoading: false });
+      const response = await apiClient.get('/fixed-income/yield-curve');
+      if (response.data.success) {
+        set({ yieldCurve: response.data.data, isLoading: false });
       }
     } catch (error) {
       set({ error: error.message, isLoading: false });
@@ -37,11 +34,9 @@ const useFixedIncomeStore = create((set, get) => ({
   
   fetchHistoricalCurves: async (months = 12) => {
     try {
-      const response = await fetch(`${API_BASE}/yield-curve/history?months=${months}`);
-      const result = await response.json();
-      
-      if (result.success) {
-        set({ historicalCurves: result.data });
+      const response = await apiClient.get('/fixed-income/yield-curve/history', { params: { months } });
+      if (response.data.success) {
+        set({ historicalCurves: response.data.data });
       }
     } catch (error) {
       console.error('Historical curves fetch error:', error);
@@ -51,15 +46,9 @@ const useFixedIncomeStore = create((set, get) => ({
   simulateRateShock: async (portfolioId, basisPoints) => {
     set({ isLoading: true });
     try {
-      const response = await fetch(`${API_BASE}/rate-shock`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ portfolio_id: portfolioId, basis_points: basisPoints })
-      });
-      const result = await response.json();
-      
-      if (result.success) {
-        set({ rateShockResult: result.data, isLoading: false });
+      const response = await apiClient.post('/fixed-income/rate-shock', { portfolio_id: portfolioId, basis_points: basisPoints });
+      if (response.data.success) {
+        set({ rateShockResult: response.data.data, isLoading: false });
       }
     } catch (error) {
       set({ error: error.message, isLoading: false });
@@ -68,11 +57,9 @@ const useFixedIncomeStore = create((set, get) => ({
   
   fetchLiquidityGaps: async (portfolioId) => {
     try {
-      const response = await fetch(`${API_BASE}/gaps/${portfolioId}`);
-      const result = await response.json();
-      
-      if (result.success) {
-        set({ liquidityGaps: result.data });
+      const response = await apiClient.get(`/fixed-income/gaps/${portfolioId}`);
+      if (response.data.success) {
+        set({ liquidityGaps: response.data.data });
       }
     } catch (error) {
       console.error('Gaps fetch error:', error);
@@ -102,20 +89,15 @@ const useFixedIncomeStore = create((set, get) => ({
   calculateWAL: async () => {
     const { bondLadder } = get();
     try {
-      const response = await fetch(`${API_BASE}/wal`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          bonds: bondLadder.map(b => ({
-            par_value: b.parValue,
-            maturity_years: b.maturityYears
-          }))
-        })
+      const response = await apiClient.post('/fixed-income/wal', { 
+        bonds: bondLadder.map(b => ({
+          par_value: b.parValue,
+          maturity_years: b.maturityYears
+        }))
       });
-      const result = await response.json();
       
-      if (result.success) {
-        set({ weightedAverageLife: result.data.weighted_average_life });
+      if (response.data.success) {
+        set({ weightedAverageLife: response.data.data.weighted_average_life });
       }
     } catch (error) {
       console.error('WAL calculation error:', error);

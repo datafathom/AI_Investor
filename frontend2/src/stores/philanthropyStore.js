@@ -3,6 +3,7 @@
  * Phase 61: Manages ESG scores, donation routing, and carbon footprint.
  */
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const usePhilanthropyStore = create((set, get) => ({
     // State
@@ -27,15 +28,12 @@ const usePhilanthropyStore = create((set, get) => ({
     // Async: Donate
     executeDonation: async (charityId, amount) => {
         try {
-            const response = await fetch('/api/v1/philanthropy/donate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ charity_id: charityId, amount })
-            });
-            if (!response.ok) throw new Error('Donation failed');
-            const data = await response.json();
-            set((s) => ({ donationHistory: [data.receipt, ...s.donationHistory], excessAlpha: s.excessAlpha - amount }));
-            return data;
+            const response = await apiClient.post('/philanthropy/donate', { charity_id: charityId, amount });
+            set((s) => ({ 
+                donationHistory: [response.data.receipt, ...s.donationHistory], 
+                excessAlpha: s.excessAlpha - amount 
+            }));
+            return response.data;
         } catch (error) {
             console.error('Donation error:', error);
             set({ error: error.message });

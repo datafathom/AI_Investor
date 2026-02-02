@@ -24,7 +24,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from models.social_trading import CopyTradingConfig, CopyTrade
 from services.social_trading.social_trading_service import get_social_trading_service
@@ -66,14 +66,14 @@ class CopyTradingService:
         logger.info(f"Creating copy config for follower {follower_id} to copy trader {trader_id}")
         
         config = CopyTradingConfig(
-            config_id=f"copy_{follower_id}_{trader_id}_{datetime.utcnow().timestamp()}",
+            config_id=f"copy_{follower_id}_{trader_id}_{datetime.now(timezone.utc).timestamp()}",
             follower_id=follower_id,
             trader_id=trader_id,
             allocation_percentage=allocation_percentage,
             risk_multiplier=risk_multiplier,
             is_active=True,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Save config
@@ -81,6 +81,22 @@ class CopyTradingService:
         self.active_configs[config.config_id] = config
         
         return config
+
+    async def stop_copy_trading(self, config_id: str) -> bool:
+        """
+        Stop copy trading for a configuration.
+        """
+        logger.info(f"Stopping copy trading for config {config_id}")
+        config = await self._get_config(config_id)
+        if config:
+            config.is_active = False
+            config.updated_date = datetime.now(timezone.utc)
+            await self._save_config(config)
+            # Update local cache
+            if config_id in self.active_configs:
+                self.active_configs[config_id] = config
+            return True
+        return False
     
     async def execute_copy_trade(
         self,
@@ -114,13 +130,13 @@ class CopyTradingService:
             
             if copy_quantity > 0:
                 copy_trade = CopyTrade(
-                    copy_trade_id=f"copy_trade_{config.config_id}_{datetime.utcnow().timestamp()}",
+                    copy_trade_id=f"copy_trade_{config.config_id}_{datetime.now(timezone.utc).timestamp()}",
                     config_id=config.config_id,
                     original_trade_id=original_trade.get('trade_id'),
                     symbol=original_trade.get('symbol'),
                     quantity=copy_quantity,
                     price=original_trade.get('price', 0),
-                    executed_date=datetime.utcnow(),
+                    executed_date=datetime.now(timezone.utc),
                     status="executed"
                 )
                 

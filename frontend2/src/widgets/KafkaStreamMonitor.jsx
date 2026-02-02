@@ -8,6 +8,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import './KafkaStreamMonitor.css';
+import apiClient from '../services/apiClient';
 
 const KafkaStreamMonitor = ({ hideHeader = false }) => {
     const [stats, setStats] = useState([]);
@@ -18,23 +19,23 @@ const KafkaStreamMonitor = ({ hideHeader = false }) => {
         // Poll stats
         const fetchStats = async () => {
             try {
-                const res = await fetch('http://localhost:5050/api/v1/system/kafka/stats');
-                if (res.ok) {
-                    const json = await res.json();
-                    // Robust check: Ensure stats is an array
-                    if (Array.isArray(json)) {
-                        setStats(json);
-                    } else if (typeof json === 'object') {
-                        // Fallback: If object, wrap in array or extract values
-                        setStats([json]);
-                    }
-                } else {
-                    // fall back
-                    setStats([
-                        { topic: 'market-data', msg_per_sec: 124, lag: 2 },
-                        { topic: 'risk-alerts', msg_per_sec: 2, lag: 0 },
-                    ]);
+                const response = await apiClient.get('/system/kafka/stats');
+                const json = response.data;
+                // Robust check: Ensure stats is an array
+                if (Array.isArray(json)) {
+                    setStats(json);
+                } else if (typeof json === 'object') {
+                    // Fallback: If object, wrap in array or extract values
+                    setStats([json]);
                 }
+            } catch (e) {
+                // Fallback / Mock on error
+                setStats([
+                    { topic: 'market-data', msg_per_sec: 124, lag: 2 },
+                    { topic: 'risk-alerts', msg_per_sec: 2, lag: 0 },
+                ]);
+            }
+        };
             } catch (e) {
                  // Mock
                  setStats([

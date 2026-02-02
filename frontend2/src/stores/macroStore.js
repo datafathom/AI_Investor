@@ -6,7 +6,7 @@
  *          and yield curve visualization.
  *          
  * INTEGRATION POINTS:
- *     - macroService: API calls to /api/v1/macro-data/*
+ *     - apiClient: API calls to /api/v1/macro-data/*
  *     - MacroHealthGauge: Regime health score
  *     - YieldCurveChart: Interest rate spreads
  *     - RegimeIndicator: Economic status
@@ -17,42 +17,37 @@
  */
 
 import { create } from 'zustand';
-
-const API_BASE = '/api/v1/macro-data';
+import apiClient from '../services/apiClient';
 
 /**
- * Macro API Service
+ * Macro API Service using apiClient
  */
 const macroService = {
     async getRegime() {
-        const response = await fetch(`${API_BASE}/regime`);
-        if (!response.ok) throw new Error('Failed to fetch macro regime');
-        return response.json();
+        const response = await apiClient.get('/macro-data/regime');
+        return response.data;
     },
 
     async getYieldCurve() {
-        const response = await fetch(`${API_BASE}/yield-curve`);
-        if (!response.ok) throw new Error('Failed to fetch yield curve');
-        return response.json();
+        const response = await apiClient.get('/macro-data/yield-curve');
+        return response.data;
     },
 
     async getSeries(seriesId, limit = 100, transform = 'raw') {
-        const params = new URLSearchParams({ limit, transform });
-        const response = await fetch(`${API_BASE}/series/${seriesId}?${params}`);
-        if (!response.ok) throw new Error(`Failed to fetch series ${seriesId}`);
-        return response.json();
+        const response = await apiClient.get(`/macro-data/series/${seriesId}`, {
+            params: { limit, transform }
+        });
+        return response.data;
     },
 
     async getIndicators() {
-        const response = await fetch(`${API_BASE}/indicators`);
-        if (!response.ok) throw new Error('Failed to fetch indicators');
-        return response.json();
+        const response = await apiClient.get('/macro-data/indicators');
+        return response.data;
     },
 
     async getHealth() {
-        const response = await fetch(`${API_BASE}/health`);
-        if (!response.ok) throw new Error('Macro health check failed');
-        return response.json();
+        const response = await apiClient.get('/macro-data/health');
+        return response.data;
     }
 };
 

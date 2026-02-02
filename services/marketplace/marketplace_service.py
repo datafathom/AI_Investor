@@ -24,7 +24,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from models.marketplace import ExtensionReview
 from services.marketplace.extension_framework import get_extension_framework
@@ -70,13 +70,35 @@ class MarketplaceService:
             user_id=user_id,
             rating=rating,
             comment=comment,
-            created_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc)
         )
         
         # Save review
         await self._save_review(review)
         
         return review
+    
+    async def get_extension_reviews(
+        self,
+        extension_id: str,
+        limit: int = 20
+    ) -> List[ExtensionReview]:
+        """
+        Get reviews for extension.
+        
+        Args:
+            extension_id: Extension identifier
+            limit: Maximum number of reviews
+            
+        Returns:
+            List of ExtensionReview objects
+        """
+        logger.info(f"Getting reviews for extension {extension_id}")
+        return await self._get_reviews_from_db(extension_id, limit)
+
+    async def _get_reviews_from_db(self, extension_id: str, limit: int) -> List[ExtensionReview]:
+        """Internal method to get reviews from DB."""
+        return []
     
     async def install_extension(
         self,
@@ -96,10 +118,10 @@ class MarketplaceService:
         logger.info(f"Installing extension {extension_id} for user {user_id}")
         
         installation = {
-            "installation_id": f"install_{user_id}_{extension_id}_{datetime.utcnow().timestamp()}",
+            "installation_id": f"install_{user_id}_{extension_id}_{datetime.now(timezone.utc).timestamp()}",
             "extension_id": extension_id,
             "user_id": user_id,
-            "installed_date": datetime.utcnow().isoformat(),
+            "installed_date": datetime.now(timezone.utc).isoformat(),
             "status": "active"
         }
         

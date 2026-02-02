@@ -6,6 +6,7 @@ Phase 6: API Endpoint Tests
 import pytest
 from unittest.mock import patch, MagicMock, AsyncMock
 from flask import Flask
+from datetime import datetime, timezone
 from web.api.attribution_api import attribution_bp
 
 
@@ -26,25 +27,27 @@ def client(app):
 
 @pytest.fixture
 def mock_attribution_service():
-    """Mock AttributionService."""
+    """Mock AttributionServiceInstance."""
     with patch('web.api.attribution_api._service') as mock:
-        service = AsyncMock()
-        from services.analysis.attribution_service import AttributionResult
-        mock_result = AttributionResult(
+        from services.analysis.attribution_service import BrinsonAttribution, DateRange
+        mock_result = BrinsonAttribution(
             portfolio_id='portfolio_1',
             benchmark_id='sp500',
-            period=None,
-            total_return=0.15,
-            benchmark_return=0.10,
-            active_return=0.05,
-            allocation_effect=0.02,
-            selection_effect=0.03
+            period=DateRange(start='2024-01-01', end='2024-12-31'),
+            total_active_return=0.05,
+            total_allocation_effect=0.02,
+            total_selection_effect=0.03,
+            total_interaction_effect=0.0,
+            sector_attributions=[],
+            regime_shifts=[],
+            calculated_at=datetime.now(timezone.utc).isoformat()
         )
-        service.calculate_brinson_attribution.return_value = mock_result
-        service.get_available_benchmarks.return_value = ['sp500', 'nasdaq']
-        service.compare_benchmarks.return_value = {}
-        mock.return_value = service
-        yield service
+        mock.calculate_brinson_attribution = AsyncMock(return_value=mock_result)
+        mock.get_available_benchmarks.return_value = [{'id': 'sp500', 'name': 'S&P 500'}]
+        mock.compare_benchmarks = AsyncMock(return_value={})
+        mock.get_sector_allocation_effect = AsyncMock(return_value=0.02)
+        mock.get_selection_effect = AsyncMock(return_value=0.03)
+        yield mock
 
 
 def test_get_attribution_success(client, mock_attribution_service):

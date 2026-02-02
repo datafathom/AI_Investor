@@ -7,6 +7,7 @@
  */
 
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useWalletStore = create((set, get) => ({
     balance: null,
@@ -18,14 +19,10 @@ const useWalletStore = create((set, get) => ({
     connectWallet: async (mock = true) => {
         set({ loading: true, error: null });
         try {
-            const response = await fetch(`/api/v1/wallet/coinbase/connect?mock=${mock}`, { method: 'POST' });
-            if (!response.ok) throw new Error('Failed to connect wallet');
-            await response.json();
-            
+            await apiClient.post('/wallet/coinbase/connect', null, { params: { mock } });
             set({ isConnected: true });
             await get().fetchBalance(mock);
             await get().fetchTransactions(mock);
-
         } catch (error) {
             console.error('Wallet connect failed:', error);
             set({ error: error.message, loading: false });
@@ -35,10 +32,8 @@ const useWalletStore = create((set, get) => ({
     fetchBalance: async (mock = true) => {
         set({ loading: true });
         try {
-            const response = await fetch(`/api/v1/wallet/coinbase/balance?mock=${mock}`);
-            if (!response.ok) throw new Error('Failed to fetch balance');
-            const data = await response.json();
-            set({ balance: data, loading: false });
+            const response = await apiClient.get('/wallet/coinbase/balance', { params: { mock } });
+            set({ balance: response.data, loading: false });
         } catch (error) {
             console.error('Fetch balance failed:', error);
             set({ error: error.message, loading: false });
@@ -47,10 +42,8 @@ const useWalletStore = create((set, get) => ({
 
     fetchTransactions: async (mock = true) => {
         try {
-            const response = await fetch(`/api/v1/wallet/coinbase/transactions?mock=${mock}`);
-            if (!response.ok) throw new Error('Failed to fetch transactions');
-            const data = await response.json();
-            set({ transactions: data });
+            const response = await apiClient.get('/wallet/coinbase/transactions', { params: { mock } });
+            set({ transactions: response.data });
         } catch (error) {
             console.error('Fetch transactions failed:', error);
         }

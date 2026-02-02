@@ -1,7 +1,5 @@
 import { create } from 'zustand';
-
-const API_WATCHLIST = '/api/v1/watchlist';
-const API_ALERT = '/api/v1/alert';
+import apiClient from '../services/apiClient';
 
 const useWatchlistStore = create((set, get) => ({
     // State
@@ -15,9 +13,8 @@ const useWatchlistStore = create((set, get) => ({
     fetchWatchlists: async (userId) => {
         set({ isLoading: true });
         try {
-            const response = await fetch(`${API_WATCHLIST}/user/${userId}`);
-            const result = await response.json();
-            set({ watchlists: result.data || [], isLoading: false });
+            const response = await apiClient.get(`/watchlist/user/${userId}`);
+            set({ watchlists: response.data.data || [], isLoading: false });
         } catch (error) {
             set({ error: error.message, isLoading: false });
         }
@@ -26,9 +23,8 @@ const useWatchlistStore = create((set, get) => ({
     fetchAlerts: async (userId) => {
         set({ isLoading: true });
         try {
-            const response = await fetch(`${API_ALERT}/user/${userId}`);
-            const result = await response.json();
-            set({ alerts: result.data || [], isLoading: false });
+            const response = await apiClient.get(`/alert/user/${userId}`);
+            set({ alerts: response.data.data || [], isLoading: false });
         } catch (error) {
             set({ error: error.message, isLoading: false });
         }
@@ -37,11 +33,7 @@ const useWatchlistStore = create((set, get) => ({
     createWatchlist: async (userId, watchlistName) => {
         set({ isLoading: true });
         try {
-            const response = await fetch(`${API_WATCHLIST}/create`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: userId, watchlist_name: watchlistName })
-            });
+            await apiClient.post('/watchlist/create', { user_id: userId, watchlist_name: watchlistName });
             await get().fetchWatchlists(userId);
             set({ isLoading: false });
         } catch (error) {
@@ -52,11 +44,7 @@ const useWatchlistStore = create((set, get) => ({
     addSymbolToWatchlist: async (watchlistId, symbol, userId) => {
         set({ isLoading: true });
         try {
-            const response = await fetch(`${API_WATCHLIST}/${watchlistId}/add`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ symbol })
-            });
+            await apiClient.post(`/watchlist/${watchlistId}/add`, { symbol });
             await get().fetchWatchlists(userId);
             set({ isLoading: false });
         } catch (error) {
@@ -67,11 +55,7 @@ const useWatchlistStore = create((set, get) => ({
     createAlert: async (userId, alertData) => {
         set({ isLoading: true });
         try {
-            const response = await fetch(`${API_ALERT}/create`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: userId, ...alertData })
-            });
+            await apiClient.post('/alert/create', { user_id: userId, ...alertData });
             await get().fetchAlerts(userId);
             set({ isLoading: false });
         } catch (error) {

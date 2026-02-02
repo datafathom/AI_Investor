@@ -18,6 +18,7 @@
  */
 
 import React, { useState } from 'react';
+import apiClient from '../../services/apiClient';
 import './GoogleLoginButton.css';
 
 /**
@@ -42,13 +43,8 @@ const GoogleLoginButton = ({
                 params.set('scopes', scopes.join(','));
             }
             
-            const response = await fetch(`/api/v1/auth/google/login?${params.toString()}`);
-            
-            if (!response.ok) {
-                throw new Error('Failed to initiate Google login');
-            }
-            
-            const data = await response.json();
+            const response = await apiClient.get(`/auth/google/login?${params.toString()}`);
+            const data = response.data;
             
             // Redirect to Google OAuth page
             window.location.href = data.authorization_url;

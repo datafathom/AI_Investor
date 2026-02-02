@@ -54,6 +54,10 @@ class OptionsStrategyBuilderService:
             "iron_butterfly": self._iron_butterfly_template
         }
     
+    def get_strategy_templates(self) -> List[str]:
+        """Get list of available strategy templates."""
+        return list(self.templates.keys())
+    
     async def create_strategy(
         self,
         strategy_name: str,

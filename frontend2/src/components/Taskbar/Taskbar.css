@@ -1,3 +1,49 @@
+
+.system-lockdown-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0px;
+    background: rgba(255, 0, 0, 0.1);
+    box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.9);
+    pointer-events: none;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 2px solid #ff4757;
+}
+
+.lockdown-glitch {
+    font-size: 8rem;
+    font-weight: 900;
+    color: #ff4757;
+    opacity: 0.1;
+    letter-spacing: -0.05em;
+    animation: glitch 0.2s infinite;
+}
+
+@keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-5px, 5px); }
+    40% { transform: translate(-5px, -5px); }
+    60% { transform: translate(5px, 5px); }
+    80% { transform: translate(5px, -5px); }
+    100% { transform: translate(0); }
+}
+
+.taskbar-container.lockdown {
+    background: #4b0000 !important;
+    animation: pulse-danger 2s infinite;
+}
+
+@keyframes pulse-danger {
+    0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.2); }
+    50% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.6); }
+    100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.2); }
+}
+
 .taskbar-container {
     position: fixed;
     bottom: 0;

@@ -1,0 +1,26 @@
+INFO:services.hr.heir_governance_svc:HeirGovernanceService initialized
+INFO:services.hr.heir_governance_svc:HR_LOG: Discretionary override for HEIR-01. Final: 73.00
+INFO:services.hr.heir_governance_svc:HR_LOG: Heir role audit VP Social. Pay Ratio: 2.50x. Nepotism: True
+INFO:services.analysis.productivity_model:ANALYSIS_LOG: Social Value Productivity: 74.10
+WARNING:services.reporting.perception_gap:REPORT_LOG: Significant perception gap: 80.00% above market.
+
+============================================================
+       PHASE 170: HEIR GOVERNANCE VERIFICATION
+============================================================
+
+[*] Testing HeirGovernanceService (KPI Override)...
+    Final Score: 73.0 (Expected: 73.0)
+
+[*] Testing Nepotism Check...
+    Status: CUSHY_JOB (Expected: CUSHY_JOB)
+
+[*] Testing ProductivityModel...
+    Total Index: 74.1
+
+[*] Testing PerceptionGapReporter...
+    Status: CRITICAL (Expected: CRITICAL)
+
+============================================================
+               PHASE 170 VERIFICATION COMPLETE
+============================================================
+

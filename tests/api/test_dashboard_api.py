@@ -25,6 +25,15 @@ def client(app):
 
 
 @pytest.fixture
+def mock_login_required():
+    """Mock login_required decorator to bypass auth."""
+    def decorator(f):
+        return f
+    with patch('web.api.dashboard_api.login_required', side_effect=decorator):
+        yield
+
+
+@pytest.fixture
 def mock_allocator():
     """Mock DynamicAllocator."""
     with patch('web.api.dashboard_api.get_dynamic_allocator') as mock:
@@ -72,44 +81,45 @@ def mock_paper_exchange():
         exchange = MagicMock()
         exchange.get_account_summary.return_value = {
             'cash': 100000.0,
-            'total_value': 100000.0
+            'total_value': 100000.0,
+            'positions': []
         }
         mock.return_value = exchange
         yield exchange
 
 
-def test_get_allocation_success(client, mock_allocator):
+def test_get_allocation_success(client, mock_login_required, mock_allocator):
     """Test successful allocation retrieval."""
     response = client.get('/api/v1/dashboard/allocation?fear_index=50')
     
     assert response.status_code == 200
     data = response.get_json()
-    assert 'fear_index' in data
-    assert 'buckets' in data
-    assert 'target_weights' in data
+    assert data['status'] == 'success'
+    assert 'data' in data
+    assert 'fear_index' in data['data']
+    assert 'buckets' in data['data']
+    assert 'target_weights' in data['data']
 
 
-def test_get_risk_status_success(client, mock_risk_monitor, mock_circuit_breaker, mock_paper_exchange):
+def test_get_risk_status_success(client, mock_login_required, mock_risk_monitor, mock_circuit_breaker, mock_paper_exchange):
     """Test successful risk status retrieval."""
     response = client.get('/api/v1/dashboard/risk')
     
     assert response.status_code == 200
     data = response.get_json()
-    assert 'var_95_daily' in data
-    assert 'portfolio_frozen' in data
-    assert 'frozen_assets' in data
+    assert data['status'] == 'success'
+    assert 'data' in data
+    assert 'var_95_daily' in data['data']
+    assert 'portfolio_frozen' in data['data']
+    assert 'frozen_assets' in data['data']
 
 
-def test_get_execution_status_success(client, mock_paper_exchange):
+def test_get_execution_status_success(client, mock_login_required, mock_paper_exchange):
     """Test successful execution status retrieval."""
-    mock_paper_exchange.get_account_summary.return_value = {
-        'cash': 100000.0,
-        'total_value': 100000.0,
-        'positions': []
-    }
-    
     response = client.get('/api/v1/dashboard/execution')
     
     assert response.status_code == 200
     data = response.get_json()
-    assert 'balance' in data or 'total_value' in data
+    assert data['status'] == 'success'
+    assert 'data' in data
+    assert 'balance' in data['data'] or 'positions' in data['data']

@@ -7,8 +7,9 @@
  */
 
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
-const useBillingStore = create((set) => ({
+const useBillingStore = create((set, get) => ({
     subscription: null,
     bills: [],
     upcomingBills: [],
@@ -19,11 +20,8 @@ const useBillingStore = create((set) => ({
     fetchSubscription: async (mock = true) => {
         set({ loading: true, error: null });
         try {
-            // Note: Reconciling endpoint to standardized path
-            const response = await fetch(`/api/v1/billing/subscription?mock=${mock}`);
-            if (!response.ok) throw new Error('Failed to fetch subscription');
-            const data = await response.json();
-            set({ subscription: data, loading: false });
+            const response = await apiClient.get('/billing/subscription', { params: { mock } });
+            set({ subscription: response.data, loading: false });
         } catch (error) {
             console.error('Fetch subscription failed:', error);
             set({ error: error.message, loading: false });
@@ -34,21 +32,15 @@ const useBillingStore = create((set) => ({
         set({ loading: true, error: null });
         try {
             const [billsRes, upcomingRes, historyRes] = await Promise.all([
-                fetch(`/api/v1/billing/bills?user_id=${userId}`),
-                fetch(`/api/v1/billing/upcoming?user_id=${userId}`),
-                fetch(`/api/v1/billing/history?user_id=${userId}&limit=20`)
-            ]);
-
-            const [billsData, upcomingData, historyData] = await Promise.all([
-                billsRes.json(),
-                upcomingRes.json(),
-                historyRes.json()
+                apiClient.get('/billing/bills', { params: { user_id: userId } }),
+                apiClient.get('/billing/upcoming', { params: { user_id: userId } }),
+                apiClient.get('/billing/history', { params: { user_id: userId, limit: 20 } })
             ]);
 
             set({ 
-                bills: billsData.data || [], 
-                upcomingBills: upcomingData.data || [], 
-                paymentHistory: historyData.data || [],
+                bills: billsRes.data.data || [], 
+                upcomingBills: upcomingRes.data.data || [], 
+                paymentHistory: historyRes.data.data || [],
                 loading: false 
             });
         } catch (error) {
@@ -60,12 +52,7 @@ const useBillingStore = create((set) => ({
     addBill: async (billData) => {
         set({ loading: true, error: null });
         try {
-            const response = await fetch('/api/v1/billing/bill/add', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(billData)
-            });
-            if (!response.ok) throw new Error('Failed to add bill');
+            await apiClient.post('/billing/bill/add', billData);
             await get().fetchBills(billData.user_id);
         } catch (error) {
             set({ error: error.message, loading: false });
@@ -75,15 +62,10 @@ const useBillingStore = create((set) => ({
     schedulePayment: async (billId, userId = 'user_1') => {
         set({ loading: true, error: null });
         try {
-            const response = await fetch('/api/v1/billing/payment/schedule', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    bill_id: billId,
-                    payment_date: new Date().toISOString().split('T')[0]
-                })
+            await apiClient.post('/billing/payment/schedule', { 
+                bill_id: billId,
+                payment_date: new Date().toISOString().split('T')[0]
             });
-            if (!response.ok) throw new Error('Failed to schedule payment');
             await get().fetchBills(userId);
         } catch (error) {
             set({ error: error.message, loading: false });
@@ -93,18 +75,12 @@ const useBillingStore = create((set) => ({
     createCheckout: async (planId, mock = true) => {
         set({ loading: true, error: null });
         try {
-            const url = `/api/v1/billing/checkout?mock=${mock}`;
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ plan_id: planId })
-            });
+            const response = await apiClient.post('/billing/checkout', 
+                { plan_id: planId },
+                { params: { mock } }
+            );
 
-            if (!response.ok) throw new Error('Checkout creation failed');
-
-            const data = await response.json();
-            // In a real app, we would redirect: window.location.href = data.url;
-            return data.url; 
+            return response.data.url; 
 
         } catch (error) {
             console.error('Checkout failed:', error);

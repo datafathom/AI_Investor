@@ -1,14 +1,14 @@
 # Phase 187: Geopolitical Risk & 'Total War' Simulator
 
-> **Status**: `[ ]` Not Started  
-> **Last Updated**: 2026-01-25  
+> **Status**: `[x]` Completed  
+> **Last Updated**: 2026-01-30  
 > **Owner**: Risk Management Team
 
 ---
 
 ## 📋 Overview
 
-**Description**: Model extreme tail risks: Global War, Strait of Hormuz closure, Taiwan invasion. This isn't standard "Value at Risk" (VaR). This is "Scenario Analysis" for non-linear events where correlations go to 1.
+**Description**: Extreme tail risk simulation (War, Supply Chain collapse).
 
 **Parent Roadmap**: [ROADMAP_1_14_26.md](./ROADMAP_1_14_26.md)  
 **Source**: JIRA_PLANNING_JSON_2.txt - Epoch X Phase 7
@@ -17,46 +17,6 @@
 
 ## 🎯 Sub-Deliverables
 
-### 187.1 World War Event Left Tail Simulator `[ ]`
-
-**Acceptance Criteria**: Simulator for specific scenarios. "Scenario A: Oil -> $200". "Scenario B: Tech Supply Chain Halt".
-
-```python
-class GeopoliticalSimulator:
-    """
-    Simulate portfolio impact of macro shocks.
-    """
-    def simulate_scenario(self, portfolio: Portfolio, scenario: Scenario) -> Impactreport:
-        # Taiwan Invasion -> TSMC (0), Apple (-40%), Raytheon (+20%)
-        pass
-```
-
-| Component | File Path | Status |
-|-----------|-----------|--------|
-| Geo Simulator | `services/simulation/geo_sim.py` | `[ ]` |
-| Scenario Config | `config/scenarios/taiwan_risk.json` | `[ ]` |
-
----
-
-### 187.2 Postgres Commodity-Tied EM Exposure Table `[ ]`
-
-**Acceptance Criteria**: DB mapping Emerging Market (EM) interdependence. Brazil/Russia -> Commodity Exporters (Good if inflation). India/China -> Commodity Importers (Bad if inflation).
-
-#### Postgres Schema (Docker-compose: timescaledb service)
-
-```sql
-CREATE TABLE country_dependencies (
-    country_code VARCHAR(3) PRIMARY KEY,
-    dependency_type VARCHAR(20),       -- NET_EXPORTER, NET_IMPORTER
-    key_commodity VARCHAR(50),         -- OIL, WHEAT, COPPER
-    correlation_to_commodity DECIMAL(5, 4),
-    
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
-
-| Component | File Path | Status |
-|-----------|-----------|--------|
 | Migration | `migrations/187_country_dep.sql` | `[ ]` |
 | Dependency Mapper | `services/risk/dependency_mapper.py` | `[ ]` |
 

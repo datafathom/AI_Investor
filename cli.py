@@ -110,10 +110,27 @@ def parse_args(command_path: list, cmd_def: dict, raw_args: list) -> tuple[dict,
 def print_help(registry):
     print("AI Investor CLI")
     print("\nAvailable commands:")
+    
     commands = registry.list_commands()
-    for cmd_name, cmd_def in sorted(commands.items()):
-        desc = cmd_def.get("description", "")
-        print(f"  {cmd_name:20} {desc}")
+    
+    # Group commands by category
+    categories = {}
+    for cmd_name, cmd_def in commands.items():
+        cat = cmd_def.get("category", "General")
+        if cat not in categories:
+            categories[cat] = []
+        categories[cat].append((cmd_name, cmd_def.get("description", "")))
+    
+    # Sort categories to ensure consistent output (General at the top)
+    sorted_cats = sorted(categories.keys())
+    if "General" in sorted_cats:
+        sorted_cats.remove("General")
+        sorted_cats.insert(0, "General") # Put General at the top
+        
+    for cat in sorted_cats:
+        print(f"\n[{cat}]")
+        for cmd_name, desc in sorted(categories[cat]):
+            print(f"  {cmd_name:25} {desc}")
 
 
 def main():

@@ -5,7 +5,7 @@ Comprehensive test coverage for conversational AI and personalized responses
 
 import pytest
 from datetime import datetime
-from unittest.mock import Mock, AsyncMock, patch
+from unittest.mock import Mock, AsyncMock, patch, MagicMock
 from services.ai_assistant.assistant_service import AssistantService
 from models.ai_assistant import Conversation, ConversationMessage, MessageRole
 
@@ -13,8 +13,11 @@ from models.ai_assistant import Conversation, ConversationMessage, MessageRole
 @pytest.fixture
 def service():
     """Create service instance with mocked dependencies."""
-    with patch('services.ai_assistant.assistant_service.get_learning_service'), \
-         patch('services.ai_assistant.assistant_service.get_cache_service'):
+    mock_learning = AsyncMock()
+    mock_cache = MagicMock()
+    
+    with patch('services.ai_assistant.assistant_service.get_learning_service', return_value=mock_learning), \
+         patch('services.ai_assistant.assistant_service.get_cache_service', return_value=mock_cache):
         return AssistantService()
 
 
@@ -68,12 +71,14 @@ async def test_get_conversation_history(service):
         messages=[
             ConversationMessage(
                 message_id="msg_1",
+                conversation_id="conv_123",
                 role=MessageRole.USER,
                 content="What should I invest in?",
                 timestamp=datetime.utcnow()
             ),
             ConversationMessage(
                 message_id="msg_2",
+                conversation_id="conv_123",
                 role=MessageRole.ASSISTANT,
                 content="Here's some advice...",
                 timestamp=datetime.utcnow()

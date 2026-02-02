@@ -3,6 +3,7 @@
  * Phase 61: Manages donation routing, ESG scores, and carbon tracking.
  */
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useImpactStore = create((set, get) => ({
     // State
@@ -27,9 +28,8 @@ const useImpactStore = create((set, get) => ({
     fetchESGData: async () => {
         set({ isLoading: true });
         try {
-            const response = await fetch('/api/v1/philanthropy/esg');
-            const data = await response.json();
-            set({ esgScores: data, isLoading: false });
+            const response = await apiClient.get('/philanthropy/esg');
+            set({ esgScores: response.data, isLoading: false });
         } catch (error) {
             set({ error: 'Failed to fetch ESG data', isLoading: false });
         }
@@ -39,9 +39,8 @@ const useImpactStore = create((set, get) => ({
         set({ isLoading: true });
         try {
             const val = get().currentNetWorth;
-            const response = await fetch(`/api/v1/philanthropy/carbon?value=${val}`);
-            const data = await response.json();
-            set({ carbonData: data, isLoading: false });
+            const response = await apiClient.get('/philanthropy/carbon', { params: { value: val } });
+            set({ carbonData: response.data, isLoading: false });
         } catch (error) {
             console.error(error);
             set({ isLoading: false });
@@ -50,9 +49,8 @@ const useImpactStore = create((set, get) => ({
 
     fetchDonationHistory: async () => {
         try {
-            const response = await fetch('/api/v1/philanthropy/history');
-            const data = await response.json();
-            set({ donationHistory: data });
+            const response = await apiClient.get('/philanthropy/history');
+            set({ donationHistory: response.data });
         } catch (error) {
             console.error(error);
         }
@@ -62,17 +60,12 @@ const useImpactStore = create((set, get) => ({
         set({ isLoading: true });
         try {
             const { allocations } = get();
-            const response = await fetch('/api/v1/philanthropy/donate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount, allocations })
-            });
-            const result = await response.json();
+            const response = await apiClient.post('/philanthropy/donate', { amount, allocations });
             
             // Refresh history
             get().fetchDonationHistory();
             set({ isLoading: false });
-            return result;
+            return response.data;
         } catch (error) {
             set({ error: error.message, isLoading: false });
             return null;

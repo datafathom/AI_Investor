@@ -4,7 +4,7 @@ Comprehensive test coverage for compliance checking and violation detection
 """
 
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.compliance.compliance_engine import ComplianceEngine
 from models.compliance import ComplianceRule, ComplianceViolation, ViolationSeverity
@@ -35,6 +35,7 @@ async def test_check_compliance(service, mock_transaction):
     rule = ComplianceRule(
         rule_id="rule_1",
         rule_name="Position Limit",
+        description="Limit on position size",
         regulation="SEC",
         rule_logic="quantity <= 10000"
     )
@@ -58,6 +59,7 @@ async def test_check_compliance_with_violation(service, mock_transaction):
     rule = ComplianceRule(
         rule_id="rule_1",
         rule_name="Position Limit",
+        description="Limit on position size",
         regulation="SEC",
         rule_logic="quantity <= 100"
     )
@@ -85,7 +87,7 @@ async def test_get_violations(service):
             user_id="user_123",
             severity=ViolationSeverity.MEDIUM,
             description="Position limit exceeded",
-            detected_date=datetime.utcnow(),
+            detected_date=datetime.now(timezone.utc),
             status="open"
         )
     ])

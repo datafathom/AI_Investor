@@ -56,7 +56,7 @@ async def create_conversation():
         
         return jsonify({
             'success': True,
-            'data': conversation.dict()
+            'data': conversation.model_dump()
         })
         
     except Exception as e:
@@ -84,7 +84,7 @@ async def get_conversation(conversation_id: str):
         
         return jsonify({
             'success': True,
-            'data': conversation.dict()
+            'data': conversation.model_dump()
         })
         
     except Exception as e:
@@ -118,7 +118,7 @@ async def send_message(conversation_id: str):
         
         return jsonify({
             'success': True,
-            'data': response.dict()
+            'data': response.model_dump()
         })
         
     except Exception as e:
@@ -140,7 +140,7 @@ async def get_recommendations(user_id: str):
         
         return jsonify({
             'success': True,
-            'data': [r.dict() for r in recommendations]
+            'data': [r.model_dump() for r in recommendations]
         })
         
     except Exception as e:

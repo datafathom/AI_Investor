@@ -6,9 +6,10 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DockerWidget from '../../src/components/DockerWidget';
+import apiClient from '../../src/services/apiClient';
 
-// Mock fetch
-global.fetch = vi.fn();
+// Mock apiClient
+vi.mock('../../src/services/apiClient');
 
 describe('DockerWidget', () => {
   beforeEach(() => {
@@ -16,9 +17,9 @@ describe('DockerWidget', () => {
   });
 
   it('should render docker widget', async () => {
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => [],
+  it('should render docker widget', async () => {
+    apiClient.get.mockResolvedValueOnce({
+      data: [],
     });
     render(<DockerWidget />);
     await waitFor(() => {
@@ -28,7 +29,7 @@ describe('DockerWidget', () => {
   });
 
   it('should show loading state initially', () => {
-    fetch.mockImplementation(() => new Promise(() => {})); // Never resolves
+    apiClient.get.mockImplementation(() => new Promise(() => {})); // Never resolves
     render(<DockerWidget />);
     expect(screen.getByText(/connecting to docker/i)).toBeInTheDocument();
   });
@@ -39,9 +40,8 @@ describe('DockerWidget', () => {
       { id: '2', name: 'container2', status: 'Exited (0)', state: 'exited', image: 'redis' },
     ];
 
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockContainers,
+    apiClient.get.mockResolvedValueOnce({
+      data: mockContainers,
     });
 
     render(<DockerWidget />);
@@ -53,7 +53,7 @@ describe('DockerWidget', () => {
   });
 
   it('should show error message when fetch fails', async () => {
-    fetch.mockRejectedValueOnce(new Error('Failed to fetch'));
+    apiClient.get.mockRejectedValueOnce(new Error('Failed to fetch'));
 
     render(<DockerWidget />);
 
@@ -63,7 +63,7 @@ describe('DockerWidget', () => {
   });
 
   it('should show retry button on error', async () => {
-    fetch.mockRejectedValueOnce(new Error('Failed to fetch'));
+    apiClient.get.mockRejectedValueOnce(new Error('Failed to fetch'));
 
     render(<DockerWidget />);
 
@@ -74,7 +74,7 @@ describe('DockerWidget', () => {
 
   it('should retry fetch when retry button is clicked', async () => {
     const user = userEvent.setup();
-    fetch.mockRejectedValueOnce(new Error('Failed to fetch'));
+    apiClient.get.mockRejectedValueOnce(new Error('Failed to fetch'));
 
     render(<DockerWidget />);
 
@@ -83,16 +83,15 @@ describe('DockerWidget', () => {
     });
 
     const mockContainers = [{ Id: '1', Names: ['container1'], Status: 'Running' }];
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockContainers,
+    apiClient.get.mockResolvedValueOnce({
+      data: mockContainers,
     });
 
     const retryButton = screen.getByRole('button', { name: /retry/i });
     await user.click(retryButton);
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledTimes(2);
+      expect(apiClient.get).toHaveBeenCalledTimes(2);
     });
   });
 });

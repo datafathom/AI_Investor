@@ -24,7 +24,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 import numpy as np
 from models.risk import StressTestResult, StressScenario, MonteCarloResult
@@ -63,7 +63,12 @@ class StressTestingService:
                 "market_shock": {"Equity": -0.20, "Fixed Income": -0.15},
                 "duration_days": 180
             }
+
         }
+
+    def list_historical_scenarios(self) -> List[str]:
+        """List available historical scenarios."""
+        return list(self.historical_scenarios.keys())
     
     async def run_historical_scenario(
         self,
@@ -112,7 +117,8 @@ class StressTestingService:
             loss_amount=loss_amount,
             loss_percentage=loss_percentage,
             recovery_time_days=recovery_time,
-            calculation_date=datetime.utcnow()
+
+            calculation_date=datetime.now(timezone.utc)
         )
     
     async def run_monte_carlo_simulation(
@@ -167,7 +173,8 @@ class StressTestingService:
             value_at_95th_percentile=float(value_at_95th),
             probability_of_loss=float(probability_of_loss),
             probability_of_positive_return=float(probability_of_positive),
-            calculation_date=datetime.utcnow()
+
+            calculation_date=datetime.now(timezone.utc)
         )
     
     async def run_custom_stress_scenario(
@@ -200,7 +207,8 @@ class StressTestingService:
             loss_amount=loss_amount,
             loss_percentage=loss_percentage,
             recovery_time_days=None,
-            calculation_date=datetime.utcnow()
+
+            calculation_date=datetime.now(timezone.utc)
         )
     
     async def _get_portfolio_value(self, portfolio_id: str) -> float:

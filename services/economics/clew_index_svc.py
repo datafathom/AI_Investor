@@ -21,7 +21,23 @@ class CLEWIndexService:
         if hasattr(self, '_initialized') and self._initialized:
             return
         self._initialized = True
+        # Demo basket
+        self.basket = [
+            {"name": "Tuition", "weight_pct": 0.25, "annual_inflation_rate": 0.07},
+            {"name": "Staff/Concierge", "weight_pct": 0.20, "annual_inflation_rate": 0.05},
+            {"name": "Private Aviation", "weight_pct": 0.30, "annual_inflation_rate": 0.12},
+            {"name": "Luxury R/E", "weight_pct": 0.25, "annual_inflation_rate": 0.08}
+        ]
         logger.info("CLEWIndexService initialized")
+
+    def calculate_current_index(self) -> float:
+        """Sum of weights * inflation as a baseline 100-indexed value (simplified)"""
+        return 142.5 # Mocking current index level
+
+    def get_uhnwi_inflation_rate(self) -> float:
+        """Returns the weighted average inflation rate of the basket."""
+        res = self.calculate_personal_inflation(self.basket)
+        return float(res["clew_index_rate"])
 
     def calculate_personal_inflation(self, basket: List[Dict[str, Any]]) -> Dict[str, Any]:
         """

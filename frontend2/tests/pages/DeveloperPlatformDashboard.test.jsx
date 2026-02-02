@@ -5,10 +5,15 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import axios from 'axios';
+import apiClient from '../../src/services/apiClient';
 import DeveloperPlatformDashboard from '../../src/pages/DeveloperPlatformDashboard';
 
-vi.mock('axios');
+vi.mock('../../src/services/apiClient', () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+  },
+}));
 
 describe('DeveloperPlatformDashboard', () => {
   beforeEach(() => {
@@ -16,12 +21,11 @@ describe('DeveloperPlatformDashboard', () => {
   });
 
   it('should render dashboard', async () => {
-    axios.get.mockResolvedValue({ data: { data: {} } });
+    // publicApiStore expects response.data?.data or response.data
+    apiClient.get.mockResolvedValue({ data: { data: [] } });
     
     render(<DeveloperPlatformDashboard />);
     
-    await waitFor(() => {
-      expect(screen.getByText(/Developer Platform/i)).toBeInTheDocument();
-    });
+    expect(await screen.findByRole('heading', { name: /Developer Platform/i, level: 1 })).toBeInTheDocument();
   });
 });

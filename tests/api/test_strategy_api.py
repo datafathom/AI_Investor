@@ -1,11 +1,7 @@
-"""
-Tests for Strategy API Endpoints
-Phase 15: Algorithmic Trading & Strategy Builder
-"""
-
 import pytest
 from unittest.mock import AsyncMock, patch
 from flask import Flask
+from datetime import datetime, timezone
 from web.api.strategy_api import strategy_bp
 
 
@@ -42,17 +38,18 @@ def mock_strategy_execution_service():
         yield service
 
 
-@pytest.mark.asyncio
-async def test_create_strategy_success(client, mock_strategy_builder_service):
+def test_create_strategy_success(client, mock_strategy_builder_service):
     """Test successful strategy creation."""
-    from models.strategy import Strategy
+    from models.strategy import TradingStrategy
     
-    mock_strategy = Strategy(
+    mock_strategy = TradingStrategy(
         strategy_id='strategy_1',
         user_id='user_1',
         strategy_name='Test Strategy',
         description='Test description',
-        rules=[]
+        rules=[],
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     mock_strategy_builder_service.create_strategy.return_value = mock_strategy
     
@@ -69,8 +66,7 @@ async def test_create_strategy_success(client, mock_strategy_builder_service):
     assert data['data']['strategy_name'] == 'Test Strategy'
 
 
-@pytest.mark.asyncio
-async def test_create_strategy_missing_params(client):
+def test_create_strategy_missing_params(client):
     """Test strategy creation with missing parameters."""
     response = client.post('/api/strategy/create', json={'user_id': 'user_1'})
     
@@ -79,16 +75,17 @@ async def test_create_strategy_missing_params(client):
     assert data['success'] is False
 
 
-@pytest.mark.asyncio
-async def test_get_strategy_success(client, mock_strategy_builder_service):
+def test_get_strategy_success(client, mock_strategy_builder_service):
     """Test successful strategy retrieval."""
-    from models.strategy import Strategy
+    from models.strategy import TradingStrategy
     
-    mock_strategy = Strategy(
+    mock_strategy = TradingStrategy(
         strategy_id='strategy_1',
         user_id='user_1',
         strategy_name='Test Strategy',
-        rules=[]
+        rules=[],
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     mock_strategy_builder_service._get_strategy.return_value = mock_strategy
     
@@ -99,8 +96,7 @@ async def test_get_strategy_success(client, mock_strategy_builder_service):
     assert data['success'] is True
 
 
-@pytest.mark.asyncio
-async def test_get_strategy_not_found(client, mock_strategy_builder_service):
+def test_get_strategy_not_found(client, mock_strategy_builder_service):
     """Test strategy retrieval when not found."""
     mock_strategy_builder_service._get_strategy.return_value = None
     
@@ -111,28 +107,40 @@ async def test_get_strategy_not_found(client, mock_strategy_builder_service):
     assert data['success'] is False
 
 
-@pytest.mark.asyncio
-async def test_start_strategy_success(client, mock_strategy_execution_service):
+def test_start_strategy_success(client, mock_strategy_execution_service):
     """Test successful strategy start."""
     from models.strategy import StrategyExecution
     
     mock_execution = StrategyExecution(
+        execution_id='exec_1',
         strategy_id='strategy_1',
-        status='running',
-        started_at=None
+        rule_id='rule_1',
+        action_taken='buy',
+        execution_time=datetime.now(timezone.utc),
+        result='success'
     )
     mock_strategy_execution_service.start_strategy.return_value = mock_execution
     
-    response = client.post('/api/strategy/strategy_1/start')
+    response = client.post('/api/strategy/strategy_1/start', 
+                          json={'portfolio_id': 'portfolio_1'})
     
     assert response.status_code == 200
     data = response.get_json()
     assert data['success'] is True
 
 
-@pytest.mark.asyncio
-async def test_stop_strategy_success(client, mock_strategy_execution_service):
+def test_stop_strategy_success(client, mock_strategy_execution_service):
     """Test successful strategy stop."""
+    from models.strategy import TradingStrategy, StrategyStatus
+    mock_strategy = TradingStrategy(
+        strategy_id='strategy_1',
+        user_id='user_1',
+        strategy_name='Test Strategy',
+        status=StrategyStatus.STOPPED,
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
+    )
+    mock_strategy_execution_service.stop_strategy.return_value = mock_strategy
     response = client.post('/api/strategy/strategy_1/stop')
     
     assert response.status_code == 200
@@ -140,22 +148,26 @@ async def test_stop_strategy_success(client, mock_strategy_execution_service):
     assert data['success'] is True
 
 
-@pytest.mark.asyncio
-async def test_get_strategy_performance_success(client, mock_strategy_execution_service):
+def test_get_strategy_performance_success(client, mock_strategy_execution_service):
     """Test successful performance retrieval."""
-    from models.strategy import StrategyPerformance
+    from models.strategy import StrategyPerformance, StrategyStatus
     
     mock_performance = StrategyPerformance(
         strategy_id='strategy_1',
-        total_return=0.15,
+        total_trades=10,
+        winning_trades=7,
+        losing_trades=3,
+        win_rate=0.7,
+        total_pnl=1500.0,
         sharpe_ratio=1.5,
-        max_drawdown=0.05
+        max_drawdown=0.05,
+        current_status=StrategyStatus.ACTIVE
     )
-    mock_strategy_execution_service.get_performance.return_value = mock_performance
+    mock_strategy_execution_service.get_strategy_performance.return_value = mock_performance
     
     response = client.get('/api/strategy/strategy_1/performance')
     
     assert response.status_code == 200
     data = response.get_json()
     assert data['success'] is True
-    assert data['data']['total_return'] == 0.15
+    assert data['data']['total_pnl'] == 1500.0

@@ -65,4 +65,14 @@ def test_qoz_10_year_exclusion():
     service.add_investment(inv)
     
     assert service.is_eligible_for_full_exclusion("QOZ_OLD") is True
-    assert service.is_eligible_for_full_exclusion("QOZ_2019") is False
+    assert service.is_eligible_for_full_exclusion("QOZ_OLD") is True
+    
+    # Add a newer investment that shouldn't be eligible
+    recent_inv = QOZInvestment(
+        investment_id="QOZ_NEW",
+        amount=Decimal("100000"),
+        investment_date=datetime.now(),
+        zone_id="ZONE_E"
+    )
+    service.add_investment(recent_inv)
+    assert service.is_eligible_for_full_exclusion("QOZ_NEW") is False

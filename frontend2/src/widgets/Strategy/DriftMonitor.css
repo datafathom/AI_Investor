@@ -1,0 +1,75 @@
+/**
+ * ==============================================================================
+ * DriftMonitor Styling
+ * ==============================================================================
+ */
+
+.drift-monitor {
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    background: rgba(13, 17, 23, 0.4);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.drift-monitor__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.drift-monitor__main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.drift-monitor__score-gauge {
+    position: relative;
+    width: 160px;
+    margin: 0 auto;
+}
+
+.drift-monitor__score-text {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 5px;
+}
+
+.drift-monitor__metric {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.drift-monitor__progress-bg {
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.drift-monitor__progress-fill {
+    height: 100%;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drift-monitor__footer {
+    margin-top: 1.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

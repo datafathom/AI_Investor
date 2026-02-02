@@ -202,7 +202,7 @@ class RiskDecompositionService:
             by_asset_class=asset_class_metric
         )
         
-    async def analyze_correlation(
+    async def calculate_correlation_analysis(
         self,
         portfolio_id: str,
         lookback_days: int = 252

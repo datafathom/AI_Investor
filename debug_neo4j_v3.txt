@@ -1,0 +1,26 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.1, pytest-7.4.0, pluggy-1.6.0 -- C:\Users\astir\Desktop\AI_Company\AI_Investor\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\astir\Desktop\AI_Company\AI_Investor
+configfile: pytest.ini
+plugins: anyio-4.12.1, asyncio-0.21.1, base-url-2.1.0
+asyncio: mode=Mode.AUTO
+collecting ... collected 10 items
+
+<Module tests/neo4j/test_affiliate_graph.py>
+  <Function test_map_affiliate>
+  <Function test_get_insider_exposure>
+<Module tests/neo4j/test_flow_graph.py>
+  <Function test_map_passive_inflow>
+  <Function test_query_structural_risk>
+<Module tests/neo4j/test_impact_graph.py>
+  <Function test_map_impact_event>
+  <Function test_map_heir_legacy>
+<Module tests/neo4j/test_mobility_graph.py>
+  <Function test_map_citizenship>
+  <Function test_find_heritage_path>
+<Module tests/neo4j/test_policy_graph.py>
+  <Function test_map_policy_impact>
+  <Function test_get_impacted_investments>
+
+========================= 10 tests collected in 1.53s =========================

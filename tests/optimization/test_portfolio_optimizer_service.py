@@ -4,7 +4,7 @@ Comprehensive test coverage for all optimization methods and edge cases
 """
 
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 import numpy as np
 from services.optimization.portfolio_optimizer_service import PortfolioOptimizerService
@@ -54,12 +54,12 @@ def mock_covariance_matrix():
 async def test_optimize_mean_variance(service, mock_portfolio_data, mock_expected_returns, mock_covariance_matrix):
     """Test mean-variance optimization."""
     service._get_portfolio_data = AsyncMock(return_value=mock_portfolio_data)
-    service.cache_service.get = AsyncMock(return_value=None)
-    service.cache_service.set = AsyncMock()
+    service.cache_service.get = Mock(return_value=None)  # Sync method
+    service.cache_service.set = Mock()  # Sync method
     service._get_expected_returns = AsyncMock(return_value=mock_expected_returns)
     service._get_covariance_matrix = AsyncMock(return_value=mock_covariance_matrix)
     service._mean_variance_optimize = AsyncMock(return_value=np.array([0.3, 0.3, 0.2, 0.2]))
-    service._check_constraints = AsyncMock(return_value=True)
+    service._check_constraints = AsyncMock(return_value={'weights_sum_to_one': True, 'long_only': True})
     
     result = await service.optimize(
         portfolio_id="test_portfolio",
@@ -79,12 +79,12 @@ async def test_optimize_mean_variance(service, mock_portfolio_data, mock_expecte
 async def test_optimize_risk_parity(service, mock_portfolio_data, mock_covariance_matrix):
     """Test risk parity optimization."""
     service._get_portfolio_data = AsyncMock(return_value=mock_portfolio_data)
-    service.cache_service.get = AsyncMock(return_value=None)
-    service.cache_service.set = AsyncMock()
+    service.cache_service.get = Mock(return_value=None)
+    service.cache_service.set = Mock()
     service._get_expected_returns = AsyncMock(return_value=np.array([0.1, 0.1, 0.1, 0.1]))
     service._get_covariance_matrix = AsyncMock(return_value=mock_covariance_matrix)
     service._risk_parity_optimize = AsyncMock(return_value=np.array([0.25, 0.25, 0.25, 0.25]))
-    service._check_constraints = AsyncMock(return_value=True)
+    service._check_constraints = AsyncMock(return_value={'weights_sum_to_one': True, 'long_only': True})
     
     result = await service.optimize(
         portfolio_id="test_portfolio",
@@ -100,12 +100,12 @@ async def test_optimize_risk_parity(service, mock_portfolio_data, mock_covarianc
 async def test_optimize_minimum_variance(service, mock_portfolio_data, mock_covariance_matrix):
     """Test minimum variance optimization."""
     service._get_portfolio_data = AsyncMock(return_value=mock_portfolio_data)
-    service.cache_service.get = AsyncMock(return_value=None)
-    service.cache_service.set = AsyncMock()
+    service.cache_service.get = Mock(return_value=None)
+    service.cache_service.set = Mock()
     service._get_expected_returns = AsyncMock(return_value=np.array([0.1, 0.1, 0.1, 0.1]))
     service._get_covariance_matrix = AsyncMock(return_value=mock_covariance_matrix)
     service._minimum_variance_optimize = AsyncMock(return_value=np.array([0.2, 0.3, 0.3, 0.2]))
-    service._check_constraints = AsyncMock(return_value=True)
+    service._check_constraints = AsyncMock(return_value={'weights_sum_to_one': True, 'long_only': True})
     
     result = await service.optimize(
         portfolio_id="test_portfolio",
@@ -128,12 +128,13 @@ async def test_optimize_cached(service):
         'expected_return': 0.11,
         'expected_risk': 0.15,
         'sharpe_ratio': 0.6,
-        'constraint_satisfaction': True,
+        'constraint_satisfaction': {'diversity': True, 'max_weight': True},
         'optimization_time_seconds': 0.5,
-        'optimization_date': datetime.utcnow()
+        'optimization_date': datetime.now(timezone.utc)
     }
     
-    service.cache_service.get = AsyncMock(return_value=cached_data)
+    service.cache_service.get = Mock(return_value=cached_data)
+    service._get_portfolio_data = AsyncMock()  # Should not be called
     
     result = await service.optimize(
         portfolio_id="test_portfolio",
@@ -150,19 +151,17 @@ async def test_optimize_cached(service):
 async def test_optimize_with_constraints(service, mock_portfolio_data, mock_expected_returns, mock_covariance_matrix):
     """Test optimization with constraints."""
     constraints = OptimizationConstraints(
-        max_weight=0.5,
-        min_weight=0.05,
-        max_sector_weight=0.4,
-        max_holding_count=10
+        long_only=True,
+        transaction_cost_rate=0.001
     )
     
     service._get_portfolio_data = AsyncMock(return_value=mock_portfolio_data)
-    service.cache_service.get = AsyncMock(return_value=None)
-    service.cache_service.set = AsyncMock()
+    service.cache_service.get = Mock(return_value=None)
+    service.cache_service.set = Mock()
     service._get_expected_returns = AsyncMock(return_value=mock_expected_returns)
     service._get_covariance_matrix = AsyncMock(return_value=mock_covariance_matrix)
     service._mean_variance_optimize = AsyncMock(return_value=np.array([0.3, 0.3, 0.2, 0.2]))
-    service._check_constraints = AsyncMock(return_value=True)
+    service._check_constraints = AsyncMock(return_value={'long_only': True, 'weights_sum_to_one': True})
     
     result = await service.optimize(
         portfolio_id="test_portfolio",
@@ -172,13 +171,15 @@ async def test_optimize_with_constraints(service, mock_portfolio_data, mock_expe
     )
     
     assert result is not None
-    assert result.constraint_satisfaction is True
+    assert isinstance(result.constraint_satisfaction, dict)
+    assert result.constraint_satisfaction['long_only'] is True
 
 
 @pytest.mark.asyncio
 async def test_optimize_empty_portfolio(service):
     """Test optimization with empty portfolio."""
     service._get_portfolio_data = AsyncMock(return_value={'holdings': []})
+    service.cache_service.get = Mock(return_value=None)
     
     with pytest.raises(ValueError, match="Portfolio has no holdings"):
         await service.optimize(
@@ -191,7 +192,7 @@ async def test_optimize_empty_portfolio(service):
 async def test_optimize_invalid_method(service, mock_portfolio_data):
     """Test optimization with invalid method."""
     service._get_portfolio_data = AsyncMock(return_value=mock_portfolio_data)
-    service.cache_service.get = AsyncMock(return_value=None)
+    service.cache_service.get = Mock(return_value=None)
     service._get_expected_returns = AsyncMock(return_value=np.array([0.1, 0.1, 0.1, 0.1]))
     service._get_covariance_matrix = AsyncMock(return_value=np.eye(4))
     
@@ -206,12 +207,12 @@ async def test_optimize_invalid_method(service, mock_portfolio_data):
 async def test_optimize_different_objectives(service, mock_portfolio_data, mock_expected_returns, mock_covariance_matrix):
     """Test optimization with different objectives."""
     service._get_portfolio_data = AsyncMock(return_value=mock_portfolio_data)
-    service.cache_service.get = AsyncMock(return_value=None)
-    service.cache_service.set = AsyncMock()
+    service.cache_service.get = Mock(return_value=None)
+    service.cache_service.set = Mock()
     service._get_expected_returns = AsyncMock(return_value=mock_expected_returns)
     service._get_covariance_matrix = AsyncMock(return_value=mock_covariance_matrix)
     service._mean_variance_optimize = AsyncMock(return_value=np.array([0.3, 0.3, 0.2, 0.2]))
-    service._check_constraints = AsyncMock(return_value=True)
+    service._check_constraints = AsyncMock(return_value={'weights_sum_to_one': True, 'long_only': True})
     
     objectives = ["maximize_sharpe", "maximize_return", "minimize_risk"]
     for objective in objectives:
@@ -227,6 +228,7 @@ async def test_optimize_different_objectives(service, mock_portfolio_data, mock_
 async def test_optimize_error_handling(service):
     """Test error handling in optimization."""
     service._get_portfolio_data = AsyncMock(side_effect=Exception("Database error"))
+    service.cache_service.get = Mock(return_value=None)
     
     with pytest.raises(Exception):
         await service.optimize(
@@ -239,21 +241,20 @@ async def test_optimize_error_handling(service):
 async def test_optimize_constraint_violation(service, mock_portfolio_data, mock_expected_returns, mock_covariance_matrix):
     """Test optimization when constraints are violated."""
     service._get_portfolio_data = AsyncMock(return_value=mock_portfolio_data)
-    service.cache_service.get = AsyncMock(return_value=None)
-    service.cache_service.set = AsyncMock()
+    service.cache_service.get = Mock(return_value=None)
+    service.cache_service.set = Mock()
     service._get_expected_returns = AsyncMock(return_value=mock_expected_returns)
     service._get_covariance_matrix = AsyncMock(return_value=mock_covariance_matrix)
     service._mean_variance_optimize = AsyncMock(return_value=np.array([0.6, 0.2, 0.1, 0.1]))  # Violates max_weight
-    service._check_constraints = AsyncMock(return_value=False)
-    
-    constraints = OptimizationConstraints(max_weight=0.5)
+    service._check_constraints = AsyncMock(return_value={'diversity': False, 'long_only': True})
     
     result = await service.optimize(
         portfolio_id="test_portfolio",
         objective="maximize_sharpe",
         method="mean_variance",
-        constraints=constraints
+        constraints=OptimizationConstraints()
     )
     
     assert result is not None
-    assert result.constraint_satisfaction is False
+    assert isinstance(result.constraint_satisfaction, dict)
+    assert result.constraint_satisfaction['diversity'] is False

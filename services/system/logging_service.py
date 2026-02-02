@@ -1,16 +1,22 @@
 
 import logging
 import json
-from pythonjsonlogger import jsonlogger
-from opentelemetry import trace
 from datetime import datetime
+from services.system.tracing_service import trace # Ensure trace is imported if used, strictly speaking trace is used in line 25
+try:
+    from pythonjsonlogger import jsonlogger
+    BaseFormatter = jsonlogger.JsonFormatter
+except ImportError:
+    class BaseFormatter(logging.Formatter):
+        def add_fields(self, log_record, record, message_dict):
+            pass
 
-class TraceCorrelationFormatter(jsonlogger.JsonFormatter):
+class TraceCorrelationFormatter(BaseFormatter):
     """
     JSON Formatter that injects OpenTelemetry trace/span IDs for correlation.
     """
     def add_fields(self, log_record, record, message_dict):
-        super(TraceCorrelationFormatter, self).add_fields(log_record, record, message_dict)
+        super().add_fields(log_record, record, message_dict)
         
         # Add timestamp if not present
         if not log_record.get('timestamp'):

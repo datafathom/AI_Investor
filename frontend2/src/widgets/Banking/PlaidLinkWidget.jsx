@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Landmark, CreditCard, Plus, CheckCircle, AlertTriangle, RefreshCcw } from 'lucide-react';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import './PlaidLinkWidget.css';
 
 const PlaidLinkWidget = () => {
@@ -15,7 +15,7 @@ const PlaidLinkWidget = () => {
 
     const fetchAccounts = async () => {
         try {
-            const res = await axios.get('/api/v1/banking/accounts');
+            const res = await apiClient.get('/banking/accounts');
             setAccounts(res.data);
         } catch (err) {
             console.error("Failed to fetch bank accounts", err);
@@ -31,15 +31,14 @@ const PlaidLinkWidget = () => {
         
         try {
             // Step 1: Create Link Token
-            const tokenRes = await axios.post('/api/v1/banking/plaid/create-link-token');
+            const tokenRes = await apiClient.post('/banking/plaid/create-link-token');
             const linkToken = tokenRes.data.link_token;
             
             // Step 2: Simulate Plaid Link Popup (since we are in simulation mode)
-            // In a real app, we'd use usePlaidLink({ token: linkToken, onSuccess: ... })
             setTimeout(async () => {
                 try {
                     // Step 3: Exchange Public Token (Simulated)
-                    await axios.post('/api/v1/banking/plaid/exchange-public-token', {
+                    await apiClient.post('/banking/plaid/exchange-public-token', {
                         public_token: `mock_public_token_${Math.random().toString(36).substr(2, 9)}`
                     });
                     

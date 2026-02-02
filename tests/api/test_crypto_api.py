@@ -55,14 +55,13 @@ def test_get_crypto_price_success(client, mock_crypto_client):
 
 def test_get_crypto_volume_success(client, mock_crypto_client):
     """Test successful crypto volume retrieval."""
-    from models.crypto import ExchangeVolume
+    from services.data.crypto_compare_service import ExchangeVolume
     
     mock_volumes = [
         ExchangeVolume(
             exchange='Binance',
-            symbol='BTC',
             volume_24h=1000000.0,
-            volume_percent=25.5
+            market_share=25.5
         )
     ]
     

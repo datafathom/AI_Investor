@@ -1,4 +1,4 @@
-import { authService } from './authService';
+import apiClient from './apiClient';
 
 class AutoCoderService {
     constructor() {
@@ -10,12 +10,9 @@ class AutoCoderService {
      */
     async generateCode(task) {
         try {
-            const response = await authService.authenticatedFetch(`${this.baseUrl}/generate`, {
-                method: 'POST',
-                body: JSON.stringify({ task })
-            });
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error || 'Generation failed');
+        try {
+            const response = await apiClient.post(`${this.baseUrl}/generate`, { task });
+            const data = response.data;
             return data.code;
         } catch (error) {
             console.error('AutoCoder Store Error [generate]:', error);
@@ -28,11 +25,9 @@ class AutoCoderService {
      */
     async validateCode(code) {
         try {
-            const response = await authService.authenticatedFetch(`${this.baseUrl}/validate`, {
-                method: 'POST',
-                body: JSON.stringify({ code })
-            });
-            const data = await response.json();
+        try {
+            const response = await apiClient.post(`${this.baseUrl}/validate`, { code });
+            const data = response.data;
             return data.is_valid;
         } catch (error) {
             console.error('AutoCoder Store Error [validate]:', error);
@@ -45,13 +40,9 @@ class AutoCoderService {
      */
     async deployModule(name, code) {
         try {
-            const response = await authService.authenticatedFetch(`${this.baseUrl}/deploy`, {
-                method: 'POST',
-                body: JSON.stringify({ name, code })
-            });
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.message || 'Deployment failed');
-            return data;
+        try {
+            const response = await apiClient.post(`${this.baseUrl}/deploy`, { name, code });
+            return response.data;
         } catch (error) {
             console.error('AutoCoder Store Error [deploy]:', error);
             throw error;
@@ -63,9 +54,9 @@ class AutoCoderService {
      */
     async getStatus() {
         try {
-            const response = await authService.authenticatedFetch(`${this.baseUrl}/status`);
-            const data = await response.json();
-            return data;
+        try {
+            const response = await apiClient.get(`${this.baseUrl}/status`);
+            return response.data;
         } catch (error) {
             console.error('AutoCoder Store Error [status]:', error);
             return { status: 'offline', modules: [] };

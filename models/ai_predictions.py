@@ -61,3 +61,20 @@ class MarketRegime(BaseModel):
     confidence: float
     detected_date: datetime
     expected_duration: Optional[str] = None
+    
+    @property
+    def regime(self) -> str:
+        """Alias for regime_type for test compatibility."""
+        return self.regime_type
+
+
+class SentimentAnalysisResult(BaseModel):
+    """Sentiment analysis result."""
+    symbol: Optional[str] = None
+    overall_sentiment: float
+    positive_score: float
+    negative_score: float
+    neutral_score: float = 0.0
+    sentiment_label: str = "neutral"
+    confidence: float = 0.0
+    analysis_date: datetime = Field(default_factory=datetime.utcnow)

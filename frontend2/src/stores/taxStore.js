@@ -7,21 +7,41 @@
  */
 
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 export const useTaxStore = create((set) => ({
     report: null,
+    opportunities: [],
     loading: false,
     error: null,
 
-    fetchOpportunities: async (mock = true) => {
+    fetchHarvestOpportunities: async (portfolioId = 'default') => {
         set({ loading: true, error: null });
         try {
-            const response = await fetch(`/api/v1/tax/harvesting/opportunities?mock=${mock}`);
-            if (!response.ok) throw new Error('Failed to fetch tax opportunities');
-            const data = await response.json();
-            set({ report: data, loading: false });
+            const response = await apiClient.get(`/tax/harvest/opportunities/${portfolioId}`);
+            set({ 
+                opportunities: response.data, 
+                loading: false 
+            });
         } catch (error) {
-            console.error('Fetch tax ops failed:', error);
+            console.error('Fetch tax harvest opportunities failed:', error);
+            set({ error: error.message, loading: false });
+        }
+    },
+
+    executeHarvest: async (portfolioId, opportunity, replacementSymbol) => {
+        set({ loading: true, error: null });
+        try {
+            await apiClient.post(`/tax/harvest/execute/${portfolioId}`, {
+                opportunity,
+                replacement_symbol: replacementSymbol,
+                approved: true
+            });
+            // Refresh opportunities
+            const updated = await apiClient.get(`/tax/harvest/opportunities/${portfolioId}`);
+            set({ opportunities: updated.data, loading: false });
+        } catch (error) {
+            console.error('Execute harvest failed:', error);
             set({ error: error.message, loading: false });
         }
     }

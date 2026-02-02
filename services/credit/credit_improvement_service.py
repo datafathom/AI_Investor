@@ -24,7 +24,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 from models.credit import (
     CreditScore, CreditRecommendation, CreditProjection, CreditFactor
@@ -67,7 +67,7 @@ class CreditImprovementService:
                 score_id="default",
                 user_id=user_id,
                 score=650,  # Default
-                report_date=datetime.utcnow()
+                report_date=datetime.now(timezone.utc)
             )
         
         factors = await self.credit_monitoring.analyze_credit_factors(user_id)
@@ -151,7 +151,7 @@ class CreditImprovementService:
                 score_id="default",
                 user_id=user_id,
                 score=650,
-                report_date=datetime.utcnow()
+                report_date=datetime.now(timezone.utc)
             )
         
         # Calculate projected improvement
@@ -166,10 +166,10 @@ class CreditImprovementService:
         
         # Projected date
         months = int(max_time.split()[0]) if max_time.split()[0].isdigit() else 3
-        projected_date = datetime.utcnow() + timedelta(days=months * 30)
+        projected_date = datetime.now(timezone.utc) + timedelta(days=months * 30)
         
         return CreditProjection(
-            projection_id=f"proj_{user_id}_{datetime.utcnow().timestamp()}",
+            projection_id=f"proj_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             current_score=score.score,
             projected_score=projected_score,
             projected_date=projected_date,

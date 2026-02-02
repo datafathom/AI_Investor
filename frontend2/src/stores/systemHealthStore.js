@@ -11,6 +11,8 @@ const useSystemHealthStore = create((set, get) => ({
     postgresHealth: { connections: 0, queryTime: 0, diskUsage: 0, status: 'unknown' },
     neo4jHealth: { nodes: 0, relationships: 0, queryTime: 0, status: 'unknown' },
     agentLoad: [],
+    auditStream: [],
+    quotas: {},
     overallStatus: 'unknown',
     lastRefresh: null,
     error: null,
@@ -48,6 +50,28 @@ const useSystemHealthStore = create((set, get) => ({
             await apiClient.post(`/system/kafka/restart/${consumerId}`);
         } catch (error) {
             console.error('Consumer restart failed:', error);
+        }
+    },
+
+    fetchAuditStream: async () => {
+        try {
+            const response = await apiClient.get('/system/audit/stream');
+            if (response.data.success) {
+                set({ auditStream: response.data.data });
+            }
+        } catch (error) {
+            console.error('Audit stream fetch failed:', error);
+        }
+    },
+
+    fetchQuotas: async () => {
+        try {
+            const response = await apiClient.get('/system/quotas');
+            if (response.data.success) {
+                set({ quotas: response.data.data });
+            }
+        } catch (error) {
+            console.error('Quotas fetch failed:', error);
         }
     },
     

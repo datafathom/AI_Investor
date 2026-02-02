@@ -133,4 +133,33 @@ describe('institutionalStore', () => {
         useInstitutionalStore.getState().resetOnboarding();
         expect(useInstitutionalStore.getState().onboardingStep).toBe(1);
     });
+
+    it('should trigger rebalance successfully', async () => {
+        const mockRebalanceResult = { 
+            client_id: 'client123', 
+            drift_percentage: 5.5, 
+            actions: [{ category: 'Equities', action: 'SELL', adjustment_pct: 3 }],
+            rebalanced: true,
+            message: 'Rebalanced 1 positions'
+        };
+        const mockAllocation = { total_aum: 1000000, allocations: [] };
+        
+        apiClient.post.mockResolvedValueOnce({ data: mockRebalanceResult });
+        apiClient.get.mockResolvedValueOnce({ data: mockAllocation });
+
+        const result = await useInstitutionalStore.getState().triggerRebalance('client123');
+
+        expect(apiClient.post).toHaveBeenCalledWith('/institutional/analytics/rebalance/client123');
+        expect(result).toEqual(mockRebalanceResult);
+        expect(useInstitutionalStore.getState().loading).toBe(false);
+    });
+
+    it('should handle trigger rebalance error', async () => {
+        apiClient.post.mockRejectedValueOnce(new Error('Rebalance Error'));
+
+        const result = await useInstitutionalStore.getState().triggerRebalance('client123');
+
+        expect(result).toBeNull();
+        expect(useInstitutionalStore.getState().error).toBe('Rebalance Error');
+    });
 });

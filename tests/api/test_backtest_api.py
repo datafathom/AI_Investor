@@ -63,7 +63,7 @@ def test_run_monte_carlo_success(client, mock_monte_carlo_service):
                           })
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert 'paths' in data
     assert 'ruin_probability' in data
     assert 'median_final' in data
@@ -74,7 +74,7 @@ def test_get_drawdown_metrics_success(client, mock_monte_carlo_service):
     response = client.get('/api/v1/backtest/drawdown')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert 'max_drawdown' in data
     assert 'avg_drawdown' in data
     assert 'ulcer_index' in data

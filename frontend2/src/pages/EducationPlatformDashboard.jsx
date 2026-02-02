@@ -3,87 +3,44 @@
  * FILE: frontend2/src/pages/EducationPlatformDashboard.jsx
  * ROLE: Education Platform Dashboard
  * PURPOSE: Phase 21 - Investment Education & Learning Platform
- *          Displays courses, lessons, assessments, and certifications.
  * 
  * INTEGRATION POINTS:
- *    - EducationAPI: /api/v1/education endpoints
- * 
- * FEATURES:
- *    - Course catalog
- *    - Lesson progress tracking
- *    - Assessments and quizzes
- *    - Certifications
+ *    - EducationStore: Uses apiClient for all API calls (User Rule 6)
  * 
  * AUTHOR: AI Investor Team
  * CREATED: 2026-01-21
- * LAST_MODIFIED: 2026-01-21
+ * LAST_MODIFIED: 2026-01-30
  * ==============================================================================
  */
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import useEducationStore from '../stores/educationStore';
 import './EducationPlatformDashboard.css';
 
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
-const API_BASE = `http://localhost:${BACKEND_PORT}`;
-
 const EducationPlatformDashboard = () => {
-  const [courses, setCourses] = useState([]);
-  const [userProgress, setUserProgress] = useState(null);
+  const userId = 'user_1'; // TODO: Get from authStore
+  
+  const {
+    courses,
+    userProgress,
+    certifications,
+    loading,
+    fetchCourses,
+    fetchUserProgress,
+    fetchCertifications,
+    enrollInCourse
+  } = useEducationStore();
+
   const [selectedCourse, setSelectedCourse] = useState(null);
-  const [certifications, setCertifications] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [userId] = useState('user_1');
 
   useEffect(() => {
-    loadCourses();
-    loadUserProgress();
-    loadCertifications();
-  }, []);
+    fetchCourses();
+    fetchUserProgress(userId);
+    fetchCertifications(userId);
+  }, [fetchCourses, fetchUserProgress, fetchCertifications]);
 
-  const loadCourses = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/education/courses`);
-      setCourses(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading courses:', error);
-    }
-  };
-
-  const loadUserProgress = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/education/progress`, {
-        params: { user_id: userId }
-      });
-      setUserProgress(res.data.data);
-    } catch (error) {
-      console.error('Error loading user progress:', error);
-    }
-  };
-
-  const loadCertifications = async () => {
-    try {
-      const res = await axios.get(`${API_BASE}/api/v1/education/certifications`, {
-        params: { user_id: userId }
-      });
-      setCertifications(res.data.data || []);
-    } catch (error) {
-      console.error('Error loading certifications:', error);
-    }
-  };
-
-  const enrollInCourse = async (courseId) => {
-    setLoading(true);
-    try {
-      await axios.post(`${API_BASE}/api/v1/education/course/${courseId}/enroll`, {
-        user_id: userId
-      });
-      loadUserProgress();
-    } catch (error) {
-      console.error('Error enrolling in course:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleEnroll = async (courseId) => {
+    await enrollInCourse(userId, courseId);
   };
 
   const getProgressPercentage = (course) => {
@@ -153,7 +110,7 @@ const EducationPlatformDashboard = () => {
                       </div>
                     )}
                     <button
-                      onClick={() => enrollInCourse(course.course_id)}
+                      onClick={() => handleEnroll(course.course_id)}
                       disabled={loading || progress > 0}
                       className="enroll-button"
                     >

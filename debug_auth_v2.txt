@@ -1,0 +1,15 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.1, pytest-7.4.0, pluggy-1.6.0 -- C:\Users\astir\Desktop\AI_Company\AI_Investor\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\astir\Desktop\AI_Company\AI_Investor
+configfile: pytest.ini
+plugins: anyio-4.12.1, asyncio-0.21.1, base-url-2.1.0
+asyncio: mode=Mode.AUTO
+collecting ... collected 3 items
+
+<Module tests/auth/test_trust_permission.py>
+  <Function test_trust_permission_singleton>
+  <Function test_check_permission_revocable>
+  <Function test_check_permission_irrevocable>
+
+========================= 3 tests collected in 0.07s ==========================

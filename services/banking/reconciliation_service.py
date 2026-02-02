@@ -34,7 +34,7 @@ class ReconciliationService:
         # In simulation mode, this fetches mock items
         bank_txs = [
             {"id": "bank_1", "date": (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d"), "amount": -42.50, "desc": "Starbucks Coffee"},
-            {"id": "bank_2", "date": (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%d"), "amount": 5000.00, "desc": "Incoming Wire Transfer"},
+            {"id": "bank_2", "date": (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%d"), "amount": 5000.00, "desc": "Transfer Incoming"},
             {"id": "bank_4", "date": (datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d"), "amount": -10.99, "desc": "Netflix Inc"}
         ]
         

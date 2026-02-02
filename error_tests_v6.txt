@@ -1,0 +1,4 @@
+﻿tests/ml/test_model_deployment_service.py::test_deploy_model
+tests/ml/test_model_deployment_service.py::test_deploy_model_gradual_rollout
+tests/ml/test_model_deployment_service.py::test_monitor_performance
+tests/ml/test_model_deployment_service.py::test_rollback_model

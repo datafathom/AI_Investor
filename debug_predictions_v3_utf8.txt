@@ -1,0 +1,88 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.13.1, pytest-7.4.0, pluggy-1.6.0 -- C:\Users\astir\Desktop\AI_Company\AI_Investor\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\astir\Desktop\AI_Company\AI_Investor
+configfile: pytest.ini
+plugins: anyio-4.12.1, asyncio-0.21.1, base-url-2.1.0
+asyncio: mode=Mode.AUTO
+collecting ... collected 6 items
+
+tests/ai_predictions/test_ai_analytics_service.py::test_analyze_sentiment PASSED [ 16%]
+tests/ai_predictions/test_ai_analytics_service.py::test_detect_market_regime FAILED [ 33%]
+tests/ai_predictions/test_prediction_engine.py::test_predict_price FAILED [ 50%]
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons FAILED [ 66%]
+tests/ai_predictions/test_prediction_engine.py::test_predict_trend PASSED [ 83%]
+tests/ai_predictions/test_prediction_engine.py::test_predict_price_cached FAILED [100%]
+
+================================== FAILURES ===================================
+__________________________ test_detect_market_regime __________________________
+tests\ai_predictions\test_ai_analytics_service.py:47: in test_detect_market_regime
+    result = await service.detect_market_regime()
+services\ai_predictions\ai_analytics_service.py:117: in detect_market_regime
+    await self._save_regime(regime)
+services\ai_predictions\ai_analytics_service.py:154: in _save_regime
+    self.cache_service.set(cache_key, regime.dict(), ttl=86400 * 7)
+E   AttributeError: 'AIAnalyticsService' object has no attribute 'cache_service'
+_____________________________ test_predict_price ______________________________
+tests\ai_predictions\test_prediction_engine.py:27: in test_predict_price
+    result = await service.predict_price(
+services\ai_predictions\prediction_engine.py:69: in predict_price
+    return PricePrediction(**cached_data)
+E   TypeError: models.ai_predictions.PricePrediction() argument after ** must be a mapping, not coroutine
+____________________ test_predict_price_different_horizons ____________________
+tests\ai_predictions\test_prediction_engine.py:49: in test_predict_price_different_horizons
+    result = await service.predict_price(
+services\ai_predictions\prediction_engine.py:69: in predict_price
+    return PricePrediction(**cached_data)
+E   TypeError: models.ai_predictions.PricePrediction() argument after ** must be a mapping, not coroutine
+__________________________ test_predict_price_cached __________________________
+tests\ai_predictions\test_prediction_engine.py:85: in test_predict_price_cached
+    result = await service.predict_price("AAPL", "1m")
+services\ai_predictions\prediction_engine.py:69: in predict_price
+    return PricePrediction(**cached_data)
+E   TypeError: models.ai_predictions.PricePrediction() argument after ** must be a mapping, not coroutine
+============================== warnings summary ===============================
+tests/ai_predictions/test_ai_analytics_service.py::test_analyze_sentiment
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\venv\Lib\site-packages\pydantic\main.py:250: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+
+tests/ai_predictions/test_ai_analytics_service.py::test_detect_market_regime
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\ai_analytics_service.py:109: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    regime_id=f"regime_{market_index}_{datetime.utcnow().timestamp()}",
+
+tests/ai_predictions/test_ai_analytics_service.py::test_detect_market_regime
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\ai_analytics_service.py:112: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    detected_date=datetime.utcnow(),
+
+tests/ai_predictions/test_prediction_engine.py::test_predict_trend
+  C:\Users\astir\Desktop\AI_Company\AI_Investor\services\ai_predictions\prediction_engine.py:130: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    prediction_id=f"trend_{symbol}_{datetime.utcnow().timestamp()}",
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/ai_predictions/test_ai_analytics_service.py::test_detect_market_regime
+FAILED tests/ai_predictions/test_prediction_engine.py::test_predict_price - T...
+FAILED tests/ai_predictions/test_prediction_engine.py::test_predict_price_different_horizons
+FAILED tests/ai_predictions/test_prediction_engine.py::test_predict_price_cached
+=================== 4 failed, 2 passed, 4 warnings in 0.63s ===================
+python : <sys>:0: RuntimeWarning: 
+coroutine 
+'AsyncMockMixin._execute_mock_call' 
+was never awaited
+At line:1 char:26
++ ... s/activate; python -m pytest t
+ests/ai_predictions/test_ai_analytic
+s_s ...
++                 ~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~
+    + CategoryInfo          : NotSp 
+   ecified: (<sys>:0: Runtim...s n  
+  ever awaited:String) [], Remote   
+ Exception
+    + FullyQualifiedErrorId : Nativ 
+   eCommandError
+ 
+RuntimeWarning: Enable tracemalloc 
+to get the object allocation 
+traceback

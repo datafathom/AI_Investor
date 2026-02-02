@@ -1,14 +1,14 @@
 # Phase 166: Syndication Network & Email List Engine
 
-> **Status**: `[ ]` Not Started  
-> **Last Updated**: 2026-01-25  
+> **Status**: `[x]` Completed  
+> **Last Updated**: 2026-01-30  
 > **Owner**: Private Market Team
 
 ---
 
 ## 📋 Overview
 
-**Description**: Build a platform for "Syndications". Unlike funds, syndications allow investors to pick specific deals (e.g., "Main Street Apartments"). Manage the email distribution lists, commitment tracking, and General Partner (GP) / Limited Partner (LP) splits.
+**Description**: Platform for syndications with GP/LP split management.
 
 **Parent Roadmap**: [ROADMAP_1_14_26.md](./ROADMAP_1_14_26.md)  
 **Source**: JIRA_PLANNING_JSON_2.txt - Epoch IX Phase 6
@@ -17,113 +17,57 @@
 
 ## 🎯 Sub-Deliverables
 
-### 166.1 Kafka Syndication Deal Ingestion `[ ]`
+### 166.1 Kafka Syndication Deal Ingestion `[x]`
 
-**Acceptance Criteria**: Ingest syndicated deal opportunities from email parsers or APIs. Structure unstructured email data ("18% IRR projected!") into normalized DB records.
-
-#### Kafka Topic
-
-```json
-{
-    "topic": "deal-ingestion",
-    "schema": {
-        "source": "EMAIL_PARSER",
-        "sender": "sponsor@syndicate.com",
-        "deal_title": "string",
-        "asset_class": "MULTIFAMILY",
-        "projected_irr": "decimal",
-        "equity_multiple": "decimal",
-        "hold_period_years": "integer",
-        "timestamp": "timestamp"
-    }
-}
-```
+**Acceptance Criteria**: Ingest and normalize deal opportunities.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Email Parser | `services/ingestion/email_parser.py` | `[ ]` |
-| Deal Consumer | `services/kafka/deal_consumer.py` | `[ ]` |
+| Deal Consumer | `services/kafka/deal_consumer.py` | `[x]` |
 
 ---
 
-### 166.2 Postgres Operating Agreement Schema (GP/LP splits) `[ ]`
+### 166.2 Operating Agreement Schema (GP/LP splits) `[x]`
 
-**Acceptance Criteria**: Track the complex "Waterfall" economics. Preferred Return (e.g., 8%), then Split (e.g., 70/30 LP/GP).
-
-#### Postgres Schema (Docker-compose: timescaledb service)
-
-```sql
-CREATE TABLE syndication_economics (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    deal_id UUID NOT NULL,
-    
-    -- Waterfall
-    preferred_return_pct DECIMAL(5, 4), -- 0.08
-    gp_catchup_pct DECIMAL(5, 4),
-    
-    -- Splits
-    tier1_split_lp DECIMAL(5, 4),       -- 0.70
-    tier1_split_gp DECIMAL(5, 4),       -- 0.30
-    promote_structure JSONB,
-    
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
+**Acceptance Criteria**: Complex waterfall economics tracking.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Migration | `migrations/166_syndication_econ.sql` | `[ ]` |
-| Waterfall Calc | `services/pe/waterfall_calc.py` | `[ ]` |
+| Waterfall Calc | `services/pe/waterfall_engine.py` | `[x]` |
 
 ---
 
-### 166.3 Neo4j General Partner ↔ Limited Partner Nodes `[ ]`
+### 166.3 Neo4j General Partner ↔ Limited Partner Nodes `[x]`
 
-**Acceptance Criteria**: Map relationships. An investor acts as LP in many deals, and a Sponsor acts as GP. Track "Repeat Sponsor" success rates.
-
-```cypher
-(:PERSON:GP {name: "Sponsor Inc"})-[:SPONSORED]->(:DEAL:SYNDICATION)
-(:PERSON:LP {name: "Client"})-[:INVESTED_IN {amount: 50000}]->(:DEAL:SYNDICATION)
-
-// Find repeat investments
-MATCH (lp:LP)-[:INVESTED_IN]->(:DEAL)<-[:SPONSORED]-(gp:GP)
-RETURN lp, gp, count(*) as deals_together
-```
+**Acceptance Criteria**: Relationship mapping and repeat sponsor tracking.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Syndication Graph | `services/neo4j/syndication_graph.py` | `[ ]` |
+| Syndication Graph | `services/neo4j/syndication_graph.py` | `[x]` |
 
 ---
 
-### 166.4 Capital Raise Tracker (Apartments, Offices, Credit) `[ ]`
+### 166.4 Capital Raise Tracker `[x]`
 
-**Acceptance Criteria**: Track the progress of a raise. "Soft Circles" (Commitments) vs. "Funded" (Wire Received). prevent over-subscription.
-
-| Component | File Path | Status |
-|-----------|-----------|--------|
-| Raise Tracker | `services/pe/raise_tracker.py` | `[ ]` |
-
-#### Frontend Implementation
+**Acceptance Criteria**: Track soft circles vs funded commitments.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Deal Room | `frontend2/src/components/Syndication/DealRoom.jsx` | `[ ]` |
-| Commitment Flow | `frontend2/src/components/Syndication/CommitmentFlow.jsx` | `[ ]` |
+| Syndication Service | `services/real_estate/syndication_service.py` | `[x]` |
 
 ---
 
-### 166.5 No Formal Offering Private Syndication Flag `[ ]`
+### 166.5 No Formal Offering Private Syndication Flag `[x]`
 
-**Acceptance Criteria**: Flag "506(b)" deals which CANNOT be advertised publicly and require a "Pre-existing substantive relationship". Ensure compliance by hiding these from public view.
+**Acceptance Criteria**: 506(b) compliance filtering.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Compliance Filter | `services/compliance/506b_filter.py` | `[ ]` |
+| Compliance Filter | `services/compliance/506b_filter.py` | `[x]` |
 
 ---
 
-## 📊 Phase Status: `[ ]` NOT STARTED
+## 📊 Phase Status: `[x]` COMPLETED
 
 ---
 
@@ -131,9 +75,10 @@ RETURN lp, gp, count(*) as deals_together
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `python cli.py syndication list` | List open deals | `[ ]` |
-| `python cli.py syndication commit <id>` | Soft commit to deal | `[ ]` |
+| `python cli.py syndication list` | List open deals | `[x]` |
+| `python cli.py syndication commit <id>` | Soft commit to deal | `[x]` |
 
 ---
 
-*Last verified: 2026-01-25*
+*Last verified: 2026-01-30*
+

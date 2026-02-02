@@ -21,8 +21,8 @@ def service():
 async def test_predict_price(service):
     """Test price prediction."""
     service._get_current_price = AsyncMock(return_value=150.0)
-    service.cache_service.get = AsyncMock(return_value=None)
-    service.cache_service.set = AsyncMock()
+    service.cache_service.get = Mock(return_value=None)
+    service.cache_service.set = Mock()
     
     result = await service.predict_price(
         symbol="AAPL",
@@ -41,8 +41,8 @@ async def test_predict_price(service):
 async def test_predict_price_different_horizons(service):
     """Test price prediction with different time horizons."""
     service._get_current_price = AsyncMock(return_value=150.0)
-    service.cache_service.get = AsyncMock(return_value=None)
-    service.cache_service.set = AsyncMock()
+    service.cache_service.get = Mock(return_value=None)
+    service.cache_service.set = Mock()
     
     horizons = ["1d", "1w", "1m", "3m", "1y"]
     for horizon in horizons:
@@ -75,12 +75,16 @@ async def test_predict_trend(service):
 async def test_predict_price_cached(service):
     """Test cached price prediction."""
     cached_data = {
+        'prediction_id': 'pred_123',
         'symbol': 'AAPL',
         'predicted_price': 157.5,
         'confidence': 0.75,
-        'time_horizon': '1m'
+        'prediction_date': datetime.utcnow(),
+        'time_horizon': '1m',
+        'model_version': 'v1.0'
     }
-    service.cache_service.get = AsyncMock(return_value=cached_data)
+    service.cache_service.get = Mock(return_value=cached_data)
+    service._get_current_price = AsyncMock()
     
     result = await service.predict_price("AAPL", "1m")
     

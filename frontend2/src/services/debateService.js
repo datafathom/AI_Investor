@@ -4,9 +4,7 @@
  * Handles API calls to the Debate Chamber.
  */
 
-import axios from 'axios';
-
-const API_URL = '/api/v1/analysis/debate';
+import apiClient from './apiClient';
 
 export const debateService = {
     /**
@@ -16,7 +14,7 @@ export const debateService = {
      */
     triggerDebate: async (ticker, summary) => {
         try {
-            const response = await axios.post(API_URL, { ticker, summary });
+            const response = await apiClient.post('/analysis/debate', { ticker, summary });
             return response.data;
         } catch (error) {
             console.error('Error triggering debate:', error);
@@ -29,7 +27,7 @@ export const debateService = {
      */
     getStatus: async () => {
         try {
-            const response = await axios.get(`${API_URL}/status`);
+            const response = await apiClient.get('/analysis/debate/status');
             return response.data;
         } catch (error) {
             console.error('Error getting debate status:', error);

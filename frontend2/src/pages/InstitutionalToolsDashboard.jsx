@@ -6,16 +6,16 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
 // Institutional Components
-import OnboardingWizard from '../components/Institutional/OnboardingWizard';
+import AdvisorOnboardingWizard from '../components/Institutional/AdvisorOnboardingWizard';
 import useInstitutionalStore from '../stores/institutionalStore';
 
 // Institutional Widgets
-import FeeRevenueForecast from '../widgets/Institutional/FeeRevenueForecast';
+import RevenuePulse from '../components/Institutional/RevenuePulse';
 import ClientRetentionAI from '../widgets/Institutional/ClientRetentionAI';
 import DocSignaturePulse from '../widgets/Institutional/DocSignaturePulse';
 import AssetAllocationWheel from '../widgets/Institutional/AssetAllocationWheel';
 import AdvisorCommissionTracker from '../widgets/Institutional/AdvisorCommissionTracker';
-import KycRiskGauge from '../widgets/Institutional/KycRiskGauge';
+import ClientHealthCompass from '../components/Institutional/ClientHealthCompass';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -65,7 +65,7 @@ const InstitutionalToolsDashboard = () => {
                 >
                     <Layout size={16} /> BACK TO DASHBOARD
                 </button>
-                <OnboardingWizard />
+                <AdvisorOnboardingWizard />
             </div>
         );
     }
@@ -153,7 +153,7 @@ const InstitutionalToolsDashboard = () => {
 
                 {/* Analytical Widgets */}
                 <div key="fee-forecast">
-                    <FeeRevenueForecast aum={activeClient?.aum} />
+                    <RevenuePulse clientId={selectedClientId} />
                 </div>
 
                 <div key="retention-ai">
@@ -161,7 +161,7 @@ const InstitutionalToolsDashboard = () => {
                 </div>
 
                 <div key="risk-gauge">
-                    <KycRiskGauge status={activeClient?.kyc_status} />
+                    <ClientHealthCompass clientId={selectedClientId} />
                 </div>
 
                 {/* Lower Row Widgets */}

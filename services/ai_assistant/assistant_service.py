@@ -139,6 +139,19 @@ class AssistantService:
         
         return assistant_msg
     
+    async def get_conversation_history(self, conversation_id: str) -> Optional[Conversation]:
+        """
+        Get conversation history.
+        
+        Args:
+            conversation_id: Conversation identifier
+            
+        Returns:
+            Conversation with all messages
+        """
+        logger.info(f"Getting history for conversation {conversation_id}")
+        return await self._get_conversation(conversation_id)
+    
     async def _generate_response(
         self,
         user_message: str,

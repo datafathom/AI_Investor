@@ -2,8 +2,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { marketService } from './marketService';
 
-// Mock global fetch
-global.fetch = vi.fn();
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { marketService } from './marketService';
+import apiClient from './apiClient';
+
+vi.mock('./apiClient');
 
 describe('marketService', () => {
     beforeEach(() => {
@@ -17,22 +20,19 @@ describe('marketService', () => {
             symbol: "SPY"
         };
 
-        fetch.mockResolvedValueOnce({
-            ok: true,
-            json: async () => mockResponse,
+        apiClient.get.mockResolvedValueOnce({
+            data: mockResponse,
         });
 
         const result = await marketService.getMarketPrediction('SPY');
 
-        expect(fetch).toHaveBeenCalledWith(expect.stringContaining('/api/v1/market/predict?symbol=SPY'));
+        expect(apiClient.get).toHaveBeenCalledWith(expect.stringContaining('/market/predict?symbol=SPY'));
         expect(result).toEqual(mockResponse);
         expect(result.prediction).toBe("UP");
     });
 
     it('getMarketPrediction should handle errors gracefully', async () => {
-        fetch.mockResolvedValueOnce({
-            ok: false,
-        });
+        apiClient.get.mockRejectedValueOnce(new Error('Network Error'));
 
         const result = await marketService.getMarketPrediction('SPY');
 

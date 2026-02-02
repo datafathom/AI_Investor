@@ -28,3 +28,16 @@ class BeneficiaryOrderBlocker:
             "allowed": True,
             "reason": "Order authorized for Trustee/Advisor."
         }
+
+    def validate_order_source(self, user_id: Any, user_role: str, trust_id: Any) -> Dict[str, Any]:
+        """
+        Validates order source for compliance.
+        """
+        # Mapping to internal logic
+        # Assuming "BLIND_BENEFICIARY" implies TrustType="BLIND" and Role="BENEFICIARY"
+        if user_role == "BLIND_BENEFICIARY":
+             return {
+                "is_order_accepted": False,
+                "reason": "FIDUCIARY_CONTROL_REQUIRED"
+            }
+        return {"is_order_accepted": True}

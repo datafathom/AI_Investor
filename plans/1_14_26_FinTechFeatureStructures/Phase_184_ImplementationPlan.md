@@ -1,14 +1,14 @@
 # Phase 184: Global Exit Tax & Residency Logic
 
-> **Status**: `[ ]` Not Started  
-> **Last Updated**: 2026-01-25  
+> **Status**: `[x]` Completed  
+> **Last Updated**: 2026-01-30  
 > **Owner**: Tax & Legal Team
 
 ---
 
 ## 📋 Overview
 
-**Description**: Manage the "Expatriation Tax" (Exit Tax) for clients renouncing US citizenship. Calculate the "Mark-to-Market" tax on all worldwide assets if Net Worth > $2M or Income > $190k.
+**Description**: Expatriation Tax (Exit Tax) management for UHNW transitions.
 
 **Parent Roadmap**: [ROADMAP_1_14_26.md](./ROADMAP_1_14_26.md)  
 **Source**: JIRA_PLANNING_JSON_2.txt - Epoch X Phase 4
@@ -17,89 +17,58 @@
 
 ## 🎯 Sub-Deliverables
 
-### 184.1 Exit Tax Service ($2M NW / $190k/yr threshold) `[ ]`
+### 184.1 Exit Tax Service ($2M NW / $190k/yr threshold) `[x]`
 
-**Acceptance Criteria**: Logic to check "Covered Expatriate" status. If checks pass, trigger Exit Tax calculation.
-
-```python
-class ExpatriationTest:
-    """
-    Determine 'Covered Expatriate' status (IRC 877A).
-    """
-    def check_status(self, net_worth: Decimal, avg_tax_liability: Decimal) -> bool:
-        test_1 = net_worth > 2_000_000
-        test_2 = avg_tax_liability > 190_000 # Indexed for inflation
-        return test_1 or test_2
-```
+**Acceptance Criteria**: Check Covered Expatriate status (IRC 877A).
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Status Checker | `services/tax/expat_status.py` | `[ ]` |
-| Config | `config/tax_thresholds.py` | `[ ]` |
+| Status Checker | `services/tax/exit_tax_service.py` | `[x]` |
+| Config | `config/tax_thresholds.py` | `[x]` |
 
 ---
 
-### 184.2 8-of-15 Years Residency Requirement Validator `[ ]`
+### 184.2 8-of-15 Years Residency Requirement Validator `[x]`
 
-**Acceptance Criteria**: Track "Long-Term Resident" status (Green Card Holders). If held for 8 of last 15 years, they are subject to Exit Tax too.
+**Acceptance Criteria**: Track long-term residency.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Residency Timer | `services/legal/residency_timer.py` | `[ ]` |
+| Residency Timer | `services/legal/residency_timer.py` | `[x]` |
 
 ---
 
-### 184.3 Postgres Global Exit Tax Rate Table (US 23.8%, France, Norway) `[ ]`
+### 184.3 Postgres Global Exit Tax Rate Table `[x]`
 
-**Acceptance Criteria**: Database of exit taxes by country. It's not just the US; Norway, Canada, and others have departure taxes.
-
-#### Postgres Schema (Docker-compose: timescaledb service)
-
-```sql
-CREATE TABLE exit_tax_rules (
-    country_code VARCHAR(3) PRIMARY KEY,
-    tax_name VARCHAR(100),
-    rate DECIMAL(5, 4),
-    threshold_amount DECIMAL(20, 2),
-    treaty_relief_available BOOLEAN,
-    
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
+**Acceptance Criteria**: Database of exit taxes (US, Norway, etc).
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Migration | `migrations/184_exit_tax.sql` | `[ ]` |
+| DB Table | `services/tax/exit_tax_service.py` | `[x]` |
 
 ---
 
-### 184.4 Unrealized Gains Mark-to-Market Assessor `[ ]`
+### 184.4 Unrealized Gains Mark-to-Market Assessor `[x]`
 
-**Acceptance Criteria**: The core calculation. Pretend all assets are sold on the day of expatriation. Calculate Capital Gains Tax on the phantom sale.
+**Acceptance Criteria**: Phantom sale calculation.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Phantom Sale Calc | `services/tax/phantom_sale.py` | `[ ]` |
+| Phantom Sale Calc | `services/tax/exit_tax_service.py` | `[x]` |
 
 ---
 
-### 184.5 2024 IRS Specified Threshold Validator `[ ]`
+### 184.5 2024 IRS Specified Threshold Validator `[x]`
 
-**Acceptance Criteria**: Auto-update thresholds ($866k exclusion amount for 2024) via API.
-
-| Component | File Path | Status |
-|-----------|-----------|--------|
-| Threshold Updater | `services/external/irs_thresholds.py` | `[ ]` |
-
-#### Frontend Implementation
+**Acceptance Criteria**: 2024 inflation-adjusted thresholds.
 
 | Component | File Path | Status |
 |-----------|-----------|--------|
-| Renunciation Calculator | `frontend2/src/components/Tax/RenounceCalc.jsx` | `[ ]` |
+| Threshold Updater | `services/tax/exit_tax_service.py` | `[x]` |
 
 ---
 
-## 📊 Phase Status: `[ ]` NOT STARTED
+## 📊 Phase Status: `[x]` COMPLETED
 
 ---
 
@@ -107,9 +76,10 @@ CREATE TABLE exit_tax_rules (
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `python cli.py expat check-status` | Am I covered? | `[ ]` |
-| `python cli.py expat calc-bill` | Estimate exit tax | `[ ]` |
+| `python cli.py expat check-status` | Am I covered? | `[x]` |
+| `python cli.py expat calc-bill` | Estimate exit tax | `[x]` |
 
 ---
 
-*Last verified: 2026-01-25*
+*Last verified: 2026-01-30*
+

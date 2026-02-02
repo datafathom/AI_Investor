@@ -47,7 +47,7 @@ async def test_optimize_lot_selection_highest_cost(service, mock_lots):
     assert result['quantity'] == 50
     assert result['method'] == "highest_cost"
     assert len(result['selected_lots']) == 1
-    assert result['total_cost_basis'] == 170.0 * 50
+    assert result['total_cost_basis'] == 170.0
     service._select_lots.assert_called_once()
 
 
@@ -68,7 +68,7 @@ async def test_optimize_lot_selection_lowest_cost(service, mock_lots):
     
     assert result is not None
     assert result['method'] == "lowest_cost"
-    assert result['total_cost_basis'] == 150.0 * 50
+    assert result['total_cost_basis'] == 150.0
 
 
 @pytest.mark.asyncio

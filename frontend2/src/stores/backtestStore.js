@@ -3,6 +3,7 @@
  * Phase 57: Manages simulation parameters, paths, and risk metrics.
  */
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useBacktestStore = create((set, get) => ({
     // State
@@ -30,13 +31,8 @@ const useBacktestStore = create((set, get) => ({
         setSimulating(true);
         setError(null);
         try {
-            const response = await fetch('/api/v1/backtest/monte-carlo', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(params)
-            });
-            if (!response.ok) throw new Error(`Simulation failed: ${response.status}`);
-            const data = await response.json();
+            const response = await apiClient.post('/backtest/monte-carlo', params);
+            const data = response.data;
             setSimulationPaths(data.paths || [], data.quantiles || {});
             setRuinProbability(data.ruin_probability || 0);
         } catch (error) {

@@ -26,7 +26,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, field
 from services.tax.harvest_service import TaxHarvestService, HarvestCandidate
@@ -179,6 +179,15 @@ class EnhancedTaxHarvestingService:
             trades_required=trades_required,
             requires_approval=requires_approval
         )
+
+    async def check_wash_sale_violation(
+        self,
+        portfolio_id: str,
+        symbol: str,
+        sale_date: datetime
+    ) -> any:
+        """Wrapper for base service wash-sale check."""
+        return await self.base_service.check_wash_sale_violation(symbol, portfolio_id)
     
     async def execute_harvest(
         self,
@@ -230,7 +239,7 @@ class EnhancedTaxHarvestingService:
                 'quantity': opportunity.candidate.position_id  # Simplified
             },
             'tax_savings': opportunity.tax_savings,
-            'execution_date': datetime.utcnow().isoformat()
+            'execution_date': datetime.now(timezone.utc).isoformat()
         }
     
     async def _calculate_tax_savings(self, candidate: HarvestCandidate) -> float:

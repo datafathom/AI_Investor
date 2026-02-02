@@ -40,3 +40,31 @@ class FATCAComplianceService:
             "requires_8938_filing": requires_fatca,
             "penalty_risk": "CRITICAL" if total_foreign_value > Decimal('100000') and not requires_fbar else "LOW"
         }
+
+    def detect_secrecy_compromise(self, jurisdiction: str, request_message: str) -> Dict[str, Any]:
+        """
+        Phase 183.3: Swiss Bank Secrecy Compromise Detector.
+        Detects keywords in incoming bank communication that suggest FATCA/W-9 pressure.
+        """
+        keywords = ["W-9", "tax residency", "self-certification", "FATCA disclosure"]
+        found = [k for k in keywords if k.lower() in request_message.lower()]
+        
+        is_compromised = len(found) > 0
+        
+        logger.info(f"COMPLIANCE_LOG: Secrecy check for {jurisdiction}. Compromised: {is_compromised}")
+        
+        return {
+            "jurisdiction": jurisdiction,
+            "compromise_triggers": found,
+            "is_secrecy_compromised": is_compromised,
+            "required_action": "PROVIDE_W9" if is_compromised else "NONE"
+        }
+
+    def list_foreign_assets(self) -> List[Dict[str, Any]]:
+        """
+        CLI Handler helper: Lists known foreign assets and their reported values.
+        """
+        return [
+            {"asset_name": "Swiss Private Account", "country": "CH", "value": 125000.00, "type": "Cash"},
+            {"asset_name": "Cayman Fund B", "country": "KY", "value": 450000.00, "type": "Hedge Fund"}
+        ]

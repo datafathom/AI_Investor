@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import axios from 'axios';
+import apiClient from './apiClient';
 import debateService from './debateService';
 
-vi.mock('axios');
+vi.mock('./apiClient');
 
 describe('debateService', () => {
     beforeEach(() => {
@@ -16,19 +16,19 @@ describe('debateService', () => {
             responses: []
         };
 
-        axios.post.mockResolvedValueOnce({ data: mockData });
+        apiClient.post.mockResolvedValueOnce({ data: mockData });
 
         const result = await debateService.triggerDebate('TSLA', 'Testing');
         expect(result.ticker).toBe('TSLA');
         expect(result.consensus.decision).toBe('BUY');
-        expect(axios.post).toHaveBeenCalledWith('/api/v1/analysis/debate', {
+        expect(apiClient.post).toHaveBeenCalledWith('/analysis/debate', {
             ticker: 'TSLA',
             summary: 'Testing'
         });
     });
 
     it('handles API errors gracefully', async () => {
-        axios.post.mockRejectedValueOnce(new Error('Network Error'));
+        apiClient.post.mockRejectedValueOnce(new Error('Network Error'));
         await expect(debateService.triggerDebate('AAPL', 'fail')).rejects.toThrow('Network Error');
     });
 });

@@ -4,7 +4,7 @@ Comprehensive test coverage for extension creation and sandboxed execution
 """
 
 import pytest
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.marketplace.extension_framework import ExtensionFramework
 from models.marketplace import Extension, ExtensionStatus
@@ -48,8 +48,8 @@ async def test_validate_extension(service):
         version="1.0.0",
         category="analytics",
         status=ExtensionStatus.DRAFT,
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._validate_security = AsyncMock(return_value={'valid': True, 'errors': []})

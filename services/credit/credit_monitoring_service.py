@@ -24,7 +24,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 from models.credit import CreditScore, CreditFactor
 from services.system.cache_service import get_cache_service
@@ -77,12 +77,12 @@ class CreditMonitoringService:
             trend = "stable"
         
         credit_score = CreditScore(
-            score_id=f"score_{user_id}_{datetime.utcnow().timestamp()}",
+            score_id=f"score_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             score=score,
             score_type=score_type,
             factors=factors or {},
-            report_date=datetime.utcnow(),
+            report_date=datetime.now(timezone.utc),
             trend=trend
         )
         
@@ -143,7 +143,7 @@ class CreditMonitoringService:
     async def _save_score(self, score: CreditScore):
         """Save credit score to cache."""
         cache_key = f"credit_score:{score.user_id}:latest"
-        self.cache_service.set(cache_key, score.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, score.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

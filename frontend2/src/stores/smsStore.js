@@ -7,6 +7,7 @@
  */
 
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useSMSStore = create((set) => ({
     sending: false,
@@ -21,17 +22,12 @@ const useSMSStore = create((set) => ({
     sendTestAlert: async (phoneNumber, mock = true) => {
         set({ sending: true, lastResult: null, error: null });
         try {
-            const response = await fetch(`/api/v1/notifications/twilio/send?mock=${mock}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ to: phoneNumber, message: "Test alert from User Settings." })
-            });
-            
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error || 'Failed to send SMS');
-            
-            set({ lastResult: data, sending: false });
-            return data;
+            const response = await apiClient.post('/notifications/twilio/send', 
+                { to: phoneNumber, message: "Test alert from User Settings." },
+                { params: { mock } }
+            );
+            set({ lastResult: response.data, sending: false });
+            return response.data;
         } catch (error) {
             console.error('SMS send failed:', error);
             set({ error: error.message, sending: false });
@@ -40,11 +36,10 @@ const useSMSStore = create((set) => ({
 
     updatePreferences: async (phoneNumber, prefs, mock = true) => {
         try {
-             await fetch(`/api/v1/notifications/twilio/subscribe?mock=${mock}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone: phoneNumber, preferences: prefs })
-            });
+            await apiClient.post('/notifications/twilio/subscribe', 
+                { phone: phoneNumber, preferences: prefs },
+                { params: { mock } }
+            );
             set({ preferences: prefs });
         } catch (error) {
             console.error('Update SMS preferences failed:', error);

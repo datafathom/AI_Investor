@@ -11,6 +11,16 @@ const useInstitutionalStore = create((set, get) => ({
     loading: false,
     error: null,
     onboardingStep: 1,
+    onboardingData: {
+        clientName: '',
+        email: '',
+        jurisdiction: 'US',
+        fundingSource: 'Plaid',
+        strategy: 'Aggressive AI',
+        kycStatus: 'Pending',
+        riskProfile: null,
+        allocationPreview: null,
+    },
 
     fetchClients: async () => {
         set({ loading: true, error: null });
@@ -102,7 +112,38 @@ const useInstitutionalStore = create((set, get) => ({
 
     setOnboardingStep: (step) => set({ onboardingStep: step }),
 
-    resetOnboarding: () => set({ onboardingStep: 1 })
+    triggerRebalance: async (clientId) => {
+        set({ loading: true, error: null });
+        try {
+            const data = await apiClient.post(`/institutional/analytics/rebalance/${clientId}`);
+            // Refresh allocation data after rebalance
+            const { fetchAssetAllocation } = get();
+            await fetchAssetAllocation(clientId);
+            set({ loading: false });
+            return data.data;
+        } catch (error) {
+            set({ error: error.message, loading: false });
+            return null;
+        }
+    },
+
+    updateOnboardingData: (data) => set(state => ({
+        onboardingData: { ...state.onboardingData, ...data }
+    })),
+
+    resetOnboarding: () => set({ 
+        onboardingStep: 1,
+        onboardingData: {
+            clientName: '',
+            email: '',
+            jurisdiction: 'US',
+            fundingSource: 'Plaid',
+            strategy: 'Aggressive AI',
+            kycStatus: 'Pending',
+            riskProfile: null,
+            allocationPreview: null,
+        }
+    })
 }));
 
 export default useInstitutionalStore;

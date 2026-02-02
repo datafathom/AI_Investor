@@ -2,14 +2,23 @@
 import pytest
 from services.system.cache_service import CacheService
 
+from unittest.mock import MagicMock, patch
+
 @pytest.fixture
 def cache():
     # Force simulated mode for reliable tests without Redis server
-    CacheService._instance = None
-    c = CacheService()
-    c._is_simulated = True
-    c._memory_cache = {}
-    return c
+    # Patch redis to prevent actual connection attempt in __init__
+    with patch('services.system.cache_service.redis.Redis') as mock_redis:
+        mock_client = MagicMock()
+        mock_redis.return_value = mock_client
+        # Ensure ping raises exception so it falls back to simulated, OR just force it.
+        # Actually initializing with mock is fine, we just overwrite _is_simulated below.
+        
+        CacheService._instance = None
+        c = CacheService()
+        c._is_simulated = True
+        c._memory_cache = {}
+        return c
 
 def test_cache_set_get(cache):
     cache.set("test_key", {"data": "info"})

@@ -44,7 +44,7 @@ class MigrationManager:
         with open(self.metadata_file, 'w') as f:
             json.dump(self.metadata, f, indent=2)
     
-    def create_migration(self, name: str, description: str = "") -> Tuple[str, str]:
+    def create_migration(self, name: str, description: str = "") -> Tuple[Path, Path]:
         """Create new migration files."""
         timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
         migration_id = f"{timestamp}_{name}"
@@ -92,7 +92,7 @@ COMMIT;
         logger.info(f"Created migration: {forward_file}")
         logger.info(f"Created rollback: {rollback_file}")
         
-        return str(forward_file), str(rollback_file)
+        return forward_file, rollback_file
     
     def list_migrations(self) -> List[Dict]:
         """List all migrations with status."""

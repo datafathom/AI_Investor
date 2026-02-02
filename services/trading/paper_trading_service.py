@@ -24,7 +24,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 import random
 from models.paper_trading import PaperOrder, VirtualPortfolio
@@ -64,15 +64,15 @@ class PaperTradingService:
         logger.info(f"Creating virtual portfolio for user {user_id}")
         
         portfolio = VirtualPortfolio(
-            portfolio_id=f"paper_{user_id}_{datetime.utcnow().timestamp()}",
+            portfolio_id=f"paper_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             portfolio_name=portfolio_name,
             initial_cash=initial_cash,
             current_cash=initial_cash,
             total_value=initial_cash,
             positions={},
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Save portfolio
@@ -134,7 +134,7 @@ class PaperTradingService:
         
         # Create order
         order = PaperOrder(
-            order_id=f"paper_order_{portfolio_id}_{datetime.utcnow().timestamp()}",
+            order_id=f"paper_order_{portfolio_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=portfolio.user_id,
             symbol=symbol,
             quantity=quantity,
@@ -145,7 +145,7 @@ class PaperTradingService:
             filled_quantity=quantity,
             commission=commission,
             slippage=abs(execution_price - market_price) if order_type == "market" else 0.0,
-            created_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc)
         )
         
         # Update portfolio
@@ -187,8 +187,16 @@ class PaperTradingService:
             'positions_value': positions_value,
             'total_value': total_value,
             'total_return': total_return,
+            'total_return': total_return,
             'num_positions': len(portfolio.positions)
         }
+
+    async def get_portfolio_positions(self, portfolio_id: str) -> Dict:
+        """Get current positions for portfolio."""
+        portfolio = await self._get_portfolio(portfolio_id)
+        if not portfolio:
+            raise ValueError(f"Portfolio {portfolio_id} not found")
+        return portfolio.positions
     
     async def _get_market_price(self, symbol: str) -> float:
         """Get current market price (simplified)."""
@@ -237,7 +245,7 @@ class PaperTradingService:
         else:  # Sell
             portfolio.current_cash += cost
         
-        portfolio.updated_date = datetime.utcnow()
+        portfolio.updated_date = datetime.now(timezone.utc)
         await self._save_portfolio(portfolio)
     
     async def _get_portfolio(self, portfolio_id: str) -> Optional[VirtualPortfolio]:

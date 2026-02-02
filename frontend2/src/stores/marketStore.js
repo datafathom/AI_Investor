@@ -6,7 +6,7 @@
  *          historical data, intraday bars, and earnings calendar.
  *          
  * INTEGRATION POINTS:
- *     - marketService: API calls to /api/v1/market/*
+ *     - apiClient: API calls to /api/v1/market/*
  *     - QuoteCard: Real-time quote display
  *     - PriceChart: Historical price visualization
  *     - EarningsCalendar: Upcoming earnings events
@@ -25,68 +25,48 @@
  */
 
 import { create } from 'zustand';
-
-const API_BASE = '/api/v1/market';
+import apiClient from '../services/apiClient';
 
 /**
- * Market Service - API calls to backend
+ * Market Service - API calls to backend via apiClient
  */
 const marketService = {
     async getQuote(symbol) {
-        const response = await fetch(`${API_BASE}/quote/${symbol}`);
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.errors?.[0]?.message || 'Failed to fetch quote');
-        }
-        return response.json();
+        const response = await apiClient.get(`/market/quote/${symbol}`);
+        return response.data;
     },
 
     async getHistory(symbol, period = 'compact', adjusted = true) {
-        const params = new URLSearchParams({ period, adjusted: adjusted.toString() });
-        const response = await fetch(`${API_BASE}/history/${symbol}?${params}`);
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.errors?.[0]?.message || 'Failed to fetch history');
-        }
-        return response.json();
+        const response = await apiClient.get(`/market/history/${symbol}`, {
+            params: { period, adjusted: adjusted.toString() }
+        });
+        return response.data;
     },
 
     async getShortInterest(symbol, mock = false) {
-        const params = new URLSearchParams();
-        if (mock) params.set('mock', 'true');
-        const response = await fetch(`${API_BASE}/short-interest/${symbol}?${params}`);
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.errors?.[0]?.message || 'Failed to fetch short interest');
-        }
-        return response.json();
+        const response = await apiClient.get(`/market/short-interest/${symbol}`, {
+            params: mock ? { mock: 'true' } : {}
+        });
+        return response.data;
     },
 
     async getIntraday(symbol, interval = '5min', outputsize = 'compact') {
-        const params = new URLSearchParams({ interval, outputsize });
-        const response = await fetch(`${API_BASE}/intraday/${symbol}?${params}`);
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.errors?.[0]?.message || 'Failed to fetch intraday');
-        }
-        return response.json();
+        const response = await apiClient.get(`/market/intraday/${symbol}`, {
+            params: { interval, outputsize }
+        });
+        return response.data;
     },
 
     async getEarnings(symbol = null, horizon = '3month') {
-        const params = new URLSearchParams({ horizon });
-        if (symbol) params.set('symbol', symbol);
-        const response = await fetch(`${API_BASE}/earnings?${params}`);
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.errors?.[0]?.message || 'Failed to fetch earnings');
-        }
-        return response.json();
+        const params = { horizon };
+        if (symbol) params.symbol = symbol;
+        const response = await apiClient.get('/market/earnings', { params });
+        return response.data;
     },
 
     async getHealth() {
-        const response = await fetch(`${API_BASE}/health`);
-        if (!response.ok) throw new Error('Health check failed');
-        return response.json();
+        const response = await apiClient.get('/market/health');
+        return response.data;
     }
 };
 
@@ -129,12 +109,12 @@ export const useMarketStore = create((set, get) => ({
         }));
 
         try {
-            const response = await marketService.getShortInterest(upperSymbol, mock);
+            const data = await marketService.getShortInterest(upperSymbol, mock);
             set((state) => ({
-                shortInterest: { ...state.shortInterest, [upperSymbol]: response.data },
+                shortInterest: { ...state.shortInterest, [upperSymbol]: data.data || data },
                 loading: { ...state.loading, shortInterest: false }
             }));
-            return response.data;
+            return data.data || data;
         } catch (error) {
             set((state) => ({
                 errors: { ...state.errors, shortInterest: error.message },
@@ -152,12 +132,12 @@ export const useMarketStore = create((set, get) => ({
         }));
 
         try {
-            const response = await marketService.getQuote(upperSymbol);
+            const data = await marketService.getQuote(upperSymbol);
             set((state) => ({
-                quotes: { ...state.quotes, [upperSymbol]: response.data },
+                quotes: { ...state.quotes, [upperSymbol]: data.data || data },
                 loading: { ...state.loading, quotes: false }
             }));
-            return response.data;
+            return data.data || data;
         } catch (error) {
             set((state) => ({
                 errors: { ...state.errors, quotes: error.message },
@@ -175,19 +155,21 @@ export const useMarketStore = create((set, get) => ({
         }));
 
         try {
-            const response = await marketService.getHistory(upperSymbol, period, adjusted);
+            const data = await marketService.getHistory(upperSymbol, period, adjusted);
+            const bars = data.data?.bars || data.bars || [];
+            const count = data.data?.count || data.count || 0;
             set((state) => ({
                 history: { 
                     ...state.history, 
                     [upperSymbol]: {
-                        bars: response.data.bars,
-                        count: response.data.count,
+                        bars,
+                        count,
                         lastUpdated: new Date().toISOString()
                     }
                 },
                 loading: { ...state.loading, history: false }
             }));
-            return response.data;
+            return data.data || data;
         } catch (error) {
             set((state) => ({
                 errors: { ...state.errors, history: error.message },
@@ -205,20 +187,21 @@ export const useMarketStore = create((set, get) => ({
         }));
 
         try {
-            const response = await marketService.getIntraday(upperSymbol, interval, outputsize);
+            const data = await marketService.getIntraday(upperSymbol, interval, outputsize);
+            const result = data.data || data;
             set((state) => ({
                 intraday: { 
                     ...state.intraday, 
                     [upperSymbol]: {
-                        interval: response.data.interval,
-                        bars: response.data.bars,
-                        count: response.data.count,
+                        interval: result.interval,
+                        bars: result.bars,
+                        count: result.count,
                         lastUpdated: new Date().toISOString()
                     }
                 },
                 loading: { ...state.loading, intraday: false }
             }));
-            return response.data;
+            return result;
         } catch (error) {
             set((state) => ({
                 errors: { ...state.errors, intraday: error.message },
@@ -235,16 +218,17 @@ export const useMarketStore = create((set, get) => ({
         }));
 
         try {
-            const response = await marketService.getEarnings(symbol, horizon);
+            const data = await marketService.getEarnings(symbol, horizon);
+            const result = data.data || data;
             set((state) => ({
                 earnings: {
-                    earnings: response.data.earnings,
-                    count: response.data.count,
+                    earnings: result.earnings || [],
+                    count: result.count || 0,
                     lastUpdated: new Date().toISOString()
                 },
                 loading: { ...state.loading, earnings: false }
             }));
-            return response.data;
+            return result;
         } catch (error) {
             set((state) => ({
                 errors: { ...state.errors, earnings: error.message },
@@ -261,12 +245,13 @@ export const useMarketStore = create((set, get) => ({
         }));
 
         try {
-            const response = await marketService.getHealth();
+            const data = await marketService.getHealth();
+            const result = data.data || data;
             set((state) => ({
-                health: response.data,
+                health: result,
                 loading: { ...state.loading, health: false }
             }));
-            return response.data;
+            return result;
         } catch (error) {
             set((state) => ({
                 errors: { ...state.errors, health: error.message },

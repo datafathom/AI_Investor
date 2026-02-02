@@ -6,12 +6,14 @@
  */
 
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useRiskStore = create((set, get) => ({
   // State
   sentinelActive: true,
   healthStatus: 'HEALTHY', // HEALTHY, WARNING, CRITICAL
   recentViolations: [],
+  orderImpact: null,
   lastSentinelCheck: new Date().toISOString(),
   
   // Stats
@@ -36,6 +38,17 @@ const useRiskStore = create((set, get) => ({
 
   setStatus: (status) => {
     set({ healthStatus: status });
+  },
+
+  fetchOrderImpact: async (tradeDetails) => {
+    try {
+      const response = await apiClient.post('/risk/impact', tradeDetails);
+      if (response.data.success) {
+        set({ orderImpact: response.data.data });
+      }
+    } catch (error) {
+      console.error('Order impact fetch failed:', error);
+    }
   },
 
   reset: () => {

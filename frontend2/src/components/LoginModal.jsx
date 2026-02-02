@@ -56,6 +56,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                         <label>Email Address</label>
                         <input
                             type="text"
+                            name="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="Enter your email or username"
@@ -67,6 +68,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                         <div className="password-field">
                             <input
                                 type={showPassword ? 'text' : 'password'}
+                                name="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="••••••••"

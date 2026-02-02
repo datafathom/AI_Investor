@@ -7,6 +7,7 @@
  */
 
 import { create } from 'zustand';
+import apiClient from '../services/apiClient';
 
 const useExchangeStore = create((set, get) => ({
     ticker: null,
@@ -17,10 +18,8 @@ const useExchangeStore = create((set, get) => ({
 
     fetchTicker: async (symbol, mock = true) => {
         try {
-            const response = await fetch(`/api/v1/exchange/binance/ticker/${symbol}?mock=${mock}`);
-            if (!response.ok) throw new Error('Failed to fetch ticker');
-            const data = await response.json();
-            set({ ticker: data });
+            const response = await apiClient.get(`/exchange/binance/ticker/${symbol}`, { params: { mock } });
+            set({ ticker: response.data });
         } catch (error) {
             console.error('Fetch ticker failed:', error);
         }
@@ -28,10 +27,10 @@ const useExchangeStore = create((set, get) => ({
 
     fetchDepth: async (symbol, mock = true) => {
         try {
-            const response = await fetch(`/api/v1/exchange/binance/depth/${symbol}?mock=${mock}&limit=5`);
-            if (!response.ok) throw new Error('Failed to fetch depth');
-            const data = await response.json();
-            set({ depth: data });
+            const response = await apiClient.get(`/exchange/binance/depth/${symbol}`, { 
+                params: { mock, limit: 5 } 
+            });
+            set({ depth: response.data });
         } catch (error) {
             console.error('Fetch depth failed:', error);
         }
@@ -40,17 +39,12 @@ const useExchangeStore = create((set, get) => ({
     placeOrder: async (orderParams, mock = true) => {
         set({ loading: true, orderStatus: null, error: null });
         try {
-            const response = await fetch(`/api/v1/exchange/binance/order?mock=${mock}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderParams)
+            const response = await apiClient.post('/exchange/binance/order', orderParams, {
+                params: { mock }
             });
 
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error || 'Trade failed');
-            
-            set({ orderStatus: data, loading: false });
-            return data;
+            set({ orderStatus: response.data, loading: false });
+            return response.data;
         } catch (error) {
             console.error('Place order failed:', error);
             set({ error: error.message, loading: false });

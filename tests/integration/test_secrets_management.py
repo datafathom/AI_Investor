@@ -4,8 +4,9 @@ Tests the secrets management system
 """
 
 import pytest
-import os
+from typing import Dict, Optional, List
 from unittest.mock import Mock, patch, MagicMock
+import os
 from services.system.secret_manager import SecretManager
 from services.system.vault_secret_manager import ProductionSecretManager
 from services.system.aws_secret_manager import AWSSecretsManager

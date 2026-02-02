@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from web.auth_utils import login_required
-from services.neo4j.master_graph import MasterGraphService
+from services.neo4j.master_graph import MasterGraph
 from services.neo4j.neo4j_service import neo4j_service
 import logging
 
@@ -16,7 +16,7 @@ def get_master_graph():
     Returns: JSON: Node-link structure for D3.js visualization.
     """
     try:
-        service = MasterGraphService()
+        service = MasterGraph()
         data = service.get_graph_data()
         return jsonify({
             "status": "success",
@@ -71,7 +71,7 @@ def trigger_shock():
         if not asset_id:
             return jsonify({"status": "error", "message": "No asset_id provided"}), 400
             
-        service = MasterGraphService()
+        service = MasterGraph()
         shock_results = service.trigger_reflexivity_shock(asset_id, magnitude)
         
         return jsonify({

@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
+import apiClient from '../../services/apiClient';
 import { ShieldCheck, ShieldAlert, FileText } from 'lucide-react';
 import './SupplyChainWidget.css';
 
@@ -11,22 +12,12 @@ const SupplyChainWidget = () => {
         // Mock fetch if backend not ready, or actual fetch
         const fetchStatus = async () => {
             try {
-                // For demo, we might need a token. 
-                // Assuming dev auto-login or session exists.
-                const token = localStorage.getItem('widget_os_token'); 
-                const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-                
-                const res = await fetch('/api/v1/system/supply-chain', { headers });
-                if (res.ok) {
-                    const data = await res.json();
-                    setStatus(data);
-                } else {
-                    // Fallback for demo if 401/403 or server down
-                    setStatus({ status: 'Unknown', vulnerabilities: 0, last_scan: 'N/A' });
-                }
+                // apiClient handles auth tokens automatically
+                const response = await apiClient.get('/system/supply-chain');
+                setStatus(response.data);
             } catch (e) {
-                console.error("Failed to fetch supply chain status", e);
-                setStatus({ status: 'Error', vulnerabilities: -1 });
+                // Fallback for demo if 401/403 or server down
+                setStatus({ status: 'Unknown', vulnerabilities: 0, last_scan: 'N/A' });
             } finally {
                 setLoading(false);
             }

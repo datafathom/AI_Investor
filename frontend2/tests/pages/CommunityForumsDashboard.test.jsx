@@ -5,10 +5,10 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import axios from 'axios';
+import apiClient from '../../src/services/apiClient';
 import CommunityForumsDashboard from '../../src/pages/CommunityForumsDashboard';
 
-vi.mock('axios');
+vi.mock('../../src/services/apiClient');
 
 describe('CommunityForumsDashboard', () => {
   beforeEach(() => {
@@ -16,7 +16,7 @@ describe('CommunityForumsDashboard', () => {
   });
 
   it('should render dashboard', async () => {
-    axios.get.mockResolvedValue({ 
+    apiClient.get.mockResolvedValue({ 
       data: { data: [] } 
     });
     
@@ -32,7 +32,7 @@ describe('CommunityForumsDashboard', () => {
       { id: '1', title: 'Test Thread', content: 'Test content', category: 'general' }
     ];
 
-    axios.get
+    apiClient.get
       .mockResolvedValueOnce({ data: { data: mockThreads } })
       .mockResolvedValueOnce({ data: { data: [] } });
 

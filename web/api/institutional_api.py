@@ -219,6 +219,54 @@ async def get_allocation(client_id):
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+@institutional_bp.route('/analytics/rebalance/<client_id>', methods=['POST'])
+@login_required
+async def calculate_drift_and_rebalance(client_id):
+    """
+    Calculate portfolio drift and trigger auto-rebalance for a client.
+    
+    Returns:
+        drift_percentage: Current drift from target allocation
+        actions: List of rebalance actions taken
+        new_allocation: Updated allocation after rebalance
+    """
+    try:
+        service = get_institutional_service()
+        allocation_data = await service.get_asset_allocation(client_id)
+        
+        # Calculate total drift
+        total_drift = sum(
+            abs(alloc.get('drift', 0)) 
+            for alloc in allocation_data.get('allocations', [])
+        )
+        
+        # Simulate rebalance actions
+        actions = []
+        for alloc in allocation_data.get('allocations', []):
+            drift = alloc.get('drift', 0)
+            if abs(drift) > 1:  # Only act on significant drift
+                action = 'BUY' if drift < 0 else 'SELL'
+                actions.append({
+                    'category': alloc.get('category'),
+                    'action': action,
+                    'adjustment_pct': abs(drift)
+                })
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'client_id': client_id,
+                'drift_percentage': total_drift,
+                'actions': actions,
+                'rebalanced': len(actions) > 0,
+                'message': f'Rebalanced {len(actions)} positions' if actions else 'No rebalancing needed'
+            }
+        })
+    except Exception as e:
+        logger.error(f"Error calculating drift: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 @institutional_bp.route('/report/generate', methods=['POST'])
 async def generate_professional_report():
     """

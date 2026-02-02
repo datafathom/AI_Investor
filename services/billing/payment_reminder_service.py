@@ -25,7 +25,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 from models.billing import Bill, PaymentReminder, BillStatus
 from services.billing.bill_payment_service import get_bill_payment_service
@@ -71,7 +71,7 @@ class PaymentReminderService:
         reminder_date = bill.due_date - timedelta(days=reminder_days_before)
         
         # Determine reminder type
-        days_until_due = (bill.due_date - datetime.utcnow()).days
+        days_until_due = (bill.due_date - datetime.now(timezone.utc)).days
         if days_until_due < 0:
             reminder_type = "overdue"
         elif days_until_due <= 1:
@@ -80,7 +80,7 @@ class PaymentReminderService:
             reminder_type = "upcoming"
         
         reminder = PaymentReminder(
-            reminder_id=f"reminder_{bill_id}_{datetime.utcnow().timestamp()}",
+            reminder_id=f"reminder_{bill_id}_{datetime.now(timezone.utc).timestamp()}",
             bill_id=bill_id,
             reminder_date=reminder_date,
             reminder_type=reminder_type,
@@ -109,7 +109,7 @@ class PaymentReminderService:
         bills = await self.bill_service.get_upcoming_bills(user_id, days_ahead=0)
         
         due_bills = []
-        today = datetime.utcnow().date()
+        today = datetime.now(timezone.utc).date()
         
         for bill in bills:
             due_date = bill.due_date.date() if isinstance(bill.due_date, datetime) else bill.due_date
@@ -139,7 +139,7 @@ class PaymentReminderService:
         bills = await self.bill_service.get_upcoming_bills(user_id, days_ahead=7)
         
         reminders_sent = []
-        today = datetime.utcnow()
+        today = datetime.now(timezone.utc)
         
         for bill in bills:
             days_until_due = (bill.due_date - today).days
@@ -153,7 +153,7 @@ class PaymentReminderService:
                 
                 # Mark as sent (in production, actually send notification)
                 reminder.sent = True
-                reminder.sent_date = datetime.utcnow()
+                reminder.sent_date = datetime.now(timezone.utc)
                 await self._save_reminder(reminder)
                 
                 reminders_sent.append(reminder)
@@ -163,7 +163,7 @@ class PaymentReminderService:
     async def _save_reminder(self, reminder: PaymentReminder):
         """Save reminder to cache."""
         cache_key = f"reminder:{reminder.bill_id}:{reminder.reminder_id}"
-        self.cache_service.set(cache_key, reminder.dict(), ttl=86400 * 30)
+        self.cache_service.set(cache_key, reminder.model_dump(), ttl=86400 * 30)
 
 
 # Singleton instance
