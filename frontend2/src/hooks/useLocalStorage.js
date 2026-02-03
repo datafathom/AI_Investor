@@ -5,6 +5,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 
 /**
  * Local storage hook
@@ -15,14 +16,21 @@ import { useState, useEffect } from 'react';
 export function useLocalStorage(key, initialValue) {
   // State to store our value
   const [storedValue, setStoredValue] = useState(() => {
-    try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.error(`Error reading localStorage key "${key}":`, error);
-      return initialValue;
-    }
+    // Try synchronous get first (Memory/LocalStorage)
+    const item = StorageService.getSync(key);
+    return item !== null ? item : initialValue;
   });
+
+  // Async hydration on mount (check IDB if missed in sync)
+  useEffect(() => {
+    async function hydrate() {
+      const dbValue = await StorageService.get(key);
+      if (dbValue !== null && JSON.stringify(dbValue) !== JSON.stringify(storedValue)) {
+        setStoredValue(dbValue);
+      }
+    }
+    hydrate();
+  }, [key]);
 
   // Return a wrapped version of useState's setter function that
   // persists the new value to localStorage.
@@ -31,9 +39,9 @@ export function useLocalStorage(key, initialValue) {
       // Allow value to be a function so we have the same API as useState
       const valueToStore = value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      StorageService.set(key, valueToStore);
     } catch (error) {
-      console.error(`Error setting localStorage key "${key}":`, error);
+      console.error(`Error setting key "${key}":`, error);
     }
   };
 

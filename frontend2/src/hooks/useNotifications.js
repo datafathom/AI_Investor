@@ -42,11 +42,14 @@ export const useNotifications = () => {
     }, []);
 
     const notify = useCallback(({ title, body, icon, type = 'info', duration = null }) => {
-        console.log(`[DEBUG] useNotifications: Notify triggered - ${title}: ${body}`);
+        // Log only once per trigger
+        console.log(`[DEBUG] useNotifications: Notify triggered - ${title}`);
+        
         if (type === 'success' || type === 'info') playSound('fill');
         else if (type === 'error' || type === 'critical') playSound('error');
         else playSound('alert');
 
+        // Check permission from state but don't let it re-trigger the effect that sets it
         if (permission === 'granted' && typeof Notification !== 'undefined') {
             try {
                 new Notification(title, { body, icon: icon || '/favicon.ico' });

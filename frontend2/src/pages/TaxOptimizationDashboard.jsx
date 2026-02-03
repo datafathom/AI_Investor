@@ -21,6 +21,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import { analyticsService } from '../services/analyticsService';
 import { GlassCard } from '../components/Common';
 import './TaxOptimizationDashboard.css';
@@ -49,7 +50,7 @@ const TaxOptimizationDashboard = () => {
 
   const onLayoutChange = (currentLayout, allLayouts) => {
       setLayouts(allLayouts);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+      StorageService.set(STORAGE_KEY, allLayouts);
   };
 
   const [harvestCandidates, setHarvestCandidates] = useState([]);

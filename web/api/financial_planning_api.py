@@ -31,7 +31,7 @@ from services.planning.goal_tracking_service import get_goal_tracking_service
 
 logger = logging.getLogger(__name__)
 
-financial_planning_bp = Blueprint('financial_planning', __name__, url_prefix='/api/planning')
+financial_planning_bp = Blueprint('financial_planning', __name__, url_prefix='/api/v1/financial_planning')
 
 
 @financial_planning_bp.route('/plan/create', methods=['POST'])

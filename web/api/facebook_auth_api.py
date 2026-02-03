@@ -28,7 +28,7 @@ from typing import Optional, Dict, Any
 
 logger = logging.getLogger(__name__)
 
-facebook_auth_bp = Blueprint('facebook_auth', __name__, url_prefix='/api/v1/auth/facebook')
+facebook_auth_bp = Blueprint('facebook_auth', __name__, url_prefix='/api/v1/facebook_auth')
 
 
 def _run_async(coro):

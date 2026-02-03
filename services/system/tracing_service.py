@@ -27,7 +27,8 @@ class TracingService:
             return
 
         # Check if tracing is enabled
-        if os.getenv('ENABLE_TRACING', 'false').lower() != 'true':
+        enabled = os.getenv('ENABLE_TRACING', 'false').lower() == 'true'
+        if not enabled:
             logger.info("Tracing is disabled (ENABLE_TRACING != true)")
             return
 
@@ -36,7 +37,7 @@ class TracingService:
         service_name = sm.get_secret('SERVICE_NAME', 'ai-investor-backend')
         
         try:
-            # Set up TracerProvider
+            # Set up TracerProvider if not already set
             provider = TracerProvider()
             
             # Use OTLP Exporter (Jaeger/Collector)
@@ -54,9 +55,14 @@ class TracingService:
             logger.info(f"TracingService initialized with endpoint: {endpoint}")
         except Exception as e:
             logger.error(f"Failed to initialize TracingService: {e}")
+            # Ensure we don't partially initialize
+            self._is_initialized = False
 
     def get_tracer(self, name: str):
         """Returns a tracer instance."""
+        if not self._is_initialized:
+            # Fallback to no-op tracer if not initialized
+            return trace.get_tracer(name)
         return trace.get_tracer(name)
 
 def get_tracing_service() -> TracingService:

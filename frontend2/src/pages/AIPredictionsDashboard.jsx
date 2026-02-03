@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import { predictionService } from '../services/predictionService';
 import './AIPredictionsDashboard.css';
 import { Brain, TrendingUp, Activity, BarChart3, Search, RefreshCw, Layers } from 'lucide-react';

@@ -28,7 +28,7 @@ from typing import Optional, Dict, Any
 
 logger = logging.getLogger(__name__)
 
-google_auth_bp = Blueprint('google_auth', __name__, url_prefix='/api/v1/auth/google')
+google_auth_bp = Blueprint('google_auth', __name__, url_prefix='/api/v1/google_auth')
 
 
 def _run_async(coro):

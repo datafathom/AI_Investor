@@ -22,6 +22,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import useResearchStore from '../stores/researchStore';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import './ResearchReportsDashboard.css';
@@ -63,7 +64,7 @@ const ResearchReportsDashboard = () => {
 
   const onLayoutChange = (currentLayout, allLayouts) => {
     setLayouts(allLayouts);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+    StorageService.set(STORAGE_KEY, allLayouts);
   };
 
   // Load Data on Mount

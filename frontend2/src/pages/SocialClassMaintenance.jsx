@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { StorageService } from '../utils/storageService';
 import { Award, Target, Activity } from 'lucide-react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { StatCard } from '../components/DataViz';
@@ -33,7 +34,7 @@ const SocialClassMaintenance = () => {
 
     const onLayoutChange = (currentLayout, allLayouts) => {
         setLayouts(allLayouts);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+        StorageService.set(STORAGE_KEY, allLayouts);
     };
 
     const [scmData, setScmData] = useState({ score: 1.0, clew: 0.03, yield: 0.05, dilution: 0 });

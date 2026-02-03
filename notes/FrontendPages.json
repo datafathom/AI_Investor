@@ -1,0 +1,506 @@
+[
+    {
+        "pageTitle": "RoleOverview",
+        "pageDescription": "Main page for RoleOverview",
+        "pageUrl": "http://localhost:5173/workspace",
+        "componentName": "RoleOverview"
+    },
+    {
+        "pageTitle": "RoleOverview",
+        "pageDescription": "Main page for RoleOverview",
+        "pageUrl": "http://localhost:5173/workspaces",
+        "componentName": "RoleOverview"
+    },
+    {
+        "pageTitle": "RoleOverview",
+        "pageDescription": "Main page for RoleOverview",
+        "pageUrl": "http://localhost:5173/analytics",
+        "componentName": "RoleOverview"
+    },
+    {
+        "pageTitle": "RoleOverview",
+        "pageDescription": "Main page for RoleOverview",
+        "pageUrl": "http://localhost:5173/analyst",
+        "componentName": "RoleOverview"
+    },
+    {
+        "pageTitle": "RoleOverview",
+        "pageDescription": "Main page for RoleOverview",
+        "pageUrl": "http://localhost:5173/portfolio",
+        "componentName": "RoleOverview"
+    },
+    {
+        "pageTitle": "RoleOverview",
+        "pageDescription": "Main page for RoleOverview",
+        "pageUrl": "http://localhost:5173/guardian",
+        "componentName": "RoleOverview"
+    },
+    {
+        "pageTitle": "RoleOverview",
+        "pageDescription": "Main page for RoleOverview",
+        "pageUrl": "http://localhost:5173/strategist",
+        "componentName": "RoleOverview"
+    },
+    {
+        "pageTitle": "RoleOverview",
+        "pageDescription": "Main page for RoleOverview",
+        "pageUrl": "http://localhost:5173/architect",
+        "componentName": "RoleOverview"
+    },
+    {
+        "pageTitle": "RoleOverview",
+        "pageDescription": "Main page for RoleOverview",
+        "pageUrl": "http://localhost:5173/observer",
+        "componentName": "RoleOverview"
+    },
+    {
+        "pageTitle": "RoleOverview",
+        "pageDescription": "Main page for RoleOverview",
+        "pageUrl": "http://localhost:5173/scanner",
+        "componentName": "RoleOverview"
+    },
+    {
+        "pageTitle": "Navigate",
+        "pageDescription": "Main page for Navigate",
+        "pageUrl": "http://localhost:5173/",
+        "componentName": "Navigate"
+    },
+    {
+        "pageTitle": "Navigate",
+        "pageDescription": "Main page for Navigate",
+        "pageUrl": "http://localhost:5173/login",
+        "componentName": "Navigate"
+    },
+    {
+        "pageTitle": "MissionControl",
+        "pageDescription": "Main page for MissionControl",
+        "pageUrl": "http://localhost:5173/workspace/mission-control",
+        "componentName": "MissionControl"
+    },
+    {
+        "pageTitle": "PoliticalAlpha",
+        "pageDescription": "Main page for PoliticalAlpha",
+        "pageUrl": "http://localhost:5173/analytics/political",
+        "componentName": "PoliticalAlpha"
+    },
+    {
+        "pageTitle": "StrategyDistillery",
+        "pageDescription": "Main page for StrategyDistillery",
+        "pageUrl": "http://localhost:5173/analytics/strategy",
+        "componentName": "StrategyDistillery"
+    },
+    {
+        "pageTitle": "StrategyDistillery",
+        "pageDescription": "Main page for StrategyDistillery",
+        "pageUrl": "http://localhost:5173/analyst/strategy",
+        "componentName": "StrategyDistillery"
+    },
+    {
+        "pageTitle": "DebateRoom",
+        "pageDescription": "Main page for DebateRoom",
+        "pageUrl": "http://localhost:5173/workspace/debate",
+        "componentName": "DebateRoom"
+    },
+    {
+        "pageTitle": "AutoCoder",
+        "pageDescription": "Main page for AutoCoderDashboard",
+        "pageUrl": "http://localhost:5173/workspace/autocoder",
+        "componentName": "AutoCoderDashboard"
+    },
+    {
+        "pageTitle": "AutoCoder",
+        "pageDescription": "Main page for AutoCoderDashboard",
+        "pageUrl": "http://localhost:5173/workspaces/autocoder",
+        "componentName": "AutoCoderDashboard"
+    },
+    {
+        "pageTitle": "VRCockpit",
+        "pageDescription": "Main page for VRCockpit",
+        "pageUrl": "http://localhost:5173/workspace/vr",
+        "componentName": "VRCockpit"
+    },
+    {
+        "pageTitle": "OptionsAnalytics",
+        "pageDescription": "Main page for OptionsAnalytics",
+        "pageUrl": "http://localhost:5173/analytics/options",
+        "componentName": "OptionsAnalytics"
+    },
+    {
+        "pageTitle": "BacktestPortfolio",
+        "pageDescription": "Main page for BacktestPortfolio",
+        "pageUrl": "http://localhost:5173/portfolio/backtest",
+        "componentName": "BacktestPortfolio"
+    },
+    {
+        "pageTitle": "Estate",
+        "pageDescription": "Main page for EstateDashboard",
+        "pageUrl": "http://localhost:5173/strategist/estate",
+        "componentName": "EstateDashboard"
+    },
+    {
+        "pageTitle": "Impact",
+        "pageDescription": "Main page for ImpactDashboard",
+        "pageUrl": "http://localhost:5173/strategist/impact",
+        "componentName": "ImpactDashboard"
+    },
+    {
+        "pageTitle": "Corporate",
+        "pageDescription": "Main page for CorporateDashboard",
+        "pageUrl": "http://localhost:5173/strategist/corporate",
+        "componentName": "CorporateDashboard"
+    },
+    {
+        "pageTitle": "SystemHealth",
+        "pageDescription": "Main page for SystemHealthDashboard",
+        "pageUrl": "http://localhost:5173/architect/system",
+        "componentName": "SystemHealthDashboard"
+    },
+    {
+        "pageTitle": "API",
+        "pageDescription": "Main page for APIDashboard",
+        "pageUrl": "http://localhost:5173/architect/api",
+        "componentName": "APIDashboard"
+    },
+    {
+        "pageTitle": "Audit",
+        "pageDescription": "Main page for AuditDashboard",
+        "pageUrl": "http://localhost:5173/guardian/compliance/audit",
+        "componentName": "AuditDashboard"
+    },
+    {
+        "pageTitle": "Scenario",
+        "pageDescription": "Main page for ScenarioDashboard",
+        "pageUrl": "http://localhost:5173/guardian/scenarios",
+        "componentName": "ScenarioDashboard"
+    },
+    {
+        "pageTitle": "Margin",
+        "pageDescription": "Main page for MarginDashboard",
+        "pageUrl": "http://localhost:5173/guardian/margin",
+        "componentName": "MarginDashboard"
+    },
+    {
+        "pageTitle": "Mobile",
+        "pageDescription": "Main page for MobileDashboard",
+        "pageUrl": "http://localhost:5173/mobile",
+        "componentName": "MobileDashboard"
+    },
+    {
+        "pageTitle": "BrokerageAccount",
+        "pageDescription": "Main page for BrokerageAccount",
+        "pageUrl": "http://localhost:5173/portfolio/brokerage",
+        "componentName": "BrokerageAccount"
+    },
+    {
+        "pageTitle": "AutoCoderSandbox",
+        "pageDescription": "AutoCoderSandbox.jsx Theme: Hacker / IDE / Cyberpunk Demonstrates the AI's ability to \"Write its own code\".",
+        "pageUrl": "http://localhost:5173/workspace/auto-coder",
+        "componentName": "AutoCoderSandbox"
+    },
+    {
+        "pageTitle": "PortfolioAttribution",
+        "pageDescription": "Main page for PortfolioAttribution",
+        "pageUrl": "http://localhost:5173/portfolio/attribution",
+        "componentName": "PortfolioAttribution"
+    },
+    {
+        "pageTitle": "FixedIncome",
+        "pageDescription": "Main page for FixedIncomeDashboard",
+        "pageUrl": "http://localhost:5173/portfolio/fixed-income",
+        "componentName": "FixedIncomeDashboard"
+    },
+    {
+        "pageTitle": "Crypto",
+        "pageDescription": "Main page for CryptoDashboard",
+        "pageUrl": "http://localhost:5173/portfolio/crypto",
+        "componentName": "CryptoDashboard"
+    },
+    {
+        "pageTitle": "Tax",
+        "pageDescription": "Main page for TaxDashboard",
+        "pageUrl": "http://localhost:5173/portfolio/tax",
+        "componentName": "TaxDashboard"
+    },
+    {
+        "pageTitle": "Macro",
+        "pageDescription": "Main page for MacroDashboard",
+        "pageUrl": "http://localhost:5173/observer/macro",
+        "componentName": "MacroDashboard"
+    },
+    {
+        "pageTitle": "Compliance",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/ComplianceDashboard.jsx ROLE: Compliance & Reporting Dashboard PURPOSE: Phase 32 - Advanced Com",
+        "pageUrl": "http://localhost:5173/guardian/compliance",
+        "componentName": "ComplianceDashboard"
+    },
+    {
+        "pageTitle": "DebateRoom",
+        "pageDescription": "Main page for DebateRoom",
+        "pageUrl": "http://localhost:5173/analyst/debate",
+        "componentName": "DebateRoom"
+    },
+    {
+        "pageTitle": "Currency",
+        "pageDescription": "Main page for CurrencyDashboard",
+        "pageUrl": "http://localhost:5173/strategist/currency",
+        "componentName": "CurrencyDashboard"
+    },
+    {
+        "pageTitle": "GlobalScanner",
+        "pageDescription": "Main page for GlobalScanner",
+        "pageUrl": "http://localhost:5173/scanner/global",
+        "componentName": "GlobalScanner"
+    },
+    {
+        "pageTitle": "Assets",
+        "pageDescription": "Main page for AssetsDashboard",
+        "pageUrl": "http://localhost:5173/assets",
+        "componentName": "AssetsDashboard"
+    },
+    {
+        "pageTitle": "CashFlow",
+        "pageDescription": "Main page for CashFlowDashboard",
+        "pageUrl": "http://localhost:5173/portfolio/cash-flow",
+        "componentName": "CashFlowDashboard"
+    },
+    {
+        "pageTitle": "ZenMode",
+        "pageDescription": "Main page for ZenMode",
+        "pageUrl": "http://localhost:5173/zen",
+        "componentName": "ZenMode"
+    },
+    {
+        "pageTitle": "MasterOrchestrator",
+        "pageDescription": "Main page for MasterOrchestrator",
+        "pageUrl": "http://localhost:5173/orchestrator",
+        "componentName": "MasterOrchestrator"
+    },
+    {
+        "pageTitle": "SocialClassMaintenance",
+        "pageDescription": "Main page for SocialClassMaintenance",
+        "pageUrl": "http://localhost:5173/strategist/scm",
+        "componentName": "SocialClassMaintenance"
+    },
+    {
+        "pageTitle": "Tenant",
+        "pageDescription": "Main page for TenantDashboard",
+        "pageUrl": "http://localhost:5173/tenant",
+        "componentName": "TenantDashboard"
+    },
+    {
+        "pageTitle": "AdvancedPortfolioAnalytics",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/AdvancedPortfolioAnalytics.jsx ROLE: Advanced Portfolio Analytics Dashboard PURPOSE: Phase 1 - ",
+        "pageUrl": "http://localhost:5173/portfolio/advanced-analytics",
+        "componentName": "AdvancedPortfolioAnalytics"
+    },
+    {
+        "pageTitle": "PortfolioOptimization",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/PortfolioOptimizationDashboard.jsx ROLE: Portfolio Optimization & Rebalancing Dashboard PURPOSE",
+        "pageUrl": "http://localhost:5173/portfolio/optimization",
+        "componentName": "PortfolioOptimizationDashboard"
+    },
+    {
+        "pageTitle": "AdvancedRisk",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/AdvancedRiskDashboard.jsx ROLE: Advanced Risk Management Dashboard PURPOSE: Phase 3 - Advanced ",
+        "pageUrl": "http://localhost:5173/portfolio/risk",
+        "componentName": "AdvancedRiskDashboard"
+    },
+    {
+        "pageTitle": "TaxOptimization",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/TaxOptimizationDashboard.jsx ROLE: Tax Optimization Dashboard PURPOSE: Phase 4 - Tax-Loss Harve",
+        "pageUrl": "http://localhost:5173/portfolio/tax-optimization",
+        "componentName": "TaxOptimizationDashboard"
+    },
+    {
+        "pageTitle": "FinancialPlanning",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/FinancialPlanningDashboard.jsx ROLE: Financial Planning & Goal Tracking Dashboard PURPOSE: Phas",
+        "pageUrl": "http://localhost:5173/planning/financial",
+        "componentName": "FinancialPlanningDashboard"
+    },
+    {
+        "pageTitle": "RetirementPlanning",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/RetirementPlanningDashboard.jsx ROLE: Retirement Planning Dashboard PURPOSE: Phase 8 - Retireme",
+        "pageUrl": "http://localhost:5173/planning/retirement",
+        "componentName": "RetirementPlanningDashboard"
+    },
+    {
+        "pageTitle": "Budgeting",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/BudgetingDashboard.jsx ROLE: Budgeting & Expense Tracking Dashboard PURPOSE: Phase 10 - Budgeti",
+        "pageUrl": "http://localhost:5173/budgeting",
+        "componentName": "BudgetingDashboard"
+    },
+    {
+        "pageTitle": "OptionsStrategy",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/OptionsStrategyDashboard.jsx ROLE: Options Strategy Builder & Analyzer Dashboard PURPOSE: Phase",
+        "pageUrl": "http://localhost:5173/trading/options",
+        "componentName": "OptionsStrategyDashboard"
+    },
+    {
+        "pageTitle": "PaperTrading",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/PaperTradingDashboard.jsx ROLE: Paper Trading & Simulation Dashboard PURPOSE: Phase 14 - Paper ",
+        "pageUrl": "http://localhost:5173/trading/paper",
+        "componentName": "PaperTradingDashboard"
+    },
+    {
+        "pageTitle": "AlgorithmicTrading",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/AlgorithmicTradingDashboard.jsx ROLE: Algorithmic Trading Dashboard PURPOSE: Phase 15 - Algorit",
+        "pageUrl": "http://localhost:5173/trading/algorithmic",
+        "componentName": "AlgorithmicTradingDashboard"
+    },
+    {
+        "pageTitle": "EstatePlanning",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/EstatePlanningDashboard.jsx ROLE: Estate Planning Dashboard PURPOSE: Phase 9 - Estate Planning ",
+        "pageUrl": "http://localhost:5173/planning/estate",
+        "componentName": "EstatePlanningDashboard"
+    },
+    {
+        "pageTitle": "BillPayment",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/BillPaymentDashboard.jsx ROLE: Bill Payment & Reminders Dashboard PURPOSE: Phase 11 - Bill Paym",
+        "pageUrl": "http://localhost:5173/billing/payments",
+        "componentName": "BillPaymentDashboard"
+    },
+    {
+        "pageTitle": "CreditMonitoring",
+        "pageDescription": "Main page for CreditMonitoringDashboard",
+        "pageUrl": "http://localhost:5173/credit/monitoring",
+        "componentName": "CreditMonitoringDashboard"
+    },
+    {
+        "pageTitle": "ResearchReports",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/ResearchReportsDashboard.jsx ROLE: Research Reports Dashboard PURPOSE: Phase 18 - Research Repo",
+        "pageUrl": "http://localhost:5173/research/reports",
+        "componentName": "ResearchReportsDashboard"
+    },
+    {
+        "pageTitle": "SocialTrading",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/SocialTradingDashboard.jsx ROLE: Social Trading Dashboard PURPOSE: Phase 19 - Social Trading & ",
+        "pageUrl": "http://localhost:5173/social/trading",
+        "componentName": "SocialTradingDashboard"
+    },
+    {
+        "pageTitle": "CommunityForums",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/CommunityForumsDashboard.jsx ROLE: Community Forums Dashboard PURPOSE: Phase 20 - Community For",
+        "pageUrl": "http://localhost:5173/community/forums",
+        "componentName": "CommunityForumsDashboard"
+    },
+    {
+        "pageTitle": "EducationPlatform",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/EducationPlatformDashboard.jsx ROLE: Education Platform Dashboard PURPOSE: Phase 21 - Investmen",
+        "pageUrl": "http://localhost:5173/education",
+        "componentName": "EducationPlatformDashboard"
+    },
+    {
+        "pageTitle": "AdvancedCharting",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/AdvancedChartingDashboard.jsx ROLE: Advanced Charting & Technical Analysis Dashboard PURPOSE: P",
+        "pageUrl": "http://localhost:5173/charting/advanced",
+        "componentName": "AdvancedChartingDashboard"
+    },
+    {
+        "pageTitle": "AdvancedOrders",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/AdvancedOrdersDashboard.jsx ROLE: Advanced Orders & Execution Dashboard PURPOSE: Phase 13 - Adv",
+        "pageUrl": "http://localhost:5173/trading/advanced-orders",
+        "componentName": "AdvancedOrdersDashboard"
+    },
+    {
+        "pageTitle": "Enterprise",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/EnterpriseDashboard.jsx ROLE: Enterprise Features Dashboard PURPOSE: Phase 31 - Enterprise Feat",
+        "pageUrl": "http://localhost:5173/enterprise",
+        "componentName": "EnterpriseDashboard"
+    },
+    {
+        "pageTitle": "Compliance",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/ComplianceDashboard.jsx ROLE: Compliance & Reporting Dashboard PURPOSE: Phase 32 - Advanced Com",
+        "pageUrl": "http://localhost:5173/compliance",
+        "componentName": "ComplianceDashboard"
+    },
+    {
+        "pageTitle": "InstitutionalTools",
+        "pageDescription": "Main page for InstitutionalToolsDashboard",
+        "pageUrl": "http://localhost:5173/institutional",
+        "componentName": "InstitutionalToolsDashboard"
+    },
+    {
+        "pageTitle": "MLTraining",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/MLTrainingDashboard.jsx ROLE: ML Training Pipeline Dashboard PURPOSE: Phase 27 - Machine Learni",
+        "pageUrl": "http://localhost:5173/ml/training",
+        "componentName": "MLTrainingDashboard"
+    },
+    {
+        "pageTitle": "Integrations",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/IntegrationsDashboard.jsx ROLE: Third-Party Integrations Dashboard PURPOSE: Phase 28 - Third-Pa",
+        "pageUrl": "http://localhost:5173/integrations",
+        "componentName": "IntegrationsDashboard"
+    },
+    {
+        "pageTitle": "DeveloperPlatform",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/DeveloperPlatformDashboard.jsx ROLE: Developer Platform Dashboard PURPOSE: Phase 29 - Public AP",
+        "pageUrl": "http://localhost:5173/developer/platform",
+        "componentName": "DeveloperPlatformDashboard"
+    },
+    {
+        "pageTitle": "Marketplace",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/MarketplaceDashboard.jsx ROLE: Marketplace & Extensions Dashboard PURPOSE: Phase 30 - Marketpla",
+        "pageUrl": "http://localhost:5173/marketplace",
+        "componentName": "MarketplaceDashboard"
+    },
+    {
+        "pageTitle": "Evolution",
+        "pageDescription": "Main page for EvolutionDashboard",
+        "pageUrl": "http://localhost:5173/evolution",
+        "componentName": "EvolutionDashboard"
+    },
+    {
+        "pageTitle": "NewsSentiment",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/NewsSentimentDashboard.jsx ROLE: News & Sentiment Analysis Dashboard PURPOSE: Phase 16 - News A",
+        "pageUrl": "http://localhost:5173/news/sentiment",
+        "componentName": "NewsSentimentDashboard"
+    },
+    {
+        "pageTitle": "WatchlistsAlerts",
+        "pageDescription": "============================================================================== FILE: frontend2/src/pages/WatchlistsAlertsDashboard.jsx ROLE: Watchlists & Alerts Dashboard PURPOSE: Phase 17 - Watchlist",
+        "pageUrl": "http://localhost:5173/watchlists/alerts",
+        "componentName": "WatchlistsAlertsDashboard"
+    },
+    {
+        "pageTitle": "AIPredictions",
+        "pageDescription": "Main page for AIPredictionsDashboard",
+        "pageUrl": "http://localhost:5173/ai/predictions",
+        "componentName": "AIPredictionsDashboard"
+    },
+    {
+        "pageTitle": "AIAssistant",
+        "pageDescription": "Main page for AIAssistantDashboard",
+        "pageUrl": "http://localhost:5173/ai/assistant",
+        "componentName": "AIAssistantDashboard"
+    },
+    {
+        "pageTitle": "TermsOfService",
+        "pageDescription": "Main page for TermsOfService",
+        "pageUrl": "http://localhost:5173/legal/terms",
+        "componentName": "TermsOfService"
+    },
+    {
+        "pageTitle": "PrivacyPolicy",
+        "pageDescription": "Main page for PrivacyPolicy",
+        "pageUrl": "http://localhost:5173/legal/privacy",
+        "componentName": "PrivacyPolicy"
+    },
+    {
+        "pageTitle": "div",
+        "pageDescription": "Main page for div",
+        "pageUrl": "http://localhost:5173/settings",
+        "componentName": "div"
+    },
+    {
+        "pageTitle": "div",
+        "pageDescription": "Main page for div",
+        "pageUrl": "http://localhost:5173/chat",
+        "componentName": "div"
+    },
+    {
+        "pageTitle": "SentinelStrategy",
+        "pageDescription": "Main page for SentinelStrategyDashboard",
+        "pageUrl": "http://localhost:5173/sentinel/strategy",
+        "componentName": "SentinelStrategyDashboard"
+    }
+]

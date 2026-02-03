@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { StorageService } from '../utils/storageService';
 import { assistantService } from '../services/assistantService';
 import './AIAssistantDashboard.css';
 import { Bot, MessageSquare, Lightbulb, Send, Clock, Sparkles, RefreshCw } from 'lucide-react';

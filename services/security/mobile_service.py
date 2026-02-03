@@ -25,7 +25,7 @@ class MobileService:
         self._pending_auths: List[TradeAuthRequest] = []
         logger.info("MobileService initialized")
 
-    async def activate_kill_switch(self, biometric_token: str) -> bool:
+    def activate_kill_switch(self, biometric_token: str) -> bool:
         # Validate token (mock)
         if biometric_token == "valid_token":
             self._kill_switch_active = True
@@ -33,10 +33,10 @@ class MobileService:
             return True
         return False
 
-    async def get_pending_authorizations(self) -> List[TradeAuthRequest]:
+    def get_pending_authorizations(self) -> List[TradeAuthRequest]:
         return self._pending_auths
 
-    async def create_auth_request(self, ticker: str, action: str, amount: float) -> str:
+    def create_auth_request(self, ticker: str, action: str, amount: float) -> str:
         req_id = f"auth-{datetime.now().timestamp()}"
         req = TradeAuthRequest(id=req_id, ticker=ticker, action=action, amount=amount)
         self._pending_auths.append(req)
@@ -44,7 +44,7 @@ class MobileService:
         logger.info(f"Mobile auth requested for {action} {ticker}")
         return req_id
 
-    async def authorize_trade(self, auth_id: str, approve: bool) -> bool:
+    def authorize_trade(self, auth_id: str, approve: bool) -> bool:
         for req in self._pending_auths:
             if req.id == auth_id:
                 req.status = "approved" if approve else "rejected"

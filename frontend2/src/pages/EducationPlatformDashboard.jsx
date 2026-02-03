@@ -14,6 +14,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import useEducationStore from '../stores/educationStore';
 import './EducationPlatformDashboard.css';
 

@@ -30,7 +30,7 @@ from services.budgeting.expense_tracking_service import get_expense_tracking_ser
 
 logger = logging.getLogger(__name__)
 
-budgeting_bp = Blueprint('budgeting', __name__, url_prefix='/api/budgeting')
+budgeting_bp = Blueprint('budgeting', __name__, url_prefix='/api/v1/budgeting')
 
 
 @budgeting_bp.route('/budget/create', methods=['POST'])

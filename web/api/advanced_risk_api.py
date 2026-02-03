@@ -29,7 +29,7 @@ from models.risk import StressScenario
 
 logger = logging.getLogger(__name__)
 
-advanced_risk_bp = Blueprint('advanced_risk', __name__, url_prefix='/api/risk')
+advanced_risk_bp = Blueprint('advanced_risk', __name__, url_prefix='/api/v1/risk')
 
 
 @advanced_risk_bp.route('/metrics/<portfolio_id>', methods=['GET'])

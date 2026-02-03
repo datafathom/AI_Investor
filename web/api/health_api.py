@@ -90,8 +90,7 @@ def detailed_health():
         health_service = get_health_check_service()
         system_health_service = get_system_health_service()
         
-        import asyncio
-        system_status = asyncio.run(system_health_service.get_health_status())
+        system_status = system_health_service.get_health_status()
         
         return jsonify({
             'status': 'healthy',

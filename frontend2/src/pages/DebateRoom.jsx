@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { StorageService } from '../utils/storageService';
 import apiClient from '../services/apiClient';
 import { MessageSquare, Scale, TrendingUp, TrendingDown, ShieldCheck, AlertOctagon, Send } from 'lucide-react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
@@ -30,7 +31,7 @@ const DebateRoom = () => {
 
     const onLayoutChange = (currentLayout, allLayouts) => {
         setLayouts(allLayouts);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+        StorageService.set(STORAGE_KEY, allLayouts);
     };
 
     const [loading, setLoading] = useState(false);

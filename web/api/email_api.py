@@ -14,7 +14,7 @@ from services.notifications.sendgrid_service import get_sendgrid_client
 
 logger = logging.getLogger(__name__)
 
-email_api_bp = Blueprint('email_api_bp', __name__)
+email_api_bp = Blueprint('email_api_bp', __name__, url_prefix='/api/v1/email')
 
 def _run_async(coro):
     try:

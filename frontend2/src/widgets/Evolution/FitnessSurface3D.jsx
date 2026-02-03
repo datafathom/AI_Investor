@@ -1,21 +1,31 @@
-import React, { useMemo } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Stars } from '@react-three/drei';
+import React, { Suspense } from 'react';
+// Imports removed to prevent R3F side-effects
 
 const FitnessSurface3D = ({ data }) => {
+  // TEMPORARILY STUBBED - 3D disabled to debug crash
   return (
-    <div style={{ width: '100%', height: '400px', background: '#111', borderRadius: '12px' }}>
-      <Canvas camera={{ position: [0, 5, 10] }}>
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} />
-        <Stars />
-        <mesh rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[10, 10, 32, 32]} />
-          <meshStandardMaterial wireframe color="#00ff88" />
-        </mesh>
-        <OrbitControls />
-        <gridHelper args={[20, 20, 0xff0000, 0x444444]} />
-      </Canvas>
+    <div style={{ 
+      width: '100%', 
+      height: '400px', 
+      background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%)', 
+      borderRadius: '12px', 
+      overflow: 'hidden', 
+      position: 'relative',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      border: '1px solid #333'
+    }}>
+      <div style={{ 
+        color: '#666', 
+        fontFamily: 'monospace', 
+        fontSize: '12px',
+        textAlign: 'center' 
+      }}>
+        <div style={{ fontSize: '24px', marginBottom: '8px' }}>🧬</div>
+        3D Fitness Surface<br/>
+        <span style={{ color: '#444', fontSize: '10px' }}>(Renderer Disabled)</span>
+      </div>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import { authService } from '../utils/authService';
 import './TenantDashboard.css';
 import { Users, Shield, ArrowRightLeft, Plus } from 'lucide-react';

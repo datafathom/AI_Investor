@@ -33,7 +33,7 @@ from services.strategy.strategy_execution_service import get_strategy_execution_
 
 logger = logging.getLogger(__name__)
 
-strategy_bp = Blueprint('strategy', __name__, url_prefix='/api/strategy')
+strategy_bp = Blueprint('strategy', __name__, url_prefix='/api/v1/strategy')
 
 
 @strategy_bp.route('/create', methods=['POST'])

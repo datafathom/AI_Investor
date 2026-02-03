@@ -14,6 +14,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import useCommunityStore from '../stores/communityStore';
 import './CommunityForumsDashboard.css';
 

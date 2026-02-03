@@ -22,6 +22,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { analyticsService } from '../services/analyticsService';
+import { workerManager } from '../services/workerManager';
+import { StorageService } from '../utils/storageService';
 import { GlassCard } from '../components/Common';
 import './AdvancedRiskDashboard.css';
 
@@ -39,18 +41,20 @@ const AdvancedRiskDashboard = () => {
   };
   const STORAGE_KEY = 'layout_advanced_risk_dashboard_v2';
 
-  const [layouts, setLayouts] = useState(() => {
-     try {
-         const saved = localStorage.getItem(STORAGE_KEY);
-         return saved ? JSON.parse(saved) : DEFAULT_LAYOUT;
-     } catch (e) {
-         return DEFAULT_LAYOUT;
-     }
-  });
+  const [layouts, setLayouts] = useState(DEFAULT_LAYOUT);
+
+  // Async load layout
+  useEffect(() => {
+      const loadLayout = async () => {
+          const saved = await StorageService.get(STORAGE_KEY);
+          if (saved) setLayouts(saved);
+      };
+      loadLayout();
+  }, []);
 
   const onLayoutChange = (currentLayout, allLayouts) => {
       setLayouts(allLayouts);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+      StorageService.set(STORAGE_KEY, allLayouts);
   };
 
   const [riskMetrics, setRiskMetrics] = useState(null);
@@ -91,11 +95,16 @@ const AdvancedRiskDashboard = () => {
   const runMonteCarlo = async () => {
     setLoading(true);
     try {
-      const data = await analyticsService.runMonteCarlo({
-        portfolio_id: portfolioId,
-        simulations: 10000,
-        time_horizon_days: 30
+      // Use Client-Side Worker for immediate interaction
+      const data = await workerManager.runMonteCarlo({
+        initialValue: 1000000, // Example Portfolio Value
+        meanReturn: 0.08,      // Example 8% Annual Return
+        volatility: 0.15,      // Example 15% Volatility
+        timeHorizon: 30,       // 30 Days
+        iterations: 10000      // 10k simulations
       });
+      
+      // Map worker result to state structure if needed (worker returns snake_case mostly, matching prop names)
       setMonteCarloResult(data);
     } catch (error) {
       console.error('Error running Monte Carlo:', error);

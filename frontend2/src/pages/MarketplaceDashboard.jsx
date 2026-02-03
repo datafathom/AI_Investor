@@ -21,6 +21,7 @@
  */
 
 import React, { useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import useMarketplaceStore from '../stores/marketplaceStore';
 import './MarketplaceDashboard.css';
 

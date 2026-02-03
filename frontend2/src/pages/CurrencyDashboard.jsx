@@ -1,4 +1,5 @@
 import React from 'react';
+import { StorageService } from '../utils/storageService';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import CashPulse from '../widgets/Currency/CashPulse';
 import FXConversion from '../widgets/Currency/FXConversion';
@@ -33,7 +34,7 @@ const CurrencyDashboard = () => {
 
     const onLayoutChange = (currentLayout, allLayouts) => {
         setLayouts(allLayouts);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+        StorageService.set(STORAGE_KEY, allLayouts);
     };
 
     const currencyStats = [

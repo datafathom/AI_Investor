@@ -14,7 +14,7 @@ from services.ai.briefing_generator import get_briefing_generator
 
 logger = logging.getLogger(__name__)
 
-briefing_bp = Blueprint('briefing_bp', __name__)
+briefing_bp = Blueprint('briefing_bp', __name__, url_prefix='/api/v1/briefing')
 
 def _run_async(coro):
     try:

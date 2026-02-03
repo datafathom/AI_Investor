@@ -31,8 +31,8 @@ from services.watchlist.alert_service import get_alert_service
 
 logger = logging.getLogger(__name__)
 
-watchlist_bp = Blueprint('watchlist', __name__, url_prefix='/api/watchlist')
-alert_bp = Blueprint('alert', __name__, url_prefix='/api/alert')
+watchlist_bp = Blueprint('watchlist', __name__, url_prefix='/api/v1/alert')
+alert_bp = Blueprint('alert', __name__, url_prefix='/api/v1/alert')
 
 
 @watchlist_bp.route('/create', methods=['POST'])

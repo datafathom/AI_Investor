@@ -84,14 +84,29 @@ def parse_args(command_path: list, cmd_def: dict, raw_args: list) -> tuple[dict,
         
         i += 1
     
-    # Fill defaults
+    # Fill defaults and validate required
+    missing_required = []
     for arg_def in arg_defs:
         if arg_def["name"] not in args:
             if "default" in arg_def:
                 args[arg_def["name"]] = arg_def["default"]
-            elif not arg_def.get("required", False):
+            elif arg_def.get("required", False):
+                missing_required.append(arg_def["name"])
+            else:
                 args[arg_def["name"]] = None
                 
+    if missing_required:
+        print(f"Error: Missing required argument(s): {', '.join(missing_required)}", file=sys.stderr)
+        # Usage hint
+        usage = f"Usage: python cli.py {' '.join(command_path)}"
+        for arg_def in arg_defs:
+            if arg_def.get("required"):
+                usage += f" <{arg_def['name']}>"
+            else:
+                usage += f" [{arg_def['name']}]"
+        print(usage, file=sys.stderr)
+        sys.exit(1)
+
     for flag_def in flag_defs:
         if flag_def["name"] not in flags:
             if "default" in flag_def:
@@ -147,33 +162,35 @@ def main():
         print_help(registry)
         sys.exit(1)
     
+
     # Simple recursive parsing logic
     command_path = []
     raw_args = []
     parsing_args = False
     
-    for arg in sys.argv[1:]:
-        if not parsing_args:
-            test_path = command_path + [arg]
-            test_cmd = registry.get_command(test_path)
-            
-            if test_cmd:
-                command_path.append(arg)
-            else:
-                current_cmd = registry.get_command(command_path)
-                if current_cmd and "subcommands" in current_cmd:
-                    subcommands = current_cmd.get("subcommands", {})
-                    if arg in subcommands:
-                        command_path.append(arg)
-                    else:
-                        parsing_args = True
-                        raw_args.append(arg)
-                else:
-                    parsing_args = True
-                    raw_args.append(arg)
-        else:
-            raw_args.append(arg)
+    # We need to iterate carefully. Once we hit a non-command arg, everything else is args.
+    # But we also need to handle nested subcommands.
     
+    arg_iter = iter(sys.argv[1:])
+    for arg in arg_iter:
+        if parsing_args:
+            raw_args.append(arg)
+            continue
+            
+        # Try to resolve next step in path
+        test_path = command_path + [arg]
+        test_cmd = registry.get_command(test_path)
+        
+        if test_cmd:
+            command_path.append(arg)
+            # If this command has NO subcommands, we are done parsing path
+            if "subcommands" not in test_cmd:
+                parsing_args = True
+        else:
+            # Current arg is not a command/subcommand -> it's an argument
+            parsing_args = True
+            raw_args.append(arg)
+            
     cmd_def = registry.get_command(command_path)
     if not cmd_def:
         print(f"Error: Unknown command: {' '.join(command_path)}", file=sys.stderr)
@@ -195,6 +212,17 @@ def main():
     try:
         args, flags = parse_args(command_path, cmd_def, raw_args)
         handler(**args, **flags)
+        
+        # Check for post_handler (sequential execution)
+        post_handler_path = cmd_def.get("post_handler")
+        if post_handler_path:
+            # Re-resolve using the registry's own import logic to avoid duplicate code
+            mod_path, func_name = post_handler_path.rsplit(":", 1)
+            import importlib
+            mod = importlib.import_module(mod_path)
+            p_handler = getattr(mod, func_name)
+            p_handler(**args, **flags)
+            
     except Exception as e:
         logger.exception(f"Error executing command: {e}")
         sys.exit(1)

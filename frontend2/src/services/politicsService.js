@@ -6,7 +6,8 @@ export const politicsService = {
      */
     async getDisclosures() {
         try {
-            return await apiClient.get('/politics/disclosures');
+            const response = await apiClient.get('/politics/disclosures');
+            return response.data || [];
         } catch (error) {
             console.error('Error in politicsService.getDisclosures:', error);
             throw error;
@@ -19,7 +20,8 @@ export const politicsService = {
      */
     async getAlphaScore(ticker) {
         try {
-            return await apiClient.get(`/politics/alpha/${ticker}`);
+            const response = await apiClient.get(`/politics/alpha/${ticker}`);
+            return response.data || null;
         } catch (error) {
             console.error(`Error in politicsService.getAlphaScore for ${ticker}:`, error);
             throw error;

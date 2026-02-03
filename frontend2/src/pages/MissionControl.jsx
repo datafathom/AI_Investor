@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import { Activity, Shield, Terminal, AlertOctagon, Heart, Zap, ShieldAlert, Cpu } from 'lucide-react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import NetworkMap from '../components/MissionControl/NetworkMap';
@@ -30,7 +31,7 @@ const MissionControl = () => {
 
     const onLayoutChange = (currentLayout, allLayouts) => {
         setLayouts(allLayouts);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+        StorageService.set(STORAGE_KEY, allLayouts);
     };
     const [systemPulse, setSystemPulse] = useState(true);
     const [logs, setLogs] = useState([

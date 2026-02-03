@@ -19,6 +19,7 @@ from typing import List, Dict, Any, Optional
 from datetime import datetime, timedelta
 import random
 from pydantic import BaseModel
+from services.social.inertia_cache import get_inertia_cache
 
 logger = logging.getLogger(__name__)
 
@@ -66,12 +67,18 @@ class RedditClient:
         """
         if self.mock:
             score = random.uniform(-0.5, 0.9)
+            velocity = random.uniform(10, 1000)
+            
+            # Update shared inertia cache
+            cache = get_inertia_cache()
+            cache.update_inertia(ticker.upper(), score, velocity)
+            
             return {
                 "ticker": ticker.upper(),
                 "sentiment_score": round(score, 2),
                 "sentiment_label": "BULLISH" if score > 0.2 else (
                     "BEARISH" if score < -0.2 else "NEUTRAL"),
-                "mention_count": random.randint(50, 5000),
+                "mention_count": int(velocity * 0.5),
                 "hype_score": random.randint(10, 100)
             }
         return {}

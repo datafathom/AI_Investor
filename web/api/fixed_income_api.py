@@ -23,7 +23,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-fixed_income_bp = Blueprint('fixed_income', __name__)
+fixed_income_bp = Blueprint('fixed_income', __name__, url_prefix='/api/v1/fixed_income')
 _service = FixedIncomeService()
 
 

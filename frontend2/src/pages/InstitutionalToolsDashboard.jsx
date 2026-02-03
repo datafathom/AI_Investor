@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import { Network, Activity, Users, Shield, Layout, Settings, PlusCircle } from 'lucide-react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { PortfolioTreeMap, SentimentHeatmap, StatCard } from '../components/DataViz';

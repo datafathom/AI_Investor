@@ -19,7 +19,7 @@ const useEvolutionStore = create((set, get) => ({
     initSocket: () => {
         if (get().socket) return;
         
-        const socket = io('http://localhost:5050');
+        const socket = io('http://localhost:5050', { transports: ['polling'] });
         
         socket.on('connect', () => {
             console.log('Evolution Socket Connected');
@@ -55,8 +55,7 @@ const useEvolutionStore = create((set, get) => ({
     
     startEvolution: async () => {
         try {
-            const response = await apiClient.post('/evolution/start');
-            const data = response.data;
+            const data = await apiClient.post('/evolution/start');
             if (data.status === 'success') {
                 set({ 
                     isEvolving: true, 
@@ -71,14 +70,14 @@ const useEvolutionStore = create((set, get) => ({
 
     spliceAgents: async (p1, p2, resolvedGenes = null) => {
         try {
-            const response = await apiClient.post('/evolution/splice', {
+            const data = await apiClient.post('/evolution/splice', {
                 parent1_id: p1.id,
                 parent2_id: p2.id,
                 parent1_genes: p1.genes,
                 parent2_genes: p2.genes,
                 resolved_genes: resolvedGenes
             });
-            return response.data;
+            return data;
         } catch (error) {
             console.error('Splicing failed:', error);
         }
@@ -93,14 +92,14 @@ const useEvolutionStore = create((set, get) => ({
                 close: 100 + Math.sin(i / 5) * 10 + (Math.random() - 0.5) * 5
             }));
 
-            const response = await apiClient.post('/evolution/playback', {
+            const data = await apiClient.post('/evolution/playback', {
                 agent_id: agentId,
                 genes: genes,
                 price_data: mockPriceData
             });
 
-            if (response.data.status === 'success') {
-                set({ playbackResult: response.data.data });
+            if (data.status === 'success') {
+                set({ playbackResult: data.data });
             }
         } catch (error) {
             console.error('Playback failed:', error);
@@ -111,9 +110,9 @@ const useEvolutionStore = create((set, get) => ({
 
     fetchGenePulse: async (agentId, genes) => {
         try {
-            const response = await apiClient.post(`/evolution/pulse/${agentId}`, { genes });
-            if (response.data.status === 'success') {
-                set({ genePulse: response.data.data });
+            const data = await apiClient.post(`/evolution/pulse/${agentId}`, { genes });
+            if (data.status === 'success') {
+                set({ genePulse: data.data });
             }
         } catch (error) {
             console.error('Pulse fetch failed:', error);

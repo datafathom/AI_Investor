@@ -9,34 +9,76 @@ import axios from 'axios';
 import { useStore } from '../store/store';
 import useHardwareStore from '../stores/hardwareStore';
 import hardwareService from './hardwareService';
+import { StorageService } from '../utils/storageService';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5050/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5050/api/v1';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000,
+  timeout: 30000,
 });
+
+// --- Caching Configuration ---
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes default
+const cache = {
+  get: async (key) => {
+    const item = await StorageService.get(`api_cache_${key}`);
+    if (!item) return null;
+    
+    // StorageService automatically parses JSON if it was stored as an object
+    const { data, expiry } = item;
+    if (Date.now() > expiry) {
+      await StorageService.remove(`api_cache_${key}`);
+      return null;
+    }
+    return data;
+  },
+  set: async (key, data, ttl = CACHE_TTL) => {
+    const item = {
+      data,
+      expiry: Date.now() + ttl,
+    };
+    await StorageService.set(`api_cache_${key}`, item);
+  }
+};
 
 // Request Interceptor
 apiClient.interceptors.request.use(
   async (config) => {
+    console.log(`[API Debug] Request to ${config.url} started`);
+    // Check Cache for GET requests
+    if (config.method === 'get' && config.useCache) {
+      const cachedData = await cache.get(config.url + JSON.stringify(config.params || {}));
+      if (cachedData) {
+        config.adapter = () => Promise.resolve({
+          data: cachedData,
+          status: 200,
+          statusText: 'OK',
+          headers: {},
+          config,
+          request: {}
+        });
+      }
+    }
     // Set global loading state
     const setLoading = useStore.getState().setLoading;
     setLoading(true);
 
     // Add Auth Token if available
-    const token = localStorage.getItem('widget_os_token') || 
-                  localStorage.getItem('token') || 
-                  localStorage.getItem('auth_token');
+    const token = await StorageService.get('widget_os_token') || 
+                  await StorageService.get('token') || 
+                  await StorageService.get('auth_token');
+
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
 
     // Add Tenant ID
-    config.headers['X-Tenant-ID'] = localStorage.getItem('widget_os_tenant_id') || 'default';
+    const tenantId = await StorageService.get('widget_os_tenant_id');
+    config.headers['X-Tenant-ID'] = tenantId || 'default';
 
     // Phase 6 / Sprint 6: Hardware Signature for high-value transactions (Multi-Sig)
     const HIGH_VALUE_THRESHOLD = 200000; // $200k threshold for hardware signature
@@ -86,6 +128,14 @@ apiClient.interceptors.response.use(
   (response) => {
     const setLoading = useStore.getState().setLoading;
     setLoading(false);
+
+    // Populate Cache for GET requests
+    const config = response.config;
+    if (config.method === 'get' && config.useCache) {
+      // Async set, don't await
+      cache.set(config.url + JSON.stringify(config.params || {}), response.data, config.cacheTTL);
+    }
+
     return response.data;
   },
   async (error) => {
@@ -96,8 +146,14 @@ apiClient.interceptors.response.use(
 
     // 401 Unauthorized - Redirect to login
     if (error.response?.status === 401 && !originalRequest._retry) {
-      // Potentially handle token refresh here if implemented
-      window.location.href = '/login';
+      console.error(`[API] 401 Unauthorized for ${originalRequest.url}. Redirecting to login.`);
+      
+      // CRITICAL: Clear token to prevent infinite loops if the token is invalid/expired
+      await StorageService.remove('widget_os_token');
+      await StorageService.remove('widget_os_user');
+      await StorageService.remove('widget_os_tenant_id');
+      
+      window.location.href = '/'; // Redirect to root, AuthGuard will handle showing the modal
       return Promise.reject(error);
     }
 

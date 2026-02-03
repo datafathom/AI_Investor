@@ -1,4 +1,5 @@
 import React from 'react';
+import { StorageService } from '../utils/storageService';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import AbuseMonitor from '../widgets/Compliance/AbuseMonitor';
 import AuditLog from '../widgets/Compliance/AuditLog';

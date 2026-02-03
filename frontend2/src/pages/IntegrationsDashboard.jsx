@@ -21,6 +21,7 @@
  */
 
 import React, { useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import useIntegrationStore from '../stores/integrationStore';
 import './IntegrationsDashboard.css';
 

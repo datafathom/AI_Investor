@@ -27,7 +27,7 @@ from services.integration.integration_service import get_integration_service
 
 logger = logging.getLogger(__name__)
 
-integration_bp = Blueprint('integration', __name__, url_prefix='/api/integration')
+integration_bp = Blueprint('integration', __name__, url_prefix='/api/v1/integration')
 
 
 @integration_bp.route('/create', methods=['POST'])

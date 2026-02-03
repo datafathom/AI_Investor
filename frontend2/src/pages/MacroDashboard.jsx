@@ -1,4 +1,5 @@
 import React from 'react';
+import { StorageService } from '../utils/storageService';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import WorldMap from '../widgets/Macro/GlobalMacroMap';
 import FuturesCurve from '../widgets/Macro/FuturesCurve';

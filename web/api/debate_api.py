@@ -14,7 +14,7 @@ from agents.debate_chamber_agent import get_debate_agent
 
 logger = logging.getLogger(__name__)
 
-debate_bp = Blueprint('debate_bp', __name__)
+debate_bp = Blueprint('debate_bp', __name__, url_prefix='/api/v1/ai/debate')
 
 def _run_async(coro):
     try:
@@ -25,7 +25,7 @@ def _run_async(coro):
         pass
     return asyncio.run(coro)
 
-@debate_bp.route('/debate/start', methods=['POST'])
+@debate_bp.route('/start', methods=['POST'])
 def start_debate():
     """
     Start a new debate session.
@@ -42,7 +42,7 @@ def start_debate():
         logger.error("Failed to run debate for %s: %s", ticker, e)
         return jsonify({"error": str(e)}), 500
 
-@debate_bp.route('/debate/stream', methods=['GET'])
+@debate_bp.route('/stream', methods=['GET'])
 def stream_debate():
     """
     Get the current state of the debate.
@@ -57,7 +57,7 @@ def stream_debate():
         "consensus": agent.consensus
     })
 
-@debate_bp.route('/debate/inject', methods=['POST'])
+@debate_bp.route('/inject', methods=['POST'])
 def inject_argument():
     """
     Inject a user argument into the debate.
@@ -68,7 +68,7 @@ def inject_argument():
     # Mocking successful injection for now
     return jsonify({"status": "success", "message": "Argument received"})
 
-@debate_bp.route('/debate/run/<ticker>', methods=['POST'])
+@debate_bp.route('/run/<ticker>', methods=['POST'])
 def run_debate(ticker: str):
     """
     Trigger a new debate for a ticker.

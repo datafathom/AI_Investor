@@ -34,7 +34,7 @@ from typing import Optional
 
 logger = logging.getLogger(__name__)
 
-market_data_bp = Blueprint('market_data', __name__)
+market_data_bp = Blueprint('market_data', __name__, url_prefix='/api/v1/market')
 
 
 def _get_alpha_client():
@@ -43,14 +43,7 @@ def _get_alpha_client():
     return get_alpha_vantage_client()
 
 
-def _run_async(coro):
-    """Helper to run async functions in sync context."""
-    try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-    return loop.run_until_complete(coro)
+# Removed _run_async helper as services are now synchronous to prevent eventlet deadlocks.
 
 
 def _build_response(data, source: str = "alpha_vantage", cache_hit: bool = False):
@@ -127,7 +120,7 @@ def get_quote(symbol: str):
         if use_mock:
             client.mock = True
 
-        quote = _run_async(client.get_quote(symbol))
+        quote = client.get_quote(symbol)
 
         if not quote:
             return jsonify(_build_error_response(
@@ -244,7 +237,7 @@ def get_history(symbol: str):
         adjusted = request.args.get('adjusted', 'true').lower() == 'true'
 
         client = _get_alpha_client()
-        bars = _run_async(client.get_daily(symbol, outputsize=period, adjusted=adjusted))
+        bars = client.get_daily(symbol, outputsize=period, adjusted=adjusted)
 
         if not bars:
             return jsonify(_build_error_response(
@@ -339,7 +332,7 @@ def get_intraday(symbol: str):
             )), 400
 
         client = _get_alpha_client()
-        bars = _run_async(client.get_intraday(symbol, interval=interval, outputsize=outputsize))
+        bars = client.get_intraday(symbol, interval=interval, outputsize=outputsize)
 
         if not bars:
             return jsonify(_build_error_response(
@@ -411,7 +404,7 @@ def get_short_interest(symbol: str):
             service.quandl.mock = True
             service.av.mock = True
 
-        analysis = _run_async(service.analyze_symbol(symbol))
+        analysis = service.analyze_symbol(symbol)
 
         if not analysis:
             return jsonify(_build_error_response(
@@ -468,7 +461,7 @@ def get_earnings():
             )), 400
 
         client = _get_alpha_client()
-        earnings = _run_async(client.get_earnings_calendar(symbol=symbol, horizon=horizon))
+        earnings = client.get_earnings_calendar(symbol=symbol, horizon=horizon)
 
         if not earnings:
             return jsonify(_build_response({

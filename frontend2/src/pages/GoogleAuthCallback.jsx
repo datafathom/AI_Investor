@@ -14,6 +14,7 @@
 
 import React, { useEffect, useState } from 'react';
 import apiClient from '../services/apiClient';
+import { StorageService } from '../utils/storageService';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import './GoogleAuthCallback.css';
 
@@ -26,7 +27,7 @@ const GoogleAuthCallback = () => {
     useEffect(() => {
         const handleCallback = async () => {
             const code = searchParams.get('code');
-            const state = searchParams.get('state');
+            const state = searchParams.get('state'); // stored role might be in state?
             const errorParam = searchParams.get('error');
 
             if (errorParam) {
@@ -45,27 +46,27 @@ const GoogleAuthCallback = () => {
                 // Send code to backend for processing
                 const response = await apiClient.post('/auth/google/callback', { 
                     code,
-                    role: role || 'user'
+                    role: 'user' // Default to user if not specified
                 });
                 
                 const data = response.data;
                 
-                authService.setSession(data.token, data.user);
+                // authService.setSession(data.token, data.user); // Deprecated/Undefined
 
                 if (data.success) {
                     // Store session token
                     if (data.session_token) {
-                        localStorage.setItem('auth_token', data.session_token);
+                        StorageService.set('auth_token', data.session_token);
                     }
 
                     // Store user info
                     if (data.user) {
-                        localStorage.setItem('user', JSON.stringify(data.user));
+                        StorageService.set('user', data.user);
                     }
 
                     // Store Google tokens (encrypted in production)
                     if (data.tokens) {
-                        localStorage.setItem('google_tokens', JSON.stringify(data.tokens));
+                        StorageService.set('google_tokens', data.tokens);
                     }
 
                     setStatus('success');

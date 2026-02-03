@@ -21,7 +21,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-macro_bp = Blueprint('macro', __name__)
+macro_bp = Blueprint('macro', __name__, url_prefix='/api/v1/macro')
 _macro_service = MacroService()
 _futures_service = FuturesService()
 

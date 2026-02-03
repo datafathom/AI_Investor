@@ -28,7 +28,7 @@ from services.enterprise.multi_user_service import get_multi_user_service
 
 logger = logging.getLogger(__name__)
 
-enterprise_bp = Blueprint('enterprise', __name__, url_prefix='/api/enterprise')
+enterprise_bp = Blueprint('enterprise', __name__, url_prefix='/api/v1/enterprise')
 
 
 @enterprise_bp.route('/organization/create', methods=['POST'])

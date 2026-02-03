@@ -17,7 +17,7 @@ from flask import Blueprint, request, jsonify
 from services.data.binance_service import get_binance_client
 import logging
 
-binance_bp = Blueprint('binance_bp', __name__)
+binance_bp = Blueprint('binance_bp', __name__, url_prefix='/api/v1/binance')
 logger = logging.getLogger(__name__)
 
 # TODO: Get mock status from config/env

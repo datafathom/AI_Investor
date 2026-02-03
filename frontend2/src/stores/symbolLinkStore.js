@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { storageAdapter } from '../utils/storageAdapter';
 
 /**
  * Symbol Link Store
@@ -40,6 +41,7 @@ const useSymbolLinkStore = create(
     }),
     {
       name: 'ai-investor-symbol-links',
+      storage: createJSONStorage(() => storageAdapter),
     }
   )
 );

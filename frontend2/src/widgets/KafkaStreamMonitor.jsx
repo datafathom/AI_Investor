@@ -36,15 +36,6 @@ const KafkaStreamMonitor = ({ hideHeader = false }) => {
                 ]);
             }
         };
-            } catch (e) {
-                 // Mock
-                 setStats([
-                    { topic: 'market-data', msg_per_sec: 250, lag: 5 },
-                    { topic: 'options-flow', msg_per_sec: 45, lag: 1 },
-                    { topic: 'risk-alerts', msg_per_sec: 0, lag: 0 },
-                ]);
-            }
-        };
         
         fetchStats();
         const interval = setInterval(fetchStats, 5000);

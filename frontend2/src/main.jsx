@@ -9,6 +9,10 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import ErrorBoundary from './components/ErrorBoundary';
 import { initErrorTracking } from './utils/errorTracking';
+import { initRequestGuard } from './utils/requestGuard';
+
+// Enforce centralized API usage
+initRequestGuard();
 
 // Initialize error tracking
 initErrorTracking();

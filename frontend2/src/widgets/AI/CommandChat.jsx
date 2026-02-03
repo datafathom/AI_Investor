@@ -23,6 +23,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import apiClient from '../../services/apiClient';
+import { StorageService } from '../../utils/storageService';
 import './CommandChat.css';
 
 const API_BASE = '/ai/autocoder';
@@ -39,23 +40,21 @@ const CommandChat = () => {
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
 
-    // Load chat history from localStorage
+    // Load chat history from storage
     useEffect(() => {
-        const saved = localStorage.getItem('autocoder_chat_history');
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                setMessages(parsed.slice(-20)); // Keep last 20 messages
-            } catch (e) {
-                console.error('Failed to load chat history:', e);
+        const loadHistory = async () => {
+            const saved = await StorageService.get('autocoder_chat_history');
+            if (saved) {
+                setMessages(saved.slice(-20)); // Keep last 20 messages
             }
-        }
+        };
+        loadHistory();
     }, []);
 
-    // Save chat history to localStorage
+    // Save chat history to storage
     useEffect(() => {
         if (messages.length > 0) {
-            localStorage.setItem('autocoder_chat_history', JSON.stringify(messages.slice(-20)));
+            StorageService.set('autocoder_chat_history', messages.slice(-20));
         }
     }, [messages]);
 
@@ -153,9 +152,9 @@ const CommandChat = () => {
         }
     };
 
-    const clearHistory = () => {
+    const clearHistory = async () => {
         setMessages([]);
-        localStorage.removeItem('autocoder_chat_history');
+        await StorageService.remove('autocoder_chat_history');
     };
 
     return (

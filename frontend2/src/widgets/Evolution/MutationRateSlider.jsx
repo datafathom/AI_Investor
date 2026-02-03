@@ -9,7 +9,7 @@ const MutationRateSlider = () => {
 
   useEffect(() => {
     // Connect to backend WebSocket
-    const newSocket = io('http://localhost:5050');
+    const newSocket = io('http://localhost:5050', { transports: ['polling'] });
     setSocket(newSocket);
 
     newSocket.on('mutation_rate_changed', (data) => {

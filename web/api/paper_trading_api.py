@@ -30,8 +30,8 @@ from services.trading.simulation_service import get_simulation_service
 
 logger = logging.getLogger(__name__)
 
-paper_trading_bp = Blueprint('paper_trading', __name__, url_prefix='/api/paper-trading')
-simulation_bp = Blueprint('simulation', __name__, url_prefix='/api/simulation')
+paper_trading_bp = Blueprint('paper_trading', __name__, url_prefix='/api/v1/simulation')
+simulation_bp = Blueprint('simulation', __name__, url_prefix='/api/v1/simulation')
 
 
 @paper_trading_bp.route('/portfolio/create', methods=['POST'])

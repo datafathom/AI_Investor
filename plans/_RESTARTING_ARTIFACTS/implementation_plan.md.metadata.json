@@ -1,6 +1,0 @@
-{
-  "artifactType": "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
-  "summary": "Implementation plan for Cycle M: Trading & Strategy Stabilization.\nFocuses on fixing imports, Pydantic schemas, and FastAPI response handling for Trading, Strategy, Backtesting, Options, and Margin APIs.",
-  "updatedAt": "2026-02-02T14:33:55.067420200Z",
-  "version": "14"
-}

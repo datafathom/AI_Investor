@@ -1,4 +1,12 @@
-/* InfiniteGrid styles are currently inline or handled globally */
-.infinite-grid-container {
-    perspective: 1000px;
+@keyframes gridMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 40px;
+  }
+}
+
+.animate-grid-move {
+  animation: gridMove 2s linear infinite;
 }

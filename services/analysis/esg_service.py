@@ -35,7 +35,7 @@ class ESGService:
         }
         logger.info("ESGService initialized with Ticker-Sector mapping")
 
-    async def get_portfolio_esg_scores(self, tickers: List[str]) -> ESGScore:
+    def get_portfolio_esg_scores(self, tickers: List[str]) -> ESGScore:
         """Calculates scores based on portfolio composition."""
         if not tickers: tickers = ["AAPL", "MSFT"]
         
@@ -60,7 +60,7 @@ class ESGService:
             grade="A" if composite > 80 else ("B" if composite > 60 else "C")
         )
 
-    async def calculate_carbon_footprint(self, portfolio_value: float, tickers: List[str]) -> CarbonFootprint:
+    def calculate_carbon_footprint(self, portfolio_value: float, tickers: List[str]) -> CarbonFootprint:
         """Estimates carbon footprint based on portfolio value and energy exposure."""
         energy_weight = len([t for t in tickers if self._sector_map.get(t) == "Energy"]) / max(1, len(tickers))
         intensity_factor = 50.0 + (energy_weight * 400.0) # Base 50, up to 450 for energy-heavy
@@ -74,7 +74,7 @@ class ESGService:
             offset_cost_usd=round(total_tons * 18.0, 2)
         )
 
-    async def get_alpha_vs_carbon_data(self) -> List[Dict]:
+    def get_alpha_vs_carbon_data(self) -> List[Dict]:
         """Returns dynamic scatterplot data."""
         data = []
         for t, sector in self._sector_map.items():
@@ -89,7 +89,7 @@ class ESGService:
             })
         return data
 
-    async def detect_sin_stocks(self) -> List[Dict]:
+    def detect_sin_stocks(self) -> List[Dict]:
         """Identifies holdings that violate ESG filters."""
         return [
             {"ticker": "MO", "name": "Altria Group", "violation": "Tobacco", "weight": 1.2},

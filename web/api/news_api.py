@@ -29,7 +29,7 @@ from services.news.sentiment_analysis_service import get_sentiment_analysis_serv
 
 logger = logging.getLogger(__name__)
 
-news_bp = Blueprint('news', __name__, url_prefix='/api/news')
+news_bp = Blueprint('news', __name__, url_prefix='/api/v1/news')
 
 
 @news_bp.route('/articles', methods=['GET'])

@@ -14,7 +14,7 @@ from services.data.crypto_compare_service import get_crypto_client
 
 logger = logging.getLogger(__name__)
 
-crypto_api_bp = Blueprint('crypto_api_bp', __name__)
+crypto_api_bp = Blueprint('crypto_api_bp', __name__, url_prefix='/api/v1/crypto')
 
 def _run_async(coro):
     return asyncio.run(coro)

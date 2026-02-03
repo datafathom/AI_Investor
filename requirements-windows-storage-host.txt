@@ -1,2 +1,0 @@
--r requirements-core.txt
-pywin32==311

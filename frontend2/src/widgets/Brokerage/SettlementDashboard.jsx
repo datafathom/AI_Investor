@@ -12,7 +12,6 @@ const SettlementDashboard = () => {
     const fetchBalances = async () => {
         setLoading(true);
         try {
-        try {
             const response = await apiClient.get('/settlement/balances');
             setData(response.data);
         } catch (e) {
@@ -24,7 +23,6 @@ const SettlementDashboard = () => {
     };
 
     const handleConvert = async () => {
-        try {
         try {
             const response = await apiClient.post('/settlement/convert', convertData);
             const result = response.data;

@@ -21,6 +21,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 
 import useAlgoStore from '../stores/algoStore';
 import './AlgorithmicTradingDashboard.css';
@@ -66,7 +67,7 @@ const AlgorithmicTradingDashboard = () => {
 
   const onLayoutChange = (currentLayout, allLayouts) => {
     setLayouts(allLayouts);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+    StorageService.set(STORAGE_KEY, allLayouts);
   };
 
   useEffect(() => {

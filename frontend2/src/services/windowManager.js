@@ -1,3 +1,5 @@
+import { StorageService } from '../utils/storageService';
+
 /**
  * Window Manager Service
  * 
@@ -6,6 +8,7 @@
  */
 
 class WindowManager {
+  // ... constructor ...
   constructor() {
     this.windows = new Map(); // windowId -> windowData
     this.windowStack = []; // Array of windowIds in z-order (last = top)
@@ -23,6 +26,8 @@ class WindowManager {
       bottomRight: { x: '50%', y: '50%', width: '50%', height: '50%' },
     };
   }
+
+  // ... (methods skipped up to saveLayout) ...
 
   /**
    * Register a new window
@@ -353,7 +358,7 @@ class WindowManager {
     try {
       const layouts = this.getSavedLayouts();
       layouts[layoutName] = layout;
-      localStorage.setItem('window_layouts', JSON.stringify(layouts));
+      StorageService.set('window_layouts', layouts);
       this.emit('layout:saved', layout);
       return layout;
     } catch (error) {
@@ -399,8 +404,8 @@ class WindowManager {
    */
   getSavedLayouts() {
     try {
-      const stored = localStorage.getItem('window_layouts');
-      return stored ? JSON.parse(stored) : {};
+      const stored = StorageService.getSync('window_layouts');
+      return stored || {};
     } catch (error) {
       console.error('Failed to get saved layouts:', error);
       return {};
@@ -414,7 +419,7 @@ class WindowManager {
     try {
       const layouts = this.getSavedLayouts();
       delete layouts[layoutName];
-      localStorage.setItem('window_layouts', JSON.stringify(layouts));
+      StorageService.set('window_layouts', layouts);
       this.emit('layout:deleted', layoutName);
       return true;
     } catch (error) {

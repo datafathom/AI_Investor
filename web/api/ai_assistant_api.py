@@ -28,7 +28,7 @@ from services.ai_assistant.learning_service import get_learning_service
 
 logger = logging.getLogger(__name__)
 
-ai_assistant_bp = Blueprint('ai_assistant', __name__, url_prefix='/api/ai-assistant')
+ai_assistant_bp = Blueprint('ai_assistant', __name__, url_prefix='/api/v1/ai_assistant')
 
 
 @ai_assistant_bp.route('/conversation/create', methods=['POST'])

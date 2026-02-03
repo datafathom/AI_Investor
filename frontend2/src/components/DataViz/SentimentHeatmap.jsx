@@ -9,7 +9,6 @@ const SentimentHeatmap = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-            try {
                 const response = await apiClient.get('/social/sentiment/heatmap');
                 const result = response.data;
                 if (result.status === 'success') {

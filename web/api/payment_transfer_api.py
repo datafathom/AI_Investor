@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, request, g
 from web.auth_utils import login_required
 from services.system.social_auth_service import get_social_auth_service
 
-payment_transfer_bp = Blueprint('payment_transfer', __name__, url_prefix='/api/v1/payments')
+payment_transfer_bp = Blueprint('payment_transfer', __name__, url_prefix='/api/v1/payment_transfer')
 
 @payment_transfer_bp.route('/linked-vendors', methods=['GET'])
 @login_required

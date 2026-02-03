@@ -4,12 +4,22 @@ import sys
 import json
 from pathlib import Path
 import logging
+from typing import Any, Dict
 
 # Add project root to path
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 logger = logging.getLogger(__name__)
+
+# Inject Any and Dict into builtins to avoid NameErrors in blueprints during static import
+import builtins
+import typing
+builtins.Any = typing.Any
+builtins.Dict = typing.Dict
+builtins.List = typing.List
+builtins.Optional = typing.Optional
+builtins.Union = typing.Union
 
 def build_docs(**kwargs):
     """
@@ -63,6 +73,98 @@ def build_docs(**kwargs):
         print(f"Failed to build documentation: {e}")
         import traceback
         traceback.print_exc()
+
+def build_api_routes_txt(**kwargs):
+    """Generates notes/api_routes.txt from live Flask app."""
+    print("Generating API Routes (TXT)...")
+    _mock_infrastructure()
+    try:
+        from web.app import create_app
+        app, _ = create_app()
+        spec = _generate_manual_spec(app)
+        
+        output_path = PROJECT_ROOT / "notes" / "api_routes.txt"
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        paths = sorted(spec["paths"].keys())
+        
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write("# AI Investor - Backend API Routes\n")
+            f.write("=" * 40 + "\n\n")
+            f.write("Base URL: http://localhost:5050\n\n")
+            for path in paths:
+                for method, details in spec["paths"][path].items():
+                    f.write(f"- {method.upper():7} {path}\n")
+                    # if details.get("summary"):
+                    #    f.write(f"  {details['summary']}\n")
+            
+        print(f"SUCCESS: Generated {output_path}")
+    except Exception as e:
+        print(f"Error generating API routes TXT: {e}")
+
+def build_api_routes_json(**kwargs):
+    """Generates notes/api_routes.json from live Flask app."""
+    print("Generating API Routes (JSON)...")
+    _mock_infrastructure()
+    try:
+        from web.app import create_app
+        app, _ = create_app()
+        spec = _generate_manual_spec(app)
+
+        output_path = PROJECT_ROOT / "notes" / "api_routes.json"
+        
+        routes_list = []
+        for path, methods in spec["paths"].items():
+            for method, details in methods.items():
+                routes_list.append({
+                    "path": path,
+                    "method": method.upper(),
+                    "summary": details.get("summary", "No summary"),
+                    "parameters": details.get("parameters", {}),
+                    "request_body": details.get("requestBody", None),
+                    "response_body": details.get("responses", {}),
+                    "error_codes": {"400": "Bad Request", "401": "Unauthorized", "500": "Server Error"},
+                    "authentication": "Bearer Token" if "security" in details else "None",
+                    "rate_limiting": "100/min",
+                    "caching": None
+                })
+        
+        # Sort by URL
+        routes_list.sort(key=lambda x: x["path"])
+        
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(routes_list, f, indent=2)
+            
+        print(f"SUCCESS: Generated {output_path}")
+    except Exception as e:
+        print(f"Error generating API routes JSON: {e}")
+        import traceback
+        traceback.print_exc()
+
+def build_api_routes_postman(**kwargs):
+    """Generates a date-stamped Postman Collection in notes/."""
+    from datetime import datetime
+    today = datetime.now().strftime("%Y-%m-%d")
+    collection_name = f"AI_Investor_{today}_postmanCollection"
+    
+    print(f"Generating Postman Collection: {collection_name}...")
+    _mock_infrastructure()
+    try:
+        from web.app import create_app
+        app, _ = create_app()
+        spec = _generate_manual_spec(app)
+        
+        postman_data = _convert_to_postman(spec, name=collection_name)
+        
+        output_path = PROJECT_ROOT / "notes" / f"{collection_name}.json"
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(postman_data, f, indent=2)
+            
+        print(f"SUCCESS: Generated {output_path}")
+        print("You can now import this file into the Postman application.")
+    except Exception as e:
+        print(f"Error generating Postman collection: {e}")
 
 def serve_docs(**kwargs):
     """
@@ -238,13 +340,12 @@ def _get_category_for_tag(tag: str) -> str:
     return "📁 Other"
 
 
-def _convert_to_postman(openapi_spec):
+def _convert_to_postman(openapi_spec, name="AI Investor API"):
     """
     Convert OpenAPI 2.0/3.0 to Postman Collection v2.1 format.
     Organizes endpoints into logical nested folder hierarchy.
     """
     info = openapi_spec.get("info", {})
-    name = info.get("title", "AI Investor API")
     description = info.get("description", "API Collection")
     
     postman = {
@@ -288,6 +389,11 @@ def _convert_to_postman(openapi_spec):
             if primary_tag not in category_groups[category]:
                 category_groups[category][primary_tag] = []
                 
+            # Extract common parameters from path (e.g. <user_id>)
+            import re
+            path_variables = re.findall(r'<(\w+)>', path)
+            postman_path = path.replace('<', ':').replace('>', '')
+            
             # Create request item
             item = {
                 "name": details.get("summary") or details.get("operationId") or f"{method.upper()} {path}",
@@ -306,19 +412,57 @@ def _convert_to_postman(openapi_spec):
                         }
                     ],
                     "url": {
-                        "raw": "{{baseUrl}}" + path,
+                        "raw": "{{baseUrl}}" + postman_path,
                         "host": ["{{baseUrl}}"],
-                        "path": path.strip("/").split("/")
+                        "path": postman_path.strip("/").split("/")
                     },
                     "description": details.get("description", "")
                 }
             }
             
-            # Add parameters/body if exists
+            # Add path variables to request
+            if path_variables:
+                item["request"]["url"]["variable"] = [
+                    {"key": var, "value": f"example_{var}"} for var in path_variables
+                ]
+            
+            # Extract query parameters from description
+            query_params = []
+            desc = details.get("description", "")
+            query_match = re.search(r'(?:Query Params:|Query:)\n?(.*?(?=\n\n|\n[A-Z]|$))', desc, re.DOTALL | re.IGNORECASE)
+            if query_match:
+                param_text = query_match.group(1).strip()
+                # matches "param_name: description" or "?param=val"
+                param_lines = re.findall(r'(\w+):\s*.*|(\w+)\s*\(query\)', param_text)
+                for p in param_lines:
+                    p_name = p[0] or p[1]
+                    if p_name:
+                        query_params.append({"key": p_name, "value": f"{{{{{p_name}}}}}"})
+            
+            if query_params:
+                item["request"]["url"]["query"] = query_params
+
+            # Extract request body from description if it looks like JSON
+            body_content = "{}"
+            desc = details.get("description", "")
+            if "{" in desc and "}" in desc:
+                # Naive extraction of JSON blocks
+                try:
+                    json_match = re.search(r'\{.*\}', desc, re.DOTALL)
+                    if json_match:
+                        # Basic cleanup of common docstring artifacts
+                        possible_json = json_match.group(0).replace("'", '"')
+                        # Remove comments like # Optional
+                        possible_json = re.sub(r'#.*', '', possible_json)
+                        # Minimal attempt to validate
+                        body_content = possible_json
+                except:
+                    pass
+
             if method.lower() in ["post", "put", "patch"]:
                 item["request"]["body"] = {
                     "mode": "raw",
-                    "raw": "{\n  \"example\": \"value\"\n}",
+                    "raw": body_content,
                     "options": {
                         "raw": {
                             "language": "json"

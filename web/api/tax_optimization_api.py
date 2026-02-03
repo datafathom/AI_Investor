@@ -30,7 +30,7 @@ from services.tax.tax_optimization_service import get_tax_optimization_service
 
 logger = logging.getLogger(__name__)
 
-tax_optimization_bp = Blueprint('tax_optimization', __name__, url_prefix='/api/tax')
+tax_optimization_bp = Blueprint('tax_optimization', __name__, url_prefix='/api/v1/tax_optimization')
 
 
 @tax_optimization_bp.route('/harvest/opportunities/<portfolio_id>', methods=['GET'])

@@ -1,4 +1,5 @@
 import React from 'react';
+import { StorageService } from '../utils/storageService';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import WalletDashboard from '../widgets/Web3/WalletDashboard';
 import LPTracker from '../widgets/Web3/LPTracker';

@@ -24,6 +24,8 @@
 import React, { useState, useEffect } from 'react';
 import apiClient from '../services/apiClient';
 import { analyticsService } from '../services/analyticsService';
+import { StorageService } from '../utils/storageService';
+import { workerManager } from '../services/workerManager';
 import { GlassCard } from '../components/Common';
 import './PortfolioOptimizationDashboard.css';
 
@@ -41,18 +43,20 @@ const PortfolioOptimizationDashboard = () => {
   };
   const STORAGE_KEY = 'layout_optimization_dashboard';
 
-  const [layouts, setLayouts] = useState(() => {
-     try {
-         const saved = localStorage.getItem(STORAGE_KEY);
-         return saved ? JSON.parse(saved) : DEFAULT_LAYOUT;
-     } catch (e) {
-         return DEFAULT_LAYOUT;
-     }
-  });
+  const [layouts, setLayouts] = useState(DEFAULT_LAYOUT);
+
+  // Async load layout
+  useEffect(() => {
+      const loadLayout = async () => {
+          const saved = await StorageService.get(STORAGE_KEY);
+          if (saved) setLayouts(saved);
+      };
+      loadLayout();
+  }, []);
 
   const onLayoutChange = (currentLayout, allLayouts) => {
       setLayouts(allLayouts);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+      StorageService.set(STORAGE_KEY, allLayouts);
   };
 
   const [optimizationResult, setOptimizationResult] = useState(null);
@@ -93,11 +97,11 @@ const PortfolioOptimizationDashboard = () => {
   const runOptimization = async () => {
     setLoading(true);
     try {
-      const data = await analyticsService.optimizePortfolio({
+      // Use Worker for Client-Side Optimization (Offloading)
+      const data = await workerManager.optimizePortfolio({
         portfolio_id: portfolioId,
-        optimization_type: optimizationType,
-        objective: 'maximize_sharpe',
-        constraints: []
+        assets: [], // Pass real assets if available in state
+        risk_free_rate: 0.02
       });
       setOptimizationResult(data);
     } catch (error) {

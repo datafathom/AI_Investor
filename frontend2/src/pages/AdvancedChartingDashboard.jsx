@@ -14,6 +14,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import useChartingStore from '../stores/chartingStore';
 import './AdvancedChartingDashboard.css';
 

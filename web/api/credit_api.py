@@ -29,7 +29,7 @@ from services.credit.credit_improvement_service import get_credit_improvement_se
 
 logger = logging.getLogger(__name__)
 
-credit_bp = Blueprint('credit', __name__, url_prefix='/api/credit')
+credit_bp = Blueprint('credit', __name__, url_prefix='/api/v1/credit')
 
 
 @credit_bp.route('/score/track', methods=['POST'])

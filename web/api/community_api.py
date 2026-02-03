@@ -30,8 +30,8 @@ from services.community.expert_qa_service import get_expert_qa_service
 
 logger = logging.getLogger(__name__)
 
-forum_bp = Blueprint('forum', __name__, url_prefix='/api/forum')
-qa_bp = Blueprint('qa', __name__, url_prefix='/api/qa')
+forum_bp = Blueprint('forum', __name__, url_prefix='/api/v1/qa')
+qa_bp = Blueprint('qa', __name__, url_prefix='/api/v1/qa')
 
 
 @forum_bp.route('/thread/create', methods=['POST'])

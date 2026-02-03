@@ -10,7 +10,7 @@ from typing import Optional, Dict, List
 
 logger = logging.getLogger(__name__)
 
-legal_bp = Blueprint('legal', __name__)
+legal_bp = Blueprint('legal', __name__, url_prefix='/api/v1/legal')
 
 # Legal document versions (in production, store in database)
 LEGAL_DOCUMENTS = {
@@ -41,7 +41,7 @@ LEGAL_DOCUMENTS = {
 }
 
 
-@legal_bp.route('/api/v1/legal/documents', methods=['GET'])
+@legal_bp.route('/documents', methods=['GET'])
 def list_documents():
     """
     List all available legal documents with versions.
@@ -66,7 +66,7 @@ def list_documents():
     }), 200
 
 
-@legal_bp.route('/api/v1/legal/documents/<document_id>', methods=['GET'])
+@legal_bp.route('/documents/<document_id>', methods=['GET'])
 def get_document(document_id: str):
     """
     Get a specific legal document.
@@ -120,7 +120,7 @@ def get_document(document_id: str):
         }), 500
 
 
-@legal_bp.route('/api/v1/legal/accept', methods=['POST'])
+@legal_bp.route('/accept', methods=['POST'])
 def accept_documents():
     """
     Record user acceptance of legal documents.
@@ -191,7 +191,7 @@ def accept_documents():
     }), 200
 
 
-@legal_bp.route('/api/v1/legal/acceptance-status', methods=['GET'])
+@legal_bp.route('/acceptance-status', methods=['GET'])
 def get_acceptance_status():
     """
     Get user's legal document acceptance status.
@@ -238,7 +238,7 @@ def get_acceptance_status():
     }), 200
 
 
-@legal_bp.route('/api/v1/legal/acceptance-history', methods=['GET'])
+@legal_bp.route('/acceptance-history', methods=['GET'])
 def get_acceptance_history():
     """
     Get user's legal document acceptance history.
@@ -275,7 +275,7 @@ def get_acceptance_history():
     }), 200
 
 
-@legal_bp.route('/api/v1/legal/check-updates', methods=['GET'])
+@legal_bp.route('/check-updates', methods=['GET'])
 def check_document_updates():
     """
     Check if user needs to accept updated legal documents.

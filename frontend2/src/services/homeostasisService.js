@@ -21,7 +21,7 @@ export const homeostasisService = {
      */
     updateMetrics: async (netWorth) => {
         try {
-            return await apiClient.post(`${API_PATH}/update`, { net_worth: net_worth });
+            return await apiClient.post(`${API_PATH}/update`, { net_worth: netWorth });
         } catch (error) {
             console.error("Failed to update homeostasis metrics", error);
             return null;

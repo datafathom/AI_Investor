@@ -50,6 +50,9 @@ def login_required(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        if request.method == 'OPTIONS':
+            return f(*args, **kwargs)
+            
         auth_header = request.headers.get('Authorization')
 
         if not auth_header or not auth_header.startswith('Bearer '):
@@ -57,8 +60,7 @@ def login_required(f):
                 g.user_id = 'demo-admin'
                 g.tenant_id = 'default'
                 g.user_role = 'admin'
-                if asyncio.iscoroutinefunction(f):
-                    return asyncio.run(f(*args, **kwargs))
+                # Sync refactor: No longer using asyncio.run
                 return f(*args, **kwargs)
             return jsonify({'error': 'Missing or invalid token'}), 401
 
@@ -85,6 +87,9 @@ def login_required(f):
     if asyncio.iscoroutinefunction(f):
         @wraps(f)
         async def async_decorated_function(*args, **kwargs):
+            if request.method == 'OPTIONS':
+                return await f(*args, **kwargs)
+                
             auth_header = request.headers.get('Authorization')
             if not auth_header or not auth_header.startswith('Bearer '):
                 if os.getenv('FLASK_ENV', 'development') == 'development':

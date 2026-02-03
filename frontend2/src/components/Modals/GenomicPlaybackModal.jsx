@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { X, Play, TrendingUp, Zap, History, Shield } from 'lucide-react';
-import useEvolutionStore from '../../../stores/evolutionStore';
-import { SimpleLineChart } from '../../Charts/SimpleCharts';
+import useEvolutionStore from '../../stores/evolutionStore';
+import { SimpleLineChart } from '../Charts/SimpleCharts';
 import './GenomicPlaybackModal.css';
 
 const GenomicPlaybackModal = ({ isOpen, onClose, agent }) => {

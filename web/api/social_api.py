@@ -14,7 +14,7 @@ from services.social.reddit_service import get_reddit_client
 
 logger = logging.getLogger(__name__)
 
-social_bp = Blueprint('social_bp', __name__)
+social_bp = Blueprint('social_bp', __name__, url_prefix='/api/v1/social')
 
 def _run_async(coro):
     try:

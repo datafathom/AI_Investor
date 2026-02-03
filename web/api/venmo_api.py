@@ -14,7 +14,7 @@ from services.payments.venmo_service import get_venmo_client
 
 logger = logging.getLogger(__name__)
 
-venmo_bp = Blueprint('venmo_bp', __name__)
+venmo_bp = Blueprint('venmo_bp', __name__, url_prefix='/api/v1/venmo')
 
 def _run_async(coro):
     try:

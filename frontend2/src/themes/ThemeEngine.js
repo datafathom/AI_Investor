@@ -213,7 +213,7 @@ class ThemeEngine {
    */
   _saveThemePreference(themeId) {
     try {
-      localStorage.setItem('selected_theme', themeId);
+      StorageService.set('selected_theme', themeId);
     } catch (error) {
       console.warn('Failed to save theme preference:', error);
     }
@@ -224,7 +224,7 @@ class ThemeEngine {
    */
   loadSavedTheme() {
     try {
-      const saved = localStorage.getItem('selected_theme');
+      const saved = StorageService.getSync('selected_theme');
       if (saved && this.themes.has(saved)) {
         this.currentTheme = saved;
       }

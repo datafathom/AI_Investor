@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import MonteCarlo from '../widgets/Backtest/MonteCarlo';
 import DrawdownTimeline from '../widgets/Backtest/DrawdownTimeline';
 import OverfitWarning from '../widgets/Backtest/OverfitWarning';
+import { StorageService } from '../utils/storageService';
 import '../widgets/Backtest/MonteCarlo.css';
 import '../widgets/Backtest/DrawdownTimeline.css';
 import '../widgets/Backtest/OverfitWarning.css';
@@ -22,18 +23,20 @@ const BacktestPortfolio = () => {
     };
     const STORAGE_KEY = 'layout_backtest_dashboard';
 
-    const [layouts, setLayouts] = useState(() => {
-        try {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            return saved ? JSON.parse(saved) : DEFAULT_LAYOUT;
-        } catch (e) {
-            return DEFAULT_LAYOUT;
-        }
-    });
+    const [layouts, setLayouts] = useState(DEFAULT_LAYOUT);
+
+    // Async load layout
+    useEffect(() => {
+        const loadLayout = async () => {
+            const saved = await StorageService.get(STORAGE_KEY);
+            if (saved) setLayouts(saved);
+        };
+        loadLayout();
+    }, []);
 
     const onLayoutChange = (currentLayout, allLayouts) => {
         setLayouts(allLayouts);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+        StorageService.set(STORAGE_KEY, allLayouts);
     };
 
     return (

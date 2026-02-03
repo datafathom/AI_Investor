@@ -16,6 +16,9 @@ DEPENDENCIES:
 import random
 from typing import List, Dict
 from datetime import datetime, timedelta
+from services.social.reddit_service import get_reddit_client
+from services.social.discord_bot import get_discord_bot
+from services.social.inertia_cache import get_inertia_cache
 
 class HypeMeterService:
     """
@@ -23,8 +26,9 @@ class HypeMeterService:
     """
     
     def __init__(self):
-        # In prod, inject db sessions
-        pass
+        self.reddit = get_reddit_client()
+        self.discord = get_discord_bot()
+        self.cache = get_inertia_cache()
 
     async def get_hype_feed(self, limit: int = 50) -> List[Dict]:
         """
@@ -98,14 +102,25 @@ class HypeMeterService:
 
     async def get_top_hyped_assets(self) -> List[Dict]:
         """
-        Get assets ranked by social volume/sentiment magnitude.
+        Get assets ranked by social volume/sentiment magnitude based on inertia cache.
         """
-        return [
-            {"symbol": "NVDA", "score": 95, "volume": "Extreme"},
-            {"symbol": "TSLA", "score": 82, "volume": "High"},
-            {"symbol": "GME", "score": 75, "volume": "High"},
-            {"symbol": "AAPL", "score": 60, "volume": "Moderate"},
-        ]
+        trending = self.cache.get_trending_tickers(limit=5)
+        results = []
+        for ticker in trending:
+            inertia = self.cache.get_inertia(ticker)
+            results.append({
+                "symbol": ticker,
+                "score": int(abs(inertia) * 100),
+                "volume": "Extreme" if self.cache.inertia_data[ticker]["velocity"] > 500 else "High"
+            })
+        
+        # Fallback to defaults if cache is empty
+        if not results:
+            return [
+                {"symbol": "NVDA", "score": 95, "volume": "Extreme"},
+                {"symbol": "TSLA", "score": 82, "volume": "High"},
+            ]
+        return results
 
 # Singleton Instance
 hypemeter_service = HypeMeterService()

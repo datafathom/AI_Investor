@@ -9,7 +9,7 @@ import logging
 
 from services.trading.fx_service import get_fx_service
 
-cash_bp = Blueprint('cash_api', __name__)
+cash_bp = Blueprint('cash_api', __name__, url_prefix='/api/v1/cash')
 logger = logging.getLogger(__name__)
 
 @cash_bp.route('/dashboard', methods=['GET'])

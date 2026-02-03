@@ -12,7 +12,7 @@ from services.security.kyc_service import (
     DocumentType
 )
 
-kyc_bp = Blueprint('kyc_api', __name__)
+kyc_bp = Blueprint('kyc_api', __name__, url_prefix='/api/v1/kyc')
 logger = logging.getLogger(__name__)
 
 @kyc_bp.route('/status', methods=['GET'])

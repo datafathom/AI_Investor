@@ -22,6 +22,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 
 import useWatchlistStore from '../stores/watchlistStore';
 import './WatchlistsAlertsDashboard.css';

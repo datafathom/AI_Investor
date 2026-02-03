@@ -8,7 +8,8 @@ import apiClient from './apiClient';
 class ScannerService {
     async getLatestMatches() {
         try {
-            return await apiClient.get('/scanner/matches');
+            const response = await apiClient.get('/scanner/matches');
+            return response.data || [];
         } catch (error) {
             console.error('Failed to fetch scanner matches:', error);
             return [];
@@ -17,7 +18,8 @@ class ScannerService {
 
     async getGalaxyData() {
         try {
-            return await apiClient.get('/scanner/galaxy');
+            const response = await apiClient.get('/scanner/galaxy');
+            return response.data || [];
         } catch (error) {
             console.error('Failed to fetch galaxy data:', error);
             return [];
@@ -26,7 +28,8 @@ class ScannerService {
 
     async getMarketPulse() {
         try {
-            return await apiClient.get('/scanner/pulse');
+            const response = await apiClient.get('/scanner/pulse');
+            return response.data || [];
         } catch (error) {
             console.error('Failed to fetch market pulse:', error);
             return [];

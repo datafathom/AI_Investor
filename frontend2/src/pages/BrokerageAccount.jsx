@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import { brokerageService } from '../services/brokerageService';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { TrendingUp, DollarSign, Activity, PieChart, Wallet, Zap, AlertCircle } from 'lucide-react';
@@ -83,7 +84,7 @@ const BrokerageAccount = () => {
 
     const onLayoutChange = (currentLayout, allLayouts) => {
         setLayouts(allLayouts);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+        StorageService.set(STORAGE_KEY, allLayouts);
     };
 
     return (

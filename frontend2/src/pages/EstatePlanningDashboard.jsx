@@ -14,6 +14,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import useEstateStore from '../stores/estateStore';
 import './EstatePlanningDashboard.css';
 import { Responsive, WidthProvider } from 'react-grid-layout';
@@ -56,7 +57,7 @@ const EstatePlanningDashboard = () => {
 
   const onLayoutChange = (currentLayout, allLayouts) => {
     setLayouts(allLayouts);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+    StorageService.set(STORAGE_KEY, allLayouts);
   };
 
   useEffect(() => {

@@ -15,7 +15,7 @@ from services.payments.square_service import get_square_client
 
 logger = logging.getLogger(__name__)
 
-square_bp = Blueprint('square_bp', __name__)
+square_bp = Blueprint('square_bp', __name__, url_prefix='/api/v1/square')
 
 def _run_async(coro):
     try:

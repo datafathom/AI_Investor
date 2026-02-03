@@ -30,7 +30,7 @@ from models.ml_training import ModelVersion, TrainingStatus
 
 logger = logging.getLogger(__name__)
 
-ml_training_bp = Blueprint('ml_training', __name__, url_prefix='/api/ml')
+ml_training_bp = Blueprint('ml_training', __name__, url_prefix='/api/v1/ml')
 
 
 @ml_training_bp.route('/training/job/create', methods=['POST'])

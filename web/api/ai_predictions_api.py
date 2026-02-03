@@ -28,7 +28,7 @@ from services.ai_predictions.ai_analytics_service import get_ai_analytics_servic
 
 logger = logging.getLogger(__name__)
 
-ai_predictions_bp = Blueprint('ai_predictions', __name__, url_prefix='/api/ai-predictions')
+ai_predictions_bp = Blueprint('ai_predictions', __name__, url_prefix='/api/v1/ai_predictions')
 
 
 @ai_predictions_bp.route('/price', methods=['POST'])

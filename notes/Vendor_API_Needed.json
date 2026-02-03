@@ -1,0 +1,168 @@
+{
+  "summary": {
+    "total_vendors": 9,
+    "implemented": 0,
+    "mocked": 1,
+    "not_configured": 8,
+    "partially_configured": 0
+  },
+  "vendors": [
+    {
+      "vendor_name": "AWS",
+      "api_name": "boto3",
+      "purpose": "Cloud Infrastructure (S3, etc)",
+      "current_status": "not_configured",
+      "credentials_found": [],
+      "credentials_missing": [
+        "AWS_ACCESS_KEY_ID",
+        "AWS_SECRET_ACCESS_KEY",
+        "AWS_REGION"
+      ],
+      "files_using": [
+        "services\\communication\\email_service.py",
+        "services\\monitoring\\cloudwatch_logger.py",
+        "services\\storage\\s3_service.py",
+        "services\\system\\aws_secret_manager.py",
+        "services\\system\\vault_secret_manager.py"
+      ],
+      "documentation_url": "https://boto3.amazonaws.com/v1/documentation/api/latest/index.html",
+      "cost_tier": "paid"
+    },
+    {
+      "vendor_name": "Google APIs",
+      "api_name": "googleapiclient",
+      "purpose": "YouTube, Gmail, etc",
+      "current_status": "not_configured",
+      "credentials_found": [],
+      "credentials_missing": [
+        "GOOGLE_API_KEY",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET"
+      ],
+      "files_using": [
+        "services\\auth\\google_auth.py",
+        "services\\calendar\\google_calendar_service.py",
+        "services\\communication\\gmail_service.py"
+      ],
+      "documentation_url": "https://developers.google.com/apis-explorer",
+      "cost_tier": "free"
+    },
+    {
+      "vendor_name": "OpenAI",
+      "api_name": "openai",
+      "purpose": "AI/LLM Services",
+      "current_status": "not_configured",
+      "credentials_found": [],
+      "credentials_missing": [
+        "OPENAI_API_KEY"
+      ],
+      "files_using": [
+        "services\\ai\\openai_client.py",
+        "services\\analysis\\filing_analyzer.py"
+      ],
+      "documentation_url": "https://platform.openai.com/docs",
+      "cost_tier": "paid"
+    },
+    {
+      "vendor_name": "Plaid",
+      "api_name": "plaid",
+      "purpose": "Banking Integration",
+      "current_status": "not_configured",
+      "credentials_found": [],
+      "credentials_missing": [
+        "PLAID_CLIENT_ID",
+        "PLAID_SECRET",
+        "PLAID_ENV"
+      ],
+      "files_using": [
+        "services\\banking\\banking_service.py",
+        "services\\banking\\plaid_service.py",
+        "services\\system\\identity_service.py"
+      ],
+      "documentation_url": "https://plaid.com/docs",
+      "cost_tier": "paid"
+    },
+    {
+      "vendor_name": "Reddit",
+      "api_name": "praw",
+      "purpose": "Social Sentiment Analysis",
+      "current_status": "mocked",
+      "credentials_found": [
+        "REDDIT_CLIENT_ID",
+        "REDDIT_CLIENT_SECRET"
+      ],
+      "credentials_missing": [],
+      "files_using": [
+        "services\\data\\reddit_service.py"
+      ],
+      "documentation_url": "https://www.reddit.com/dev/api",
+      "cost_tier": "free"
+    },
+    {
+      "vendor_name": "SendGrid",
+      "api_name": "sendgrid",
+      "purpose": "Email Delivery",
+      "current_status": "not_configured",
+      "credentials_found": [],
+      "credentials_missing": [
+        "SENDGRID_API_KEY"
+      ],
+      "files_using": [
+        "services\\communication\\email_service.py"
+      ],
+      "documentation_url": "https://docs.sendgrid.com",
+      "cost_tier": "free"
+    },
+    {
+      "vendor_name": "Square",
+      "api_name": "square",
+      "purpose": "Payment Processing",
+      "current_status": "not_configured",
+      "credentials_found": [],
+      "credentials_missing": [
+        "SQUARE_ACCESS_TOKEN",
+        "SQUARE_APPLICATION_ID"
+      ],
+      "files_using": [
+        "services\\payments\\catalog_sync.py",
+        "services\\payments\\square_service.py"
+      ],
+      "documentation_url": "https://developer.squareup.com/docs",
+      "cost_tier": "paid"
+    },
+    {
+      "vendor_name": "Stripe",
+      "api_name": "stripe",
+      "purpose": "Payment Processing",
+      "current_status": "not_configured",
+      "credentials_found": [],
+      "credentials_missing": [
+        "STRIPE_API_KEY",
+        "STRIPE_SECRET_KEY",
+        "STRIPE_PUBLISHABLE_KEY"
+      ],
+      "files_using": [
+        "services\\billing\\payment_service.py",
+        "services\\payments\\catalog_sync.py"
+      ],
+      "documentation_url": "https://stripe.com/docs/api",
+      "cost_tier": "paid"
+    },
+    {
+      "vendor_name": "Twilio",
+      "api_name": "twilio",
+      "purpose": "SMS/Voice Communications",
+      "current_status": "not_configured",
+      "credentials_found": [],
+      "credentials_missing": [
+        "TWILIO_ACCOUNT_SID",
+        "TWILIO_AUTH_TOKEN"
+      ],
+      "files_using": [
+        "services\\monitoring\\alert_manager.py"
+      ],
+      "documentation_url": "https://www.twilio.com/docs",
+      "cost_tier": "paid"
+    }
+  ]
+}

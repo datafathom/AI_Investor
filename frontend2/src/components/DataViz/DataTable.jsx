@@ -28,6 +28,7 @@ const DataTable = ({
   };
 
   const sortedData = React.useMemo(() => {
+    if (!Array.isArray(data)) return [];
     if (!sortConfig.key) return data;
     
     return [...data].sort((a, b) => {

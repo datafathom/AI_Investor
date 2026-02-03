@@ -14,7 +14,7 @@ from services.payments.coinbase_service import get_coinbase_client
 
 logger = logging.getLogger(__name__)
 
-coinbase_bp = Blueprint('coinbase_bp', __name__)
+coinbase_bp = Blueprint('coinbase_bp', __name__, url_prefix='/api/v1/coinbase')
 
 def _run_async(coro):
     try:

@@ -112,7 +112,13 @@ export default defineConfig({
 
   // Optimize dependencies for better performance
   optimizeDeps: {
-    include: ['react-window'],
+    include: ['react-window', 'three', '@react-three/fiber', '@react-three/drei'],
+  },
+
+  resolve: {
+    alias: {
+      'three': resolve(__dirname, 'node_modules/three')
+    }
   },
 
   // Development server configuration

@@ -34,7 +34,8 @@ class DatabaseManager:
                 self._pg_pool = psycopg2.pool.ThreadedConnectionPool(
                     minconn=1,
                     maxconn=20,
-                    dsn=pg_url
+                    dsn=pg_url,
+                    connect_timeout=5
                 )
                 logger.info("PostgreSQL connection pool initialized.")
             except Exception as e:
@@ -63,6 +64,9 @@ class DatabaseManager:
         if not self._pg_pool:
             raise ConnectionError("PostgreSQL pool not initialized.")
 
+        # In a real app we might want to wait for a connection with a timeout
+        # but ThreadedConnectionPool.getconn() blocks if minconn=maxconn and all busy.
+        # With min=1, max=20, it should be fine unless we leak.
         conn = self._pg_pool.getconn()
         
         # Apply Tenant Isolation

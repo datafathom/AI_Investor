@@ -1,6 +1,7 @@
 import logging
 import uuid
 import json
+import threading
 from datetime import datetime
 from typing import Dict, Any, Optional, List
 from web.auth_utils import generate_token
@@ -22,7 +23,8 @@ class SocialAuthService:
     def _init_service(self) -> None:
         self.logger = logging.getLogger(__name__)
         self.db = get_database_manager()
-        self._init_db()
+        self._db_initialized = False
+        self._lock = threading.Lock() # Use a simple lock for initialization
 
     def _init_db(self, cur=None) -> None:
         """Ensures auth tables exist in Postgres and schema is up-to-date."""
@@ -104,8 +106,20 @@ class SocialAuthService:
             self.logger.info("Migrating schema: Adding column %s to %s", column, table)
             cur.execute(f"ALTER TABLE {table} ADD COLUMN {column} {type_def};")
 
+    def _ensure_initialized(self):
+        """Lazy initialization of the database schema."""
+        if self._db_initialized:
+            return
+        
+        with self._lock:
+            if not self._db_initialized:
+                self.logger.info("SocialAuthService: First-run lazy initialization...")
+                self._init_db()
+                self._db_initialized = True
+
     def _get_user_by_email(self, email: str) -> Optional[Dict[str, Any]]:
         """Helper to fetch user data from DB (case-insensitive)."""
+        self._ensure_initialized()
         if not email:
             return None
         email = email.strip().lower()
@@ -136,6 +150,7 @@ class SocialAuthService:
         Processes the OAuth callback, exchanges code for user info, 
         and performs login or account merging.
         """
+        self._ensure_initialized()
         self.logger.info("Handling %s callback with code: %s", provider, code)
         
         # 1. Simulate fetching user profile from provider
@@ -219,6 +234,7 @@ class SocialAuthService:
 
     def _get_user_by_id(self, user_id: int) -> Optional[Dict[str, Any]]:
         """Helper to fetch user data from DB by ID."""
+        self._ensure_initialized()
         try:
             with self.db.pg_cursor() as cur:
                 cur.execute("""
@@ -238,6 +254,7 @@ class SocialAuthService:
 
     def set_password(self, email: str, password: str, user_id: int = None) -> bool:
         """Sets or updates password for a user."""
+        self._ensure_initialized()
         if user_id:
              try:
                 password_hash = f"mock_hash_{password[::-1]}"
@@ -257,6 +274,7 @@ class SocialAuthService:
 
     def verify_email(self, email: str) -> bool:
         """Marks a user as email-verified."""
+        self._ensure_initialized()
         try:
             with self.db.pg_cursor() as cur:
                 cur.execute("UPDATE users SET is_verified = TRUE WHERE email = %s;", (email,))
@@ -268,6 +286,7 @@ class SocialAuthService:
 
     def reset_database(self) -> None:
         """Clears all users and linked accounts for a fresh start."""
+        self._ensure_initialized()
         try:
             with self.db.pg_cursor() as cur:
                 cur.execute("TRUNCATE linked_accounts, users RESTART IDENTITY CASCADE;")
@@ -279,6 +298,7 @@ class SocialAuthService:
 
     def get_linked_finance_vendors(self, email: str) -> List[str]:
         """Returns list of linked finance-capable providers."""
+        self._ensure_initialized()
         user = self._get_user_by_email(email)
         if not user:
             return []

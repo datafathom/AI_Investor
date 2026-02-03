@@ -28,7 +28,7 @@ from services.marketplace.marketplace_service import get_marketplace_service
 
 logger = logging.getLogger(__name__)
 
-marketplace_bp = Blueprint('marketplace', __name__, url_prefix='/api/marketplace')
+marketplace_bp = Blueprint('marketplace', __name__, url_prefix='/api/v1/marketplace')
 
 
 @marketplace_bp.route('/extension/create', methods=['POST'])

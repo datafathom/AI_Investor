@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { StorageService } from '../utils/storageService';
 import { Microscope, Globe2, Scan, Filter, Activity, Eye, TrendingUp, TrendingDown, ExternalLink, Zap } from 'lucide-react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import GalaxyView from '../components/Scanner/GalaxyView';
@@ -45,7 +46,7 @@ const GlobalScanner = () => {
 
     const onLayoutChange = (currentLayout, allLayouts) => {
         setLayouts(allLayouts);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+        StorageService.set(STORAGE_KEY, allLayouts);
     };
 
     const columns = [

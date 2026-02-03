@@ -16,6 +16,7 @@ import random
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 from services.system.secret_manager import get_secret_manager
+from services.social.inertia_cache import get_inertia_cache
 
 logger = logging.getLogger(__name__)
 
@@ -69,9 +70,16 @@ class DiscordBot:
     async def get_hype_score(self, ticker: str) -> Dict[str, Any]:
         """Calculate hype metrics based on Discord activity."""
         if self.mock:
+            score = random.uniform(-0.2, 0.8)
+            velocity = random.randint(10, 500)
+            
+            # Update shared inertia cache
+            cache = get_inertia_cache()
+            cache.update_inertia(ticker.upper(), score, velocity)
+            
             return {
-                "ticker": ticker,
-                "velocity": random.randint(10, 500), # Mentions per hour
+                "ticker": ticker.upper(),
+                "velocity": velocity, # Mentions per hour
                 "growth_pct": round(random.uniform(5, 50), 2),
                 "hot_channels": ["#trading-floor", "#alpha-sigs"],
                 "last_updated": datetime.utcnow().isoformat()

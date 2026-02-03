@@ -21,6 +21,10 @@ from web.api.corporate_api import router as corporate_router
 from web.api.margin_api import router as margin_router
 from web.api.mobile_api import router as mobile_router
 from web.api.integrations_api import router as integrations_router
+from web.api.auth_fastapi import router as auth_router
+from web.api.brokerage_api import router as brokerage_router
+from web.api.homeostasis_api import router as homeostasis_router
+from web.socket_gateway import socket_app
 
 app = FastAPI(title="AI Investor API Gateway", version="2.0.0")
 
@@ -52,6 +56,12 @@ app.include_router(corporate_router)
 app.include_router(margin_router)
 app.include_router(mobile_router)
 app.include_router(integrations_router)
+app.include_router(auth_router)
+app.include_router(brokerage_router)
+app.include_router(homeostasis_router)
+
+# Mount Socket.IO ASGI app
+app.mount("/socket.io", socket_app)
 
 # Legacy / Gap support
 @app.get("/api/v1/gap")

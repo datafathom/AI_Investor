@@ -1,4 +1,5 @@
 import apiClient from '../services/apiClient';
+import { StorageService } from './storageService';
 
 export const authService = {
     async register(email, password) {
@@ -12,9 +13,9 @@ export const authService = {
         try {
             const data = await apiClient.post('/auth/login', { email, password });
             
-            // Save to localStorage
-            localStorage.setItem('widget_os_token', data.token);
-            localStorage.setItem('widget_os_user', JSON.stringify(data.user));
+            // Save to StorageService (writes to IDB + LS + Memory)
+            await StorageService.set('widget_os_token', data.token);
+            await StorageService.set('widget_os_user', data.user);
 
             return data;
         } catch (error) {
@@ -23,30 +24,35 @@ export const authService = {
         }
     },
 
-    logout() {
-        localStorage.removeItem('widget_os_token');
-        localStorage.removeItem('widget_os_user');
-        localStorage.removeItem('widget_os_tenant_id');
+    async logout() {
+        await StorageService.remove('widget_os_token');
+        await StorageService.remove('widget_os_user');
+        await StorageService.remove('widget_os_tenant_id');
         // Optional: Call logout endpoint if exists
         // apiClient.post('/auth/logout').catch(() => {});
-        window.location.href = '/login';
+        window.location.href = '/';
     },
 
     setTenantId(tenantId) {
-        localStorage.setItem('widget_os_tenant_id', tenantId);
+        StorageService.set('widget_os_tenant_id', tenantId);
     },
 
     getTenantId() {
-        return localStorage.getItem('widget_os_tenant_id') || 'default';
+        // Use sync for critical headers
+        return StorageService.getSync('widget_os_tenant_id') || 'default';
     },
 
+    _userCache: null,
+    _lastUserRaw: null,
+
     getCurrentUser() {
-        const user = localStorage.getItem('widget_os_user');
-        return user ? JSON.parse(user) : null;
+        // Use sync get for immediate user availability
+        const user = StorageService.getSync('widget_os_user');
+        return user;
     },
 
     getToken() {
-        return localStorage.getItem('widget_os_token');
+        return StorageService.getSync('widget_os_token');
     },
 
     isAuthenticated() {
@@ -66,7 +72,8 @@ export const authService = {
     },
 
     setSession(token, user) {
-        localStorage.setItem('widget_os_token', token);
-        localStorage.setItem('widget_os_user', JSON.stringify(user));
+        StorageService.set('widget_os_token', token);
+        StorageService.set('widget_os_user', user);
     }
 };
+

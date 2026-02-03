@@ -31,7 +31,7 @@ from services.billing.payment_reminder_service import get_payment_reminder_servi
 
 logger = logging.getLogger(__name__)
 
-billing_bp = Blueprint('billing', __name__, url_prefix='/api/billing')
+billing_bp = Blueprint('billing', __name__, url_prefix='/api/v1/billing')
 
 
 @billing_bp.route('/bill/create', methods=['POST'])

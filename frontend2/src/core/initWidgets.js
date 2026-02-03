@@ -3,8 +3,9 @@ import widgetRegistry from './WidgetRegistry';
 import { lazy } from 'react';
 
 // Lazy load widgets
-const OptionsChainWidget = lazy(() => import('../widgets/OptionsChain/OptionsChainWidget'));
-const DOMWidget = lazy(() => import('../widgets/DOM/DOMWidget'));
+// Lazy load widgets
+const OptionsChainWidget = lazy(() => import('../widgets/OptionsChain/OptionsChainWidget.jsx'));
+const DOMWidget = lazy(() => import('../widgets/DOM/DOMWidget.jsx'));
 
 export const initWidgets = () => {
   widgetRegistry.register({

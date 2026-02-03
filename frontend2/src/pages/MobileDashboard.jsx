@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { StorageService } from '../utils/storageService';
 import { Smartphone } from 'lucide-react';
 import BiometricKill from '../widgets/Mobile/BiometricKill';
 import TradeAuth from '../widgets/Mobile/TradeAuth';

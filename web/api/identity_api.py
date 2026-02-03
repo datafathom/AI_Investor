@@ -3,7 +3,7 @@ import logging
 from services.system.identity_service import IdentityService
 from web.auth_utils import login_required
 
-identity_api = Blueprint('identity_api', __name__)
+identity_api = Blueprint('identity_api', __name__, url_prefix='/api/v1/identity')
 logger = logging.getLogger(__name__)
 
 identity_service = IdentityService()

@@ -1,22 +1,17 @@
-/**
- * brokerageService.js
- * 
- * Manages institutional brokerage connections and real-time execution.
- * Interfaces with backend brokerage_api.py.
- */
-
 import apiClient from './apiClient';
+import { workerManager } from './workerManager';
 
 class BrokerageService {
     constructor() {
         this.listeners = [];
-        this.currentData = null;
+        // Hydrate from LocalStorage for instant UI (Stale-while-revalidate)
+        const cached = localStorage.getItem('last_brokerage_summary');
+        this.currentData = cached ? JSON.parse(cached) : null;
         this.interval = null;
     }
 
     /**
      * Start a real-time polling loop for account updates.
-     * In a production environment, this would ideally use the presenceService (Socket.io).
      */
     startPolling(intervalMs = 5000) {
         if (this.interval) return;
@@ -33,29 +28,25 @@ class BrokerageService {
 
     async fetchUpdates() {
         try {
+            // Use apiClient with cache flag for the raw requests if appropriate
+            // But for real-time brokerage, we usually want fresh data.
+            // We use the worker to keep the UI thread smooth during transformation.
             const [status, positions] = await Promise.all([
                 apiClient.get('/brokerage/status'),
                 apiClient.get('/brokerage/positions')
             ]);
 
-            // Transform backend data to frontend expected schema
-            const transformedData = {
-                liquidity: status.total_buying_power / 4, // Logic approximation
-                buyingPower: status.total_buying_power,
-                dailyPL: status.daily_pl_percentage || 0,
-                equity: status.total_buying_power, // Placeholder if equity not in status
-                positions: positions.map(pos => ({
-                    symbol: pos.symbol,
-                    qty: pos.qty,
-                    avgPrice: pos.avg_price || 0,
-                    currentPrice: pos.current_price || pos.market_value / pos.qty,
-                    value: pos.market_value,
-                    pl: pos.unrealized_pl,
-                    plPercent: ((pos.unrealized_pl / (pos.market_value - pos.unrealized_pl)) * 100).toFixed(2) + '%'
-                }))
-            };
+            // Offload transformation to Web Worker
+            const transformedData = await workerManager.runTask('TRANSFORM_BROKERAGE_DATA', {
+                status,
+                positions
+            });
 
             this.currentData = transformedData;
+            
+            // Persist for next session hydration
+            localStorage.setItem('last_brokerage_summary', JSON.stringify(transformedData));
+            
             this.notify({ type: 'MARKET_UPDATE', data: transformedData });
         } catch (error) {
             console.error('brokerageService poll error:', error);

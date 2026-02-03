@@ -67,7 +67,7 @@ class EstateService:
         ]
         logger.info("EstateService initialized")
     
-    async def check_heartbeat(self, user_id: str) -> HeartbeatStatus:
+    def check_heartbeat(self, user_id: str) -> HeartbeatStatus:
         days_since = (datetime.now() - self._last_heartbeat).days
         days_until = max(0, self._trigger_days - days_since)
         trigger_date = (self._last_heartbeat + timedelta(days=self._trigger_days)).isoformat()
@@ -78,12 +78,12 @@ class EstateService:
             trigger_date=trigger_date
         )
     
-    async def confirm_alive(self, user_id: str) -> bool:
+    def confirm_alive(self, user_id: str) -> bool:
         self._last_heartbeat = datetime.now()
         logger.info(f"Heartbeat confirmed for {user_id}")
         return True
     
-    async def trigger_succession(self, user_id: str) -> SuccessionResult:
+    def trigger_succession(self, user_id: str) -> SuccessionResult:
         logger.warning(f"Succession triggered for {user_id}")
         return SuccessionResult(
             triggered=True,
@@ -92,27 +92,27 @@ class EstateService:
             timestamp=datetime.now().isoformat()
         )
     
-    async def get_beneficiaries(self, user_id: str) -> List[Beneficiary]:
+    def get_beneficiaries(self, user_id: str) -> List[Beneficiary]:
         return self._beneficiaries
     
-    async def add_beneficiary(self, user_id: str, beneficiary: Beneficiary) -> Beneficiary:
+    def add_beneficiary(self, user_id: str, beneficiary: Beneficiary) -> Beneficiary:
         self._beneficiaries.append(beneficiary)
         return beneficiary
 
-    async def update_allocation(self, user_id: str, beneficiary_id: str, percent: float) -> bool:
+    def update_allocation(self, user_id: str, beneficiary_id: str, percent: float) -> bool:
         for b in self._beneficiaries:
             if b.id == beneficiary_id:
                 b.allocation_percent = percent
                 return True
         return False
     
-    async def get_entity_graph(self, user_id: str) -> Dict:
+    def get_entity_graph(self, user_id: str) -> Dict:
         return {
             "nodes": [n.__dict__ for n in self._nodes],
             "edges": [e.__dict__ for e in self._edges]
         }
     
-    async def calculate_estate_tax(self, total_value: float) -> float:
+    def calculate_estate_tax(self, total_value: float) -> float:
         # 2023 exemption is $12.92M per individual
         exemption = 12920000.0
         if total_value > exemption:

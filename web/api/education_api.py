@@ -29,7 +29,7 @@ from services.education.content_management_service import get_content_management
 
 logger = logging.getLogger(__name__)
 
-education_bp = Blueprint('education', __name__, url_prefix='/api/education')
+education_bp = Blueprint('education', __name__, url_prefix='/api/v1/education')
 
 
 @education_bp.route('/course/create', methods=['POST'])

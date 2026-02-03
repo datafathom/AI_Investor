@@ -14,7 +14,7 @@ from services.payments.stripe_service import get_stripe_client
 
 logger = logging.getLogger(__name__)
 
-stripe_bp = Blueprint('stripe_bp', __name__)
+stripe_bp = Blueprint('stripe_bp', __name__, url_prefix='/api/v1/stripe')
 
 def _run_async(coro):
     try:

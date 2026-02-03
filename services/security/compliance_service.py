@@ -84,16 +84,22 @@ class ComplianceService:
             self._audit_logs.append(log)
             prev_hash = log.hash
         
-        self._sar_alerts = [
-            SARAlert(type="structuring", description="Multiple small deposits detected", evidence_score=0.85),
-            SARAlert(type="insider_trading", description="Trade preceding major macro announcement", evidence_score=0.72),
-            SARAlert(type="spoofing", description="High-frequency order cancellation (4ms) detected in AAPL", evidence_score=0.92, agent_id="Momentum-Alpha-1"),
-        ]
+        import random
+        alert_types = ["structuring", "insider_trading", "spoofing", "layering", "aml"]
+        tickers = ["AAPL", "TSLA", "GME", "NVDA", "BTC"]
+        
+        for i in range(3):
+            self._sar_alerts.append(SARAlert(
+                type=random.choice(alert_types),
+                description=f"Automated detection: {random.choice(['Abnormal volume', 'Pre-news spike', 'Rapid cancellation'])} in {random.choice(tickers)}",
+                evidence_score=round(random.uniform(0.65, 0.98), 2),
+                agent_id=f"Watcher-{i+1}"
+            ))
 
-    async def get_audit_logs(self, limit: int = 100) -> List[AuditLog]:
+    def get_audit_logs(self, limit: int = 100) -> List[AuditLog]:
         return self._audit_logs[-limit:]
 
-    async def add_audit_log(self, log_data: Dict) -> AuditLog:
+    def add_audit_log(self, log_data: Dict) -> AuditLog:
         prev_hash = self._audit_logs[-1].hash if self._audit_logs else "0" * 64
         log = AuditLog(
             action=log_data.get("action", ""),
@@ -110,11 +116,11 @@ class ComplianceService:
         
         # Simple real-time abuse detection trigger
         if "order" in log.action.lower() and log.details.get("latency_ms", 100) < 10:
-            await self._trigger_abuse_alert(log)
+            self._trigger_abuse_alert(log)
             
         return log
 
-    async def _trigger_abuse_alert(self, log: AuditLog) -> None:
+    def _trigger_abuse_alert(self, log: AuditLog) -> None:
         alert = SARAlert(
             type="spoofing",
             description=f"Potential spoofing detected: {log.action} with {log.details.get('latency_ms')}ms latency",
@@ -125,7 +131,7 @@ class ComplianceService:
         self._sar_alerts.append(alert)
         logger.warning(f"Abuse alert triggered: {alert.description}")
 
-    async def verify_log_integrity(self) -> Dict:
+    def verify_log_integrity(self) -> Dict:
         """Validates the entire hash chain."""
         valid = True
         errors = []
@@ -150,10 +156,10 @@ class ComplianceService:
             "timestamp": datetime.now().isoformat()
         }
 
-    async def get_sar_alerts(self) -> List[SARAlert]:
+    def get_sar_alerts(self) -> List[SARAlert]:
         return self._sar_alerts
 
-    async def update_sar_status(self, sar_id: str, status: str) -> bool:
+    def update_sar_status(self, sar_id: str, status: str) -> bool:
         for alert in self._sar_alerts:
             if alert.id == sar_id:
                 alert.status = status
@@ -161,7 +167,7 @@ class ComplianceService:
                 return True
         return False
 
-    async def get_compliance_score(self) -> int:
+    def get_compliance_score(self) -> int:
         """Calculate a mock compliance score (0-100)."""
         pending = len([a for a in self._sar_alerts if a.status == "pending"])
         score = 100 - (pending * 5)

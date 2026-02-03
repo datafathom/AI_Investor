@@ -23,60 +23,61 @@ LAST_MODIFIED: 2026-01-21
 ==============================================================================
 """
 
-from flask import Blueprint, jsonify, request
+from fastapi import APIRouter, HTTPException, Depends, Request
 import logging
+from typing import List, Optional
+from pydantic import BaseModel
 from services.estate.estate_planning_service import get_estate_planning_service
 from services.estate.inheritance_simulator import get_inheritance_simulator
 from models.estate import EstateScenario
 
 logger = logging.getLogger(__name__)
 
-estate_bp = Blueprint('estate', __name__, url_prefix='/api/estate')
+router = APIRouter(prefix="/api/v1/estate", tags=["Estate Planning"])
+
+class CreatePlanRequest(BaseModel):
+    user_id: str
+    beneficiaries: List[dict]
+    trust_accounts: Optional[dict] = None
+
+class UpdateBeneficiaryRequest(BaseModel):
+    updates: dict
+
+class TaxCalculationRequest(BaseModel):
+    estate_value: float
+    exemptions: Optional[float] = None
+
+class SimulationRequest(BaseModel):
+    projection_years: Optional[int] = 10
+
+class ComparisonRequest(BaseModel):
+    scenarios: List[dict]
 
 
-@estate_bp.route('/plan/create', methods=['POST'])
-async def create_estate_plan():
+@router.post('/plan/create')
+async def create_estate_plan(data: CreatePlanRequest):
     """
     Create estate plan.
-    
-    Request body:
-        user_id: User identifier
-        beneficiaries: List of beneficiary objects
-        trust_accounts: Optional trust account information
     """
     try:
-        data = request.get_json() or {}
-        user_id = data.get('user_id')
-        beneficiaries = data.get('beneficiaries', [])
-        trust_accounts = data.get('trust_accounts')
-        
-        if not user_id or not beneficiaries:
-            return jsonify({
-                'success': False,
-                'error': 'user_id and beneficiaries are required'
-            }), 400
-        
         service = get_estate_planning_service()
         plan = await service.create_estate_plan(
-            user_id=user_id,
-            beneficiaries=beneficiaries,
-            trust_accounts=trust_accounts
+            user_id=data.user_id,
+            beneficiaries=data.beneficiaries,
+            trust_accounts=data.trust_accounts
         )
         
-        return jsonify({
+        return {
             'success': True,
             'data': plan.model_dump()
-        })
+        }
         
     except Exception as e:
         logger.error(f"Error creating estate plan: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-@estate_bp.route('/plan/<user_id>', methods=['GET'])
+@router.get('/plan/{user_id}')
 async def get_estate_plan(user_id: str):
     """
     Get estate plan for user.
@@ -86,154 +87,106 @@ async def get_estate_plan(user_id: str):
         plan = await service.get_estate_plan_by_user(user_id)
         
         if not plan:
-            return jsonify({
-                'success': False,
-                'error': 'Estate plan not found'
-            }), 404
+            raise HTTPException(status_code=404, detail='Estate plan not found')
         
-        return jsonify({
+        return {
             'success': True,
             'data': plan.model_dump()
-        })
+        }
         
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error getting estate plan: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-@estate_bp.route('/plan/<plan_id>/beneficiary/<beneficiary_id>', methods=['PUT'])
-async def update_beneficiary(plan_id: str, beneficiary_id: str):
+@router.put('/plan/{plan_id}/beneficiary/{beneficiary_id}')
+async def update_beneficiary(plan_id: str, beneficiary_id: str, data: UpdateBeneficiaryRequest):
     """
     Update beneficiary in estate plan.
-    
-    Request body:
-        updates: Dictionary of updates to apply
     """
     try:
-        data = request.get_json() or {}
-        updates = data.get('updates', {})
-        
         service = get_estate_planning_service()
         beneficiary = await service.update_beneficiary(
             plan_id=plan_id,
             beneficiary_id=beneficiary_id,
-            updates=updates
+            updates=data.updates
         )
         
-        return jsonify({
+        return {
             'success': True,
             'data': beneficiary.model_dump()
-        })
+        }
         
     except Exception as e:
         logger.error(f"Error updating beneficiary: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-@estate_bp.route('/tax/calculate', methods=['POST'])
-async def calculate_estate_tax():
+@router.post('/tax/calculate')
+async def calculate_estate_tax(data: TaxCalculationRequest):
     """
     Calculate estate tax.
-    
-    Request body:
-        estate_value: Total estate value
-        exemptions: Optional exemption amount
     """
     try:
-        data = request.get_json() or {}
-        estate_value = float(data.get('estate_value', 0))
-        exemptions = data.get('exemptions')
-        
         service = get_estate_planning_service()
         tax_calc = await service.calculate_estate_tax(
-            estate_value=estate_value,
-            exemptions=exemptions
+            estate_value=data.estate_value,
+            exemptions=data.exemptions
         )
         
-        return jsonify({
+        return {
             'success': True,
             'data': tax_calc
-        })
+        }
         
     except Exception as e:
         logger.error(f"Error calculating estate tax: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-@estate_bp.route('/inheritance/simulate/<plan_id>', methods=['POST'])
-async def simulate_inheritance(plan_id: str):
+@router.post('/inheritance/simulate/{plan_id}')
+async def simulate_inheritance(plan_id: str, data: SimulationRequest):
     """
     Simulate inheritance for estate plan.
-    
-    Request body:
-        projection_years: Years to project forward (default: 10)
     """
     try:
-        data = request.get_json() or {}
-        projection_years = int(data.get('projection_years', 10))
-        
         simulator = get_inheritance_simulator()
         projections = await simulator.simulate_inheritance(
             plan_id=plan_id,
-            projection_years=projection_years
+            projection_years=data.projection_years
         )
         
-        return jsonify({
+        return {
             'success': True,
             'data': [p.model_dump() for p in projections]
-        })
+        }
         
     except Exception as e:
         logger.error(f"Error simulating inheritance: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-@estate_bp.route('/inheritance/compare', methods=['POST'])
-async def compare_inheritance_scenarios():
+@router.post('/inheritance/compare')
+async def compare_inheritance_scenarios(data: ComparisonRequest):
     """
     Compare inheritance scenarios.
-    
-    Request body:
-        scenarios: List of EstateScenario objects
     """
     try:
-        data = request.get_json() or {}
-        scenarios_data = data.get('scenarios', [])
-        
-        if not scenarios_data:
-            return jsonify({
-                'success': False,
-                'error': 'scenarios are required'
-            }), 400
-        
-        scenarios = [EstateScenario(**s) for s in scenarios_data]
+        scenarios = [EstateScenario(**s) for s in data.scenarios]
         
         simulator = get_inheritance_simulator()
         results = await simulator.compare_scenarios(scenarios)
         
-        return jsonify({
+        return {
             'success': True,
             'data': {
                 name: [p.model_dump() for p in projections]
                 for name, projections in results.items()
             }
-        })
+        }
         
     except Exception as e:
         logger.error(f"Error comparing scenarios: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        raise HTTPException(status_code=500, detail=str(e))

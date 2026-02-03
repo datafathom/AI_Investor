@@ -33,8 +33,8 @@ from services.execution.smart_execution_service import get_smart_execution_servi
 
 logger = logging.getLogger(__name__)
 
-advanced_orders_bp = Blueprint('advanced_orders', __name__, url_prefix='/api/orders')
-execution_bp = Blueprint('execution', __name__, url_prefix='/api/execution')
+advanced_orders_bp = Blueprint('advanced_orders', __name__, url_prefix='/api/v1/execution')
+execution_bp = Blueprint('execution', __name__, url_prefix='/api/v1/execution')
 
 
 @advanced_orders_bp.route('/trailing-stop', methods=['POST'])

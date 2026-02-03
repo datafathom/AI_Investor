@@ -14,7 +14,7 @@ from services.notifications.twilio_service import get_twilio_client
 
 logger = logging.getLogger(__name__)
 
-twilio_api_bp = Blueprint('twilio_api_bp', __name__)
+twilio_api_bp = Blueprint('twilio_api_bp', __name__, url_prefix='/api/v1/twilio')
 
 def _run_async(coro):
     try:

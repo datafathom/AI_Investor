@@ -48,39 +48,19 @@ class AnthropicClient:
         """
         Returns a canned response based on persona and topic.
         """
-        topic = topic.upper()
+        from agents.prompt_loader import get_prompt_loader
+        loader = get_prompt_loader()
         
-        if persona == "BULL":
-            responses = [
-                f"The fundamentals for {topic} are incredibly strong. Revenue growth is "
-                "accelerating, and their AI moat is widening.",
-                f"Market sentiment for {topic} is shifting positive. The technicals show a "
-                "clear breakout pattern forming on the weekly chart.",
-                f"{topic} is undervalued relative to its peers. The forward P/E suggests "
-                "significant upside potential as margins expand.",
-                f"Institutional accumulation of {topic} has been heavy. Smart money is "
-                "positioning for the next leg up."
-            ]
-            return random.choice(responses)
+        topic = topic.upper()
+        persona_key = persona.lower()
+        
+        # Load from the DebateChamberAgent group in JSON
+        prompt = loader.get_prompt("DebateChamberAgent", persona_key, {"topic": topic})
+        
+        if "PROMPT_NOT_FOUND" in prompt:
+            return f"No opinion on {topic} for persona {persona}"
             
-        elif persona == "BEAR":
-            responses = [
-                f"{topic} is significantly overextended here. The RSI is flashing overbought, "
-                "and a correction is imminent.",
-                f"Macro headwinds are going to crush {topic}'s guidance. Inflationary "
-                "pressures are eating into their margins.",
-                f"The valuation for {topic} is completely detached from reality. This is a "
-                "classic bubble formation.",
-                f"Insider selling at {topic} has been rampant. Management knows the peak is in."
-            ]
-            return random.choice(responses)
-            
-        elif persona == "MODERATOR":
-            return (f"Let's bring this to a conclusion. We've heard compelling arguments for both "
-                    f"sides of {topic}. Based on the volatility and volume, caution is advised, "
-                    "but the trend remains the deciding factor.")
-
-        return "I have no opinion on this matter."
+        return prompt
 
 class AnthropicClientSingleton:
     """Singleton wrapper for AnthropicClient."""

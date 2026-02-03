@@ -11,7 +11,6 @@ const OverfitWarning = () => {
     useEffect(() => {
         const checkOverfit = async () => {
             try {
-            try {
                 const response = await apiClient.get('/backtest/overfit', { 
                     params: { is_sharpe: 2.45, oos_sharpe: 1.12 } 
                 });

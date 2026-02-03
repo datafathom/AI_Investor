@@ -14,7 +14,7 @@ from services.taxes.taxbit_service import get_taxbit_client
 
 logger = logging.getLogger(__name__)
 
-tax_api_bp = Blueprint('tax_api_bp', __name__)
+tax_api_bp = Blueprint('tax_api_bp', __name__, url_prefix='/api/v1/tax_api')
 
 def _run_async(coro):
     try:

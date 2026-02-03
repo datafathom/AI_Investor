@@ -36,14 +36,31 @@ def stop_all(**kwargs):
     docker_down()
     
     # 2. Kill Host Processes
-    print("🔪 Killing Host Processes (Python/Node)...")
+    stop_python_processes()
+    print("🔪 Killing Node Processes...")
     try:
-        subprocess.run("taskkill /F /IM python.exe /T", shell=True, stderr=subprocess.DEVNULL)
         subprocess.run("taskkill /F /IM node.exe /T", shell=True, stderr=subprocess.DEVNULL)
     except Exception as e:
-        logger.warning(f"Error killing host processes: {e}")
+        logger.warning(f"Error killing node processes: {e}")
         
     return True
+
+def stop_python_processes(**kwargs):
+    """Terminate all running Python processes on the host."""
+    import subprocess
+    import sys
+    
+    print("🔪 Terminating all Python processes...")
+    try:
+        if sys.platform == "win32":
+            subprocess.run("taskkill /F /IM python.exe /T", shell=True, stderr=subprocess.DEVNULL)
+        else:
+            subprocess.run("pkill -9 python", shell=True, stderr=subprocess.DEVNULL)
+        print("OK Python processes terminated.")
+        return True
+    except Exception as e:
+        logger.error(f"Error killing python processes: {e}")
+        return False
 
 def verify_pipeline(**kwargs):
     """Verify data pipeline."""

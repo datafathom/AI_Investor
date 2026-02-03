@@ -7,6 +7,7 @@ from typing import Dict, List, Tuple, Optional
 import random
 import math
 import logging
+from services.social.inertia_cache import get_inertia_cache
 
 logger = logging.getLogger(__name__)
 
@@ -31,9 +32,10 @@ class MonteCarloService:
     def __init__(self) -> None:
         logger.info("MonteCarloService initialized")
     
-    async def run_gbm_simulation(
+    def run_gbm_simulation(
         self,
         initial_value: float,
+        ticker: Optional[str] = None,
         mu: float = 0.08,
         sigma: float = 0.15,
         days: int = 252,
@@ -45,13 +47,21 @@ class MonteCarloService:
         ruins = 0
         ruin_threshold = initial_value * 0.5
         
+        # Hype-Adjusted Drift
+        hype_drift = 0.0
+        if ticker:
+            hype_drift = get_inertia_cache().get_inertia(ticker.upper())
+            logger.info(f"Applying hype-adjusted drift for {ticker}: {hype_drift}")
+        
+        effective_mu = mu + hype_drift
+        
         for _ in range(min(paths, 1000)):  # Limit for performance
             path = [initial_value]
             value = initial_value
             
             for _ in range(days):
                 z = random.gauss(0, 1)
-                value = value * math.exp((mu - 0.5 * sigma**2) * dt + sigma * math.sqrt(dt) * z)
+                value = value * math.exp((effective_mu - 0.5 * sigma**2) * dt + sigma * math.sqrt(dt) * z)
                 path.append(value)
             
             all_paths.append(path)
@@ -78,14 +88,14 @@ class MonteCarloService:
             mean_final=sum(final_values) / len(final_values)
         )
     
-    async def calculate_ruin_probability(
+    def calculate_ruin_probability(
         self,
         result: SimulationResult,
         drawdown_limit: float = 0.50
     ) -> float:
         return result.ruin_probability
     
-    async def calculate_drawdown_metrics(self, path: List[float]) -> DrawdownMetrics:
+    def calculate_drawdown_metrics(self, path: List[float]) -> DrawdownMetrics:
         if not path:
             return DrawdownMetrics(0, 0, 0, 0, 0, 0)
         
@@ -123,7 +133,7 @@ class MonteCarloService:
             recovery_days=int(max_duration * 1.5)
         )
     
-    async def detect_overfit(self, is_sharpe: float, oos_sharpe: float) -> Tuple[bool, float]:
+    def detect_overfit(self, is_sharpe: float, oos_sharpe: float) -> Tuple[bool, float]:
         variance = abs(is_sharpe - oos_sharpe) / max(is_sharpe, 0.01)
         return variance > 0.20, variance
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { StorageService } from '../utils/storageService';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import StressTest from '../widgets/Scenario/StressTest';
 import MonteCarloRefined from '../widgets/Scenario/MonteCarloRefined';
@@ -37,7 +38,7 @@ const ScenarioDashboard = () => {
 
     const onLayoutChange = (currentLayout, allLayouts) => {
         setLayouts(allLayouts);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+        StorageService.set(STORAGE_KEY, allLayouts);
     };
 
     const scenarioStats = [

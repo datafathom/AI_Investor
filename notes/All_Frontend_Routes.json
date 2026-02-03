@@ -1,0 +1,672 @@
+{
+    "project": "AI Investor",
+    "type": "Frontend Routes Documentation",
+    "base_url": "http://localhost:5173",
+    "route_count": 80,
+    "routes": [
+        {
+            "path": "/ai/assistant",
+            "component": "AIAssistantDashboard",
+            "description": "Ai Assistant (Phase 26)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/ai/predictions",
+            "component": "AIPredictionsDashboard",
+            "description": "Ai Predictions (Phase 25)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/analyst",
+            "component": "RoleOverview",
+            "description": "Overview Analyst",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/analyst/debate",
+            "component": "DebateRoom",
+            "description": "Role Analyst",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/analytics",
+            "component": "RoleOverview",
+            "description": "Overview Analytics",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/analytics/options",
+            "component": "OptionsAnalytics",
+            "description": "Options",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/analytics/political",
+            "component": "PoliticalAlpha",
+            "description": "Political Alpha",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/analytics/strategy",
+            "component": "StrategyDistillery",
+            "description": "Strategy Distillery",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/architect",
+            "component": "RoleOverview",
+            "description": "Overview Architect",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/architect/api",
+            "component": "APIDashboard",
+            "description": "Role Api (Phase 23)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/architect/system",
+            "component": "SystemHealthDashboard",
+            "description": "Role Architect (Phase 19)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/assets",
+            "component": "AssetsDashboard",
+            "description": "Assets (Phase 24)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/billing/payments",
+            "component": "BillPaymentDashboard",
+            "description": "Bill Payment (Phase 11)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/budgeting",
+            "component": "BudgetingDashboard",
+            "description": "Budgeting (Phase 10)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/charting/advanced",
+            "component": "AdvancedChartingDashboard",
+            "description": "Advanced Charting (Phase 5)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/chat",
+            "component": "div",
+            "description": "Chat",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/community/forums",
+            "component": "CommunityForumsDashboard",
+            "description": "Community Forums (Phase 20)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/compliance",
+            "component": "ComplianceDashboard",
+            "description": "Compliance",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/credit/monitoring",
+            "component": "CreditMonitoringDashboard",
+            "description": "Credit Monitoring (Phase 12)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/developer/platform",
+            "component": "DeveloperPlatformDashboard",
+            "description": "Developer Platform (Phase 29)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/education",
+            "component": "EducationPlatformDashboard",
+            "description": "Education (Phase 21)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/enterprise",
+            "component": "EnterpriseDashboard",
+            "description": "Enterprise (Phase 31)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/evolution",
+            "component": "EvolutionDashboard",
+            "description": "Frontend interface for EvolutionDashboard (Phase 4: Evolution Lab)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/guardian",
+            "component": "RoleOverview",
+            "description": "Overview Guardian",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/guardian/compliance",
+            "component": "ComplianceDashboard",
+            "description": "Role Guardian",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/guardian/compliance/audit",
+            "component": "AuditDashboard",
+            "description": "Role Audit (Phase 16)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/guardian/margin",
+            "component": "MarginDashboard",
+            "description": "Role Margin (Phase 21)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/guardian/scenarios",
+            "component": "ScenarioDashboard",
+            "description": "Role Scenarios (Phase 17)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/institutional",
+            "component": "InstitutionalToolsDashboard",
+            "description": "Institutional (Phase 33)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/integrations",
+            "component": "IntegrationsDashboard",
+            "description": "Integrations (Phase 28)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/legal/privacy",
+            "component": "PrivacyPolicy",
+            "description": "Legal Privacy",
+            "secured": false,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/legal/terms",
+            "component": "TermsOfService",
+            "description": "Legal Terms",
+            "secured": false,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/marketplace",
+            "component": "MarketplaceDashboard",
+            "description": "Marketplace (Phase 30)",
+            "secured": true,
+            "query_params": [
+                "symbol (query)",
+                "timeframe (query)"
+            ],
+            "is_os_style": true
+        },
+        {
+            "path": "/ml/training",
+            "component": "MLTrainingDashboard",
+            "description": "Ml Training (Phase 27)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/mobile",
+            "component": "MobileDashboard",
+            "description": "Role Warden (Phase 22)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/news/sentiment",
+            "component": "NewsSentimentDashboard",
+            "description": "News Sentiment (Phase 16)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/observer",
+            "component": "RoleOverview",
+            "description": "Overview Observer",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/observer/macro",
+            "component": "MacroDashboard",
+            "description": "Role Observer",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/orchestrator",
+            "component": "MasterOrchestrator",
+            "description": "Role Orchestrator (Phase 200)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/planning/estate",
+            "component": "EstatePlanningDashboard",
+            "description": "Estate Planning (Phase 9)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/planning/financial",
+            "component": "FinancialPlanningDashboard",
+            "description": "Financial Planning (Phase 7)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/planning/retirement",
+            "component": "RetirementPlanningDashboard",
+            "description": "Retirement Planning (Phase 8)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/portfolio",
+            "component": "RoleOverview",
+            "description": "Overview Portfolio",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/portfolio/advanced-analytics",
+            "component": "AdvancedPortfolioAnalytics",
+            "description": "Advanced Analytics (Phase 1)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/portfolio/attribution",
+            "component": "PortfolioAttribution",
+            "description": "Attribution",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/portfolio/backtest",
+            "component": "BacktestPortfolio",
+            "description": "Backtest",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/portfolio/brokerage",
+            "component": "BrokerageAccount",
+            "description": "Brokerage",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/portfolio/cash-flow",
+            "component": "CashFlowDashboard",
+            "description": "Cash Flow (Phase 10)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/portfolio/crypto",
+            "component": "CryptoDashboard",
+            "description": "Crypto",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/portfolio/fixed-income",
+            "component": "FixedIncomeDashboard",
+            "description": "Fixed Income",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/portfolio/optimization",
+            "component": "PortfolioOptimizationDashboard",
+            "description": "Portfolio Optimization (Phase 2)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/portfolio/risk",
+            "component": "AdvancedRiskDashboard",
+            "description": "Advanced Risk (Phase 3)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/portfolio/tax",
+            "component": "TaxDashboard",
+            "description": "Tax",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/portfolio/tax-optimization",
+            "component": "TaxOptimizationDashboard",
+            "description": "Tax Optimization (Phase 4)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/research/reports",
+            "component": "ResearchReportsDashboard",
+            "description": "Research Reports (Phase 18)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/scanner",
+            "component": "RoleOverview",
+            "description": "Overview Scanner",
+            "secured": true,
+            "query_params": [
+                "symbol (query)",
+                "timeframe (query)"
+            ],
+            "is_os_style": true
+        },
+        {
+            "path": "/scanner/global",
+            "component": "GlobalScanner",
+            "description": "Scanner",
+            "secured": true,
+            "query_params": [
+                "symbol (query)",
+                "timeframe (query)"
+            ],
+            "is_os_style": true
+        },
+        {
+            "path": "/sentinel/strategy",
+            "component": "SentinelStrategyDashboard",
+            "description": "Frontend interface for SentinelStrategyDashboard",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/settings",
+            "component": "div",
+            "description": "Settings",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/social/trading",
+            "component": "SocialTradingDashboard",
+            "description": "Social Trading (Phase 19)",
+            "secured": true,
+            "query_params": [
+                "symbol (query)",
+                "timeframe (query)"
+            ],
+            "is_os_style": true
+        },
+        {
+            "path": "/strategist",
+            "component": "RoleOverview",
+            "description": "Overview Strategist",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/strategist/corporate",
+            "component": "CorporateDashboard",
+            "description": "Role Corporate (Phase 20)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/strategist/currency",
+            "component": "CurrencyDashboard",
+            "description": "Role Strategist",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/strategist/estate",
+            "component": "EstateDashboard",
+            "description": "Role Estate",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/strategist/impact",
+            "component": "ImpactDashboard",
+            "description": "Role Impact (Phase 18)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/strategist/scm",
+            "component": "SocialClassMaintenance",
+            "description": "Role Scm (Phase 197)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/tenant",
+            "component": "TenantDashboard",
+            "description": "Tenant",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/trading/advanced-orders",
+            "component": "AdvancedOrdersDashboard",
+            "description": "Advanced Orders (Phase 13)",
+            "secured": true,
+            "query_params": [
+                "symbol (query)",
+                "timeframe (query)"
+            ],
+            "is_os_style": true
+        },
+        {
+            "path": "/trading/algorithmic",
+            "component": "AlgorithmicTradingDashboard",
+            "description": "Algorithmic Trading (Phase 15)",
+            "secured": true,
+            "query_params": [
+                "symbol (query)",
+                "timeframe (query)"
+            ],
+            "is_os_style": true
+        },
+        {
+            "path": "/trading/options",
+            "component": "OptionsStrategyDashboard",
+            "description": "Options Strategy (Phase 6)",
+            "secured": true,
+            "query_params": [
+                "symbol (query)",
+                "timeframe (query)"
+            ],
+            "is_os_style": true
+        },
+        {
+            "path": "/trading/paper",
+            "component": "PaperTradingDashboard",
+            "description": "Paper Trading (Phase 14)",
+            "secured": true,
+            "query_params": [
+                "symbol (query)",
+                "timeframe (query)"
+            ],
+            "is_os_style": true
+        },
+        {
+            "path": "/watchlists/alerts",
+            "component": "WatchlistsAlertsDashboard",
+            "description": "Watchlists Alerts (Phase 17)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/workspace",
+            "component": "RoleOverview",
+            "description": "Overview Workspace",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/workspace/auto-coder",
+            "component": "AutoCoderSandbox",
+            "description": "Sandbox",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/workspace/autocoder",
+            "component": "AutoCoderDashboard",
+            "description": "Auto Coder",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/workspace/debate",
+            "component": "DebateRoom",
+            "description": "Debate Chamber",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/workspace/mission-control",
+            "component": "MissionControl",
+            "description": "Mission Control",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/workspace/terminal",
+            "component": "TerminalWorkspace",
+            "description": "Dashboard",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/workspace/vr",
+            "component": "VRCockpit",
+            "description": "Vr Cockpit",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        },
+        {
+            "path": "/zen",
+            "component": "ZenMode",
+            "description": "Zen (Phase 24)",
+            "secured": true,
+            "query_params": [],
+            "is_os_style": true
+        }
+    ]
+}

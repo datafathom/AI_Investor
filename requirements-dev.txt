@@ -1,8 +1,0 @@
-iniconfig==2.3.0
-pipdeptree==2.30.0
-pluggy==1.6.0
-pytest==7.4.0
-pytest-asyncio==0.21.1
-pytest-base-url==2.1.0
-selenium==4.20.0
-webdriver-manager==4.0.2

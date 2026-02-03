@@ -2,7 +2,7 @@ import apiClient from './apiClient';
 
 class AutoCoderService {
     constructor() {
-        this.baseUrl = '/api/v1/dev';
+        this.baseUrl = '/dev';
     }
 
     /**
@@ -10,10 +10,8 @@ class AutoCoderService {
      */
     async generateCode(task) {
         try {
-        try {
             const response = await apiClient.post(`${this.baseUrl}/generate`, { task });
-            const data = response.data;
-            return data.code;
+            return response.code;
         } catch (error) {
             console.error('AutoCoder Store Error [generate]:', error);
             throw error;
@@ -25,10 +23,8 @@ class AutoCoderService {
      */
     async validateCode(code) {
         try {
-        try {
             const response = await apiClient.post(`${this.baseUrl}/validate`, { code });
-            const data = response.data;
-            return data.is_valid;
+            return response.is_valid;
         } catch (error) {
             console.error('AutoCoder Store Error [validate]:', error);
             return false;
@@ -39,7 +35,6 @@ class AutoCoderService {
      * Deploys validated code to the active registry.
      */
     async deployModule(name, code) {
-        try {
         try {
             const response = await apiClient.post(`${this.baseUrl}/deploy`, { name, code });
             return response.data;
@@ -54,13 +49,13 @@ class AutoCoderService {
      */
     async getStatus() {
         try {
-        try {
             const response = await apiClient.get(`${this.baseUrl}/status`);
             return response.data;
         } catch (error) {
             console.error('AutoCoder Store Error [status]:', error);
             return { status: 'offline', modules: [] };
         }
+    }
     /**
      * Gets pending optimization tasks for the sandbox.
      */

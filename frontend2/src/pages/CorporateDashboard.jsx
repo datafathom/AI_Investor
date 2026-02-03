@@ -1,4 +1,5 @@
 import React from 'react';
+import { StorageService } from '../utils/storageService';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import EarningsCalendar from '../widgets/Corporate/EarningsCalendar';
 import DRIPConsole from '../widgets/Corporate/DRIPConsole';

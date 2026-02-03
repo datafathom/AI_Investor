@@ -28,7 +28,7 @@ class SystemHealthService:
     def __init__(self) -> None:
         logger.info("SystemHealthService initialized")
 
-    async def get_data_source_health(self) -> List[Dict]:
+    def get_data_source_health(self) -> List[Dict]:
         """Check health and quota status of external data vendors."""
         from services.system.api_governance import get_governor
         governor = get_governor()
@@ -60,14 +60,14 @@ class SystemHealthService:
             
         return results
 
-    async def get_health_status(self) -> Dict:
+    def get_health_status(self) -> Dict:
         """Aggregate health status from all systems. Optimized for responsiveness."""
         # 1. Kafka Health (via Monitor Service with 1s timeout)
-        kafka_pulse = await kafka_monitor_service.get_cluster_status()
-        kafka_throughput = await kafka_monitor_service.get_throughput_stats()
+        kafka_pulse = kafka_monitor_service.get_cluster_status()
+        kafka_throughput = kafka_monitor_service.get_throughput_stats()
         
         # 2. Data Source Health
-        api_health = await self.get_data_source_health()
+        api_health = self.get_data_source_health()
         
         # 3. Agent & OS Stats (Fast Metadata)
         # We avoid process_iter here as it's slow on Windows
@@ -114,7 +114,7 @@ class SystemHealthService:
             "overall_status": "healthy" if kafka_pulse["status"] == "healthy" else "warning"
         }
 
-    async def restart_service(self, service_name: str) -> bool:
+    def restart_service(self, service_name: str) -> bool:
         logger.warning(f"RESTARTING SERVICE: {service_name}")
         return True
 

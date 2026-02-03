@@ -8,6 +8,7 @@
  */
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { storageAdapter } from '../utils/storageAdapter';
 
 const useNavigationStore = create(
   persist(
@@ -44,7 +45,7 @@ const useNavigationStore = create(
     }),
     {
       name: 'investor-navigation-storage', // unique name
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => storageAdapter),
     }
   )
 );

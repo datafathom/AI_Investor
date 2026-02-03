@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import useAPIStore from '../stores/apiStore';
 import DataConnectors from '../widgets/API/DataConnectors';
@@ -46,7 +47,7 @@ const APIDashboard = () => {
 
     const onLayoutChange = (currentLayout, allLayouts) => {
         setLayouts(allLayouts);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+        StorageService.set(STORAGE_KEY, allLayouts);
     };
 
     const apiStats = [

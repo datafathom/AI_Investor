@@ -3,6 +3,7 @@
  * Handles API calls for market-related data.
  */
 import apiClient from './apiClient';
+import { workerManager } from './workerManager';
 
 class MarketService {
     constructor() {
@@ -11,8 +12,6 @@ class MarketService {
 
     /**
      * Fetches the Fear & Greed Index.
-     * @param {string[]} symbols - Optional list of symbols to analyze.
-     * @returns {Promise<Object>} - The fear and greed index data.
      */
     async getFearGreedIndex(symbols = []) {
         try {
@@ -20,12 +19,14 @@ class MarketService {
             if (symbols.length > 0) {
                 queryParams.append('symbols', symbols.join(','));
             }
-
-            // Default to mock=true for now as per backend default
             queryParams.append('mock', 'true');
 
-            const response = await apiClient.get(`${this.baseUrl}/fear-greed?${queryParams.toString()}`);
-            return response.data;
+            // ENABLE CACHING: Result is valid for 5 mins
+            const response = await apiClient.get(`${this.baseUrl}/fear-greed?${queryParams.toString()}`, {
+                useCache: true,
+                cacheTTL: 5 * 60 * 1000
+            });
+            return response;
         } catch (error) {
             console.error('Failed to fetch Fear & Greed Index:', error);
             throw error;
@@ -34,16 +35,21 @@ class MarketService {
 
     /**
      * Fetches the Market Direction Prediction.
-     * @param {string} symbol - Symbol to predict (default SPY).
-     * @returns {Promise<Object>} - Prediction result { prediction: "UP"|"DOWN", ... }.
      */
     async getMarketPrediction(symbol = 'SPY') {
         try {
             const queryParams = new URLSearchParams();
             queryParams.append('symbol', symbol);
 
-            const response = await apiClient.get(`${this.baseUrl}/predict?${queryParams.toString()}`);
-            return response.data;
+            const rawData = await apiClient.get(`${this.baseUrl}/predict?${queryParams.toString()}`);
+            
+            // Offload complex transformation to worker
+            const transformed = await workerManager.runTask('TRANSFORM_MARKET_DATA', {
+                rawData,
+                symbol
+            });
+            
+            return transformed;
         } catch (error) {
             console.error('Failed to fetch Market Prediction:', error);
             return {

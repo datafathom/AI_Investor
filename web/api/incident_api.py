@@ -14,7 +14,7 @@ from services.notifications.pagerduty_service import get_pagerduty_client
 
 logger = logging.getLogger(__name__)
 
-incident_api_bp = Blueprint('incident_api_bp', __name__)
+incident_api_bp = Blueprint('incident_api_bp', __name__, url_prefix='/api/v1/incident')
 
 def _run_async(coro):
     try:

@@ -16,19 +16,19 @@ from web.auth_utils import login_required, requires_role
 
 # ...
 
-# Define Blueprints
-backtest_bp = Blueprint('backtest_api_v1', __name__)
-estate_bp = Blueprint('estate_api_v1', __name__)
-compliance_bp = Blueprint('compliance_api_v1', __name__)
-scenario_bp = Blueprint('scenario_api_v1', __name__)
-philanthropy_bp = Blueprint('philanthropy_api_v1', __name__)
-system_bp = Blueprint('system_api_v1', __name__)
-corporate_bp = Blueprint('corporate_api_v1', __name__)
-margin_bp = Blueprint('margin_api_v1', __name__)
-mobile_bp = Blueprint('mobile_api_v1', __name__)
-integrations_bp = Blueprint('integrations_api_v1', __name__)
-assets_bp = Blueprint('assets_api_v1', __name__)
-zen_bp = Blueprint('zen_api_v1', __name__)
+# Define Blueprints with URL Prefixes
+backtest_bp = Blueprint('backtest_api_v1', __name__, url_prefix='/api/v1/backtest')
+estate_bp = Blueprint('estate_api_v1', __name__, url_prefix='/api/v1/estate')
+compliance_bp = Blueprint('compliance_api_v1', __name__, url_prefix='/api/v1/compliance')
+scenario_bp = Blueprint('scenario_api_v1', __name__, url_prefix='/api/v1/scenario')
+philanthropy_bp = Blueprint('philanthropy_api_v1', __name__, url_prefix='/api/v1/philanthropy')
+system_bp = Blueprint('system_api_v1', __name__, url_prefix='/api/v1/system')
+corporate_bp = Blueprint('corporate_api_v1', __name__, url_prefix='/api/v1/corporate')
+margin_bp = Blueprint('margin_api_v1', __name__, url_prefix='/api/v1/margin')
+mobile_bp = Blueprint('mobile_api_v1', __name__, url_prefix='/api/v1/mobile')
+integrations_bp = Blueprint('integrations_api_v1', __name__, url_prefix='/api/v1/integrations')
+assets_bp = Blueprint('assets_api_v1', __name__, url_prefix='/api/v1/assets')
+zen_bp = Blueprint('zen_api_v1', __name__, url_prefix='/api/v1/market')
 
 # Phase 1 API Integration - Market Data
 from web.api.market_data_api import market_data_bp
@@ -80,11 +80,11 @@ def run_monte_carlo():
     try:
         data = request.json or {}
         service = get_monte_carlo_service()
-        res = _run_async(service.run_gbm_simulation(
+        res = service.run_gbm_simulation(
             data.get('initial_value', 1000000), 
             mu=data.get('mu', 0.08), 
             sigma=data.get('sigma', 0.15)
-        ))
+        )
         return jsonify({
             "status": "success",
             "data": {
@@ -121,7 +121,7 @@ def check_overfit():
         is_sharpe = request.args.get('is_sharpe', 1.5, type=float)
         oos_sharpe = request.args.get('oos_sharpe', 1.12, type=float)
         service = get_monte_carlo_service()
-        is_overfit, variance = _run_async(service.detect_overfit(is_sharpe, oos_sharpe))
+        is_overfit, variance = service.detect_overfit(is_sharpe, oos_sharpe)
         return jsonify({
             "status": "success",
             "data": {
@@ -151,7 +151,7 @@ def get_heartbeat():
     """
     try:
         service = get_estate_service()
-        status = _run_async(service.check_heartbeat("demo-user"))
+        status = service.check_heartbeat("demo-user")
         return jsonify({
             "status": "success",
             "data": {
@@ -178,9 +178,9 @@ def get_compliance_overview():
     """
     try:
         service = get_compliance_service()
-        score = _run_async(service.get_compliance_score())
-        alerts = _run_async(service.get_sar_alerts())
-        logs = _run_async(service.get_audit_logs())
+        score = service.get_compliance_score()
+        alerts = service.get_sar_alerts()
+        logs = service.get_audit_logs()
         return jsonify({
             "status": "success",
             "data": {
@@ -211,7 +211,7 @@ def get_audit_logs():
     try:
         limit = request.args.get('limit', 100, type=int)
         service = get_compliance_service()
-        logs = _run_async(service.get_audit_logs(limit))
+        logs = service.get_audit_logs(limit)
         return jsonify({
             "status": "success",
             "data": [{
@@ -241,7 +241,7 @@ def list_sar_alerts():
     """
     try:
         service = get_compliance_service()
-        alerts = _run_async(service.get_sar_alerts())
+        alerts = service.get_sar_alerts()
         return jsonify({
             "status": "success",
             "data": [{
@@ -278,7 +278,7 @@ def update_sar_status(sap_id):
     try:
         status = request.args.get('status')
         service = get_compliance_service()
-        success = _run_async(service.update_sar_status(sap_id, status))
+        success = service.update_sar_status(sap_id, status)
         if not success:
             return jsonify({"status": "error", "message": "SAR not found"}), 404
         return jsonify({"status": "success"})
@@ -299,7 +299,7 @@ def verify_integrity():
     """
     try:
         service = get_compliance_service()
-        res = _run_async(service.verify_log_integrity())
+        res = service.verify_log_integrity()
         return jsonify({
             "status": "success",
             "data": {
@@ -340,9 +340,9 @@ def simulate_scenario():
         from services.analysis.scenario_service import MacroShock
         data = request.json
         shock = MacroShock(data['id'], data['id'], data['equityDrop'], data['bondDrop'], data['goldChange'])
-        result = _run_async(service.apply_shock("default", shock))
-        sufficiency = _run_async(service.calculate_hedge_sufficiency("default", shock))
-        recovery = _run_async(service.project_recovery_timeline(result))
+        result = service.apply_shock("default", shock)
+        sufficiency = service.calculate_hedge_sufficiency("default", shock)
+        recovery = service.project_recovery_timeline(result)
         
         return jsonify({
             "status": "success",
@@ -387,7 +387,7 @@ def run_refined_mc():
         service = get_scenario_service()
         from services.analysis.scenario_service import MacroShock
         shock = MacroShock(id=scenario_id, name=scenario_id, equity_drop=0, bond_drop=0, gold_change=0)
-        res = _run_async(service.run_refined_monte_carlo(initial_value, shock))
+        res = service.run_refined_monte_carlo(initial_value, shock)
         return jsonify({
             "status": "success",
             "data": res
@@ -411,7 +411,7 @@ def simulate_bank_run():
     try:
         stress_level = request.args.get('stress_level', 1.0, type=float)
         service = get_scenario_service()
-        res = _run_async(service.calculate_liquidity_drain(stress_level))
+        res = service.calculate_liquidity_drain(stress_level)
         return jsonify({
             "status": "success",
             "data": res
@@ -429,12 +429,12 @@ def shadow_fork():
     try:
         data = request.json
         service = get_scenario_service()
-        res = _run_async(service.simulate_shadow_fork(
+        res = service.simulate_shadow_fork(
             data.get('initial_value', 1000000),
             data.get('baseline_params', {}),
             data.get('shadow_params', {}),
             data.get('horizon_days', 30)
-        ))
+        )
         return jsonify({
             "status": "success",
             "data": res
@@ -465,7 +465,7 @@ def donate():
         from services.philanthropy.donation_service import get_donation_service
         service = get_donation_service()
         allocs = data.get('allocations', [])
-        record = _run_async(service.route_excess_alpha(data.get('amount', 0), allocs))
+        record = service.route_excess_alpha(data.get('amount', 0), allocs)
         return jsonify({
             "status": "success",
             "data": {
@@ -491,7 +491,7 @@ def donation_history():
     try:
         from services.philanthropy.donation_service import get_donation_service
         service = get_donation_service()
-        history = _run_async(service.get_donation_history())
+        history = service.get_donation_history()
         return jsonify({
             "status": "success",
             "data": [{
@@ -516,7 +516,7 @@ def get_esg():
     """
     try:
         service = get_esg_service()
-        scores = _run_async(service.get_portfolio_esg_scores())
+        scores = service.get_portfolio_esg_scores()
         return jsonify({
             "status": "success",
             "data": {
@@ -545,8 +545,8 @@ def get_carbon():
     """
     try:
         service = get_esg_service()
-        footprint = _run_async(service.calculate_carbon_footprint(request.args.get('value', 3000000, type=float)))
-        scatter = _run_async(service.get_alpha_vs_carbon_data())
+        footprint = service.calculate_carbon_footprint(request.args.get('value', 3000000, type=float))
+        scatter = service.get_alpha_vs_carbon_data()
         return jsonify({
             "status": "success",
             "data": {
@@ -573,7 +573,7 @@ def get_health():
     """
     try:
         service = get_system_health_service()
-        health = _run_async(service.get_health_status())
+        health = service.get_health_status()
         return jsonify({
             "status": "success",
             "data": health
@@ -581,6 +581,20 @@ def get_health():
     except Exception as e:
         logger.exception("System health check failed")
         return jsonify({"status": "error", "message": str(e)}), 500
+
+@system_bp.route('/error', methods=['POST'])
+def log_frontend_error():
+    """
+    Log frontend crashes and exceptions to the system logger.
+    Fixes 404 errors observed in frontend error tracking.
+    """
+    try:
+        data = request.json or {}
+        logger.error(f"FRONTEND_CRASH: {data.get('error')}\nStack: {data.get('stack')}\nContext: {data.get('context')}")
+        return jsonify({"status": "logged"})
+    except Exception as e:
+        logger.exception("Failed to log frontend error")
+        return jsonify({"status": "error"}), 500
 
 @system_bp.route('/secrets', methods=['GET'])
 @login_required
@@ -689,7 +703,7 @@ def get_corporate_earnings():
     """
     try:
         service = get_corporate_service()
-        evs = _run_async(service.get_earnings_calendar())
+        evs = service.get_earnings_calendar()
         return jsonify({
             "status": "success",
             "data": [{"ticker": e.ticker, "date": e.date} for e in evs]
@@ -710,7 +724,7 @@ def get_margin_status():
     """
     try:
         service = get_margin_service()
-        status = _run_async(service.get_margin_status("default"))
+        status = service.get_margin_status("default")
         return jsonify({
             "status": "success",
             "data": {
@@ -741,7 +755,7 @@ def activate_kill_switch():
     """
     try:
         service = get_mobile_service()
-        success = _run_async(service.activate_kill_switch(request.json.get('token')))
+        success = service.activate_kill_switch(request.json.get('token'))
         return jsonify({
             "status": "success" if success else "error",
             "data": {"success": success}
@@ -756,19 +770,50 @@ def activate_kill_switch():
 def get_external_connectors():
     """
     List status of all external API connectors and broker bridges.
-    
-    Returns:
-        JSON: Standardized response with connector status array.
     """
     try:
         service = get_integrations_service()
-        conns = _run_async(service.get_connectors())
+        conns = service.get_connectors() # Synchronous call
         return jsonify({
             "status": "success",
             "data": [{"name": c.name, "status": c.status} for c in conns]
         })
     except Exception as e:
         logger.exception("Connector status fetch failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@integrations_bp.route('/webhooks', methods=['GET'])
+@login_required
+def get_webhooks():
+    """
+    List configured webhooks.
+    """
+    try:
+        service = get_integrations_service()
+        hooks = service.get_webhooks() # Synchronous call
+        return jsonify({
+            "status": "success",
+            "data": [{"id": h.id, "url": h.url, "status": h.status} for h in hooks]
+        })
+    except Exception as e:
+        logger.exception("Webhook fetch failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@integrations_bp.route('/webhooks/<webhook_id>/test', methods=['POST'])
+@login_required
+def test_webhook(webhook_id):
+    """
+    Test a webhook configuration.
+    """
+    try:
+        service = get_integrations_service()
+        res = service.test_webhook(webhook_id) # Synchronous call
+        return jsonify({
+            "status": "success",
+            "data": res
+        })
+    except Exception as e:
+        logger.exception("Webhook test failed")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 # --- Assets (Phase 67) ---
@@ -806,7 +851,7 @@ def calculate_zen_equilibrium():
     """
     try:
         service = get_homeostasis_service()
-        res = _run_async(service.calculate_homeostasis("default"))
+        res = service.calculate_homeostasis("default")
         return jsonify({
             "status": "success",
             "data": {
@@ -817,4 +862,66 @@ def calculate_zen_equilibrium():
         })
     except Exception as e:
         logger.exception("Zen calculation failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@zen_bp.route('/status', methods=['GET'])
+@login_required
+def get_homeostasis_status():
+    """
+    Get current homeostasis status and net worth metrics.
+    """
+    try:
+        service = get_homeostasis_service()
+        # The analysis service uses calculate_homeostasis
+        res = service.calculate_homeostasis("demo-user")
+        return jsonify({
+            "status": "success",
+            "data": {
+                "net_worth": res.current_value,
+                "target": res.freedom_number,
+                "homeostasis_score": res.freedom_progress * 100,
+                "years_covered": res.years_covered,
+                "retirement_probability": res.retirement_probability,
+                "monthly_safe_withdrawal": res.monthly_safe_withdrawal
+            }
+        })
+    except Exception as e:
+        logger.exception("Homeostasis status fetch failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@zen_bp.route('/update', methods=['POST'])
+@login_required
+def update_homeostasis_metrics():
+    """
+    Update net worth and trigger homeostasis checks.
+    """
+    try:
+        service = get_homeostasis_service()
+        # In analysis version, we don't have update_net_worth, but we can re-calculate
+        res = service.calculate_homeostasis("demo-user")
+        return jsonify({
+            "status": "success",
+            "data": {
+                "net_worth": res.current_value,
+                "target": res.freedom_number,
+                "homeostasis_score": res.freedom_progress * 100
+            }
+        })
+    except Exception as e:
+        logger.exception("Homeostasis update failed")
+        return jsonify({"status": "error", "message": str(e)}), 500
+@zen_bp.route('/donate', methods=['POST'])
+@login_required
+def manual_donate():
+    """
+    Manually trigger a philanthropy donation.
+    """
+    try:
+        from services.execution.philanthropy_service import philanthropy_service
+        data = request.json
+        amount = data.get('amount', 0)
+        philanthropy_service.donate_excess_alpha("demo-user", amount)
+        return jsonify({"status": "success", "amount": amount})
+    except Exception as e:
+        logger.exception("Manual donation failed")
         return jsonify({"status": "error", "message": str(e)}), 500

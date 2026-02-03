@@ -17,6 +17,7 @@
 
 import React, { useState, useEffect } from 'react';
 import apiClient from '../../services/apiClient';
+import { StorageService } from '../../utils/storageService';
 import './WalletConnect.css';
 
 const API_BASE = '/ethereum';
@@ -30,15 +31,13 @@ const WalletConnect = ({ onWalletConnected }) => {
     const [connectedWallets, setConnectedWallets] = useState([]);
 
     useEffect(() => {
-        // Load previously connected wallets from localStorage
-        const saved = localStorage.getItem('connected_wallets');
-        if (saved) {
-            try {
-                setConnectedWallets(JSON.parse(saved));
-            } catch (e) {
-                console.error('Failed to load saved wallets:', e);
+        const loadWallets = async () => {
+            const saved = await StorageService.get('connected_wallets');
+            if (saved) {
+                setConnectedWallets(saved);
             }
-        }
+        };
+        loadWallets();
     }, []);
 
     const handleAddressSubmit = async (e) => {
@@ -83,7 +82,9 @@ const WalletConnect = ({ onWalletConnected }) => {
 
             const updated = [...connectedWallets, walletInfo];
             setConnectedWallets(updated);
-            localStorage.setItem('connected_wallets', JSON.stringify(updated));
+            
+            // Async save (fire and forget)
+            StorageService.set('connected_wallets', updated);
 
             if (onWalletConnected) {
                 onWalletConnected(walletInfo);
@@ -103,7 +104,7 @@ const WalletConnect = ({ onWalletConnected }) => {
     const handleDisconnect = (addressToRemove) => {
         const updated = connectedWallets.filter(w => w.address !== addressToRemove);
         setConnectedWallets(updated);
-        localStorage.setItem('connected_wallets', JSON.stringify(updated));
+        StorageService.set('connected_wallets', updated);
         
         if (addressToRemove === address) {
             setBalance(null);

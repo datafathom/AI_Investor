@@ -20,6 +20,11 @@ class PresenceService {
    * Initialize presence service
    */
   initialize(userId, username) {
+    if (this.socket && this.currentUser?.id === userId) {
+      console.log("[Presence] Already initialized for this user, skipping.");
+      return;
+    }
+    
     if (this.socket) {
       this.disconnect();
     }
@@ -28,7 +33,7 @@ class PresenceService {
     // Use relative path to leverage Vite proxy correctly in all environments
     this.socket = io({
       path: '/socket.io',
-      transports: ['websocket', 'polling'],
+      transports: ['polling'],
       reconnectionAttempts: 5
     });
 

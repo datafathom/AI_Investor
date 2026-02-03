@@ -32,15 +32,6 @@ const FearGreedWidget = () => {
             } finally {
                 setLoading(false);
             }
-            } catch (e) {
-                 setData({
-                    score: 65,
-                    rating: 'Greed',
-                    components: { vix: 15, momentum: 60 }
-                });
-            } finally {
-                setLoading(false);
-            }
         };
 
         fetchData();

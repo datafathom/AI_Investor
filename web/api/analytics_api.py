@@ -32,7 +32,7 @@ from services.analytics.risk_decomposition_service import get_risk_decomposition
 
 logger = logging.getLogger(__name__)
 
-analytics_bp = Blueprint('analytics', __name__, url_prefix='/api/analytics')
+analytics_bp = Blueprint('analytics', __name__, url_prefix='/api/v1/analytics')
 
 
 @analytics_bp.route('/attribution/<portfolio_id>', methods=['GET'])

@@ -30,7 +30,7 @@ from services.options.options_analytics_service import get_options_analytics_ser
 
 logger = logging.getLogger(__name__)
 
-options_bp = Blueprint('options', __name__, url_prefix='/api/options')
+options_bp = Blueprint('options', __name__, url_prefix='/api/v1/options')
 
 
 @options_bp.route('/strategy/create', methods=['POST'])

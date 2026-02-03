@@ -125,11 +125,15 @@ class KYCService:
         required = {DocumentType.PASSPORT, DocumentType.UTILITY_BILL}
         
         for doc in documents:
-            # Mock verification (in production, use OCR/AI)
-            doc.status = VerificationStatus.VERIFIED
-            verified_docs.append(doc)
+            # Enhanced mock verification: Fail if checksum is empty or too short
+            if not doc.checksum or len(doc.checksum) < 32:
+                doc.status = VerificationStatus.REJECTED
+                logger.warning(f"Document {doc.id} rejected: Invalid checksum")
+            else:
+                doc.status = VerificationStatus.VERIFIED
+                verified_docs.append(doc)
         
-        doc_types = {d.document_type for d in documents}
+        doc_types = {d.document_type for d in documents if d.status == VerificationStatus.VERIFIED}
         missing = [t for t in required if t not in doc_types]
         
         # Determine verification level
@@ -195,34 +199,34 @@ class KYCService:
     
     async def get_filing_calendar(self) -> List[FilingDeadline]:
         """
-        Get upcoming filing deadlines.
-        
-        Returns:
-            List of filing deadlines
+        Get upcoming filing deadlines dynamically.
         """
         now = datetime.now()
+        
+        # 13F is due 45 days after quarter end
+        # Schedule 13D is due 5-10 days after crossing 5%
         
         deadlines = [
             FilingDeadline(
                 filing_type="Form 13F",
-                due_date="2026-02-14",
-                description="Q4 2025 Quarterly Holdings Report",
+                due_date=(now + timedelta(days=45)).strftime("%Y-%m-%d"),
+                description="Next Quarterly Holdings Report",
                 status="upcoming",
-                days_remaining=27
+                days_remaining=45
             ),
             FilingDeadline(
                 filing_type="Schedule 13D/G",
-                due_date="2026-01-25",
-                description="5% ownership disclosure",
+                due_date=(now + timedelta(days=10)).strftime("%Y-%m-%d"),
+                description="5% threshold disclosure",
                 status="due_soon",
-                days_remaining=7
+                days_remaining=10
             ),
             FilingDeadline(
                 filing_type="K-1",
-                due_date="2026-03-15",
-                description="Partnership income reporting",
+                due_date=(now + timedelta(days=72)).strftime("%Y-%m-%d"),
+                description="Annual partnership reporting",
                 status="upcoming",
-                days_remaining=56
+                days_remaining=72
             ),
         ]
         

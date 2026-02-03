@@ -33,7 +33,7 @@ class MarginService:
         self._margin_used = 450000.0 
         logger.info("MarginService initialized with PortfolioManager and RiskMonitor")
     
-    async def calculate_margin_buffer(self, portfolio_id: str = "default") -> float:
+    def calculate_margin_buffer(self, portfolio_id: str = "default") -> float:
         """
         Calculates the margin buffer based on real portfolio equity and maintenance requirements.
         """
@@ -59,8 +59,8 @@ class MarginService:
         buffer = ((equity - maint_req) / equity) * 100
         return max(0.0, buffer)
     
-    async def get_margin_status(self, portfolio_id: str = "default") -> MarginStatus:
-        buffer = await self.calculate_margin_buffer(portfolio_id)
+    def get_margin_status(self, portfolio_id: str = "default") -> MarginStatus:
+        buffer = self.calculate_margin_buffer(portfolio_id)
         total_value = self.pm.get_combined_value()
         
         # Available margin is typically 50% of equity minus used margin (Reg T)
@@ -75,12 +75,12 @@ class MarginService:
             maintenance_margin=self._margin_used * 0.25 # Simplified
         )
     
-    async def get_liquidation_distance(self, position_id: str) -> float:
+    def get_liquidation_distance(self, position_id: str) -> float:
         # Per-position liquidation distance would require more complex modeling
         return 25.5 
     
-    async def generate_deleverage_plan(self, target_buffer: float) -> DeleveragePlan:
-        current_buffer = await self.calculate_margin_buffer()
+    def generate_deleverage_plan(self, target_buffer: float) -> DeleveragePlan:
+        current_buffer = self.calculate_margin_buffer()
         if current_buffer >= target_buffer:
             return DeleveragePlan([], 0, current_buffer, "none")
         
@@ -120,8 +120,8 @@ class MarginService:
             urgency="critical" if current_buffer < 10 else "high" if current_buffer < 20 else "low"
         )
     
-    async def check_danger_zone(self, portfolio_id: str = "default") -> bool:
-        buffer = await self.calculate_margin_buffer(portfolio_id)
+    def check_danger_zone(self, portfolio_id: str = "default") -> bool:
+        buffer = self.calculate_margin_buffer(portfolio_id)
         return buffer < 20
 
 _margin_service: Optional[MarginService] = None

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import WalletDashboard from '../widgets/Crypto/CryptoWalletDashboard';
 import LPTracker from '../widgets/Crypto/LPPositionTracker';
@@ -53,7 +54,7 @@ const CryptoDashboard = () => {
 
     const onLayoutChange = (currentLayout, allLayouts) => {
         setLayouts(allLayouts);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(allLayouts));
+        StorageService.set(STORAGE_KEY, allLayouts);
     };
 
     // Derived Data

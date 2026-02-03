@@ -22,6 +22,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import useSocialStore from '../stores/socialStore';
 import './SocialTradingDashboard.css';
 

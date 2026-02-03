@@ -3,7 +3,7 @@
  * Phase 57: Manages simulation parameters, paths, and risk metrics.
  */
 import { create } from 'zustand';
-import apiClient from '../services/apiClient';
+import { workerManager } from '../services/workerManager';
 
 const useBacktestStore = create((set, get) => ({
     // State
@@ -25,14 +25,21 @@ const useBacktestStore = create((set, get) => ({
     setSimulating: (simulating) => set({ isSimulating: simulating }),
     setError: (error) => set({ error }),
     
-    // Async: Run simulation
+    // Async: Run simulation via Worker
     runSimulation: async () => {
         const { params, setSimulating, setError, setSimulationPaths, setRuinProbability } = get();
         setSimulating(true);
         setError(null);
         try {
-            const response = await apiClient.post('/backtest/monte-carlo', params);
-            const data = response.data;
+            // Offload to Web Worker
+            const data = await workerManager.runMonteCarlo({
+                initialValue: 1000000,
+                meanReturn: params.mu,
+                volatility: params.sigma,
+                timeHorizon: params.days,
+                iterations: params.paths
+            });
+            
             setSimulationPaths(data.paths || [], data.quantiles || {});
             setRuinProbability(data.ruin_probability || 0);
         } catch (error) {

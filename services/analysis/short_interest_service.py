@@ -41,12 +41,12 @@ class ShortInterestService:
         self.quandl = quandl_client or get_quandl_client()
         self.av = av_client or get_alpha_vantage_client()
 
-    async def analyze_symbol(self, symbol: str) -> Optional[SqueezeAnalysis]:
+    def analyze_symbol(self, symbol: str) -> Optional[SqueezeAnalysis]:
         """
         Performs full short interest analysis for a symbol.
         """
         # 1. Get Short Interest Data
-        si_data = await self.quandl.get_short_interest(symbol)
+        si_data = self.quandl.get_short_interest(symbol)
         if not si_data:
             logger.warning(f"No short interest data for {symbol}")
             return None
@@ -57,7 +57,7 @@ class ShortInterestService:
         # Note: In a real scenario, we'd fetch actual volume. For now, we'll try to get it from AV or fallback.
         avg_volume = 0.0
         try:
-            daily_bars = await self.av.get_daily(symbol, outputsize="compact")
+            daily_bars = self.av.get_daily(symbol, outputsize="compact")
             if daily_bars:
                 # Average of last 10 days
                 recent_bars = daily_bars[:10]

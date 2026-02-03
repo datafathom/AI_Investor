@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, useRef, useCallback, Suspense, lazy } from 'react';
+import { StorageService } from '../utils/storageService';
 import GridLayout from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -14,15 +15,16 @@ import { useToast } from '../context/ToastContext';
 import PageHeader from '../components/Navigation/PageHeader';
 
 // AI Investor Widgets
-import MonitorWidget from '../components/AI_Investor/Views/MonitorWidget';
-import CommandWidget from '../components/AI_Investor/Views/CommandWidget';
-import TerminalWidget from '../components/Terminal/TerminalWidget';
-import ResearchWidget from '../components/AI_Investor/Views/ResearchWidget';
-import PortfolioWidget from '../components/AI_Investor/Views/PortfolioWidget';
-import DockerWidget from '../components/DockerWidget';
-import WindowManagerWidget from '../components/WindowManager/WindowManagerWidget';
-import HomeostasisWidget from '../components/AI_Investor/Views/HomeostasisWidget';
-import SystemLogWidget from '../components/Terminal/SystemLogWidget';
+// AI Investor Widgets (Lazy Loaded)
+const MonitorWidget = lazy(() => import('../components/AI_Investor/Views/MonitorWidget'));
+const CommandWidget = lazy(() => import('../components/AI_Investor/Views/CommandWidget'));
+const TerminalWidget = lazy(() => import('../components/Terminal/TerminalWidget'));
+const ResearchWidget = lazy(() => import('../components/AI_Investor/Views/ResearchWidget'));
+const PortfolioWidget = lazy(() => import('../components/AI_Investor/Views/PortfolioWidget'));
+const DockerWidget = lazy(() => import('../components/DockerWidget'));
+const WindowManagerWidget = lazy(() => import('../components/WindowManager/WindowManagerWidget'));
+const HomeostasisWidget = lazy(() => import('../components/AI_Investor/Views/HomeostasisWidget'));
+const SystemLogWidget = lazy(() => import('../components/Terminal/SystemLogWidget'));
 const OptionsChainWidget = lazy(() => import('../widgets/OptionsChain/OptionsChainWidget'));
 const MarketDepthWidget = lazy(() => import('../widgets/DOM/DOMWidget'));
 const TradeTapeWidget = lazy(() => import('../components/AI_Investor/Views/TradeTapeWidget'));
@@ -374,35 +376,35 @@ const Dashboard = ({
                     <div key="monitor-view" data-widget-id="monitor-view" className={`widget-wrapper glass-panel ${widgetStates['monitor-view']?.minimized ? 'minimized' : ''} ${widgetStates['monitor-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['monitor-view']} onMinimize={() => handleWidgetMinimize('monitor-view')} onMaximize={() => handleWidgetMaximize('monitor-view')} onClose={() => handleWidgetClose('monitor-view')} onLock={() => handleWidgetLock('monitor-view')} onMinimumFullView={() => handleMinimumFullView('monitor-view')} onViewSource={() => handleViewSource('monitor-view')} isMaximized={widgetStates['monitor-view']?.maximized} isLocked={widgetStates['monitor-view']?.locked} linkingGroup={widgetStates['monitor-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('monitor-view', g)} />
                         <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
-                        {!widgetStates['monitor-view']?.minimized && <div className="window-content"><MonitorWidget /></div>}
+                        {!widgetStates['monitor-view']?.minimized && <Suspense fallback={<div className="p-4">Loading Monitor...</div>}><div className="window-content"><MonitorWidget /></div></Suspense>}
                     </div>
                 )}
                 {widgetVisibility['command-view'] !== false && (
                     <div key="command-view" data-widget-id="command-view" className={`widget-wrapper glass-panel ${widgetStates['command-view']?.minimized ? 'minimized' : ''} ${widgetStates['command-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['command-view']} onMinimize={() => handleWidgetMinimize('command-view')} onMaximize={() => handleWidgetMaximize('command-view')} onClose={() => handleWidgetClose('command-view')} onLock={() => handleWidgetLock('command-view')} onMinimumFullView={() => handleMinimumFullView('command-view')} onViewSource={() => handleViewSource('command-view')} isMaximized={widgetStates['command-view']?.maximized} isLocked={widgetStates['command-view']?.locked} linkingGroup={widgetStates['command-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('command-view', g)} />
                         <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
-                        {!widgetStates['command-view']?.minimized && <div className="window-content"><CommandWidget /></div>}
+                        {!widgetStates['command-view']?.minimized && <Suspense fallback={<div className="p-4">Loading Command...</div>}><div className="window-content"><CommandWidget /></div></Suspense>}
                     </div>
                 )}
                 {widgetVisibility['portfolio-view'] !== false && (
                     <div key="portfolio-view" data-widget-id="portfolio-view" className={`widget-wrapper glass-panel ${widgetStates['portfolio-view']?.minimized ? 'minimized' : ''} ${widgetStates['portfolio-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['portfolio-view']} onMinimize={() => handleWidgetMinimize('portfolio-view')} onMaximize={() => handleWidgetMaximize('portfolio-view')} onClose={() => handleWidgetClose('portfolio-view')} onLock={() => handleWidgetLock('portfolio-view')} onMinimumFullView={() => handleMinimumFullView('portfolio-view')} onViewSource={() => handleViewSource('portfolio-view')} isMaximized={widgetStates['portfolio-view']?.maximized} isLocked={widgetStates['portfolio-view']?.locked} linkingGroup={widgetStates['portfolio-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('portfolio-view', g)} />
                         <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
-                        {!widgetStates['portfolio-view']?.minimized && <div className="window-content"><PortfolioWidget /></div>}
+                        {!widgetStates['portfolio-view']?.minimized && <Suspense fallback={<div className="p-4">Loading Portfolio...</div>}><div className="window-content"><PortfolioWidget /></div></Suspense>}
                     </div>
                 )}
                 {widgetVisibility['research-view'] !== false && (
                     <div key="research-view" data-widget-id="research-view" className={`widget-wrapper glass-panel ${widgetStates['research-view']?.minimized ? 'minimized' : ''} ${widgetStates['research-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['research-view']} onMinimize={() => handleWidgetMinimize('research-view')} onMaximize={() => handleWidgetMaximize('research-view')} onClose={() => handleWidgetClose('research-view')} onLock={() => handleWidgetLock('research-view')} onMinimumFullView={() => handleMinimumFullView('research-view')} onViewSource={() => handleViewSource('research-view')} isMaximized={widgetStates['research-view']?.maximized} isLocked={widgetStates['research-view']?.locked} linkingGroup={widgetStates['research-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('research-view', g)} />
                         <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
-                        {!widgetStates['research-view']?.minimized && <div className="window-content"><ResearchWidget /></div>}
+                        {!widgetStates['research-view']?.minimized && <Suspense fallback={<div className="p-4">Loading Research...</div>}><div className="window-content"><ResearchWidget /></div></Suspense>}
                     </div>
                 )}
                 {widgetVisibility['terminal-view'] !== false && (
                     <div key="terminal-view" data-widget-id="terminal-view" className={`widget-wrapper glass-panel ${widgetStates['terminal-view']?.minimized ? 'minimized' : ''} ${widgetStates['terminal-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['terminal-view']} onMinimize={() => handleWidgetMinimize('terminal-view')} onMaximize={() => handleWidgetMaximize('terminal-view')} onClose={() => handleWidgetClose('terminal-view')} onLock={() => handleWidgetLock('terminal-view')} onMinimumFullView={() => handleMinimumFullView('terminal-view')} onViewSource={() => handleViewSource('terminal-view')} isMaximized={widgetStates['terminal-view']?.maximized} isLocked={widgetStates['terminal-view']?.locked} linkingGroup={widgetStates['terminal-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('terminal-view', g)} />
                         <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
-                        {!widgetStates['terminal-view']?.minimized && <div className="window-content"><TerminalWidget logs={logs} onClearHistory={handleClearLogs} /></div>}
+                        {!widgetStates['terminal-view']?.minimized && <Suspense fallback={<div className="p-4">Loading Terminal...</div>}><div className="window-content"><TerminalWidget logs={logs} onClearHistory={handleClearLogs} /></div></Suspense>}
                     </div>
                 )}
                 {/* Charts */}
@@ -417,7 +419,7 @@ const Dashboard = ({
                     <div key="homeostasis-view" data-widget-id="homeostasis-view" className={`widget-wrapper ${widgetStates['homeostasis-view']?.minimized ? 'minimized' : ''} ${widgetStates['homeostasis-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['homeostasis-view']} onMinimize={() => handleWidgetMinimize('homeostasis-view')} onMaximize={() => handleWidgetMaximize('homeostasis-view')} onClose={() => handleWidgetClose('homeostasis-view')} onLock={() => handleWidgetLock('homeostasis-view')} onMinimumFullView={() => handleMinimumFullView('homeostasis-view')} onViewSource={() => handleViewSource('homeostasis-view')} isMaximized={widgetStates['homeostasis-view']?.maximized} isLocked={widgetStates['homeostasis-view']?.locked} linkingGroup={widgetStates['homeostasis-view']?.linkingGroup || 'none'} onLinkingGroupChange={(g) => handleLinkingGroupChange('homeostasis-view', g)} />
                         <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
-                        {!widgetStates['homeostasis-view']?.minimized && <div className="window-content"><HomeostasisWidget /></div>}
+                        {!widgetStates['homeostasis-view']?.minimized && <Suspense fallback={<div className="p-4">Loading Homeostasis...</div>}><div className="window-content"><HomeostasisWidget /></div></Suspense>}
                     </div>
                 )}
                 {widgetVisibility['options-chain-view'] !== false && (
@@ -445,7 +447,7 @@ const Dashboard = ({
                     <div key="system-log-view" data-widget-id="system-log-view" className={`widget-wrapper ${widgetStates['system-log-view']?.minimized ? 'minimized' : ''} ${widgetStates['system-log-view']?.maximized ? 'maximized' : ''}`}>
                         <WindowHeader title={WIDGET_TITLES['system-log-view']} onMinimize={() => handleWidgetMinimize('system-log-view')} onMaximize={() => handleWidgetMaximize('system-log-view')} onClose={() => handleWidgetClose('system-log-view')} onLock={() => handleWidgetLock('system-log-view')} onMinimumFullView={() => handleMinimumFullView('system-log-view')} onViewSource={() => handleViewSource('system-log-view')} isMaximized={widgetStates['system-log-view']?.maximized} isLocked={widgetStates['system-log-view']?.locked} />
                         <div className="widget-drag-handle" onMouseDown={handleDragAttempt}><span></span></div>
-                        {!widgetStates['system-log-view']?.minimized && <div className="window-content"><SystemLogWidget /></div>}
+                        {!widgetStates['system-log-view']?.minimized && <Suspense fallback={<div className="p-4">Loading Logs...</div>}><div className="window-content"><SystemLogWidget /></div></Suspense>}
                     </div>
                 )}
                 {/* Add more widgets as needed */}

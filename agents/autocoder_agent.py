@@ -36,6 +36,7 @@ from datetime import datetime
 from agents.base_agent import BaseAgent
 from services.system.model_manager import ModelProvider, ModelConfig
 from services.ai.openai_client import get_openai_client
+from agents.prompt_loader import get_prompt_loader
 
 logger = logging.getLogger(__name__)
 
@@ -234,23 +235,9 @@ class AutocoderAgent(BaseAgent):
         Returns:
             Dict with 'code', 'result', 'execution_result'
         """
-        system_prompt = """You are an expert Python programmer specializing in financial data analysis and trading strategies.
-
-Generate clean, efficient Python code that:
-1. Uses standard libraries (math, datetime, json, collections) and data science libraries (numpy, pandas)
-2. Avoids dangerous operations (no eval, exec, file I/O, system calls)
-3. Includes clear comments
-4. Returns results via print() or return statements
-
-Generate ONLY the Python code, no explanations or markdown formatting."""
-
-        user_prompt = f"""Write Python code to: {prompt}
-
-Requirements:
-- Use standard libraries and data science tools
-- No file I/O or system operations
-- Return results via print() statements
-- Include helpful comments"""
+        loader = get_prompt_loader()
+        system_prompt = loader.get_prompt("AutocoderAgent", "system")
+        user_prompt = loader.get_prompt("AutocoderAgent", "user", {"prompt": prompt})
 
         messages = [
             {"role": "system", "content": system_prompt},

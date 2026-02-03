@@ -59,11 +59,4 @@ def compress_response(app):
         logger.warning("flask-compress not installed. Install with: pip install flask-compress")
 
 
-def enable_cors_optimization(app):
-    """Optimize CORS headers."""
-    @app.after_request
-    def add_cors_headers(response):
-        # Preflight caching
-        if request.method == 'OPTIONS':
-            response.headers['Access-Control-Max-Age'] = '86400'
-        return response
+

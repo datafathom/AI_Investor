@@ -12,7 +12,6 @@ const DOMWidget = ({ linkingGroup = 'none' }) => {
     const fetchDepth = async () => {
       if (!currentSymbol) return;
       try {
-      try {
         const response = await apiClient.get(`/market/dom/${currentSymbol}`);
         setDepth(response.data);
       } catch (err) {

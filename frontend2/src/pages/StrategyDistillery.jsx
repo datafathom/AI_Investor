@@ -1,24 +1,67 @@
-import React, { useEffect } from 'react';
-import { FlaskConical, Dna, Zap, Play, Info } from 'lucide-react';
+import React, { useEffect, Suspense } from 'react';
+import { FlaskConical, Dna, Zap, Play, Info, AlertTriangle } from 'lucide-react';
 import useEvolutionStore from '../stores/evolutionStore';
-
-// Genomics Widgets
-import FitnessSurface3D from '../widgets/Evolution/FitnessSurface3D';
-import GeneFrequencyPlot from '../widgets/Evolution/GeneFrequencyPlot';
-import MutationRateSlider from '../widgets/Evolution/MutationRateSlider';
-import SurvivalProbabilityMeter from '../widgets/Evolution/SurvivalProbabilityMeter';
-import AncestorLineageMap from '../widgets/Evolution/AncestorLineageMap';
-import SplicingConflictResolver from '../widgets/Evolution/SplicingConflictResolver';
-import AgentHallOfFame from '../widgets/Evolution/AgentHallOfFame';
-import GenomicPlaybackModal from '../components/Modals/GenomicPlaybackModal';
-import ShadowStrategyPanel from '../widgets/Strategy/ShadowStrategyPanel';
 import './StrategyDistillery.css';
+
+// Error Boundary for widgets
+class WidgetErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error(`Widget Error [${this.props.name}]:`, error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-4 bg-red-900/20 border border-red-500/30 rounded-xl">
+          <div className="flex items-center gap-2 text-red-400 text-sm mb-2">
+            <AlertTriangle size={16} />
+            <span className="font-bold">{this.props.name} Widget Error</span>
+          </div>
+          <p className="text-red-300/70 text-xs font-mono">{this.state.error?.message || 'Unknown error'}</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// Lazy load widgets to isolate crashes
+const FitnessSurface3D = React.lazy(() => import('../widgets/Evolution/FitnessSurface3D'));
+const GeneFrequencyPlot = React.lazy(() => import('../widgets/Evolution/GeneFrequencyPlot'));
+const MutationRateSlider = React.lazy(() => import('../widgets/Evolution/MutationRateSlider'));
+const SurvivalProbabilityMeter = React.lazy(() => import('../widgets/Evolution/SurvivalProbabilityMeter'));
+const AncestorLineageMap = React.lazy(() => import('../widgets/Evolution/AncestorLineageMap'));
+const SplicingConflictResolver = React.lazy(() => import('../widgets/Evolution/SplicingConflictResolver'));
+const AgentHallOfFame = React.lazy(() => import('../widgets/Evolution/AgentHallOfFame'));
+const GenomicPlaybackModal = React.lazy(() => import('../components/Modals/GenomicPlaybackModal'));
+const ShadowStrategyPanel = React.lazy(() => import('../widgets/Strategy/ShadowStrategyPanel'));
+
+const WidgetLoader = () => (
+  <div className="p-4 animate-pulse bg-slate-800/30 rounded-xl">
+    <div className="h-4 bg-slate-700/50 rounded w-24 mb-2"></div>
+    <div className="h-32 bg-slate-700/30 rounded"></div>
+  </div>
+);
 
 const StrategyDistillery = () => {
   const { 
     geneFrequencies,
     hallOfFame,
-    spliceAgents
+    spliceAgents,
+    generation,
+    isEvolving,
+    startEvolution,
+    fitnessSurface,
+    initSocket
   } = useEvolutionStore();
 
   const [selectedAgent, setSelectedAgent] = React.useState(null);
@@ -41,7 +84,6 @@ const StrategyDistillery = () => {
       }
   };
 
-  // Mock Active Strategy for Shadow Engine Demo
   const activeStrategy = {
     id: 'strat_gen_7',
     name: 'Quantum Momentum v7.2',
@@ -87,15 +129,27 @@ const StrategyDistillery = () => {
           
           {/* TOP SECTION: 3D Visualization & Shadow Engine */}
           <div className="lg:col-span-8">
-            <FitnessSurface3D trainingData={fitnessSurface} />
+            <WidgetErrorBoundary name="FitnessSurface3D">
+              <Suspense fallback={<WidgetLoader />}>
+                <FitnessSurface3D data={fitnessSurface} />
+              </Suspense>
+            </WidgetErrorBoundary>
           </div>
           <div className="lg:col-span-4">
-            <ShadowStrategyPanel strategy={activeStrategy} userId="user_1" />
+            <WidgetErrorBoundary name="ShadowStrategyPanel">
+              <Suspense fallback={<WidgetLoader />}>
+                <ShadowStrategyPanel strategy={activeStrategy} userId="user_1" />
+              </Suspense>
+            </WidgetErrorBoundary>
           </div>
 
           {/* MIDDLE SECTION: Gene Frequencies & Control */}
           <div className="lg:col-span-4">
-            <MutationRateSlider />
+            <WidgetErrorBoundary name="MutationRateSlider">
+              <Suspense fallback={<WidgetLoader />}>
+                <MutationRateSlider />
+              </Suspense>
+            </WidgetErrorBoundary>
             <div className="mt-6 glass-panel p-4 flex items-start gap-3 bg-cyan-900/10 border-cyan-500/20">
               <Info className="text-cyan-400 mt-1" size={20} />
               <p className="text-xs text-slate-400 leading-relaxed">
@@ -105,15 +159,27 @@ const StrategyDistillery = () => {
             </div>
           </div>
           <div className="lg:col-span-8">
-            <GeneFrequencyPlot data={geneFrequencies} />
+            <WidgetErrorBoundary name="GeneFrequencyPlot">
+              <Suspense fallback={<WidgetLoader />}>
+                <GeneFrequencyPlot data={geneFrequencies} />
+              </Suspense>
+            </WidgetErrorBoundary>
           </div>
 
           {/* BOTTOM SECTION: Lineage & Splicing */}
           <div className="lg:col-span-8">
-            <AncestorLineageMap onSelect={handleSelectAgent} />
+            <WidgetErrorBoundary name="AncestorLineageMap">
+              <Suspense fallback={<WidgetLoader />}>
+                <AncestorLineageMap onSelect={handleSelectAgent} />
+              </Suspense>
+            </WidgetErrorBoundary>
           </div>
           <div className="lg:col-span-4">
-            <AgentHallOfFame onSelectAgent={handleSelectAgent} />
+            <WidgetErrorBoundary name="AgentHallOfFame">
+              <Suspense fallback={<WidgetLoader />}>
+                <AgentHallOfFame onSelectAgent={handleSelectAgent} />
+              </Suspense>
+            </WidgetErrorBoundary>
           </div>
 
           <div className="lg:col-span-12">
@@ -122,11 +188,15 @@ const StrategyDistillery = () => {
                     <Zap className="text-cyan-400" />
                     <h2 className="text-xl font-bold text-white uppercase italic">Active Splicing Lab</h2>
                 </div>
-                <SplicingConflictResolver 
-                    parent1={splicingParents.p1} 
-                    parent2={splicingParents.p2} 
-                    onResolve={handleResolveSplicing} 
-                />
+                <WidgetErrorBoundary name="SplicingConflictResolver">
+                  <Suspense fallback={<WidgetLoader />}>
+                    <SplicingConflictResolver 
+                        parent1={splicingParents.p1} 
+                        parent2={splicingParents.p2} 
+                        onResolve={handleResolveSplicing} 
+                    />
+                  </Suspense>
+                </WidgetErrorBoundary>
             </div>
           </div>
 
@@ -135,11 +205,13 @@ const StrategyDistillery = () => {
         <div className="scroll-buffer-100" />
       </div>
 
-      <GenomicPlaybackModal 
-        isOpen={isPlaybackOpen} 
-        onClose={() => setIsPlaybackOpen(false)} 
-        agent={selectedAgent} 
-      />
+      <Suspense fallback={null}>
+        <GenomicPlaybackModal 
+          isOpen={isPlaybackOpen} 
+          onClose={() => setIsPlaybackOpen(false)} 
+          agent={selectedAgent} 
+        />
+      </Suspense>
     </div>
   );
 };

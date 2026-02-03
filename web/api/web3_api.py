@@ -21,7 +21,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-web3_bp = Blueprint('web3', __name__)
+web3_bp = Blueprint('web3', __name__, url_prefix='/api/v1/web3')
 _wallet_service = WalletService()
 _lp_service = LPTrackerService()
 _gas_service = GasService()

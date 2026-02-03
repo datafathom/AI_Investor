@@ -25,7 +25,7 @@ from typing import Optional
 
 logger = logging.getLogger(__name__)
 
-facebook_hype_bp = Blueprint('facebook_hype', __name__, url_prefix='/api/v1/facebook')
+facebook_hype_bp = Blueprint('facebook_hype', __name__, url_prefix='/api/v1/facebook_hype')
 
 
 def _run_async(coro):

@@ -195,7 +195,10 @@ function AppContent() {
   const { isDark, toggleTheme } = useTheme();
   const [globalLock, setGlobalLock] = useState(false);
   const [currentUser, setCurrentUser] = useState(authService.getCurrentUser());
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(!authService.isAuthenticated());
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(() => {
+    const bypassEnabled = localStorage.getItem('widget_os_bypass') === 'true';
+    return !bypassEnabled && !authService.isAuthenticated();
+  });
 
   // Phase 5 State
   const [isSystemFrozen, setIsSystemFrozen] = useState(false);
@@ -327,7 +330,7 @@ function AppContent() {
               height: 300,
               x: 100,
               y: 100,
-              isMinimized: false,
+              isMinimized: true,
               risk: 'low',
               component: () => (
                   <div style={{padding: 20, color: 'white'}}>
@@ -346,7 +349,7 @@ function AppContent() {
               height: 400,
               x: 550,
               y: 120,
-              isMinimized: false,
+              isMinimized: true,
               risk: 'medium',
               badgeCount: 3,
               component: () => (
@@ -724,6 +727,7 @@ function AppContent() {
               <Routes>
                 {/* Overview Landing Pages */}
                 <Route path="/workspace" element={<RoleOverview />} />
+                <Route path="/workspaces" element={<RoleOverview />} />
                 <Route path="/analytics" element={<RoleOverview />} />
                 <Route path="/analyst" element={<RoleOverview />} />
                 <Route path="/portfolio" element={<RoleOverview />} />
@@ -734,6 +738,7 @@ function AppContent() {
                 <Route path="/scanner" element={<RoleOverview />} />
 
                 <Route path="/" element={<Navigate to="/workspace/terminal" replace />} />
+                <Route path="/login" element={<Navigate to="/" replace />} />
                 <Route path="/workspace/terminal" element={
                   <TerminalWorkspace
                     handleViewSource={() => { }}
@@ -748,8 +753,10 @@ function AppContent() {
                 <Route path="/workspace/mission-control" element={<MissionControl />} />
                 <Route path="/analytics/political" element={<PoliticalAlpha />} />
                 <Route path="/analytics/strategy" element={<StrategyDistillery />} />
+                <Route path="/analyst/strategy" element={<StrategyDistillery />} />
                 <Route path="/workspace/debate" element={<DebateRoom />} />
                 <Route path="/workspace/autocoder" element={<AutoCoderDashboard />} />
+                <Route path="/workspaces/autocoder" element={<AutoCoderDashboard />} />
                 <Route path="/workspace/vr" element={<VRCockpit />} />
                 <Route path="/analytics/options" element={<OptionsAnalytics />} />
                 <Route path="/portfolio/backtest" element={<BacktestPortfolio />} />

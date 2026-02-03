@@ -30,7 +30,7 @@ export function SocketProvider({ children }) {
       console.log('[SocketContext] Initializing Socket.IO connection...');
       
       socketRef.current = io(SOCKET_SERVER_URL, {
-        transports: ['websocket', 'polling'],
+        transports: ['polling'],
         reconnection: true,
         reconnectionDelay: 1000,
         reconnectionAttempts: Infinity, // Keep trying to reconnect

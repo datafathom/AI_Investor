@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import DeadMansSwitch from '../widgets/Estate/DeadMansSwitch';
 import BeneficiaryMap from '../widgets/Estate/BeneficiaryMap';

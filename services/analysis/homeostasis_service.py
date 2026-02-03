@@ -34,12 +34,12 @@ class HomeostasisService:
         self._autopilot_enabled = False
         logger.info("HomeostasisService initialized")
     
-    async def calculate_freedom_number(self, monthly_expenses: float, years: int = 30) -> float:
+    def calculate_freedom_number(self, monthly_expenses: float, years: int = 30) -> float:
         annual = monthly_expenses * 12
         return annual / self._safe_withdrawal_rate
     
-    async def calculate_homeostasis(self, portfolio_id: str) -> HomeostasisResult:
-        freedom_number = await self.calculate_freedom_number(self._monthly_expenses)
+    def calculate_homeostasis(self, portfolio_id: str) -> HomeostasisResult:
+        freedom_number = self.calculate_freedom_number(self._monthly_expenses)
         progress = self._portfolio_value / freedom_number
         years = self._portfolio_value / (self._monthly_expenses * 12)
         monthly_swr = self._portfolio_value * self._safe_withdrawal_rate / 12
@@ -53,7 +53,7 @@ class HomeostasisService:
             monthly_safe_withdrawal=monthly_swr
         )
     
-    async def run_retirement_monte_carlo(
+    def run_retirement_monte_carlo(
         self,
         portfolio_value: float,
         annual_withdrawal: float,
@@ -83,15 +83,15 @@ class HomeostasisService:
             paths_run=simulations
         )
     
-    async def set_autopilot(self, enabled: bool) -> bool:
+    def set_autopilot(self, enabled: bool) -> bool:
         self._autopilot_enabled = enabled
         logger.info(f"Autopilot {'enabled' if enabled else 'disabled'}")
         return enabled
     
-    async def get_autopilot_status(self) -> bool:
+    def get_autopilot_status(self) -> bool:
         return self._autopilot_enabled
     
-    async def should_rebalance(self, portfolio_id: str) -> bool:
+    def should_rebalance(self, portfolio_id: str) -> bool:
         return self._autopilot_enabled and random.random() > 0.7
 
 _homeostasis_service: Optional[HomeostasisService] = None

@@ -31,7 +31,7 @@ from models.retirement import RetirementScenario
 
 logger = logging.getLogger(__name__)
 
-retirement_bp = Blueprint('retirement', __name__, url_prefix='/api/retirement')
+retirement_bp = Blueprint('retirement', __name__, url_prefix='/api/v1/retirement')
 
 
 @retirement_bp.route('/project', methods=['POST'])

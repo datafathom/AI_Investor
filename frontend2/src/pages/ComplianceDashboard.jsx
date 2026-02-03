@@ -21,6 +21,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { StorageService } from '../utils/storageService';
 import './ComplianceDashboard.css';
 import { complianceService } from '../services/waveServices';
 

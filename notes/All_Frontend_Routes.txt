@@ -1,80 +1,85 @@
-http://localhost:5173/
-http://localhost:5173/workspace
-http://localhost:5173/analytics
-http://localhost:5173/analyst
-http://localhost:5173/portfolio
-http://localhost:5173/guardian
-http://localhost:5173/strategist
-http://localhost:5173/architect
-http://localhost:5173/observer
-http://localhost:5173/scanner
-http://localhost:5173/workspace/terminal
-http://localhost:5173/workspace/mission-control
-http://localhost:5173/analytics/political
-http://localhost:5173/analytics/strategy
-http://localhost:5173/workspace/debate
-http://localhost:5173/workspace/autocoder
-http://localhost:5173/workspace/vr
-http://localhost:5173/analytics/options
-http://localhost:5173/portfolio/backtest
-http://localhost:5173/strategist/estate
-http://localhost:5173/strategist/impact
-http://localhost:5173/strategist/corporate
-http://localhost:5173/architect/system
-http://localhost:5173/architect/api
-http://localhost:5173/guardian/compliance/audit
-http://localhost:5173/guardian/scenarios
-http://localhost:5173/guardian/margin
-http://localhost:5173/mobile
-http://localhost:5173/portfolio/brokerage
-http://localhost:5173/workspace/auto-coder
-http://localhost:5173/portfolio/attribution
-http://localhost:5173/portfolio/fixed-income
-http://localhost:5173/portfolio/crypto
-http://localhost:5173/portfolio/tax
-http://localhost:5173/observer/macro
-http://localhost:5173/guardian/compliance
-http://localhost:5173/analyst/debate
-http://localhost:5173/strategist/currency
-http://localhost:5173/scanner/global
-http://localhost:5173/assets
-http://localhost:5173/portfolio/cash-flow
-http://localhost:5173/zen
-http://localhost:5173/orchestrator
-http://localhost:5173/strategist/scm
-http://localhost:5173/tenant
-http://localhost:5173/portfolio/advanced-analytics
-http://localhost:5173/portfolio/optimization
-http://localhost:5173/portfolio/risk
-http://localhost:5173/portfolio/tax-optimization
-http://localhost:5173/planning/financial
-http://localhost:5173/planning/retirement
-http://localhost:5173/budgeting
-http://localhost:5173/trading/options
-http://localhost:5173/trading/paper
-http://localhost:5173/trading/algorithmic
-http://localhost:5173/planning/estate
-http://localhost:5173/billing/payments
-http://localhost:5173/credit/monitoring
-http://localhost:5173/research/reports
-http://localhost:5173/social/trading
-http://localhost:5173/community/forums
-http://localhost:5173/education
-http://localhost:5173/charting/advanced
-http://localhost:5173/trading/advanced-orders
-http://localhost:5173/enterprise
-http://localhost:5173/compliance
-http://localhost:5173/institutional
-http://localhost:5173/ml/training
-http://localhost:5173/integrations
-http://localhost:5173/developer/platform
-http://localhost:5173/marketplace
-http://localhost:5173/evolution
-http://localhost:5173/news/sentiment
-http://localhost:5173/watchlists/alerts
-http://localhost:5173/ai/predictions
-http://localhost:5173/ai/assistant
-http://localhost:5173/legal/terms
-http://localhost:5173/legal/privacy
-http://localhost:5173/settings
-http://localhost:5173/chat
+# AI Investor - Available Frontend Routes
+========================================
+
+Full URL Base: http://localhost:5173
+
+- /ai/assistant
+- /ai/predictions
+- /analyst
+- /analyst/debate
+- /analytics
+- /analytics/options
+- /analytics/political
+- /analytics/strategy
+- /architect
+- /architect/api
+- /architect/system
+- /assets
+- /billing/payments
+- /budgeting
+- /charting/advanced
+- /chat
+- /community/forums
+- /compliance
+- /credit/monitoring
+- /developer/platform
+- /education
+- /enterprise
+- /evolution
+- /guardian
+- /guardian/compliance
+- /guardian/compliance/audit
+- /guardian/margin
+- /guardian/scenarios
+- /institutional
+- /integrations
+- /legal/privacy
+- /legal/terms
+- /marketplace
+- /ml/training
+- /mobile
+- /news/sentiment
+- /observer
+- /observer/macro
+- /orchestrator
+- /planning/estate
+- /planning/financial
+- /planning/retirement
+- /portfolio
+- /portfolio/advanced-analytics
+- /portfolio/attribution
+- /portfolio/backtest
+- /portfolio/brokerage
+- /portfolio/cash-flow
+- /portfolio/crypto
+- /portfolio/fixed-income
+- /portfolio/optimization
+- /portfolio/risk
+- /portfolio/tax
+- /portfolio/tax-optimization
+- /research/reports
+- /scanner
+- /scanner/global
+- /sentinel/strategy
+- /settings
+- /social/trading
+- /strategist
+- /strategist/corporate
+- /strategist/currency
+- /strategist/estate
+- /strategist/impact
+- /strategist/scm
+- /tenant
+- /trading/advanced-orders
+- /trading/algorithmic
+- /trading/options
+- /trading/paper
+- /watchlists/alerts
+- /workspace
+- /workspace/auto-coder
+- /workspace/autocoder
+- /workspace/debate
+- /workspace/mission-control
+- /workspace/terminal
+- /workspace/vr
+- /zen

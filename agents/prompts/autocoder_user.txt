@@ -1,0 +1,7 @@
+Write Python code to: {prompt}
+
+Requirements:
+- Use standard libraries and data science tools
+- No file I/O or system operations
+- Return results via print() statements
+- Include helpful comments

@@ -30,7 +30,7 @@ from models.optimization import OptimizationConstraints
 
 logger = logging.getLogger(__name__)
 
-optimization_bp = Blueprint('optimization', __name__, url_prefix='/api/optimization')
+optimization_bp = Blueprint('optimization', __name__, url_prefix='/api/v1/optimization')
 
 
 @optimization_bp.route('/optimize/<portfolio_id>', methods=['POST'])

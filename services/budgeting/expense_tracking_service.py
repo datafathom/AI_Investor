@@ -25,7 +25,7 @@ LAST_MODIFIED: 2026-01-21
 
 import logging
 from datetime import datetime, timezone, timedelta
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from models.budgeting import Expense, ExpenseCategory, SpendingTrend
 from services.system.cache_service import get_cache_service
 

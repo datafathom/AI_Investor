@@ -124,3 +124,52 @@
 }
 
 .oc-error { color: #ff4757; }
+
+/* Virtual List Styles */
+.strike-row-virtual {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    align-items: center;
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+.strike-row-virtual:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+.virtual-cell {
+    font-size: 11px;
+    padding: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right;
+}
+.virtual-cell.call-bid { color: #2ed573; }
+.virtual-cell.call-ask { color: #ff4757; }
+.virtual-cell.put-bid { color: #2ed573; }
+.virtual-cell.put-ask { color: #ff4757; }
+.virtual-cell.call-delta, .virtual-cell.put-delta { color: #70a1ff; }
+
+.virtual-cell.strike-center {
+    text-align: center;
+    font-weight: bold;
+    color: var(--text-primary);
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px;
+}
+
+.expiry-header-row {
+    background: rgba(30, 144, 255, 0.1);
+    color: #1e90ff;
+    padding: 8px 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    border-left: 3px solid #1e90ff;
+    width: 100%;
+    box-sizing: border-box;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 1px;
+}

@@ -23,7 +23,7 @@ def security_headers(app):
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
             "font-src 'self' https://fonts.gstatic.com; "
             "img-src 'self' data: https:; "
-            "connect-src 'self' https://api.sentry.io wss://localhost:*; "
+            "connect-src 'self' http://127.0.0.1:5050 http://localhost:5050 https://api.sentry.io wss://localhost:* wss://127.0.0.1:*; "
             "frame-ancestors 'none';"
         )
         response.headers['Content-Security-Policy'] = csp

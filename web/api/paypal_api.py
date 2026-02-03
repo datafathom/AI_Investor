@@ -14,7 +14,7 @@ from services.payments.paypal_service import get_paypal_client
 
 logger = logging.getLogger(__name__)
 
-paypal_bp = Blueprint('paypal_bp', __name__)
+paypal_bp = Blueprint('paypal_bp', __name__, url_prefix='/api/v1/paypal')
 
 def _run_async(coro):
     try:

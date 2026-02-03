@@ -1,0 +1,96 @@
+"""
+FastAPI Socket.io Gateway - Real-time Dashboard Updates
+Migrated from Flask-SocketIO (web/websocket.py)
+"""
+
+import socketio
+import logging
+from typing import Dict, Any, List
+
+logger = logging.getLogger(__name__)
+
+# Create a Socket.IO server (ASGI version)
+sio = socketio.AsyncServer(
+    async_mode='asgi',
+    cors_allowed_origins='*'
+)
+
+# ASGI App to be mounted in FastAPI
+socket_app = socketio.ASGIApp(sio)
+
+# --- Event Handlers ---
+
+@sio.event
+async def connect(sid, environ):
+    logger.info(f"Client connected: {sid}")
+    await sio.emit('connected', {'status': 'connected', 'message': 'Mission Control online (FastAPI)'}, to=sid)
+
+@sio.event
+async def disconnect(sid):
+    logger.info(f"Client disconnected: {sid}")
+
+@sio.event
+async def subscribe(sid, data: Dict[str, Any]):
+    channel = data.get('channel', 'general')
+    await sio.enter_room(sid, channel)
+    logger.debug(f"Client {sid} subscribed to: {channel}")
+    await sio.emit('subscribed', {'channel': channel}, to=sid)
+
+@sio.event
+async def unsubscribe(sid, data: Dict[str, Any]):
+    channel = data.get('channel', 'general')
+    await sio.leave_room(sid, channel)
+    logger.debug(f"Client {sid} unsubscribed from: {channel}")
+
+@sio.event
+async def ping(sid):
+    from datetime import datetime
+    await sio.emit('pong', {'timestamp': datetime.utcnow().isoformat() + 'Z'}, to=sid)
+
+@sio.event
+async def update_mutation_rate(sid, data: Dict[str, Any]):
+    rate = data.get('rate', 0.1)
+    logger.info(f"Mutation rate update: {rate}")
+    await sio.emit('mutation_rate_changed', {'rate': rate}, room='evolution')
+
+@sio.event
+async def evolution_control(sid, data: Dict[str, Any]):
+    cmd = data.get('command')
+    val = data.get('value')
+    logger.info(f"Evolution control: {cmd} (val: {val})")
+    await sio.emit('evolution_status_update', {'command': cmd, 'value': val}, room='evolution')
+
+# --- Broadcaster Class ---
+
+class FastAPIWebSocketBroadcaster:
+    """
+    Utility for broadcasting events via the FastAPI-Socket.IO server.
+    """
+    
+    async def broadcast_agent_status(self, agent_name: str, status: str, is_active: bool, details: Dict = None):
+        data = {
+            'agent': agent_name,
+            'status': status,
+            'active': is_active,
+            'details': details or {},
+            'timestamp': self._get_timestamp()
+        }
+        await sio.emit('agent_status', data, room='agents')
+
+    async def broadcast_portfolio_update(self, current_value: float, set_point: float, pnl_percent: float):
+        data = {
+            'value': current_value,
+            'set_point': set_point,
+            'gap': current_value - set_point,
+            'gap_percent': ((current_value - set_point) / set_point) * 100,
+            'pnl_percent': pnl_percent,
+            'timestamp': self._get_timestamp()
+        }
+        await sio.emit('portfolio_update', data, room='portfolio')
+
+    def _get_timestamp(self) -> str:
+        from datetime import datetime
+        return datetime.utcnow().isoformat() + 'Z'
+
+# Singleton instance
+broadcaster = FastAPIWebSocketBroadcaster()

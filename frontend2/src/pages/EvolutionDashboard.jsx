@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { StorageService } from '../utils/storageService';
 import apiClient from '../services/apiClient';
 import FitnessSurface3D from '../widgets/Evolution/FitnessSurface3D';
 import LineageMap from '../widgets/Evolution/LineageMap';

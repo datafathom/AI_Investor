@@ -21,21 +21,21 @@ from flask import Blueprint, jsonify
 from services.system.kafka_monitor_service import kafka_monitor_service
 
 # Define Blueprint
-system_bp = Blueprint('system_bp', __name__, url_prefix='/api/v1/system')
+system_bp = Blueprint('system_bp', __name__)
 
 @system_bp.route('/kafka/status', methods=['GET'])
-async def get_kafka_status():
+def get_kafka_status():
     """
     Get Kafka cluster health, topic count, and broker info.
     """
-    data = await kafka_monitor_service.get_cluster_status()
+    data = kafka_monitor_service.get_cluster_status()
     return jsonify(data)
 
 @system_bp.route('/kafka/stats', methods=['GET'])
-async def get_kafka_stats():
+def get_kafka_stats():
     """
     Get simulated throughput statistics for Kafka topics.
     Real implementation would query JMX/Prometheus.
     """
-    data = await kafka_monitor_service.get_throughput_stats()
+    data = kafka_monitor_service.get_throughput_stats()
     return jsonify(data)

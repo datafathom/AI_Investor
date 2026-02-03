@@ -29,7 +29,7 @@ from services.social_trading.copy_trading_service import get_copy_trading_servic
 
 logger = logging.getLogger(__name__)
 
-social_trading_bp = Blueprint('social_trading', __name__, url_prefix='/api/social-trading')
+social_trading_bp = Blueprint('social_trading', __name__, url_prefix='/api/v1/social_trading')
 
 
 @social_trading_bp.route('/profile/create', methods=['POST'])

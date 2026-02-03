@@ -31,7 +31,7 @@ from services.research.report_generator import get_report_generator
 
 logger = logging.getLogger(__name__)
 
-research_bp = Blueprint('research', __name__, url_prefix='/api/v1/research')
+research_bp = Blueprint('research', __name__, url_prefix='/api/v1/search')
 
 
 @research_bp.route('/portfolio-report', methods=['POST'])

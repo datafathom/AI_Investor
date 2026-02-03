@@ -27,7 +27,7 @@ import asyncio
 
 logger = logging.getLogger(__name__)
 
-coinbase_crypto_bp = Blueprint('coinbase_crypto', __name__, url_prefix='/api/v1/coinbase')
+coinbase_crypto_bp = Blueprint('coinbase_crypto', __name__, url_prefix='/api/v1/coinbase_crypto')
 
 
 def _run_async(coro):

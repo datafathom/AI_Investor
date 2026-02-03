@@ -33,7 +33,7 @@ from typing import Optional
 
 logger = logging.getLogger(__name__)
 
-macro_data_bp = Blueprint('macro_data', __name__)
+macro_data_bp = Blueprint('macro_data', __name__, url_prefix='/api/v1/macro_data')
 
 
 def _get_fred_service():
