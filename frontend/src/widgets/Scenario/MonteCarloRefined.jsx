@@ -5,7 +5,7 @@ import useScenarioStore from '../../stores/scenarioStore';
 
 /**
  * MonteCarloRefined - Post-shock path visualizer.
- * Phase 60: 10k path visualization for scenario shocks.
+ * : 10k path visualization for scenario shocks.
  */
 const MonteCarloRefined = () => {
     const { recoveryProjection, impactResults, runRefinedMonteCarlo, activeScenario } = useScenarioStore();

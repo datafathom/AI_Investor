@@ -1,6 +1,6 @@
 /**
  * Compliance Store - Zustand State Management for Audit & SAR
- * Phase 59: Manages audit logs, SAR workflow, and compliance monitoring.
+ * : Manages audit logs, SAR workflow, and compliance monitoring.
  */
 import { create } from 'zustand';
 import apiClient from '../services/apiClient';

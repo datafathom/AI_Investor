@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/OptionsStrategyDashboard.jsx
  * ROLE: Options Strategy Builder & Analyzer Dashboard
- * PURPOSE: Phase 6 - Options Strategy Builder & Analyzer
+ * PURPOSE:  - Options Strategy Builder & Analyzer
  *          Displays options strategies, Greeks analysis, and P&L visualization.
  * 
  * INTEGRATION POINTS:
@@ -94,7 +94,7 @@ const OptionsStrategyDashboard = () => {
       <div className="dashboard-header">
         <div className="header-titles">
           <h1>Options Strategy Builder</h1>
-          <p className="subtitle">Phase 6: Options Strategy Builder & Analyzer</p>
+          <p className="subtitle">: Options Strategy Builder & Analyzer</p>
         </div>
         <div className="header-actions">
           <button onClick={resetLayout} className="btn-utility ripple">

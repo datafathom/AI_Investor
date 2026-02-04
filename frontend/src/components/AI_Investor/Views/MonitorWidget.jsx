@@ -4,7 +4,7 @@ import TensorMonitor from '../Analytics/TensorMonitor';
 import { Activity, ArrowUpRight, TrendingUp, Cpu } from 'lucide-react';
 
 const MonitorWidget = () => {
-    // Mock Tensor Data (Phase 11) - In production this comes from DataFusionService
+    // Mock Tensor Data  - In production this comes from DataFusionService
     const mockTensor = {
         symbol: "TSLA",
         timestamp: new Date().toISOString(),
@@ -48,7 +48,7 @@ const MonitorWidget = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {/* Real-time Tensor Monitor (Phase 11) */}
+                {/* Real-time Tensor Monitor  */}
                 <div className="lg:col-span-1">
                     <TensorMonitor tensor={mockTensor} collapsible={true} />
                 </div>

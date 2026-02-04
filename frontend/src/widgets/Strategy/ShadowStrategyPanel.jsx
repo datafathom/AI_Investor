@@ -54,7 +54,7 @@ const ShadowStrategyPanel = ({ strategy, userId }) => {
                     <GitFork size={16} className="text-purple-400" />
                     <h3 className="text-white text-sm font-bold">Shadow Engine</h3>
                 </div>
-                <span className="text-[9px] uppercase tracking-widest text-slate-500 font-mono">Phase 51 | SPRINT 6</span>
+                <span className="text-[9px] uppercase tracking-widest text-slate-500 font-mono"> | SPRINT 6</span>
             </div>
 
             {/* Strategy Info */}

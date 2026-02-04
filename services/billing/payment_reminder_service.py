@@ -160,6 +160,28 @@ class PaymentReminderService:
         
         return reminders_sent
     
+    async def get_upcoming_reminders(
+        self,
+        user_id: str,
+        days_ahead: int = 7
+    ) -> List[PaymentReminder]:
+        """
+        Get upcoming reminders for user.
+        
+        Args:
+            user_id: User identifier
+            days_ahead: Number of days to look ahead
+            
+        Returns:
+            List of PaymentReminder objects
+        """
+        return await self._get_reminders_from_db(user_id, days_ahead)
+
+    async def _get_reminders_from_db(self, user_id: str, days_ahead: int) -> List[PaymentReminder]:
+        """Fetch reminders from database placeholder."""
+        # This would implementation database query
+        return []
+    
     async def _save_reminder(self, reminder: PaymentReminder):
         """Save reminder to cache."""
         cache_key = f"reminder:{reminder.bill_id}:{reminder.reminder_id}"

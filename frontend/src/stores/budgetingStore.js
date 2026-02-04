@@ -1,5 +1,5 @@
 /**
- * Budgeting Store - Phase 17
+ * Budgeting Store - 
  * Manages budgets, expenses, and insights
  */
 import { create } from 'zustand';

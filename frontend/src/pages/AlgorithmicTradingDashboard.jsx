@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/AlgorithmicTradingDashboard.jsx
  * ROLE: Algorithmic Trading Dashboard
- * PURPOSE: Phase 15 - Algorithmic Trading & Strategy Automation
+ * PURPOSE:  - Algorithmic Trading & Strategy Automation
  *          Displays trading strategies, execution status, and performance monitoring.
  * 
  * INTEGRATION POINTS:
@@ -105,7 +105,7 @@ const AlgorithmicTradingDashboard = () => {
     <div className="full-bleed-page algorithmic-trading-dashboard">
       <div className="dashboard-header">
         <h1>Algorithmic Trading</h1>
-        <p className="subtitle">Phase 15: Algorithmic Trading & Strategy Automation</p>
+        <p className="subtitle">: Algorithmic Trading & Strategy Automation</p>
       </div>
 
       <div className="scrollable-content-wrapper">

@@ -3,7 +3,7 @@ import { Server, Database, Cpu, Activity, AlertTriangle, CheckCircle } from 'luc
 import './SystemHealth.css';
 
 /**
- * System Health Telemetry (Phase 18)
+ * System Health Telemetry 
  * 
  * Kafka, Database, and Agent health monitoring dashboard.
  */

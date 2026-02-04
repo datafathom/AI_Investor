@@ -1,6 +1,6 @@
 /**
  * Estate Store - Zustand State Management for Estate Planning
- * Phase 58: Manages beneficiaries, estate plans, and inheritance simulations.
+ * : Manages beneficiaries, estate plans, and inheritance simulations.
  * Updated to use apiClient per User Rule 6.
  */
 import { create } from 'zustand';

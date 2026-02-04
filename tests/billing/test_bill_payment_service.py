@@ -50,7 +50,8 @@ async def test_schedule_payment(service):
         due_date=datetime(2024, 2, 1),
         status=BillStatus.PENDING,
         recurrence=RecurrenceType.ONE_TIME,
-        created_date=datetime.now(timezone.utc)
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_bill = AsyncMock(return_value=bill)
@@ -79,7 +80,8 @@ async def test_get_upcoming_bills(service):
             due_date=datetime.now(timezone.utc) + timedelta(days=5),
             status=BillStatus.PENDING,
             recurrence=RecurrenceType.ONE_TIME,
-            created_date=datetime.now(timezone.utc)
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
     ])
     

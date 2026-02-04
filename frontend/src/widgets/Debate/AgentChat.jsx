@@ -6,7 +6,7 @@ import './AgentChat.css';
 /**
  * AgentChat - Multi-Agent Debate Chat Interface
  * 
- * Phase 55: Real-time chat interface showing Bull vs Bear persona debates
+ * : Real-time chat interface showing Bull vs Bear persona debates
  * with typing indicators, sentiment glow, and user argument injection.
  */
 const AgentChat = ({ ticker = 'SPY' }) => {

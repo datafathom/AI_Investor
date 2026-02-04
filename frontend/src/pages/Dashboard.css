@@ -82,7 +82,7 @@
   text-overflow: ellipsis;
 }
 
-/* WIDGET WRAPPER OVERRIDES - Matching Phase 1 WindowWrapper */
+/* WIDGET WRAPPER OVERRIDES - Matching  WindowWrapper */
 .widget-wrapper {
   background: var(--glass-surface);
   backdrop-filter: blur(var(--blur-strength));

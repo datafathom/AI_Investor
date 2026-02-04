@@ -66,7 +66,7 @@ const AdvisorOnboardingWizard = () => {
                             </div>
                             <div>
                                 <h3 className="text-2xl font-black tracking-tight text-white uppercase italic">Institutional Identity</h3>
-                                <p className="text-xs text-slate-500 font-mono tracking-widest uppercase">Phase 33 / Identity Bridge</p>
+                                <p className="text-xs text-slate-500 font-mono tracking-widest uppercase"> / Identity Bridge</p>
                             </div>
                         </div>
                         

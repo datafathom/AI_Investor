@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/PortfolioOptimizationDashboard.jsx
  * ROLE: Portfolio Optimization & Rebalancing Dashboard
- * PURPOSE: Phase 2 - Portfolio Optimization & Automated Rebalancing
+ * PURPOSE:  - Portfolio Optimization & Automated Rebalancing
  *          Displays portfolio optimization results and rebalancing recommendations.
  * 
  * INTEGRATION POINTS:
@@ -115,7 +115,7 @@ const PortfolioOptimizationDashboard = () => {
     <div className="full-bleed-page portfolio-optimization-dashboard">
       <div className="dashboard-header">
         <h1>Portfolio Optimization & Rebalancing</h1>
-        <p className="subtitle">Phase 2: Portfolio Optimization & Automated Rebalancing</p>
+        <p className="subtitle">: Portfolio Optimization & Automated Rebalancing</p>
       </div>
 
       <div className="scrollable-content-wrapper">

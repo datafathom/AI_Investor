@@ -140,7 +140,7 @@ def start_dev_mode(check_infra=True):
 
     # 4. Start Frontend (Vite)
     print("Launching Frontend (Vite HMR)...")
-    frontend_dir = PROJECT_ROOT / "frontend2"
+    frontend_dir = PROJECT_ROOT / "frontend"
     frontend_cmd = ["npm", "run", "dev", "--", "--port", str(FRONTEND_PORT)]
     # Windows needs shell=True for npm usually
     

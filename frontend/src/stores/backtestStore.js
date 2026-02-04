@@ -1,6 +1,6 @@
 /**
  * Backtest Store - Zustand State Management for Monte Carlo Backtesting
- * Phase 57: Manages simulation parameters, paths, and risk metrics.
+ * : Manages simulation parameters, paths, and risk metrics.
  */
 import { create } from 'zustand';
 import { workerManager } from '../services/workerManager';

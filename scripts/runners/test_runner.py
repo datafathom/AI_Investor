@@ -20,7 +20,7 @@ TESTS_DIR = PROJECT_ROOT / "tests"
 TEST_MAPPING = {
     "agents": [TESTS_DIR / "agents"],
     "api": [TESTS_DIR / "api"],
-    "models": [TESTS_DIR / "models"],
+    "schemas": [TESTS_DIR / "schemas"],
     "billing": [TESTS_DIR / "billing"],
     "unit": [TESTS_DIR / "unit"],
     "integration": [TESTS_DIR / "integration"],
@@ -107,7 +107,7 @@ def run_tests(category: str = "all") -> int:
     """
     logger.info(f"Running tests for category: {category}")
     
-    args = ["-v"] # Default detailed output
+    args = ["-v", "-s", "-p", "no:cacheprovider", "--tb=short"] # Detailed output, no capture to avoid I/O errors
     
     if category == "all":
         # Run everything in tests/ default recursion
@@ -203,8 +203,22 @@ def run_unit_tests():
 def run_integration_tests():
     sys.exit(run_tests("integration"))
 
-def run_models_tests():
-    sys.exit(run_tests("models"))
+def run_schemas_tests():
+    sys.exit(run_tests("schemas"))
+
+def run_env_tests():
+    """
+    Run environment variable validation tests.
+    """
+    cmd = [sys.executable, "-m", "pytest", "-v", str(TESTS_DIR / "system" / "test_env_vars.py")]
+    print(f"\n🚀 Executing: {' '.join(cmd)}\n")
+    import subprocess
+    try:
+        result = subprocess.run(cmd, check=False)
+        sys.exit(result.returncode)
+    except Exception as e:
+        logger.error(f"Failed to run env tests: {e}")
+        sys.exit(1)
 
 def run_billing_tests():
     sys.exit(run_tests("billing"))

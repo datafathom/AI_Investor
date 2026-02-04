@@ -120,9 +120,14 @@ class TestRebalancingRecommendation:
         """Test valid rebalancing recommendation creation."""
         recommendation = RebalancingRecommendation(
             portfolio_id="portfolio_1",
-            trades=[],
+            current_weights={"AAPL": 0.5, "MSFT": 0.5}, # Added
+            target_weights={"AAPL": 0.4, "MSFT": 0.6}, # Added
+            recommended_trades=[], # Renamed from trades
+            drift_percentage=0.1, # Added
             estimated_cost=0.0,
-            requires_approval=False
+            estimated_tax_impact=0.0, # Added
+            requires_approval=False,
+            recommendation_date=datetime.now() # Added
         )
         assert recommendation.portfolio_id == "portfolio_1"
         assert recommendation.requires_approval is False
@@ -134,10 +139,16 @@ class TestRebalancingHistory:
     def test_valid_rebalancing_history(self):
         """Test valid rebalancing history creation."""
         history = RebalancingHistory(
+            rebalancing_id="rebal_1", # Added
             portfolio_id="portfolio_1",
-            executed_at=datetime.now(),
-            trades=[],
-            total_cost=0.0
+            rebalancing_date=datetime.now(), # Renamed from executed_at
+            strategy="full", # Added
+            before_weights={"AAPL": 0.5}, # Added
+            after_weights={"AAPL": 0.4}, # Added
+            trades_executed=[], # Renamed from trades
+            total_cost=0.0,
+            tax_impact=0.0, # Added
+            status="executed" # Added
         )
         assert history.portfolio_id == "portfolio_1"
         assert history.total_cost == 0.0

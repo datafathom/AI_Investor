@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/AdvancedPortfolioAnalytics.jsx
  * ROLE: Advanced Portfolio Analytics Dashboard
- * PURPOSE: Phase 1 - Portfolio Performance Attribution & Risk Decomposition
+ * PURPOSE:  - Portfolio Performance Attribution & Risk Decomposition
  *          Displays comprehensive portfolio analytics with performance attribution,
  *          risk decomposition, and holding contributions.
  * 
@@ -94,7 +94,7 @@ const AdvancedPortfolioAnalytics = () => {
     <div className="full-bleed-page advanced-portfolio-analytics">
       <div className="analytics-header">
         <h1>Advanced Portfolio Analytics</h1>
-        <p className="subtitle">Phase 1: Performance Attribution & Risk Decomposition</p>
+        <p className="subtitle">: Performance Attribution & Risk Decomposition</p>
       </div>
 
       <div className="scrollable-content-wrapper">

@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/FinancialPlanningDashboard.jsx
  * ROLE: Financial Planning & Goal Tracking Dashboard
- * PURPOSE: Phase 7 - Financial Planning & Goal Tracking
+ * PURPOSE:  - Financial Planning & Goal Tracking
  *          Displays financial goals, progress tracking, and planning recommendations.
  * 
  * INTEGRATION POINTS:
@@ -66,7 +66,7 @@ const FinancialPlanningDashboard = () => {
     <div className="full-bleed-page financial-planning-dashboard">
       <div className="dashboard-header">
         <h1>Financial Planning & Goal Tracking</h1>
-        <p className="subtitle">Phase 7: Financial Planning & Goal Tracking</p>
+        <p className="subtitle">: Financial Planning & Goal Tracking</p>
       </div>
 
       <div className="scrollable-content-wrapper">

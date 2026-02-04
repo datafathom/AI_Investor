@@ -1,6 +1,6 @@
 /**
  * Philanthropy Store - Zustand State Management for ESG & Donations
- * Phase 61: Manages ESG scores, donation routing, and carbon footprint.
+ * : Manages ESG scores, donation routing, and carbon footprint.
  */
 import { create } from 'zustand';
 import apiClient from '../services/apiClient';

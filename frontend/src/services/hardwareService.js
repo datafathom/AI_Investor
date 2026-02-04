@@ -1,5 +1,5 @@
 /**
- * Hardware Service (Phase 51)
+ * Hardware Service 
  * Interfaces with physical Ledger/Trezor devices using WebHID/WebUSB.
  * Handles Multi-Sig signature requests for high-value transactions.
  */

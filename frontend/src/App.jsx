@@ -20,7 +20,7 @@ import useTaskbarStore from './stores/taskbarStore';
 import Taskbar from './components/Taskbar/Taskbar';
 import HardwareSigModal from './components/Modals/HardwareSigModal';
 
-// Phase 5: Risk & Safety
+// : Risk & Safety
 import KillSwitch from './components/KillSwitch/KillSwitch';
 import FrozenOverlay from './components/KillSwitch/FrozenOverlay';
 import PreTradeRiskModal from './components/Modals/PreTradeRiskModal';
@@ -65,56 +65,61 @@ const TaxDashboard = lazy(() => import('./pages/TaxDashboard'));
 const MacroDashboard = lazy(() => import('./pages/MacroDashboard'));
 const ComplianceDashboard = lazy(() => import('./pages/ComplianceDashboard'));
 const EstateDashboard = lazy(() => import('./pages/EstateDashboard'));
-const AuditDashboard = lazy(() => import('./pages/AuditDashboard')); // Phase 16
-const ScenarioDashboard = lazy(() => import('./pages/ScenarioDashboard')); // Phase 17
-const ImpactDashboard = lazy(() => import('./pages/ImpactDashboard')); // Phase 18
-const SystemHealthDashboard = lazy(() => import('./pages/SystemHealthDashboard')); // Phase 19
-const CorporateDashboard = lazy(() => import('./pages/CorporateDashboard')); // Phase 20
-const MarginDashboard = lazy(() => import('./pages/MarginDashboard')); // Phase 21
-const MobileDashboard = lazy(() => import('./pages/MobileDashboard')); // Phase 22
-const APIDashboard = lazy(() => import('./pages/APIDashboard')); // Phase 23
-const AssetsDashboard = lazy(() => import('./pages/AssetsDashboard')); // Phase 24
-const CashFlowDashboard = lazy(() => import('./pages/CashFlowDashboard')); // Phase 10
+const AuditDashboard = lazy(() => import('./pages/AuditDashboard')); // 
+const ScenarioDashboard = lazy(() => import('./pages/ScenarioDashboard')); // 
+const ImpactDashboard = lazy(() => import('./pages/ImpactDashboard')); // 
+const SystemHealthDashboard = lazy(() => import('./pages/SystemHealthDashboard')); // 
+const CorporateDashboard = lazy(() => import('./pages/CorporateDashboard')); // 
+const MarginDashboard = lazy(() => import('./pages/MarginDashboard')); // 
+const MobileDashboard = lazy(() => import('./pages/MobileDashboard')); // 
+const APIDashboard = lazy(() => import('./pages/APIDashboard')); // 
+const AssetsDashboard = lazy(() => import('./pages/AssetsDashboard')); // 
+const CashFlowDashboard = lazy(() => import('./pages/CashFlowDashboard')); // 
 const RoleOverview = lazy(() => import('./pages/RoleOverview'));
 const TenantDashboard = lazy(() => import('./pages/TenantDashboard'));
 // App Hardening & Improvements - New Phases
-const AdvancedPortfolioAnalytics = lazy(() => import('./pages/AdvancedPortfolioAnalytics')); // Phase 1
-const NewsSentimentDashboard = lazy(() => import('./pages/NewsSentimentDashboard')); // Phase 16
-const WatchlistsAlertsDashboard = lazy(() => import('./pages/WatchlistsAlertsDashboard')); // Phase 17
-const AIPredictionsDashboard = lazy(() => import('./pages/AIPredictionsDashboard')); // Phase 25
-const AIAssistantDashboard = lazy(() => import('./pages/AIAssistantDashboard')); // Phase 26
-const PortfolioOptimizationDashboard = lazy(() => import('./pages/PortfolioOptimizationDashboard')); // Phase 2
-const AdvancedRiskDashboard = lazy(() => import('./pages/AdvancedRiskDashboard')); // Phase 3
-const TaxOptimizationDashboard = lazy(() => import('./pages/TaxOptimizationDashboard')); // Phase 4
-const FinancialPlanningDashboard = lazy(() => import('./pages/FinancialPlanningDashboard')); // Phase 7
-const RetirementPlanningDashboard = lazy(() => import('./pages/RetirementPlanningDashboard')); // Phase 8
-const BudgetingDashboard = lazy(() => import('./pages/BudgetingDashboard')); // Phase 10
-const OptionsStrategyDashboard = lazy(() => import('./pages/OptionsStrategyDashboard')); // Phase 6
-const PaperTradingDashboard = lazy(() => import('./pages/PaperTradingDashboard')); // Phase 14
-const AlgorithmicTradingDashboard = lazy(() => import('./pages/AlgorithmicTradingDashboard')); // Phase 15
-const EstatePlanningDashboard = lazy(() => import('./pages/EstatePlanningDashboard')); // Phase 9
-const BillPaymentDashboard = lazy(() => import('./pages/BillPaymentDashboard')); // Phase 11
-const CreditMonitoringDashboard = lazy(() => import('./pages/CreditMonitoringDashboard')); // Phase 12
-const ResearchReportsDashboard = lazy(() => import('./pages/ResearchReportsDashboard')); // Phase 18
-const SocialTradingDashboard = lazy(() => import('./pages/SocialTradingDashboard')); // Phase 19
-const CommunityForumsDashboard = lazy(() => import('./pages/CommunityForumsDashboard')); // Phase 20
-const EducationPlatformDashboard = lazy(() => import('./pages/EducationPlatformDashboard')); // Phase 21
-const AdvancedChartingDashboard = lazy(() => import('./pages/AdvancedChartingDashboard')); // Phase 5
-const AdvancedOrdersDashboard = lazy(() => import('./pages/AdvancedOrdersDashboard')); // Phase 13
-const EnterpriseDashboard = lazy(() => import('./pages/EnterpriseDashboard')); // Phase 31
-const InstitutionalToolsDashboard = lazy(() => import('./pages/InstitutionalToolsDashboard')); // Phase 33
-const MasterOrchestrator = lazy(() => import('./pages/MasterOrchestrator')); // Phase 200
-const SocialClassMaintenance = lazy(() => import('./pages/SocialClassMaintenance')); // Phase 197
-const ZenMode = lazy(() => import('./pages/ZenMode')); // Phase 24
-const MLTrainingDashboard = lazy(() => import('./pages/MLTrainingDashboard')); // Phase 27
-const IntegrationsDashboard = lazy(() => import('./pages/IntegrationsDashboard')); // Phase 28
-const DeveloperPlatformDashboard = lazy(() => import('./pages/DeveloperPlatformDashboard')); // Phase 29
-const MarketplaceDashboard = lazy(() => import('./pages/MarketplaceDashboard')); // Phase 30
-const EvolutionDashboard = lazy(() => import('./pages/EvolutionDashboard')); // Phase 4: Evolution Lab
+const AdvancedPortfolioAnalytics = lazy(() => import('./pages/AdvancedPortfolioAnalytics')); // 
+const NewsSentimentDashboard = lazy(() => import('./pages/NewsSentimentDashboard')); // 
+const WatchlistsAlertsDashboard = lazy(() => import('./pages/WatchlistsAlertsDashboard')); // 
+const AIPredictionsDashboard = lazy(() => import('./pages/AIPredictionsDashboard')); // 
+const AIAssistantDashboard = lazy(() => import('./pages/AIAssistantDashboard')); // 
+const PortfolioOptimizationDashboard = lazy(() => import('./pages/PortfolioOptimizationDashboard')); // 
+const AdvancedRiskDashboard = lazy(() => import('./pages/AdvancedRiskDashboard')); // 
+const TaxOptimizationDashboard = lazy(() => import('./pages/TaxOptimizationDashboard')); // 
+const FinancialPlanningDashboard = lazy(() => import('./pages/FinancialPlanningDashboard')); // 
+const RetirementPlanningDashboard = lazy(() => import('./pages/RetirementPlanningDashboard')); // 
+const BudgetingDashboard = lazy(() => import('./pages/BudgetingDashboard')); // 
+const OptionsStrategyDashboard = lazy(() => import('./pages/OptionsStrategyDashboard')); // 
+const PaperTradingDashboard = lazy(() => import('./pages/PaperTradingDashboard')); // 
+const AlgorithmicTradingDashboard = lazy(() => import('./pages/AlgorithmicTradingDashboard')); // 
+const EstatePlanningDashboard = lazy(() => import('./pages/EstatePlanningDashboard')); // 
+const BillPaymentDashboard = lazy(() => import('./pages/BillPaymentDashboard')); // 
+const CreditMonitoringDashboard = lazy(() => import('./pages/CreditMonitoringDashboard')); // 
+const ResearchReportsDashboard = lazy(() => import('./pages/ResearchReportsDashboard')); // 
+const SocialTradingDashboard = lazy(() => import('./pages/SocialTradingDashboard')); // 
+const CommunityForumsDashboard = lazy(() => import('./pages/CommunityForumsDashboard')); // 
+const EducationPlatformDashboard = lazy(() => import('./pages/EducationPlatformDashboard')); // 
+const AdvancedChartingDashboard = lazy(() => import('./pages/AdvancedChartingDashboard')); // 
+const AdvancedOrdersDashboard = lazy(() => import('./pages/AdvancedOrdersDashboard')); // 
+const EnterpriseDashboard = lazy(() => import('./pages/EnterpriseDashboard')); // 
+const InstitutionalToolsDashboard = lazy(() => import('./pages/InstitutionalToolsDashboard')); // 
+const MasterOrchestrator = lazy(() => import('./pages/MasterOrchestrator')); // 
+const SocialClassMaintenance = lazy(() => import('./pages/SocialClassMaintenance')); // 
+const ZenMode = lazy(() => import('./pages/ZenMode')); // 
+const MLTrainingDashboard = lazy(() => import('./pages/MLTrainingDashboard')); // 
+const IntegrationsDashboard = lazy(() => import('./pages/IntegrationsDashboard')); // 
+const SentinelStrategyDashboard = lazy(() => import('./pages/SentinelStrategyDashboard'));
+const GoogleAuthCallback = lazy(() => import('./pages/GoogleAuthCallback'));
+const AccountOverview = lazy(() => import('./pages/Accounts/AccountOverview'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const Settings = lazy(() => import('./pages/Settings'));
+const DeveloperPlatformDashboard = lazy(() => import('./pages/DeveloperPlatformDashboard')); // 
+const MarketplaceDashboard = lazy(() => import('./pages/MarketplaceDashboard')); // 
+const EvolutionDashboard = lazy(() => import('./pages/EvolutionDashboard')); // : Evolution Lab
 const TermsOfService = lazy(() => import('./pages/Legal/TermsOfService'));
 const PrivacyPolicy = lazy(() => import('./pages/Legal/PrivacyPolicy'));
 const OnboardingFlow = lazy(() => import('./components/Onboarding/OnboardingFlow'));
-const SentinelStrategyDashboard = lazy(() => import('./pages/SentinelStrategyDashboard'));
+const PortfolioManagement = lazy(() => import('./pages/PortfolioManagement'));
 
 import MFAVerificationModal from './components/MFAVerificationModal';
 
@@ -125,61 +130,15 @@ const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
 function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
-  const isOSStylePage = [
-    '/workspace/terminal', 
-    '/zen', 
-    '/analytics/political', 
-    '/portfolio/advanced-analytics',
-    '/trading/advanced-orders',
-    '/portfolio/brokerage',
-    '/portfolio/attribution',
-    '/portfolio/fixed-income',
-    '/portfolio/crypto',
-    '/portfolio/optimization',
-    '/planning/financial',
-    '/planning/retirement',
-    '/planning/estate',
-    '/analytics/cashflow',
-    '/planning/budgeting',
-    '/billing/payments',
-    '/portfolio/tax-optimization',
-    '/portfolio/tax',
-    '/trading/algorithmic',
-    '/trading/options',
-    '/trading/paper',
-    '/analytics/political',
-    '/analyst',
-    '/ai/predictions',
-    '/analytics/strategy',
-    '/analytics/options',
-    '/workspace/debate',
-    '/research/reports',
-    '/workspace/mission-control',
-    '/scanner/global',
-    '/assets',
-    '/tenant',
-    '/portfolio/risk',
-    '/credit/monitoring',
-    '/architect/system',
-    '/architect/api',
-    '/mobile',
-    '/news/sentiment',
-    '/watchlists/alerts',
-    '/ai/predictions',
-    '/ai/assistant',
-    '/enterprise',
-    '/institutional',
-    '/ml/training',
-    '/integrations',
-    '/developer/platform',
-    '/marketplace',
-    '/legal/terms',
-    '/legal/privacy',
-    '/workspace/autocoder',
-    '/workspace/vr',
-    '/orchestrator',
-    '/strategist/scm'
-  ].includes(location.pathname);
+  const isOSStylePage = location.pathname.startsWith('/orchestrator/') || 
+                         location.pathname.startsWith('/analyst/') || 
+                         location.pathname.startsWith('/trader/') || 
+                         location.pathname.startsWith('/strategist/') || 
+                         location.pathname.startsWith('/data-scientist/') ||
+                         location.pathname.startsWith('/architect/') ||
+                         location.pathname.startsWith('/guardian/') ||
+                         location.pathname.startsWith('/marketing/') ||
+                         location.pathname.startsWith('/legal/');
   const {
     resetLayout,
     activeWorkspace,
@@ -202,7 +161,7 @@ function AppContent() {
     return !bypassEnabled && !authService.isAuthenticated();
   });
 
-  // Phase 5 State
+  // Core State
   const [isSystemFrozen, setIsSystemFrozen] = useState(false);
   const [riskModalOpen, setRiskModalOpen] = useState(false);
   const [pendingTrade, setPendingTrade] = useState(null);
@@ -249,10 +208,10 @@ function AppContent() {
     'Shift+B': () => setTradeModal({ open: true, details: { symbol: groups.none || 'SPY', side: 'BUY', quantity: 10, price: 480.00 } }),
     'Shift+S': () => setTradeModal({ open: true, details: { symbol: groups.none || 'SPY', side: 'SELL', quantity: 10, price: 480.00 } }),
     'Ctrl+Shift+S': () => handleSaveWorkspacePrompt(),
-    'Alt+1': () => navigate('/workspace/terminal'),
-    'Alt+2': () => navigate('/analytics/options'),
-    'Alt+3': () => navigate('/portfolio/backtest'),
-    'Alt+4': () => navigate('/scanner/global'),
+    'Alt+1': () => navigate('/orchestrator/terminal'),
+    'Alt+2': () => navigate('/trader/options'),
+    'Alt+3': () => navigate('/strategist/backtest'),
+    'Alt+4': () => navigate('/trader/scanner'),
     // Command Palette
     'Ctrl+K': () => setCommandPaletteOpen(prev => !prev),
     'Meta+K': () => setCommandPaletteOpen(prev => !prev), // Mac support
@@ -321,7 +280,7 @@ function AppContent() {
     }
   }, [currentUser]);
 
-  // Phase 1 Verification: Spawn Welcome Window
+  //  Verification: Spawn Welcome Window
   const addWindow = useWindowStore((state) => state.addWindow);
   useEffect(() => {
       if (useWindowStore.getState().windows.length === 0) {
@@ -521,158 +480,120 @@ function AppContent() {
     if (action?.startsWith('toggle-widget-')) {
       const widgetId = action.replace('toggle-widget-', '');
       setWidgetVisibility(prev => ({ ...prev, [widgetId]: prev[widgetId] === false ? true : false }));
+      if (location.pathname !== '/orchestrator/terminal') {
+        navigate('/orchestrator/terminal');
+      }
       return;
     }
 
     switch (action) {
-      // Navigation
-      case 'show-dashboard': navigate('/workspace/terminal'); break;
-      case 'show-mission-control': navigate('/workspace/mission-control'); break;
-      case 'show-political-alpha': navigate('/analytics/political'); break;
-      case 'show-strategy-distillery': navigate('/analytics/strategy'); break;
-      case 'show-debate-chamber': navigate('/workspace/debate'); break;
-      case 'show-auto-coder': navigate('/workspace/autocoder'); break;
-      case 'show-sandbox': navigate('/workspace/auto-coder'); break;
-      case 'show-vr-cockpit': navigate('/workspace/vr'); break;
-      case 'show-options': navigate('/analytics/options'); break;
-      case 'show-backtest': navigate('/portfolio/backtest'); break;
-      case 'show-brokerage': navigate('/portfolio/brokerage'); break;
-      case 'show-scanner': navigate('/scanner/global'); break; // Phase 4
+      // --- Orchestrator ---
+      case 'nav-overview-orchestrator': navigate('/orchestrator'); break;
+      case 'show-dashboard': navigate('/orchestrator/terminal'); break;
+      case 'show-mission-control': navigate('/orchestrator/mission-control'); break;
+      case 'role-orchestrator': navigate('/orchestrator/graph'); break;
+      case 'show-chat': navigate('/orchestrator/chat'); break;
+      case 'show-zen': navigate('/orchestrator/zen'); break;
 
-      // Roles & New Phases
-      case 'role-observer': navigate('/observer/macro'); break; // Phase 10
-      case 'role-estate': navigate('/strategist/estate'); break; // Phase 15
-      case 'role-guardian': navigate('/guardian/compliance'); break; // Phase 11
-      case 'role-warden': navigate('/mobile'); break; // Phase 22
-      case 'role-audit': navigate('/guardian/compliance/audit'); break; // Phase 16
-      case 'role-margin': navigate('/guardian/margin'); break; // Phase 21
-      case 'role-scenarios': navigate('/guardian/scenarios'); break; // Phase 17
-      case 'role-analyst': navigate('/analyst/debate'); break; // Phase 12
-      case 'role-strategist': navigate('/strategist/currency'); break; // Phase 13
-      case 'role-impact': navigate('/strategist/impact'); break; // Phase 18
-      case 'role-corporate': navigate('/strategist/corporate'); break; // Phase 20
-      case 'role-architect': navigate('/architect/system'); break; // Phase 19
-      case 'role-api': navigate('/architect/api'); break; // Phase 23
-      case 'role-orchestrator': navigate('/orchestrator'); break; // Phase 200
-      case 'role-scm': navigate('/strategist/scm'); break; // Phase 197
-      case 'show-tax': navigate('/portfolio/tax'); break; // Phase 9
-      case 'show-crypto': navigate('/portfolio/crypto'); break; // Phase 8
-      case 'show-fixed-income': navigate('/portfolio/fixed-income'); break; // Phase 7 (FixedIncomeDashboard)
-      case 'show-attribution': navigate('/portfolio/attribution'); break; // Phase 6 (PortfolioAttribution)
-      case 'show-assets': navigate('/assets'); break; // Phase 24
-      case 'show-zen': navigate('/zen'); break; // Phase 24 (Zen)
-      case 'show-cash-flow': navigate('/portfolio/cash-flow'); break; // Phase 10
-      case 'show-tenant': navigate('/tenant'); break;
-      case 'profile-settings': navigate('/settings'); break;
-      
-      // App Hardening & Improvements - Portfolio Analytics
-      case 'nav-advanced-analytics': navigate('/portfolio/advanced-analytics'); break;
-      case 'nav-portfolio-optimization': navigate('/portfolio/optimization'); break;
-      case 'nav-advanced-risk': navigate('/portfolio/risk'); break;
-      case 'nav-tax-optimization': navigate('/portfolio/tax-optimization'); break;
-      
-      // Trading & Execution
-      case 'nav-options-strategy': navigate('/trading/options'); break;
-      case 'nav-advanced-orders': navigate('/trading/advanced-orders'); break;
-      case 'nav-paper-trading': navigate('/trading/paper'); break;
-      case 'nav-algorithmic-trading': navigate('/trading/algorithmic'); break;
-      
-      // Financial Planning
-      case 'nav-financial-planning': navigate('/planning/financial'); break;
-      case 'nav-retirement-planning': navigate('/planning/retirement'); break;
-      case 'nav-estate-planning': navigate('/planning/estate'); break;
-      case 'nav-budgeting': navigate('/budgeting'); break;
-      case 'nav-bill-payment': navigate('/billing/payments'); break;
-      case 'nav-credit-monitoring': navigate('/credit/monitoring'); break;
-      
-      // Market Intelligence
-      case 'nav-news-sentiment': navigate('/news/sentiment'); break;
-      case 'nav-watchlists-alerts': navigate('/watchlists/alerts'); break;
-      case 'nav-research-reports': navigate('/research/reports'); break;
-      case 'nav-advanced-charting': navigate('/charting/advanced'); break;
-      
-      // Social & Community
-      case 'nav-social-trading': navigate('/social/trading'); break;
-      case 'nav-community-forums': navigate('/community/forums'); break;
-      case 'nav-education': navigate('/education'); break;
-      
-      // AI & Machine Learning
-      case 'nav-ai-predictions': navigate('/ai/predictions'); break;
-      case 'nav-ai-assistant': navigate('/ai/assistant'); break;
-      case 'nav-ml-training': navigate('/ml/training'); break;
-      
-      // Legal
+      // --- Architect ---
+      case 'nav-overview-architect': navigate('/architect'); break;
+      case 'nav-admin': navigate('/architect/admin'); break;
+      case 'role-architect': navigate('/architect/health'); break;
+      case 'role-api': navigate('/architect/api'); break;
+      case 'nav-integrations': navigate('/architect/integrations'); break;
+      case 'nav-developer-platform': navigate('/architect/dev-platform'); break;
+
+      // --- Account ---
+      case 'nav-account': navigate('/account'); break;
+      case 'nav-account-settings': navigate('/account/settings'); break;
+
+       // --- Data Scientist & Analyst ---
+       case 'nav-overview-analyst': navigate('/analyst'); break;
+       case 'show-political-alpha': navigate('/analyst/political'); break;
+       case 'show-strategy-distillery': navigate('/analyst/strategy'); break;
+       case 'role-observer': navigate('/analyst/macro'); break;
+
+       case 'nav-overview-data-scientist': navigate('/data-scientist'); break;
+       case 'nav-ai-predictions': navigate('/data-scientist/predictions'); break;
+       case 'nav-ml-training': navigate('/data-scientist/training'); break;
+       case 'nav-ai-assistant': navigate('/data-scientist/assistant'); break;
+       case 'nav-autocoder': navigate('/data-scientist/autocoder'); break;
+       case 'show-debate': navigate('/data-scientist/debate'); break;
+       case 'show-vr': navigate('/data-scientist/vr'); break;
+
+      // --- Day-Trader (Trader) ---
+      case 'nav-overview-trader': navigate('/trader'); break;
+      case 'show-scanner': navigate('/trader/scanner'); break;
+      case 'nav-options-strategy': navigate('/trader/options'); break;
+      case 'nav-advanced-orders': navigate('/trader/advanced-orders'); break;
+      case 'nav-algorithmic-trading': navigate('/trader/algorithmic'); break;
+      case 'nav-paper-trading': navigate('/trader/paper'); break;
+      case 'nav-advanced-charting': navigate('/trader/charting'); break;
+      case 'show-options': navigate('/trader/options-analytics'); break;
+
+      // --- Strategist ---
+      case 'nav-overview-strategist': navigate('/strategist'); break;
+      case 'nav-portfolio-management': navigate('/strategist/net-worth'); break;
+      case 'nav-advanced-analytics': navigate('/strategist/analytics'); break;
+      case 'nav-portfolio-optimization': navigate('/strategist/optimization'); break;
+      case 'show-attribution': navigate('/strategist/attribution'); break;
+      case 'show-backtest': navigate('/strategist/backtest'); break;
+      case 'show-brokerage': navigate('/strategist/brokerage'); break;
+      case 'show-crypto': navigate('/strategist/crypto'); break;
+      case 'show-fixed-income': navigate('/strategist/fixed-income'); break;
+      case 'show-assets': navigate('/strategist/assets'); break;
+      case 'role-corporate': navigate('/strategist/corporate'); break;
+      case 'role-impact': navigate('/strategist/impact'); break;
+      case 'role-scm': navigate('/strategist/scm'); break;
+      case 'nav-estate-planning': navigate('/strategist/estate'); break;
+      case 'nav-retirement-planning': navigate('/strategist/retirement'); break;
+      case 'nav-budgeting': navigate('/strategist/budgeting'); break;
+      case 'nav-financial-planning': navigate('/strategist/financial'); break;
+
+      // --- Marketing ---
+      case 'nav-overview-marketing': navigate('/marketing'); break;
+      case 'nav-news-sentiment': navigate('/marketing/news'); break;
+      case 'nav-social-trading': navigate('/marketing/social'); break;
+      case 'nav-community-forums': navigate('/marketing/forums'); break;
+      case 'nav-education': navigate('/marketing/education'); break;
+      case 'nav-marketplace': navigate('/marketing/marketplace'); break;
+      case 'nav-research-reports': navigate('/marketing/reports'); break;
+      case 'nav-watchlists-alerts': navigate('/marketing/alerts'); break;
+
+      // --- Lawyer & Legal ---
+      case 'nav-overview-legal': navigate('/legal'); break;
+      case 'role-guardian': navigate('/legal/compliance'); break;
+      case 'role-audit': navigate('/legal/audit'); break;
+      case 'role-scenarios': navigate('/legal/scenarios'); break;
+      case 'role-margin': navigate('/legal/margin'); break;
+      case 'show-tax': navigate('/legal/tax'); break;
       case 'nav-legal-terms': navigate('/legal/terms'); break;
       case 'nav-legal-privacy': navigate('/legal/privacy'); break;
-      
-      // Integrations & Platform
-      case 'nav-integrations': navigate('/integrations'); break;
-      case 'nav-developer-platform': navigate('/developer/platform'); break;
-      case 'nav-marketplace': navigate('/marketplace'); break;
-      
-      // Enterprise & Compliance
-      case 'nav-enterprise': navigate('/enterprise'); break;
-      case 'nav-compliance': navigate('/compliance'); break;
-      case 'nav-institutional': navigate('/institutional'); break;
-      
-      // View & Theme
+
+      // --- Guardian ---
+      case 'nav-overview-guardian': navigate('/guardian'); break;
+      case 'nav-advanced-risk': navigate('/guardian/risk'); break;
+      case 'nav-credit-monitoring': navigate('/guardian/credit'); break;
+      case 'nav-institutional': navigate('/guardian/institutional'); break;
+      case 'nav-enterprise': navigate('/guardian/enterprise'); break;
+      case 'nav-bill-payment': navigate('/guardian/payments'); break;
+      case 'show-cash-flow': navigate('/guardian/cash-flow'); break;
+      case 'show-tenant': navigate('/guardian/tenants'); break;
+      case 'role-warden': navigate('/guardian/mobile'); break;
+
+      // --- Legacy Data Scientist Redirects ---
+      case 'nav-overview-pioneer': navigate('/data-scientist'); break;
+      case 'show-auto-coder': navigate('/data-scientist/autocoder'); break;
+      case 'show-sandbox': navigate('/data-scientist/sandbox'); break;
+      case 'show-vr-cockpit': navigate('/data-scientist/vr'); break;
+      case 'show-debate-chamber': navigate('/data-scientist/debate'); break;
+
+      // Widgets / Specifics
       case 'toggle-theme': toggleTheme(); break;
-      case 'toggle-fullscreen':
-        if (document.fullscreenElement) {
-          document.exitFullscreen();
-        } else {
-          document.documentElement.requestFullscreen();
-        }
-        break;
-      
-      // Layout & Widgets
       case 'reset-layout': resetLayout(); break;
-      case 'lock-widgets': setGlobalLock(true); break;
-      case 'unlock-widgets': setGlobalLock(false); break;
-      case 'toggle-lock': setGlobalLock(prev => !prev); break;
-      case 'open-all-widgets': {
-        // Set all widgets to visible and clear corrupted layout
-        const allVisible = {};
-        const widgetKeys = ['monitor-view', 'command-view', 'research-view', 'portfolio-view', 
-                           'homeostasis-view', 'options-chain-view', 'market-depth-view', 
-                           'trade-tape-view', 'terminal-view', 'bar-chart'];
-        widgetKeys.forEach(k => allVisible[k] = true);
-        setWidgetVisibility(allVisible);
-        // Clear corrupted layout coordinates
-        localStorage.removeItem('react_node_template_widget_layout');
-        // Force reset to DEFAULT_LAYOUT
-        resetLayout();
-        break;
-      }
-      case 'close-all-widgets': {
-        const allHidden = {};
-        const allWidgetKeys = ['monitor-view', 'command-view', 'research-view', 'portfolio-view', 
-                              'homeostasis-view', 'options-chain-view', 'market-depth-view', 
-                              'trade-tape-view', 'terminal-view', 'bar-chart'];
-        allWidgetKeys.forEach(k => allHidden[k] = false);
-        setWidgetVisibility(allHidden);
-        break;
-      }
-      
-      // Auth
+      case 'profile-settings': navigate('/settings'); break;
       case 'logout': handleLogout(); break;
       case 'signin': setIsAuthModalOpen(true); break;
-      
-      // Overviews
-      case 'nav-overview-workspace': navigate('/workspace'); break;
-      case 'nav-overview-analytics': navigate('/analytics'); break;
-      case 'nav-overview-portfolio': navigate('/portfolio'); break;
-      case 'nav-overview-analyst': navigate('/analyst'); break;
-      case 'nav-overview-guardian': navigate('/guardian'); break;
-      case 'nav-overview-strategist': navigate('/strategist'); break;
-      case 'nav-overview-architect': navigate('/architect'); break;
-      case 'nav-overview-observer': navigate('/observer'); break;
-      case 'nav-overview-scanner': navigate('/scanner'); break;
-
-      // Debug
-      case 'force-loading': setDebugStates(prev => ({ ...prev, forceLoading: !prev.forceLoading })); break;
-      case 'force-error': setDebugStates(prev => ({ ...prev, forceError: !prev.forceError })); break;
-      case 'show-chat': navigate('/chat'); break;
 
       default: break;
     }
@@ -721,110 +642,119 @@ function AppContent() {
           <SubHeaderNav />
           
           <main className={`institutional-os-container ${isOSStylePage ? 'os-bleed' : ''}`}>
-            <Breadcrumbs />
+            {/* Breadcrumbs moved to Taskbar */}
             {/* Route Content Wrapper - Takes remaining flex space */}
             <div className={isOSStylePage ? 'route-content-os' : 'route-content'}>
             <Suspense fallback={<DashboardSkeleton />}>
               <GlobalTooltip />
               <Routes>
-                {/* Overview Landing Pages */}
-                <Route path="/workspace" element={<RoleOverview />} />
-                <Route path="/workspaces" element={<RoleOverview />} />
-                <Route path="/analytics" element={<RoleOverview />} />
-                <Route path="/analyst" element={<AIPredictionsDashboard />} />
-                <Route path="/portfolio" element={<RoleOverview />} />
-                <Route path="/guardian" element={<RoleOverview />} />
-                <Route path="/strategist" element={<RoleOverview />} />
-                <Route path="/architect" element={<RoleOverview />} />
-                <Route path="/observer" element={<RoleOverview />} />
-                <Route path="/scanner" element={<RoleOverview />} />
+                {/* Role Landing Pages */}
+                <Route path="/orchestrator" element={<RoleOverview />} />
+                <Route path="/orchestrator/terminal" element={<TerminalWorkspace handleViewSource={() => { }} globalLock={globalLock} isDarkMode={isDark} widgetStates={widgetStates} setWidgetStates={setWidgetStates} widgetVisibility={widgetVisibility} setWidgetVisibility={setWidgetVisibility} />} />
+                <Route path="/orchestrator/mission-control" element={<MissionControl />} />
+                <Route path="/orchestrator/graph" element={<MasterOrchestrator />} />
+                <Route path="/orchestrator/chat" element={<div className="p-8 text-white"><h1>Global Chat</h1><p>Neural communication interface active.</p></div>} />
+                <Route path="/orchestrator/zen" element={<ZenMode />} />
 
-                <Route path="/" element={<Navigate to="/workspace/terminal" replace />} />
-                <Route path="/login" element={<Navigate to="/" replace />} />
-                <Route path="/workspace/terminal" element={
-                  <TerminalWorkspace
-                    handleViewSource={() => { }}
-                    globalLock={globalLock}
-                    isDarkMode={isDark}
-                    widgetStates={widgetStates}
-                    setWidgetStates={setWidgetStates}
-                    widgetVisibility={widgetVisibility}
-                    setWidgetVisibility={setWidgetVisibility}
-                  />
-                } />
-                <Route path="/workspace/mission-control" element={<MissionControl />} />
-                <Route path="/analytics/political" element={<PoliticalAlpha />} />
-                <Route path="/analytics/strategy" element={<StrategyDistillery />} />
-                <Route path="/analyst/strategy" element={<StrategyDistillery />} />
-                <Route path="/workspace/debate" element={<DebateRoom />} />
-                <Route path="/workspace/autocoder" element={<AutoCoderDashboard />} />
-                <Route path="/workspaces/autocoder" element={<AutoCoderDashboard />} />
-                <Route path="/workspace/vr" element={<VRCockpit />} />
-                <Route path="/analytics/options" element={<OptionsAnalytics />} />
-                <Route path="/portfolio/backtest" element={<BacktestPortfolio />} />
-                <Route path="/strategist/estate" element={<EstateDashboard />} />
-                <Route path="/strategist/impact" element={<ImpactDashboard />} />
-                <Route path="/strategist/corporate" element={<CorporateDashboard />} />
-                <Route path="/architect/system" element={<SystemHealthDashboard />} />
+                <Route path="/architect" element={<RoleOverview />} />
+                <Route path="/architect/health" element={<SystemHealthDashboard />} />
                 <Route path="/architect/api" element={<APIDashboard />} />
-                <Route path="/guardian/compliance/audit" element={<AuditDashboard />} />
-                <Route path="/guardian/scenarios" element={<ScenarioDashboard />} />
-                <Route path="/guardian/margin" element={<MarginDashboard />} />
-                <Route path="/mobile" element={<MobileDashboard />} />
-                <Route path="/portfolio/brokerage" element={<BrokerageAccount />} />
-                <Route path="/workspace/auto-coder" element={<AutoCoderSandbox />} />
-                <Route path="/portfolio/attribution" element={<PortfolioAttribution />} />
-                <Route path="/portfolio/fixed-income" element={<FixedIncomeDashboard />} />
-                <Route path="/portfolio/crypto" element={<CryptoDashboard />} />
-                <Route path="/portfolio/tax" element={<TaxDashboard />} />
-                <Route path="/observer/macro" element={<MacroDashboard />} />
-                <Route path="/guardian/compliance" element={<ComplianceDashboard />} />
-                <Route path="/analyst/debate" element={<DebateRoom />} />
-                <Route path="/strategist/currency" element={<CurrencyDashboard />} />
-                <Route path="/scanner/global" element={<GlobalScanner />} />
-                <Route path="/assets" element={<AssetsDashboard />} />
-                <Route path="/portfolio/cash-flow" element={<CashFlowDashboard />} />
-                <Route path="/zen" element={<ZenMode />} />
-                <Route path="/orchestrator" element={<MasterOrchestrator />} />
+                <Route path="/architect/admin" element={<AdminDashboard />} />
+                <Route path="/architect/integrations" element={<IntegrationsDashboard />} />
+                <Route path="/architect/dev-platform" element={<DeveloperPlatformDashboard />} />
+
+                <Route path="/analyst" element={<RoleOverview />} />
+                {/* Removed: <Route path="/analyst/predictions" element={<AIPredictionsDashboard />} /> */}
+                {/* Removed: <Route path="/analyst/training" element={<MLTrainingDashboard />} /> */}
+                <Route path="/analyst/political" element={<PoliticalAlpha />} />
+                <Route path="/analyst/strategy" element={<StrategyDistillery />} />
+                <Route path="/analyst/macro" element={<MacroDashboard />} />
+                {/* Removed: <Route path="/analyst/assistant" element={<AIAssistantDashboard />} /> */}
+                <Route path="/analyst/sentinel" element={<SentinelStrategyDashboard />} />
+
+                <Route path="/data-scientist" element={<RoleOverview />} />
+                <Route path="/data-scientist/predictions" element={<AIPredictionsDashboard />} />
+                <Route path="/data-scientist/training" element={<MLTrainingDashboard />} />
+                <Route path="/data-scientist/assistant" element={<AIAssistantDashboard />} />
+                <Route path="/data-scientist/autocoder" element={<AutoCoderDashboard />} />
+                <Route path="/data-scientist/sandbox" element={<AutoCoderSandbox />} />
+                <Route path="/data-scientist/vr" element={<VRCockpit />} />
+                <Route path="/data-scientist/debate" element={<DebateRoom />} />
+
+                <Route path="/trader" element={<RoleOverview />} />
+                <Route path="/trader/scanner" element={<GlobalScanner />} />
+                <Route path="/trader/options" element={<OptionsStrategyDashboard />} />
+                <Route path="/trader/advanced-orders" element={<AdvancedOrdersDashboard />} />
+                <Route path="/trader/algorithmic" element={<AlgorithmicTradingDashboard />} />
+                <Route path="/trader/paper" element={<PaperTradingDashboard />} />
+                <Route path="/trader/charting" element={<AdvancedChartingDashboard />} />
+                <Route path="/trader/options-analytics" element={<OptionsAnalytics />} />
+
+                <Route path="/strategist" element={<RoleOverview />} />
+                <Route path="/strategist/net-worth" element={<PortfolioManagement />} />
+                <Route path="/strategist/analytics" element={<AdvancedPortfolioAnalytics />} />
+                <Route path="/strategist/optimization" element={<PortfolioOptimizationDashboard />} />
+                <Route path="/strategist/attribution" element={<PortfolioAttribution />} />
+                <Route path="/strategist/backtest" element={<BacktestPortfolio />} />
+                <Route path="/strategist/brokerage" element={<BrokerageAccount />} />
+                <Route path="/strategist/crypto" element={<CryptoDashboard />} />
+                <Route path="/strategist/fixed-income" element={<FixedIncomeDashboard />} />
+                <Route path="/strategist/assets" element={<AssetsDashboard />} />
+                <Route path="/strategist/corporate" element={<CorporateDashboard />} />
+                <Route path="/strategist/impact" element={<ImpactDashboard />} />
                 <Route path="/strategist/scm" element={<SocialClassMaintenance />} />
-                <Route path="/tenant" element={<TenantDashboard />} />
-                {/* App Hardening & Improvements Routes */}
-                <Route path="/portfolio/advanced-analytics" element={<AdvancedPortfolioAnalytics />} />
-                <Route path="/portfolio/optimization" element={<PortfolioOptimizationDashboard />} />
-                <Route path="/portfolio/risk" element={<AdvancedRiskDashboard />} />
-                <Route path="/portfolio/tax-optimization" element={<TaxOptimizationDashboard />} />
-                <Route path="/planning/financial" element={<FinancialPlanningDashboard />} />
-                <Route path="/planning/retirement" element={<RetirementPlanningDashboard />} />
-                <Route path="/budgeting" element={<BudgetingDashboard />} />
-                <Route path="/trading/options" element={<OptionsStrategyDashboard />} />
-                <Route path="/trading/paper" element={<PaperTradingDashboard />} />
-                <Route path="/trading/algorithmic" element={<AlgorithmicTradingDashboard />} />
-                <Route path="/planning/estate" element={<EstatePlanningDashboard />} />
-                <Route path="/billing/payments" element={<BillPaymentDashboard />} />
-                <Route path="/credit/monitoring" element={<CreditMonitoringDashboard />} />
-                <Route path="/research/reports" element={<ResearchReportsDashboard />} />
-                <Route path="/social/trading" element={<SocialTradingDashboard />} />
-                <Route path="/community/forums" element={<CommunityForumsDashboard />} />
-                <Route path="/education" element={<EducationPlatformDashboard />} />
-                <Route path="/charting/advanced" element={<AdvancedChartingDashboard />} />
-                <Route path="/trading/advanced-orders" element={<AdvancedOrdersDashboard />} />
-                <Route path="/enterprise" element={<EnterpriseDashboard />} />
-                <Route path="/compliance" element={<ComplianceDashboard />} />
-                <Route path="/institutional" element={<InstitutionalToolsDashboard />} />
-                <Route path="/ml/training" element={<MLTrainingDashboard />} />
-                <Route path="/integrations" element={<IntegrationsDashboard />} />
-                <Route path="/developer/platform" element={<DeveloperPlatformDashboard />} />
-                <Route path="/marketplace" element={<MarketplaceDashboard />} />
-                <Route path="/evolution" element={<EvolutionDashboard />} />
-                <Route path="/news/sentiment" element={<NewsSentimentDashboard />} />
-                <Route path="/watchlists/alerts" element={<WatchlistsAlertsDashboard />} />
-                <Route path="/ai/predictions" element={<AIPredictionsDashboard />} />
-                <Route path="/ai/assistant" element={<AIAssistantDashboard />} />
+                <Route path="/strategist/estate" element={<EstatePlanningDashboard />} />
+                <Route path="/strategist/retirement" element={<RetirementPlanningDashboard />} />
+                <Route path="/strategist/budgeting" element={<BudgetingDashboard />} />
+                <Route path="/strategist/financial" element={<FinancialPlanningDashboard />} />
+
+                <Route path="/marketing" element={<RoleOverview />} />
+                <Route path="/marketing/news" element={<NewsSentimentDashboard />} />
+                <Route path="/marketing/social" element={<SocialTradingDashboard />} />
+                <Route path="/marketing/forums" element={<CommunityForumsDashboard />} />
+                <Route path="/marketing/education" element={<EducationPlatformDashboard />} />
+                <Route path="/marketing/marketplace" element={<MarketplaceDashboard />} />
+                <Route path="/marketing/reports" element={<ResearchReportsDashboard />} />
+                <Route path="/marketing/alerts" element={<WatchlistsAlertsDashboard />} />
+
+                <Route path="/legal" element={<RoleOverview />} />
+                <Route path="/legal/compliance" element={<ComplianceDashboard />} />
+                <Route path="/legal/audit" element={<AuditDashboard />} />
+                <Route path="/legal/scenarios" element={<ScenarioDashboard />} />
+                <Route path="/legal/margin" element={<MarginDashboard />} />
+                <Route path="/legal/tax" element={<TaxDashboard />} />
                 <Route path="/legal/terms" element={<TermsOfService />} />
                 <Route path="/legal/privacy" element={<PrivacyPolicy />} />
-                <Route path="/settings" element={<div className="p-8 text-white"><h1>Settings</h1><p>Configuration panel coming soon.</p></div>} />
-                <Route path="/chat" element={<div className="p-8 text-white"><h1>Chat</h1><p>Real-time chat interface coming soon.</p></div>} />
-                <Route path="/sentinel/strategy" element={<SentinelStrategyDashboard />} />
+
+                <Route path="/guardian" element={<RoleOverview />} />
+                <Route path="/guardian/risk" element={<AdvancedRiskDashboard />} />
+                <Route path="/guardian/credit" element={<CreditMonitoringDashboard />} />
+                <Route path="/guardian/institutional" element={<InstitutionalToolsDashboard />} />
+                <Route path="/guardian/enterprise" element={<EnterpriseDashboard />} />
+                <Route path="/guardian/payments" element={<BillPaymentDashboard />} />
+                <Route path="/guardian/cash-flow" element={<CashFlowDashboard />} />
+                <Route path="/guardian/tenants" element={<TenantDashboard />} />
+                <Route path="/guardian/mobile" element={<MobileDashboard />} />
+
+                <Route path="/pioneer" element={<RoleOverview />} />
+                <Route path="/data-scientist/autocoder" element={<AutoCoderDashboard />} />
+                <Route path="/data-scientist/sandbox" element={<AutoCoderSandbox />} />
+                <Route path="/data-scientist/vr" element={<VRCockpit />} />
+                <Route path="/data-scientist/debate" element={<DebateRoom />} />
+                <Route path="/data-scientist/evolution" element={<EvolutionDashboard />} />
+                <Route path="/data-scientist/sentinel" element={<SentinelStrategyDashboard />} />
+
+                {/* Account & Settings */}
+                <Route path="/account" element={<AccountOverview />} />
+                <Route path="/account/settings" element={<Settings />} />
+                <Route path="/settings" element={<Navigate to="/account/settings" replace />} />
+                <Route path="/settings/profile" element={<div className="p-8 text-white"><h1>Profile Settings</h1><p>Update your institutional identity.</p></div>} />
+                <Route path="/settings/keyboard" element={<div className="p-8 text-white"><h1>Keyboard Shortcuts</h1><p>Master the terminal via hotkeys.</p></div>} />
+
+                {/* Baselines */}
+                <Route path="/" element={<Navigate to="/orchestrator/terminal" replace />} />
+                <Route path="/login" element={<Navigate to="/" replace />} />
+                <Route path="*" element={<div className="p-8 text-white"><h1>404: Node Missing</h1><p>The requested path does not exist in this namespace.</p></div>} />
               </Routes>
 
             </Suspense>
@@ -851,7 +781,7 @@ function AppContent() {
           tradeDetails={tradeModal.details}
           onConfirm={(details) => {
             setTradeModal({ ...tradeModal, open: false });
-            // Chain to Phase 5 Execution Shield
+            // Chain to  Execution Shield
             setPendingTrade({
                 ticker: details.symbol,
                 size: details.quantity,
@@ -869,7 +799,7 @@ function AppContent() {
           currentUser={currentUser}
         />
 
-        {/* Phase 1: Window Manager Layer */}
+        {/* : Window Manager Layer */}
         {useWindowStore(useShallow((state) => state.windows.map(w => w.id))).map((id) => (
             <WindowWrapper key={id} id={id} />
         ))}
@@ -896,7 +826,7 @@ function AppContent() {
           }}
         />
 
-        {/* Phase 5: Global Safety Logic */}
+        {/* : Global Safety Logic */}
         <MFAVerificationModal 
             isOpen={isKillMFAOpen}
             onClose={() => setKillMFAOpen(false)}
@@ -953,7 +883,7 @@ function AppContent() {
         />
 
         
-        {/* Phase 01: Education Mode Overlay */}
+        {/* : Education Mode Overlay */}
         <EducationOverlay />
         
         {/* Onboarding Flow */}

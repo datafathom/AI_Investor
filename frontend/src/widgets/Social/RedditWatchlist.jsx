@@ -16,7 +16,7 @@ const RedditWatchlist = () => {
     const [loading, setLoading] = useState(false);
     const { toast } = useToast();
 
-    // TODO: Connect to backend in Phase 20 execution
+    // TODO: Connect to backend in  execution
     const addUser = () => {
         if (!newUser) return;
         setUsers([...users, { name: newUser, sentiment: 0.0, karma: "???", status: "Pending" }]);

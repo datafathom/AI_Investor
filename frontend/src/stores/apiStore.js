@@ -1,6 +1,6 @@
 /**
  * API Store - Zustand State Management for API Marketplace
- * Phase 66: Manages data connectors, API keys, and webhooks.
+ * : Manages data connectors, API keys, and webhooks.
  */
 import { create } from 'zustand';
 import apiClient from '../services/apiClient';

@@ -1,7 +1,7 @@
 /**
  * Cash Store - Zustand State Management for Multi-Currency Cash
  * 
- * Phase 56: Manages global cash balances, FX rates, and
+ * : Manages global cash balances, FX rates, and
  * interest-bearing cash optimization.
  * 
  * State slices:

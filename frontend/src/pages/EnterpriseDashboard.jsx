@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/EnterpriseDashboard.jsx
  * ROLE: Enterprise Features Dashboard
- * PURPOSE: Phase 31 - Enterprise Features & Multi-User Support
+ * PURPOSE:  - Enterprise Features & Multi-User Support
  *          Displays team management, organizational structure, and shared portfolios.
  * 
  * INTEGRATION POINTS:
@@ -68,7 +68,7 @@ const EnterpriseDashboard = () => {
     <div className="enterprise-dashboard">
       <div className="dashboard-header">
         <h1>Enterprise Features</h1>
-        <p className="subtitle">Phase 31: Enterprise Features & Multi-User Support</p>
+        <p className="subtitle">: Enterprise Features & Multi-User Support</p>
       </div>
 
       <div className="dashboard-content">

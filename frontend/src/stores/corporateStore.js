@@ -1,6 +1,6 @@
 /**
  * Corporate Store - Zustand State Management for Corporate Actions
- * Phase 63: Manages earnings calendar, DRIP, and corporate actions.
+ * : Manages earnings calendar, DRIP, and corporate actions.
  */
 import { create } from 'zustand';
 import apiClient from '../services/apiClient';

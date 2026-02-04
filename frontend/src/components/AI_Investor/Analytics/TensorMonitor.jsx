@@ -3,7 +3,7 @@ import { Radar } from 'lucide-react';
 import GlassCard from '../Controls/GlassCard';
 
 const TensorMonitor = ({ tensor, collapsible = false }) => {
-    // Phase 11: Safety check against empty data
+    // : Safety check against empty data
     // We access tensor.tensor for the individual components to avoid iterating over the wrapper object
     const data = tensor?.tensor || {
         price_momentum: 0.5,

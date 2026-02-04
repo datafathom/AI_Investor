@@ -70,6 +70,11 @@ NEO4J_PASSWORD = get_env("NEO4J_PASSWORD", "password")
 # Kafka Configuration
 KAFKA_BOOTSTRAP_SERVERS = get_env("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
 
+# Redis Configuration
+REDIS_HOST = get_env("REDIS_HOST", "localhost")
+REDIS_PORT = get_env_int("REDIS_PORT", 6379)
+REDIS_PASSWORD = get_env("REDIS_PASSWORD")
+
 # Market Data Providers
 ALPHA_VANTAGE_API_KEY = get_env("ALPHA_VANTAGE_API_KEY")
 POLYGON_API_KEY = get_env("POLYGON_API_KEY")

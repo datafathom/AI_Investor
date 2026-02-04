@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/MarketplaceDashboard.jsx
  * ROLE: Marketplace & Extensions Dashboard
- * PURPOSE: Phase 30 - Marketplace & Extensions
+ * PURPOSE:  - Marketplace & Extensions
  *          Displays extension marketplace, installation management, and reviews.
  * 
  * INTEGRATION POINTS:
@@ -73,7 +73,7 @@ const MarketplaceDashboard = () => {
     <div className="marketplace-dashboard">
       <div className="dashboard-header">
         <h1>Extension Marketplace</h1>
-        <p className="subtitle">Phase 30: Marketplace & Extensions</p>
+        <p className="subtitle">: Marketplace & Extensions</p>
       </div>
 
       <div className="search-bar">

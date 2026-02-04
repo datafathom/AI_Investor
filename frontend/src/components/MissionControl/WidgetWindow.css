@@ -1,0 +1,118 @@
+/**
+ * WidgetWindow.css
+ * OS-style windowing system and responsive scaling.
+ */
+
+:root {
+  --window-title-bg: rgba(15, 23, 42, 0.8);
+  --window-border: rgba(255, 255, 255, 0.08);
+  --window-accent: #00d1ff;
+}
+
+.os-window {
+  transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  container-type: size; /* Enable Container Queries for internal content */
+  height: 100%;
+}
+
+.os-window:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+
+.os-window.is-rolled-up {
+  height: 32px !important; /* Forces height to title bar only */
+}
+
+/* Scroll Vault */
+.scroll-vault {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.scroll-vault::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scroll-vault::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll-vault::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.scroll-vault::-webkit-scrollbar-thumb:hover {
+  background: var(--window-accent);
+}
+
+/* Light Mode: Solarized Professional */
+:global(.light) .os-window {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  color: #1a202c;
+}
+
+:global(.light) .window-title-bar {
+  background: #edf2f7;
+  border-bottom-color: #e2e8f0;
+}
+
+:global(.light) .window-title-bar span {
+  color: #4a5568;
+}
+
+:global(.light) .window-control-btn {
+  color: #718096;
+}
+
+:global(.light) .window-control-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #2d3748;
+}
+
+/* Internal Content Refinement (Examples for Mission Control) */
+
+/* Capital Allocation Container Query logic */
+@container (max-width: 250px) {
+  .allocation-layout {
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+}
+
+@container (max-height: 200px) {
+  .allocation-legend {
+    display: none !important;
+  }
+}
+
+/* Dynamic Text Scaling using clamp() */
+.metric-heavy {
+  font-size: clamp(1.5rem, 8cqw, 3rem);
+  line-height: 1;
+}
+
+/* Terminal Styling */
+.terminal-window {
+  background: #0f172a;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+:global(.light) .terminal-window {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+}
+
+:global(.light) .terminal-text {
+  color: #1a202c;
+}
+
+.terminal-sticky-bottom {
+  display: flex;
+  flex-direction: column-reverse; /* Keeps new logs at bottom */
+}

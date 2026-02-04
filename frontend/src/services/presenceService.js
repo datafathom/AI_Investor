@@ -68,7 +68,7 @@ class PresenceService {
       this.emit('presence:list-updated', Array.from(this.users.values()));
     });
 
-    // Risk & Trade Events (Phase 48)
+    // Risk & Trade Events 
     this.socket.on('risk:alert', (data) => {
       this.emit('risk:alert', data);
     });

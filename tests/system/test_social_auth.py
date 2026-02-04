@@ -20,6 +20,9 @@ def service():
         # Ensure _get_user_by_email is mockable
         svc._get_user_by_email = MagicMock()
         
+        # Prevent auto-initialization from consuming mock cursor calls
+        svc._db_initialized = True
+        
         return svc
 
 def test_social_auth_singleton():

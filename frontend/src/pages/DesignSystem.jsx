@@ -2,7 +2,7 @@
  * Design System Playground Page
  * 
  * Interactive component playground for developers.
- * Placeholder for now - will be implemented in Phase 4.1.
+ * Placeholder for now - will be implemented in .1.
  */
 
 import React from 'react';

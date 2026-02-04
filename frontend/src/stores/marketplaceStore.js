@@ -1,5 +1,5 @@
 /**
- * Marketplace Store - Phase 30
+ * Marketplace Store - 
  * Manages extension marketplace state following User Rule 6 pattern
  */
 import { create } from 'zustand';

@@ -1,6 +1,6 @@
 /**
  * ML Training Service
- * Phase 27: API integration for ML Model Training Pipeline
+ * : API integration for ML Model Training Pipeline
  */
 import apiClient from './apiClient';
 

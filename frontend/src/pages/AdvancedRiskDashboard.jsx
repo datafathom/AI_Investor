@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/AdvancedRiskDashboard.jsx
  * ROLE: Advanced Risk Management Dashboard
- * PURPOSE: Phase 3 - Advanced Risk Management & Stress Testing
+ * PURPOSE:  - Advanced Risk Management & Stress Testing
  *          Displays risk metrics, stress test results, and Monte Carlo simulations.
  * 
  * INTEGRATION POINTS:
@@ -117,7 +117,7 @@ const AdvancedRiskDashboard = () => {
     <div className="full-bleed-page advanced-risk-dashboard">
       <div className="dashboard-header">
         <h1>Advanced Risk Management</h1>
-        <p className="subtitle">Phase 3: Advanced Risk Management & Stress Testing</p>
+        <p className="subtitle">: Advanced Risk Management & Stress Testing</p>
       </div>
 
       <div className="scrollable-content-wrapper">

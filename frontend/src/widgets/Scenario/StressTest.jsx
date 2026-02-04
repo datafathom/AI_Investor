@@ -13,7 +13,7 @@ import "./WhatIfSimulator.css";
 
 /**
  * StressTest - Refactored multi-event simulator.
- * Phase 60: Supports multi-event selection and backend revaluation.
+ * : Supports multi-event selection and backend revaluation.
  */
 const StressTest = () => {
   const { presetScenarios, runScenario, isSimulating, impactResults, reset } =

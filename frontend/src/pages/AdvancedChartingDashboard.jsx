@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/AdvancedChartingDashboard.jsx
  * ROLE: Advanced Charting & Technical Analysis Dashboard
- * PURPOSE: Phase 5 - Advanced Charting & Technical Analysis
+ * PURPOSE:  - Advanced Charting & Technical Analysis
  * 
  * INTEGRATION POINTS:
  *    - ChartingStore: Uses apiClient for all API calls (User Rule 6)
@@ -53,7 +53,7 @@ const AdvancedChartingDashboard = () => {
     <div className="advanced-charting-dashboard">
       <div className="dashboard-header">
         <h1>Advanced Charting & Technical Analysis</h1>
-        <p className="subtitle">Phase 5: Advanced Charting & Technical Analysis</p>
+        <p className="subtitle">: Advanced Charting & Technical Analysis</p>
       </div>
 
       <div className="chart-controls">

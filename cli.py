@@ -147,6 +147,38 @@ def print_help(registry):
         for cmd_name, desc in sorted(categories[cat]):
             print(f"  {cmd_name:25} {desc}")
 
+    print("\nDevelopment Modes Summary:")
+    print("  dev                      Standard mode: Backend + Frontend + Local Infra Check.")
+    print("  dev-full                 Full mode: Starts Docker Infra + Backend + Frontend.")
+    print("  dev-no-db                Light mode: Backend + Frontend only (for remote DB/2-node).")
+    print("\nUse 'python cli.py <command> --help' for detailed information on a specific command.")
+
+
+def print_command_help(command_path: list, cmd_def: dict):
+    print(f"\nCommand: {' '.join(command_path)}")
+    print(f"Description: {cmd_def.get('description', 'No description available.')}")
+    
+    arg_defs = cmd_def.get("arguments", [])
+    if arg_defs:
+        print("\nArguments:")
+        for arg in arg_defs:
+            req = "(Required)" if arg.get("required") else f"(Optional, Default: {arg.get('default')})"
+            print(f"  {arg['name']:20} {arg.get('help', '')} {req}")
+            
+    flag_defs = cmd_def.get("flags", [])
+    if flag_defs:
+        print("\nFlags:")
+        for flag in flag_defs:
+            short = f"-{flag['short']}, " if "short" in flag else ""
+            print(f"  {short}--{flag['name']:18} {flag.get('help', '')} (Default: {flag.get('default')})")
+
+    if "subcommands" in cmd_def:
+        print("\nAvailable subcommands:")
+        for subcmd_name, subcmd_def in sorted(cmd_def["subcommands"].items()):
+            print(f"  {subcmd_name:20} {subcmd_def.get('description', '')}")
+            
+    print()
+
 
 def main():
     global logger
@@ -196,6 +228,11 @@ def main():
         print(f"Error: Unknown command: {' '.join(command_path)}", file=sys.stderr)
         print_help(registry)
         sys.exit(1)
+
+    # Check for help flag in raw_args
+    if "--help" in raw_args or "-h" in raw_args:
+        print_command_help(command_path, cmd_def)
+        sys.exit(0)
     
     if "subcommands" in cmd_def and not cmd_def.get("handler"):
         print(f"Command: {' '.join(command_path)}")

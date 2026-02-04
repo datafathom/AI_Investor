@@ -3,7 +3,7 @@ import { Feather, Target, Clock, Power, Check } from 'lucide-react';
 import './ZenMode.css';
 
 /**
- * Homeostasis Zen Mode (Phase 24)
+ * Homeostasis Zen Mode 
  * 
  * Minimalist goal tracking with autopilot master override.
  */

@@ -1,6 +1,6 @@
 /**
  * Social Trading Service
- * Phase 24: Social Trading & Leaderboards
+ * : Social Trading & Leaderboards
  */
 import apiClient from './apiClient';
 

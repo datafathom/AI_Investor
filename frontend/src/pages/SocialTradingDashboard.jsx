@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/SocialTradingDashboard.jsx
  * ROLE: Social Trading Dashboard
- * PURPOSE: Phase 19 - Social Trading & Copy Trading
+ * PURPOSE:  - Social Trading & Copy Trading
  *          Displays trader leaderboard, follow/unfollow, and copy trading settings.
  * 
  * INTEGRATION POINTS:
@@ -68,7 +68,7 @@ const SocialTradingDashboard = () => {
     <div className="social-trading-dashboard">
       <div className="dashboard-header">
         <h1>Social Trading</h1>
-        <p className="subtitle">Phase 19: Social Trading & Copy Trading</p>
+        <p className="subtitle">: Social Trading & Copy Trading</p>
       </div>
 
       <div className="dashboard-content">

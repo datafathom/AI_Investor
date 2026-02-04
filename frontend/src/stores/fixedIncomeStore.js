@@ -1,7 +1,7 @@
 /**
  * Fixed Income Store - Zustand State Management
  * 
- * Phase 50: Manages bond ladder, yield curve, and rate shock state.
+ * : Manages bond ladder, yield curve, and rate shock state.
  * Provides real-time updates for fixed income analytics.
  */
 

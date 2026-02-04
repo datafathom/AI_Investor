@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/MLTrainingDashboard.jsx
  * ROLE: ML Training Pipeline Dashboard
- * PURPOSE: Phase 27 - Machine Learning Model Training Pipeline
+ * PURPOSE:  - Machine Learning Model Training Pipeline
  *          Displays ML training jobs, model versions, and deployment status.
  * 
  * INTEGRATION POINTS:
@@ -77,7 +77,7 @@ const MLTrainingDashboard = () => {
     <div className="ml-training-dashboard">
       <div className="dashboard-header">
         <h1>ML Training Pipeline</h1>
-        <p className="subtitle">Phase 27: Machine Learning Model Training Pipeline</p>
+        <p className="subtitle">: Machine Learning Model Training Pipeline</p>
       </div>
 
       <div className="dashboard-content">

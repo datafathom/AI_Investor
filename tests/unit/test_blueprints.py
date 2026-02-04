@@ -1,41 +1,56 @@
+"""
+Router Registration Tests
+Verifies that all FastAPI routers are properly registered.
+"""
+import pytest
 
-import os
-import sys
-from pathlib import Path
 
-# Add project root to path
-_project_root = Path(__file__).parent
-sys.path.insert(0, str(_project_root))
+def test_fastapi_gateway_imports() -> None:
+    """Test that FastAPI gateway can be imported without errors."""
+    from web.fastapi_gateway import app
+    assert app is not None
+    assert app.title == "AI Investor API Gateway"
 
-# Mock some drivers to avoid DB errors
-from unittest.mock import MagicMock
-sys.modules["psycopg2"] = MagicMock()
-sys.modules["psycopg2.extras"] = MagicMock()
-sys.modules["psycopg2.pool"] = MagicMock()
-sys.modules["redis"] = MagicMock()
-sys.modules["confluent_kafka"] = MagicMock()
-sys.modules["confluent_kafka.admin"] = MagicMock()
-sys.modules["neo4j"] = MagicMock()
-sys.modules["elasticsearch"] = MagicMock()
 
-from flask import Flask
+def test_gateway_routes_registered() -> None:
+    """Test that routes are registered in the gateway."""
+    from web.fastapi_gateway import app
+    
+    routes = [route.path for route in app.routes]
+    
+    # Verify core routes exist
+    assert "/health" in routes
+    assert "/api/health" in routes
+    
+    # Check that we have many routes registered (all the routers)
+    assert len(routes) > 50, f"Expected many routes, got {len(routes)}"
 
-original_register = Flask.register_blueprint
 
-def trace_register(self, blueprint, **options):
-    name = options.get('name', blueprint.name)
-    print(f"TRACE: Registering blueprint '{name}' (from {blueprint})")
-    return original_register(self, blueprint, **options)
+def test_legal_router_registered() -> None:
+    """Test that the legal router is registered."""
+    from web.fastapi_gateway import app
+    
+    routes = [route.path for route in app.routes]
+    legal_routes = [r for r in routes if '/legal' in r]
+    
+    assert len(legal_routes) > 0, "Legal routes should be registered"
 
-Flask.register_blueprint = trace_register
 
-try:
-    from web.app import create_app
-    app, _ = create_app()
-    print("\nFINAL REGISTERED BLUEPRINTS:")
-    for name, bp in app.blueprints.items():
-        print(f" - {name}: {bp}")
-except Exception as e:
-    print(f"\nCRITICAL ERROR during create_app: {e}")
-    import traceback
-    traceback.print_exc()
+def test_auth_router_registered() -> None:
+    """Test that the auth router is registered."""
+    from web.fastapi_gateway import app
+    
+    routes = [route.path for route in app.routes]
+    auth_routes = [r for r in routes if '/auth' in r]
+    
+    assert len(auth_routes) > 0, "Auth routes should be registered"
+
+
+def test_billing_router_registered() -> None:
+    """Test that the billing router is registered."""
+    from web.fastapi_gateway import app
+    
+    routes = [route.path for route in app.routes]
+    billing_routes = [r for r in routes if '/billing' in r]
+    
+    assert len(billing_routes) > 0, "Billing routes should be registered"

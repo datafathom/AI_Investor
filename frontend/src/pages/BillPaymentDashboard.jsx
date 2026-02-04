@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/BillPaymentDashboard.jsx
  * ROLE: Bill Payment & Reminders Dashboard
- * PURPOSE: Phase 11 - Bill Payment Automation & Reminders
+ * PURPOSE:  - Bill Payment Automation & Reminders
  *          Displays bills, payment scheduling, and reminders.
  * 
  * INTEGRATION POINTS:
@@ -70,7 +70,7 @@ const BillPaymentDashboard = () => {
     <div className="full-bleed-page bill-payment-dashboard">
       <div className="dashboard-header">
         <h1>Bill Payment & Reminders</h1>
-        <p className="subtitle">Phase 11: Bill Payment Automation & Reminders</p>
+        <p className="subtitle">: Bill Payment Automation & Reminders</p>
       </div>
 
       <div className="scrollable-content-wrapper">

@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/RetirementPlanningDashboard.jsx
  * ROLE: Retirement Planning Dashboard
- * PURPOSE: Phase 8 - Retirement Planning & Projection
+ * PURPOSE:  - Retirement Planning & Projection
  *          Displays retirement projections, withdrawal strategies, and Social Security optimization.
  * 
  * INTEGRATION POINTS:
@@ -62,7 +62,7 @@ const RetirementPlanningDashboard = () => {
     <div className="full-bleed-page retirement-planning-dashboard">
       <div className="dashboard-header">
         <h1>Retirement Planning</h1>
-        <p className="subtitle">Phase 8: Retirement Planning & Projection</p>
+        <p className="subtitle">: Retirement Planning & Projection</p>
       </div>
 
       <div className="scrollable-content-wrapper">

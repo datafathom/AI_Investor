@@ -4,7 +4,7 @@ import useCashStore from '../../stores/cashStore';
 import './CashPulse.css';
 
 /**
- * Global Cash Balance Widget (Phase 13 -> 56)
+ * Global Cash Balance Widget  -> 56)
  * 
  * Multi-currency cash management with FX rates and interest heat indicators.
  */

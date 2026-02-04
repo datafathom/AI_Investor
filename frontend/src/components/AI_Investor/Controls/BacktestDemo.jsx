@@ -32,7 +32,7 @@ const BacktestDemo = () => {
         <div className="p-4 h-full flex flex-col gap-4">
             <header>
                 <h1 className="neon-text text-2xl mb-1">Simulation Command</h1>
-                <p className="text-dim text-xs">Phase 23 Backtesting Engine v0.1 | Hybrid NLP Sentiment Fusion</p>
+                <p className="text-dim text-xs"> Backtesting Engine v0.1 | Hybrid NLP Sentiment Fusion</p>
             </header>
 
             <div className="flex-1 flex flex-col gap-4 overflow-auto">

@@ -1,6 +1,6 @@
 /**
  * Mobile Store - Zustand State Management for Mobile Actions
- * Phase 65: Manages biometric kill switch, trade authorization, and haptic alerts.
+ * : Manages biometric kill switch, trade authorization, and haptic alerts.
  */
 import { create } from 'zustand';
 import apiClient from '../services/apiClient';

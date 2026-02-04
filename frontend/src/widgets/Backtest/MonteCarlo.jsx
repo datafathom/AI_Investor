@@ -4,7 +4,7 @@ import useBacktestStore from '../../stores/backtestStore';
 import './MonteCarlo.css';
 
 /**
- * Monte Carlo Simulation Visualizer (Phase 14 -> 57)
+ * Monte Carlo Simulation Visualizer  -> 57)
  * 
  * Canvas-based 10K path visualization with quantile shading.
  */

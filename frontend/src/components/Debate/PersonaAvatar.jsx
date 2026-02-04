@@ -2,7 +2,7 @@ import React from 'react';
 import './PersonaAvatar.css';
 
 /**
- * Persona Avatar Component (Phase 12)
+ * Persona Avatar Component 
  * 
  * Displays agent persona with sentiment glow.
  */

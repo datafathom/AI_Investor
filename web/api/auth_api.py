@@ -77,11 +77,10 @@ async def login(request_data: LoginRequest):
             'user': user_data
         }
 
-    social_service = get_social_auth_service()
-    user_data = None
-    
     # 2. Database Lookup
+    user_data = None
     try:
+        social_service = get_social_auth_service()
         with social_service.db.pg_cursor() as cur:
             cur.execute("""
                 SELECT id, email, username, role, is_verified, password_hash, organization_id 
@@ -95,11 +94,18 @@ async def login(request_data: LoginRequest):
                     "organization_id": user[6]
                 }
     except Exception as e:
-        logger.warning(f"Login DB connection unavailable: {e}")
+        logger.warning(f"AUTH_FAIL: DB connection unavailable during login for {email}: {e}")
+        # If DB is down and it's not the admin fallback (already handled), 
+        # we can't verify standard users.
+        if email != 'admin':
+             raise HTTPException(
+                 status_code=503, 
+                 detail="Security service temporarily unavailable. Please try again later."
+             )
 
     # 3. Standard Password Verification
-    provided_hash = f"mock_hash_{password[::-1]}"
     if user_data:
+        provided_hash = f"mock_hash_{password[::-1]}"
         stored_hash = user_data.get("password_hash")
         if stored_hash == provided_hash:
             token = generate_token(user_id=user_data["id"], role=user_data["role"])

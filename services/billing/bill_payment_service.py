@@ -148,7 +148,10 @@ class BillPaymentService:
             List of upcoming bills
         """
         # In production, fetch from database
-        # For now, return mock data
+        return await self._get_bills_from_db(user_id, days_ahead)
+
+    async def _get_bills_from_db(self, user_id: str, days_ahead: int) -> List[Bill]:
+        """Fetch bills from database (placeholder)."""
         return []
     
     async def get_payment_history(

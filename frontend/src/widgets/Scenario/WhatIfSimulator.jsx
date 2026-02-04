@@ -3,7 +3,7 @@ import { Zap, TrendingDown, TrendingUp, Play, RotateCcw } from 'lucide-react';
 import './WhatIfSimulator.css';
 
 /**
- * What-If Impact Simulator (Phase 16)
+ * What-If Impact Simulator 
  * 
  * Drag-and-drop macro event simulator with portfolio revaluation.
  */

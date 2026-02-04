@@ -7,15 +7,16 @@ import pytest
 from datetime import datetime
 from pydantic import ValidationError
 from schemas.analytics import (
-    AttributionType,
     AttributionBreakdown,
     HoldingAttribution,
-    PerformanceAttribution,
+    AttributionResult, # Replaced PerformanceAttribution
     HoldingContribution,
     FactorRiskDecomposition,
-    ConcentrationRisk,
+    ConcentrationRiskAnalysis, # Replaced ConcentrationRisk
     CorrelationAnalysis,
-    TailRiskContributions
+    TailRiskContributions,
+    CalculationMetadata,
+    BenchmarkComparison
 )
 
 
@@ -67,29 +68,43 @@ class TestHoldingAttribution:
         assert attribution.contribution_pct == 2.5
 
 
-class TestPerformanceAttribution:
-    """Tests for PerformanceAttribution model."""
+class TestAttributionResult: # Replaced TestPerformanceAttribution
+    """Tests for AttributionResult model."""
     
-    def test_valid_performance_attribution(self):
-        """Test valid performance attribution creation."""
-        from schemas.analytics import CalculationMetadata
-        
-        attribution = PerformanceAttribution(
-            portfolio_id="portfolio_1",
-            total_return=15.5,
-            benchmark_return=12.0,
-            active_return=3.5,
-            breakdown=[],
-            calculation_metadata=CalculationMetadata(
-                calculation_method="multi_factor",
-                calculation_date=datetime.now(),
-                data_quality="high",
-                missing_data_points=0
-            )
+    def test_valid_attribution_result(self):
+        """Test valid attribution result creation."""
+        metadata = CalculationMetadata(
+            calculation_method="multi_factor",
+            calculation_date=datetime.now(),
+            data_quality="high",
+            missing_data_points=0
         )
-        assert attribution.portfolio_id == "portfolio_1"
-        assert attribution.total_return == 15.5
-        assert attribution.active_return == 3.5
+        
+        result = AttributionResult(
+            portfolio_id="portfolio_1",
+            period_start=datetime.now(),
+            period_end=datetime.now(),
+            total_return=15.5,
+            total_return_pct=0.155,
+            attribution_by_asset_class={},
+            attribution_by_sector={},
+            attribution_by_geography={},
+            attribution_by_holding=[],
+            benchmark_comparison=BenchmarkComparison(
+                benchmark_symbol="SPY",
+                portfolio_return=15.5,
+                benchmark_return=12.0,
+                active_return=3.5,
+                allocation_effect=1.0,
+                selection_effect=2.0,
+                interaction_effect=0.5,
+                tracking_error=0.05
+            ),
+            calculation_metadata=metadata
+        )
+        assert result.portfolio_id == "portfolio_1"
+        assert result.total_return == 15.5
+        assert result.benchmark_comparison.active_return == 3.5
 
 
 class TestHoldingContribution:
@@ -117,25 +132,38 @@ class TestFactorRiskDecomposition:
         """Test valid factor risk decomposition creation."""
         decomposition = FactorRiskDecomposition(
             portfolio_id="portfolio_1",
+            factor_model="fama_french",
             total_risk=0.18,
-            factor_risks=[]
+            factor_exposures=[], # Renamed from factor_risks
+            idiosyncratic_risk=0.05,
+            r_squared=0.85
         )
         assert decomposition.portfolio_id == "portfolio_1"
         assert decomposition.total_risk == 0.18
 
 
-class TestConcentrationRisk:
-    """Tests for ConcentrationRisk model."""
+class TestConcentrationRiskAnalysis: # Replaced TestConcentrationRisk
+    """Tests for ConcentrationRiskAnalysis model."""
     
     def test_valid_concentration_risk(self):
-        """Test valid concentration risk creation."""
-        concentration = ConcentrationRisk(
+        """Test valid concentration risk analysis creation."""
+        valid_metric = {
+            "dimension": "holding",
+            "herfindahl_hirschman_index": 0.25,
+            "top_5_concentration": 0.4,
+            "top_10_concentration": 0.6,
+            "max_weight": 0.1,
+            "max_weight_symbol": "AAPL"
+        }
+        concentration = ConcentrationRiskAnalysis(
             portfolio_id="portfolio_1",
-            herfindahl_index=0.25,
-            dimension_risks={}
+            by_holding=valid_metric,
+            by_sector={**valid_metric, "dimension": "sector"},
+            by_geography={**valid_metric, "dimension": "geography"},
+            by_asset_class={**valid_metric, "dimension": "asset_class"}
         )
         assert concentration.portfolio_id == "portfolio_1"
-        assert concentration.herfindahl_index == 0.25
+        assert concentration.by_holding.herfindahl_hirschman_index == 0.25
 
 
 class TestCorrelationAnalysis:
@@ -145,11 +173,13 @@ class TestCorrelationAnalysis:
         """Test valid correlation analysis creation."""
         correlation = CorrelationAnalysis(
             portfolio_id="portfolio_1",
-            avg_correlation=0.6,
-            correlation_matrix={}
+            average_correlation=0.6, # Renamed from avg_correlation
+            correlation_matrix={"AAPL": {"MSFT": 0.6}},
+            diversification_ratio=1.2,
+            highly_correlated_pairs=[]
         )
         assert correlation.portfolio_id == "portfolio_1"
-        assert correlation.avg_correlation == 0.6
+        assert correlation.average_correlation == 0.6
 
 
 class TestTailRiskContributions:
@@ -159,10 +189,11 @@ class TestTailRiskContributions:
         """Test valid tail risk contributions creation."""
         tail_risk = TailRiskContributions(
             portfolio_id="portfolio_1",
-            var_95=0.05,
-            cvar_95=0.07,
-            contributions={}
+            confidence_level=0.95,
+            portfolio_var=0.05, # Renamed from var_95
+            portfolio_cvar=0.07, # Renamed from cvar_95
+            contributions=[],
+            method="historical"
         )
         assert tail_risk.portfolio_id == "portfolio_1"
-        assert tail_risk.var_95 == 0.05
-        assert tail_risk.cvar_95 == 0.07
+        assert tail_risk.portfolio_var == 0.05

@@ -38,6 +38,8 @@
 
 ## 7. Data & Observability
 - **Logging**: Use UnifiedActivityService.log_activity for business actions.
+- **Logging Security**: **NEVER** print or log any password or .env variable to output.
+- **Path Privacy**: **ALWAYS** use relative paths from project root in logs/output. **NEVER** expose full system paths (e.g., `C:/Users/name/...`).
 
 ## 8. File Structure & Knowledge
 - **Modularity**: Separate concerns into distinct files/services.

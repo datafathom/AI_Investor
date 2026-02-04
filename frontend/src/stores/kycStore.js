@@ -1,7 +1,7 @@
 /**
  * KYC Store - Zustand State Management for KYC & Document Vault
  * 
- * Phase 54: Manages identity verification status, document uploads,
+ * : Manages identity verification status, document uploads,
  * and regulatory filing deadlines.
  * 
  * State slices:

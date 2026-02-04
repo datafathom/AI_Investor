@@ -3,7 +3,7 @@
  * FILE: frontend2/src/pages/AnalyticsOptions.jsx
  * ROLE: Options Analytics Page
  * PURPOSE: Displays advanced market analytics widgets (GEX, Fama-French).
- *          Serves as the container for Phase 2 implementation of deep-dive tools.
+ *          Serves as the container for  implementation of deep-dive tools.
  *          Enabled with Drag & Resize functionality via react-grid-layout.
  * ==============================================================================
  */

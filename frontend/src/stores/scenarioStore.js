@@ -1,6 +1,6 @@
 /**
  * Scenario Store - Zustand State Management for What-If Simulator
- * Phase 60: Manages macro shock scenarios and portfolio impact simulation.
+ * : Manages macro shock scenarios and portfolio impact simulation.
  */
 import { create } from 'zustand';
 import apiClient from '../services/apiClient';

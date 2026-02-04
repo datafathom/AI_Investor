@@ -80,7 +80,7 @@ apiClient.interceptors.request.use(
     const tenantId = await StorageService.get('widget_os_tenant_id');
     config.headers['X-Tenant-ID'] = tenantId || 'default';
 
-    // Phase 6 / Sprint 6: Hardware Signature for high-value transactions (Multi-Sig)
+    //  / Sprint 6: Hardware Signature for high-value transactions (Multi-Sig)
     const HIGH_VALUE_THRESHOLD = 200000; // $200k threshold for hardware signature
     const sensitiveEndpoints = ['/withdraw', '/execute_large_trade', '/brokerage/trade'];
     const alwaysRequireHardware = ['/risk/kill-switch']; // Always require hardware for critical ops

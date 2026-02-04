@@ -1,6 +1,6 @@
 /**
  * Market Store Tests
- * Phase 17: Market Data State Management
+ * : Market Data State Management
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';

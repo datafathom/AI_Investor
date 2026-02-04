@@ -7,6 +7,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import useEducationStore from "../../stores/educationStore";
+import { Settings } from "lucide-react";
 import "./MenuBar.css";
 
 const MENU_ITEMS = [
@@ -83,6 +84,7 @@ const MENU_ITEMS = [
     items: [
       {
         label: "The Architect",
+        action: "nav-overview-architect",
         submenu: [
           { label: "System Health", action: "role-architect" },
           { label: "API & Integrations", action: "role-api" },
@@ -90,6 +92,7 @@ const MENU_ITEMS = [
       },
       {
         label: "The Orchestrator",
+        action: "nav-overview-workspace",
         submenu: [
           { label: "Master Graph", action: "role-orchestrator" },
           { label: "System Reflexivity", action: "role-orchestrator" },
@@ -97,6 +100,7 @@ const MENU_ITEMS = [
       },
       {
         label: "The Strategist",
+        action: "nav-overview-strategist",
         submenu: [
           { label: "Social Class Maintenance", action: "role-scm" },
           { label: "Currency & Cash", action: "role-strategist" },
@@ -108,6 +112,7 @@ const MENU_ITEMS = [
       },
       {
         label: "The Guardian",
+        action: "nav-overview-guardian",
         submenu: [
           { label: "Compliance & KYC", action: "role-guardian" },
           { label: "Margin & Liquidity", action: "role-margin" },
@@ -117,6 +122,7 @@ const MENU_ITEMS = [
       },
       {
         label: "The Analyst",
+        action: "nav-overview-analyst",
         submenu: [
           { label: "Debate Chamber", action: "role-analyst" },
           { label: "Macro Observer", action: "role-observer" },
@@ -129,7 +135,7 @@ const MENU_ITEMS = [
         submenu: [
           { label: "Crypto & Web3", action: "show-crypto" },
           { label: "Fixed Income", action: "show-fixed-income" },
-          { label: "Real Estate & Illiquid", action: "show-assets" }, // Upcoming Phase 24
+          { label: "Real Estate & Illiquid", action: "show-assets" }, // Upcoming 
         ],
       },
       { type: "divider" },
@@ -144,163 +150,152 @@ const MENU_ITEMS = [
     items: [
       {
         label: "Module Overviews",
+        action: "nav-overview-workspace", // Primary landing
         submenu: [
-          { label: "Core Workspace Overview", action: "nav-overview-workspace" },
-          { label: "Analytics Overview", action: "nav-overview-analytics" },
-          { label: "Portfolio Overview", action: "nav-overview-portfolio" },
-          { label: "Analyst Overview", action: "nav-overview-analyst" },
-          { label: "Guardian Overview", action: "nav-overview-guardian" },
-          { label: "Strategist Overview", action: "nav-overview-strategist" },
+          { label: "Orchestrator Overview", action: "nav-overview-orchestrator" },
           { label: "Architect Overview", action: "nav-overview-architect" },
-          { label: "Observer Overview", action: "nav-overview-observer" },
-          { label: "Scanner Overview", action: "nav-overview-scanner" },
+          { label: "Analyst Overview", action: "nav-overview-analyst" },
+          { label: "Trader Overview", action: "nav-overview-trader" },
+          { label: "Strategist Overview", action: "nav-overview-strategist" },
+          { label: "Data Scientist Overview", action: "nav-overview-data-scientist" },
+          { label: "Marketing Overview", action: "nav-overview-marketing" },
+          { label: "Legal Overview", action: "nav-overview-legal" },
+          { label: "Guardian Overview", action: "nav-overview-guardian" },
+          { label: "Data Scientist Overview", action: "nav-overview-pioneer" },
         ],
       },
       { type: "divider" },
       {
-        label: "Core Workspaces",
+        label: "Orchestrator",
+        action: "nav-overview-orchestrator",
         submenu: [
           { label: "Terminal Workspace", action: "show-dashboard" },
           { label: "Mission Control", action: "show-mission-control" },
-          { label: "Auto-Coder Dashboard", action: "show-auto-coder" },
-          { label: "Auto-Coder Sandbox", action: "show-sandbox" },
-          { label: "VR Cockpit", action: "show-vr-cockpit" },
-          { label: "Chat", action: "show-chat" },
-        ],
-      },
-      {
-        label: "Analysis & Logic",
-        submenu: [
-          { label: "Political Alpha", action: "show-political-alpha" },
-          { label: "Strategy Distillery", action: "show-strategy-distillery" },
-          { label: "Options Analytics", action: "show-options" },
-          { label: "Backtest Explorer", action: "show-backtest" },
-          { label: "Debate Chamber", action: "show-debate-chamber" },
-        ],
-      },
-      {
-        label: "Portfolio Management",
-        submenu: [
-          { label: "Virtual Brokerage", action: "show-brokerage" },
-          { label: "Global Scanner", action: "show-scanner" },
-          { label: "Portfolio Attribution", action: "show-attribution" },
-          { label: "Fixed Income", action: "show-fixed-income" },
-          { label: "Crypto & Web3", action: "show-crypto" },
-          { label: "Tax Optimization", action: "show-tax" },
-          { label: "Assets & Illiquid", action: "show-assets" },
-          { label: "Cash Flow", action: "show-cash-flow" },
-          { label: "Family Office (Tenants)", action: "show-tenant" },
+          { label: "Master Graph Control", action: "role-orchestrator" },
+          { label: "Global Chat", action: "show-chat" },
+          { label: "Zen Mode", action: "show-zen" },
           { type: "divider" },
-          { label: "Advanced Portfolio Analytics", action: "nav-advanced-analytics" },
-          { label: "Portfolio Optimization", action: "nav-portfolio-optimization" },
-          { label: "Advanced Risk Management", action: "nav-advanced-risk" },
-          { label: "Tax Optimization (Enhanced)", action: "nav-tax-optimization" },
+          { label: "Market Monitor", action: "toggle-widget-monitor-view" },
+          { label: "Trade Tape", action: "toggle-widget-trade-tape-view" },
+          { label: "Options Chain", action: "toggle-widget-options-chain-view" },
+          { label: "Market Depth", action: "toggle-widget-market-depth-view" },
+          { label: "System Log", action: "toggle-widget-system-log-view" },
         ],
       },
       {
-        label: "Trading & Execution",
+        label: "Architect",
+        action: "nav-overview-architect",
         submenu: [
+          { label: "Cloud Admin Center", action: "nav-admin" },
+          { label: "System Health", action: "role-architect" },
+          { label: "API Dashboard", action: "role-api" },
+          { label: "Third-Party Integrations", action: "nav-integrations" },
+          { label: "Developer Platform", action: "nav-developer-platform" },
+        ],
+      },
+       {
+         label: "Data Scientist",
+         action: "nav-overview-data-scientist",
+         submenu: [
+           { label: "AI Predictions", action: "nav-ai-predictions" },
+           { label: "ML Pipeline", action: "nav-ml-training" },
+           { label: "AI Colleague", action: "nav-ai-assistant" },
+           { label: "Auto-Coder", action: "nav-autocoder" },
+           { label: "Debate Chamber", action: "show-debate" },
+           { label: "VR Cockpit", action: "show-vr" },
+         ],
+       },
+      {
+        label: "Trader",
+        action: "nav-overview-trader",
+        submenu: [
+          { label: "Global Scanner", action: "show-scanner" },
           { label: "Options Strategy Builder", action: "nav-options-strategy" },
           { label: "Advanced Orders", action: "nav-advanced-orders" },
-          { label: "Paper Trading", action: "nav-paper-trading" },
           { label: "Algorithmic Trading", action: "nav-algorithmic-trading" },
+          { label: "Paper Trading", action: "nav-paper-trading" },
+          { label: "Advanced Charting", action: "nav-advanced-charting" },
+          { label: "Options Analytics", action: "show-options" },
         ],
       },
       {
-        label: "Financial Planning",
+        label: "Strategist",
+        action: "nav-overview-strategist",
         submenu: [
-          { label: "Financial Planning", action: "nav-financial-planning" },
-          { label: "Retirement Planning", action: "nav-retirement-planning" },
+          { label: "Portfolio Net Worth", action: "nav-portfolio-management" },
+          { label: "Advanced Analytics", action: "nav-advanced-analytics" },
+          { label: "Portfolio Optimization", action: "nav-portfolio-optimization" },
+          { label: "Portfolio Attribution", action: "show-attribution" },
+          { label: "Backtest Explorer", action: "show-backtest" },
+          { label: "Virtual Brokerage", action: "show-brokerage" },
+          { type: "divider" },
+          { label: "Crypto & Web3 Assets", action: "show-crypto" },
+          { label: "Fixed Income", action: "show-fixed-income" },
+          { label: "Assets & Illiquids", action: "show-assets" },
+          { type: "divider" },
+          { label: "Corporate Actions", action: "role-corporate" },
+          { label: "Philanthropy & Impact", action: "role-impact" },
+          { label: "Social Class Maintenance", action: "role-scm" },
+          { type: "divider" },
           { label: "Estate Planning", action: "nav-estate-planning" },
-          { label: "Budgeting", action: "nav-budgeting" },
-          { label: "Bill Payment", action: "nav-bill-payment" },
-          { label: "Credit Monitoring", action: "nav-credit-monitoring" },
+          { label: "Retirement Planning", action: "nav-retirement-planning" },
+          { label: "Budgeting & Planning", action: "nav-budgeting" },
+          { label: "Financial Planning", action: "nav-financial-planning" },
         ],
       },
       {
-        label: "Market Intelligence",
+        label: "Marketing",
+        action: "nav-overview-marketing",
         submenu: [
           { label: "News & Sentiment Analysis", action: "nav-news-sentiment" },
-          { label: "Watchlists & Alerts", action: "nav-watchlists-alerts" },
-          { label: "Research Reports", action: "nav-research-reports" },
-          { label: "Advanced Charting", action: "nav-advanced-charting" },
-        ],
-      },
-      {
-        label: "Social & Community",
-        submenu: [
           { label: "Social Trading", action: "nav-social-trading" },
           { label: "Community Forums", action: "nav-community-forums" },
           { label: "Education Platform", action: "nav-education" },
-        ],
-      },
-      {
-        label: "AI & Machine Learning",
-        submenu: [
-          { label: "AI Predictions", action: "nav-ai-predictions" },
-          { label: "AI Assistant", action: "nav-ai-assistant" },
-          { label: "ML Training Pipeline", action: "nav-ml-training" },
-        ],
-      },
-      {
-        label: "Integrations & Platform",
-        submenu: [
-          { label: "Third-Party Integrations", action: "nav-integrations" },
-          { label: "Developer Platform", action: "nav-developer-platform" },
           { label: "Extension Marketplace", action: "nav-marketplace" },
+          { label: "Research Reports", action: "nav-research-reports" },
+          { label: "Watchlists & Alerts", action: "nav-watchlists-alerts" },
         ],
       },
       {
-        label: "Enterprise & Compliance",
-        submenu: [
-          { label: "Enterprise Features", action: "nav-enterprise" },
-          { label: "Compliance & Reporting", action: "nav-compliance" },
-          { label: "Institutional Tools", action: "nav-institutional" },
-        ],
-      },
-
-      {
-        label: "Role: The Guardian",
+        label: "Lawyer",
+        action: "nav-overview-legal",
         submenu: [
           { label: "Compliance & KYC", action: "role-guardian" },
           { label: "Regulatory Audit", action: "role-audit" },
           { label: "Stress Scenarios", action: "role-scenarios" },
           { label: "Margin Management", action: "role-margin" },
+          { label: "Tax Optimization", action: "show-tax" },
+          { label: "Legal Terms", action: "nav-legal-terms" },
+          { label: "Privacy Policy", action: "nav-legal-privacy" },
         ],
       },
       {
-        label: "Role: The Strategist",
+        label: "Guardian",
+        action: "nav-overview-guardian",
         submenu: [
-          { label: "Estate Planning", action: "role-estate" },
-          { label: "Philanthropy & Impact", action: "role-impact" },
-          { label: "Corporate Actions", action: "role-corporate" },
-          { label: "Currency & Cash", action: "role-strategist" },
+          { label: "Advanced Risk Management", action: "nav-advanced-risk" },
+          { label: "Credit Monitoring", action: "nav-credit-monitoring" },
+          { label: "Institutional Tools", action: "nav-institutional" },
+          { label: "Enterprise Features", action: "nav-enterprise" },
+          { label: "Bill Payments", action: "nav-bill-payment" },
+          { label: "Cash Flow Tracking", action: "show-cash-flow" },
+          { label: "Family Office", action: "show-tenant" },
+          { label: "Mobile Companion", action: "role-warden" },
         ],
       },
       {
-        label: "Role: The Architect",
+        label: "Data Scientist",
+        action: "nav-overview-pioneer",
         submenu: [
-          { label: "System Health", action: "role-architect" },
-          { label: "API Dashboard", action: "role-api" },
+          { label: "Auto-Coder Dashboard", action: "show-auto-coder" },
+          { label: "Auto-Coder Sandbox", action: "show-sandbox" },
+          { label: "VR Cockpit", action: "show-vr-cockpit" },
+          { label: "Debate Chamber", action: "show-debate-chamber" },
         ],
-      },
-      {
-        label: "Role: The Observer",
-        submenu: [{ label: "Macro Observer", action: "role-observer" }],
       },
       { type: "divider" },
-      {
-        label: "Special Modes",
-        submenu: [
-          { label: "Mobile Dashboard", action: "role-warden" },
-          { label: "Zen Mode", action: "show-zen" },
-        ],
-      },
+      { label: "Mobile Dashboard", action: "role-warden" },
     ],
-  },
-  {
-    label: "AI Investor",
-    items: [], // Will be populated dynamically
   },
   {
     label: "Widgets",
@@ -329,20 +324,6 @@ const MENU_ITEMS = [
       { type: "divider" },
       { label: "Developer Tools", action: "dev-tools", shortcut: "F12" },
       { label: "Console", action: "console" },
-    ],
-  },
-  {
-    label: "Workspaces",
-    items: [
-      {
-        label: "Save As...",
-        action: "workspace-save-prompt",
-        shortcut: "Ctrl+Shift+S",
-      },
-      { label: "Import Layout", action: "import-layout" },
-      { label: "Export Layout", action: "export-layout" },
-      { type: "divider" },
-      // Dynamic workspaces will be injected here
     ],
   },
   {
@@ -394,6 +375,20 @@ export default function MenuBar({
   const menuRefs = useRef({});
   const menuBarRef = useRef(null);
 
+  const [localUser, setLocalUser] = useState(currentUser);
+
+  useEffect(() => {
+    setLocalUser(currentUser);
+  }, [currentUser]);
+
+  useEffect(() => {
+    const handleProfileUpdate = () => {
+      setLocalUser(authService.getCurrentUser());
+    };
+    window.addEventListener('user-profile-update', handleProfileUpdate);
+    return () => window.removeEventListener('user-profile-update', handleProfileUpdate);
+  }, []);
+
   const AI_INVESTOR_IDS = [
     "monitor-view",
     "command-view",
@@ -407,21 +402,31 @@ export default function MenuBar({
 
   // Build widgets menu dynamically
   const menuItemsWithWidgets = MENU_ITEMS.map((menu) => {
-    if (menu.label === "AI Investor") {
-      const investorWidgets = Object.entries(widgetTitles)
-        .filter(([id]) => AI_INVESTOR_IDS.includes(id))
-        .map(([id, name]) => ({ id, name }))
-        .sort((a, b) => a.name.localeCompare(b.name));
-
+    if (menu.label === "Routes") {
       return {
         ...menu,
-        items: [
-          ...investorWidgets.map(({ id, name }) => ({
-            label: name,
-            action: `toggle-widget-${id}`,
-            checked: widgetVisibility?.[id] !== false,
-          })),
-        ],
+        items: menu.items.map((routeItem) => {
+          if (routeItem.label === "Orchestrator") {
+            const investorWidgets = Object.entries(widgetTitles)
+              .filter(([id]) => AI_INVESTOR_IDS.includes(id))
+              .map(([id, name]) => ({ id, name }))
+              .sort((a, b) => a.name.localeCompare(b.name));
+
+            return {
+              ...routeItem,
+              submenu: [
+                ...routeItem.submenu,
+                { type: "divider" },
+                ...investorWidgets.map(({ id, name }) => ({
+                  label: name,
+                  action: `toggle-widget-${id}`,
+                  checked: widgetVisibility?.[id] !== false,
+                })),
+              ],
+            };
+          }
+          return routeItem;
+        }),
       };
     }
     if (menu.label === "Widgets") {
@@ -506,22 +511,144 @@ export default function MenuBar({
     ...menuItemsWithWidgets,
     {
       label: "Account",
-      items: currentUser
+      items: localUser
         ? [
-            { label: `Signed in as ${currentUser.username}`, disabled: true },
+            { 
+              type: "account-profile", 
+              label: localUser?.username || "Account", 
+              action: "nav-account" 
+            },
             { type: "divider" },
             {
-              label: "Profile Settings",
-              action: "profile-settings",
-              disabled: false,
+              label: (
+                <span className="menu-label-with-icon">
+                  <Settings size={14} className="menu-icon" /> Settings
+                </span>
+              ),
+              action: "nav-account-settings",
+              submenu: [
+                {
+                  label: "Layout",
+                  submenu: [
+                    { label: "Save Layout", action: "save-layout" },
+                    { label: "Load Layout", action: "load-layout" },
+                    { label: "Reset Layout", action: "reset-layout" },
+                    { label: "AutoSort Current Page", action: "auto-sort" },
+                    { label: "Sync Cloud Layout", action: "save-layout" },
+                    { type: "divider" },
+                    {
+                      label: "Workspaces",
+                      action: "workspace-save-prompt",
+                      shortcut: "Ctrl+Shift+S",
+                    },
+                    { label: "Import Layout", action: "import-layout" },
+                    { label: "Export Layout", action: "export-layout" },
+                    { type: "divider" },
+                    ...workspaces.map((name) => ({
+                      label: name,
+                      action: `load-workspace-${name}`,
+                      checked: name === activeWorkspace,
+                    })),
+                  ],
+                },
+              ],
             },
-            { label: "Sync Cloud Layout", action: "save-layout" },
             { type: "divider" },
             { label: "Logout", action: "logout" },
           ]
         : [{ label: "Sign In / Register", action: "signin" }],
     },
   ];
+
+  const userForDisplay = localUser || currentUser;
+
+  const renderMenuItems = (items) => {
+    return items.map((item, index) => {
+      if (item.type === "divider") {
+        return <div key={`divider-${index}`} className="menu-divider" />;
+      }
+
+      if (item.type === "account-profile") {
+        return (
+          <div 
+            key={`profile-${index}`} 
+            className="menu-account-profile-item"
+            onClick={(e) => handleMenuItemClick(item.action, e)}
+          >
+            <div className="profile-avatar-circle">
+              {userForDisplay?.avatar ? (
+                <img src={userForDisplay.avatar} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                <span className="profile-initials">{userForDisplay?.username?.charAt(0).toUpperCase() || 'A'}</span>
+              )}
+            </div>
+            <div className="profile-info">
+              <span className="profile-label">{userForDisplay?.username || "Account"}</span>
+              <span className="profile-subtitle">Signed in as {userForDisplay?.email || userForDisplay?.username || 'Admin'}</span>
+            </div>
+          </div>
+        );
+      }
+
+      const isChecked = item.checked !== undefined && item.checked;
+      const hasSubmenu = item.submenu && item.submenu.length > 0;
+
+      return (
+        <div
+          key={`menu-item-${index}`}
+          className={`menu-dropdown-item ${item.disabled ? "disabled" : ""} ${isChecked ? "checked" : ""} ${hasSubmenu ? "has-submenu" : ""}`}
+          onClick={(e) => {
+            if (!item.disabled) {
+              if (hasSubmenu && item.action) {
+                // Submenu headers are now clickable if they have an action
+                handleMenuItemClick(item.action, e);
+              } else if (!hasSubmenu) {
+                if (typeof item.action === "string" && item.action.startsWith("toggle-widget-")) {
+                  const widgetId = item.action.replace("toggle-widget-", "");
+                  if (onToggleWidget) {
+                    onToggleWidget(widgetId);
+                  }
+                  e.stopPropagation();
+                } else {
+                  handleMenuItemClick(item.action, e);
+                }
+              }
+            }
+          }}
+          tabIndex={item.disabled ? -1 : 0}
+          role="menuitem"
+          aria-disabled={item.disabled}
+          aria-checked={isChecked}
+          aria-haspopup={hasSubmenu}
+          aria-expanded={false}
+        >
+          {item.checked !== undefined && (
+            <span className="menu-checkmark">{isChecked ? "" : ""}</span>
+          )}
+
+          {hasSubmenu ? (
+            <div className="menu-submenu-trigger">
+              <span className="menu-item-label">{item.label}</span>
+              <span className="menu-submenu-arrow">▶</span>
+            </div>
+          ) : (
+            <span className="menu-item-label">{item.label}</span>
+          )}
+
+          {item.shortcut && (
+            <span className="menu-item-shortcut">{item.shortcut}</span>
+          )}
+
+          {/* Recursive Sub-menu Rendering */}
+          {hasSubmenu && (
+            <div className="menu-submenu">
+              {renderMenuItems(item.submenu)}
+            </div>
+          )}
+        </div>
+      );
+    });
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -572,6 +699,11 @@ export default function MenuBar({
       onSignin();
     }
 
+    if (action === "auto-sort") {
+      onAutoSort();
+      return;
+    }
+
     if (onMenuAction) {
       onMenuAction(action);
     }
@@ -618,85 +750,7 @@ export default function MenuBar({
                 className="menu-dropdown"
                 ref={(el) => (menuRefs.current[menu.label] = el)}
               >
-                {menu.items.map((item, index) => {
-                  if (item.type === "divider") {
-                    return (
-                      <div key={`divider-${index}`} className="menu-divider" />
-                    );
-                  }
-
-                  const isChecked = item.checked !== undefined && item.checked;
-                  const hasSubmenu = item.submenu && item.submenu.length > 0;
-
-                  return (
-                    <div
-                      key={item.label}
-                      className={`menu-dropdown-item ${item.disabled ? "disabled" : ""} ${isChecked ? "checked" : ""} ${hasSubmenu ? "has-submenu" : ""}`}
-                      onClick={(e) => {
-                        if (!hasSubmenu && !item.disabled) {
-                          if (item.action?.startsWith("toggle-widget-")) {
-                            const widgetId = item.action.replace(
-                              "toggle-widget-",
-                              "",
-                            );
-                            if (onToggleWidget) {
-                              onToggleWidget(widgetId);
-                            }
-                            e.stopPropagation();
-                          } else {
-                            handleMenuItemClick(item.action, e);
-                          }
-                        }
-                      }}
-                      tabIndex={item.disabled ? -1 : 0}
-                      role="menuitem"
-                      aria-disabled={item.disabled}
-                      aria-checked={isChecked}
-                      aria-haspopup={hasSubmenu}
-                      aria-expanded={false} // Submenus expand on hover
-                    >
-                      {item.checked !== undefined && (
-                        <span className="menu-checkmark">
-                          {isChecked ? "" : ""}
-                        </span>
-                      )}
-
-                      {hasSubmenu ? (
-                        <div className="menu-submenu-trigger">
-                          <span className="menu-item-label">{item.label}</span>
-                          <span className="menu-submenu-arrow">▶</span>
-                        </div>
-                      ) : (
-                        <span className="menu-item-label">{item.label}</span>
-                      )}
-
-                      {item.shortcut && (
-                        <span className="menu-item-shortcut">
-                          {item.shortcut}
-                        </span>
-                      )}
-
-                      {/* Recursive Sub-menu Rendering */}
-                      {hasSubmenu && (
-                        <div className="menu-submenu">
-                          {item.submenu.map((subItem, subIndex) => (
-                            <div
-                              key={subItem.label || subIndex}
-                              className={`menu-dropdown-item`}
-                              onClick={(e) =>
-                                handleMenuItemClick(subItem.action, e)
-                              }
-                            >
-                              <span className="menu-item-label">
-                                {subItem.label}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                {renderMenuItems(menu.items)}
               </div>
             )}
           </div>
@@ -724,34 +778,6 @@ export default function MenuBar({
           <span className="zoom-symbol">+</span>
         </button>
 
-        <button
-          className="menu-bar-button"
-          onClick={onAutoSort}
-          title="Auto-sort widgets to fit as many as possible"
-        >
-          Auto Sort
-        </button>
-        <button
-          className="menu-bar-button"
-          onClick={onSaveLayout}
-          title="Save current layout"
-        >
-          Save Layout
-        </button>
-        <button
-          className="menu-bar-button"
-          onClick={onLoadLayout}
-          title="Load saved layout"
-        >
-          Load Layout
-        </button>
-        <button
-          className="menu-bar-button"
-          onClick={onResetLayout}
-          title="Reset widget layout to default"
-        >
-          Reset Layout
-        </button>
         <button
           className="menu-bar-button"
           onClick={onToggleLogCenter}

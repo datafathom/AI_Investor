@@ -1,6 +1,6 @@
 /**
  * Margin Store - Zustand State Management for Margin & Collateral
- * Phase 64: Manages margin buffer, liquidation distance, and de-leveraging.
+ * : Manages margin buffer, liquidation distance, and de-leveraging.
  */
 import { create } from 'zustand';
 import apiClient from '../services/apiClient';

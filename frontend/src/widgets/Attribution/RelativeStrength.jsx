@@ -3,7 +3,7 @@ import { Download, Play, Pause, TrendingUp, AlertTriangle } from 'lucide-react';
 import './RelativeStrength.css';
 
 /**
- * Relative Strength Chart (Phase 6)
+ * Relative Strength Chart 
  * 
  * Canvas-based chart comparing strategy vs benchmark with regime shift detection.
  */

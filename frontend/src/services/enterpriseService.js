@@ -1,6 +1,6 @@
 /**
  * Enterprise Service
- * Phase 31: API integration for Enterprise Features & Multi-User Support
+ * : API integration for Enterprise Features & Multi-User Support
  */
 import apiClient from './apiClient';
 

@@ -84,7 +84,7 @@ const SocialClassMaintenance = () => {
                                 <Award className="text-yellow-500 animate-neon-pulse" size={32} />
                                 Social Class Maintenance (SCM)
                             </h1>
-                            <p className="text-zinc-400 mt-2 font-mono text-xs uppercase tracking-widest">Phase 197: Return on Lifestyle & Personal Inflation Monitor</p>
+                            <p className="text-zinc-400 mt-2 font-mono text-xs uppercase tracking-widest">: Return on Lifestyle & Personal Inflation Monitor</p>
                         </div>
                         <div className="flex gap-4">
                              <StatCard 

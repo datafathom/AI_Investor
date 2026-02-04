@@ -69,7 +69,7 @@ const EvolutionDashboard = () => {
 
     const handleMutate = () => {
         notify({ title: 'MUTATION SIMULATED', body: 'Applying randomness to next generation...', type: 'info' });
-        // Phase 37 API doesn't have an explicit 'mutate' endpoint exposed separate from 'evolve' loop
+        //  API doesn't have an explicit 'mutate' endpoint exposed separate from 'evolve' loop
         // But we can simulate UI feedback
     };
 
@@ -77,7 +77,7 @@ const EvolutionDashboard = () => {
         <div className="p-8 h-full overflow-y-auto text-white">
             <header className="mb-8 flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tighter text-blue-400">EVOLUTION LAB <span className="text-xs align-top bg-blue-900 px-2 py-0.5 rounded text-white ml-2">PHASE 37</span></h1>
+                    <h1 className="text-3xl font-bold tracking-tighter text-blue-400">EVOLUTION LAB <span className="text-xs align-top bg-blue-900 px-2 py-0.5 rounded text-white ml-2"></span></h1>
                     <p className="text-gray-400">Genetic Distillery & Hyperparameter Splicing</p>
                 </div>
                 <div className={`px-4 py-2 rounded ${status === 'online' ? 'bg-green-900/50 border border-green-500' : 'bg-red-900/50'}`}>

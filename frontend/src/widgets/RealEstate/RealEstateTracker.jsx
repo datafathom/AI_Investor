@@ -3,7 +3,7 @@ import { Home, Palette, Briefcase, TrendingUp, TrendingDown, DollarSign } from '
 import './RealEstateTracker.css';
 
 /**
- * Real Estate & Illiquid Asset Tracker (Phase 23)
+ * Real Estate & Illiquid Asset Tracker 
  * 
  * Manual asset entry with appreciation/depreciation tracking.
  */

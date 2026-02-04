@@ -3,7 +3,7 @@ import { Key, Link, Webhook, Plus, Lock, Check, X } from 'lucide-react';
 import './APIMarketplace.css';
 
 /**
- * API Marketplace Widget (Phase 22)
+ * API Marketplace Widget 
  * 
  * Third-party data connectors, API key management, and webhooks.
  */

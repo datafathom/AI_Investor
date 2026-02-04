@@ -85,7 +85,7 @@ const IncidentDashboard = ({ mock = true }) => {
             </div>
 
             <div className="footer">
-                <span>Phase 22 {mock && '(Mock)'}</span>
+                <span> {mock && '(Mock)'}</span>
             </div>
         </div>
     );

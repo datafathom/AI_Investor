@@ -4,7 +4,7 @@ import { useFixedIncomeStore } from '../../stores/fixedIncomeStore';
 import './DurationGauges.css';
 
 /**
- * Duration & Convexity Gauges (Phase 50)
+ * Duration & Convexity Gauges 
  * 
  * Semi-circular gauges showing fixed income portfolio risk metrics.
  * Now connected to real Rate Shock simulation from backend.

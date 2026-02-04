@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/CommunityForumsDashboard.jsx
  * ROLE: Community Forums Dashboard
- * PURPOSE: Phase 20 - Community Forums & Discussion
+ * PURPOSE:  - Community Forums & Discussion
  * 
  * INTEGRATION POINTS:
  *    - CommunityStore: Uses apiClient for all API calls (User Rule 6)
@@ -72,7 +72,7 @@ const CommunityForumsDashboard = () => {
     <div className="community-forums-dashboard">
       <div className="dashboard-header">
         <h1>Community Forums</h1>
-        <p className="subtitle">Phase 20: Community Forums & Discussion</p>
+        <p className="subtitle">: Community Forums & Discussion</p>
       </div>
 
       <div className="dashboard-content">

@@ -1,5 +1,5 @@
 /**
- * Community Store - Phase 22
+ * Community Store - 
  * Manages community forums and expert Q&A
  */
 import { create } from 'zustand';

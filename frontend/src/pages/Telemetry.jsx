@@ -2,7 +2,7 @@
  * Telemetry Page
  * 
  * Server metrics and real-time data visualization.
- * Placeholder for now - will be upgraded with Recharts in Phase 2.2.
+ * Placeholder for now - will be upgraded with Recharts in .2.
  */
 
 import React from 'react';

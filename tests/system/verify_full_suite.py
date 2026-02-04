@@ -191,51 +191,51 @@ def register_and_login(driver):
             logger.warning(f"API Verification request failed: {e}")
 
         # 3. Login via UI
-    try:
-        # Check if already logged in/at dashboard
-        containers = driver.find_elements(By.CLASS_NAME, "institutional-os-container")
-        if containers and any(c.is_displayed() for c in containers):
-            logger.info("[PROTOCOL] Already logged in. Proceeding...")
-            return
-
-        # Normal login flow
-        driver.get(BASE_URL)
         try:
-            WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.CLASS_NAME, "auth-modal")))
-        except:
-            logger.info("[PROTOCOL] Auth modal not found; checking for existing dashboard...")
+            # Check if already logged in/at dashboard
             containers = driver.find_elements(By.CLASS_NAME, "institutional-os-container")
-            if containers and containers[0].is_displayed():
+            if containers and any(c.is_displayed() for c in containers):
+                logger.info("[PROTOCOL] Already logged in. Proceeding...")
                 return
 
-        # Ensure Login Mode
-        buttons = driver.find_elements(By.TAG_NAME, "button")
-        for btn in buttons:
-            if "Sign In" in btn.text:
-                btn.click()
-                break
-        
-        inputs = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.TAG_NAME, "input")))
-        for inp in inputs:
-            itype = inp.get_attribute("type")
-            if itype == "email": inp.clear(); inp.send_keys(email)
-            elif itype == "password": inp.clear(); inp.send_keys(password)
-            
-        driver.find_element(By.CLASS_NAME, "auth-button").click()
-        
-        # Wait for Dash or Onboarding
-        logger.info("[PROTOCOL] Waiting for Dashboard or Onboarding...")
-        try:
-            # Short wait for onboarding skip button
-            skip_btn = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "skip-button")))
-            logger.info("[PROTOCOL] Onboarding detected - Skipping...")
-            skip_btn.click()
-        except:
-            logger.info("[PROTOCOL] No onboarding or already dismissed")
+            # Normal login flow
+            driver.get(BASE_URL)
+            try:
+                WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.CLASS_NAME, "auth-modal")))
+            except:
+                logger.info("[PROTOCOL] Auth modal not found; checking for existing dashboard...")
+                containers = driver.find_elements(By.CLASS_NAME, "institutional-os-container")
+                if containers and containers[0].is_displayed():
+                    return
 
-        # Now wait for the main container to be visible (not just present)
-        WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CLASS_NAME, "institutional-os-container")))
-        logger.info("Authentication Protocol Complete")
+            # Ensure Login Mode
+            buttons = driver.find_elements(By.TAG_NAME, "button")
+            for btn in buttons:
+                if "Sign In" in btn.text:
+                    btn.click()
+                    break
+            
+            inputs = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.TAG_NAME, "input")))
+            for inp in inputs:
+                itype = inp.get_attribute("type")
+                if itype == "email": inp.clear(); inp.send_keys(email)
+                elif itype == "password": inp.clear(); inp.send_keys(password)
+                
+            driver.find_element(By.CLASS_NAME, "auth-button").click()
+            
+            # Wait for Dash or Onboarding
+            logger.info("[PROTOCOL] Waiting for Dashboard or Onboarding...")
+            try:
+                # Short wait for onboarding skip button
+                skip_btn = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "skip-button")))
+                logger.info("[PROTOCOL] Onboarding detected - Skipping...")
+                skip_btn.click()
+            except:
+                logger.info("[PROTOCOL] No onboarding or already dismissed")
+
+            # Now wait for the main container to be visible (not just present)
+            WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CLASS_NAME, "institutional-os-container")))
+            logger.info("Authentication Protocol Complete")
 
     except Exception as e:
         import traceback

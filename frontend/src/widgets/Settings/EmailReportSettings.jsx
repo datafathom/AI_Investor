@@ -76,7 +76,7 @@ const EmailReportSettings = ({ mock = true }) => {
             </div>
 
             <div className="footer">
-                <span>Phase 21 {mock && '(Mock)'}</span>
+                <span> {mock && '(Mock)'}</span>
             </div>
         </div>
     );

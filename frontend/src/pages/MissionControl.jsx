@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { StorageService } from '../utils/storageService';
-import { Activity, Shield, Terminal, AlertOctagon, Heart, Zap, ShieldAlert, Cpu } from 'lucide-react';
-import { Responsive, WidthProvider } from 'react-grid-layout';
 import NetworkMap from '../components/MissionControl/NetworkMap';
 import ResourceTimeline from '../components/MissionControl/ResourceTimeline';
+import WidgetWindow from '../components/MissionControl/WidgetWindow';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -74,23 +71,23 @@ const MissionControl = () => {
                             <Activity className={`text-cyan-400 ${systemPulse ? 'opacity-100' : 'opacity-50'} transition-opacity animate-neon-pulse`} size={24} />
                             <div>
                                 <h1 className="text-2xl font-bold text-white tracking-widest uppercase text-glow-cyan">Mission Control</h1>
-                                <span className="text-cyan-500 text-xs font-mono">SYSTEM ONLINE /// UPTIME: 99.98%</span>
+                                <span className="text-cyan-500 text-xs font-mono">SYSTEM ONLINE /// V3.2.0</span>
                             </div>
                         </div>
 
                         {/* Resource Timeline Widget */}
-                        <div className="w-64 h-16 z-10 opacity-80 hover:opacity-100 transition-opacity">
+                        <div className="hidden md:block w-64 h-16 z-10 opacity-80 hover:opacity-100 transition-opacity">
                             <ResourceTimeline />
                         </div>
 
-                        <div className="flex gap-8 z-10">
+                        <div className="flex gap-4 md:gap-8 z-10">
                             <div className="text-center">
-                                <span className="block text-slate-500 uppercase text-[10px]">Active Agents</span>
-                                <span className="text-xl font-bold text-white">12</span>
+                                <span className="block text-slate-500 uppercase text-[8px] md:text-[10px]">Active Agents</span>
+                                <span className="text-lg md:text-xl font-bold text-white">12</span>
                             </div>
                             <div className="text-center">
-                                <span className="block text-slate-500 uppercase text-[10px]">Latency</span>
-                                <span className="text-xl font-bold text-green-400">42ms</span>
+                                <span className="block text-slate-500 uppercase text-[8px] md:text-[10px]">Latency</span>
+                                <span className="text-lg md:text-xl font-bold text-green-400">42ms</span>
                             </div>
                         </div>
 
@@ -100,26 +97,26 @@ const MissionControl = () => {
 
                 {/* WIDGET: Threat Level */}
                 <div key="threat">
-                    <div className={`glass-panel p-4 flex flex-col justify-center items-center rounded-xl border-2 h-full ${defconLevel < 2 ? 'bg-red-950/20 border-red-500' : 'bg-slate-900/40 border-slate-800'}`} data-tour-id="threat-level-display">
-                        <h2 className="text-lg font-bold uppercase tracking-widest text-white mb-1">Global Threat Level</h2>
-                        <div className="text-5xl font-black text-white drop-shadow-lg">DEFCON {defconLevel}</div>
-                        <span className="text-slate-400 bg-black/20 px-2 rounded mt-2 uppercase text-[10px]">
-                            {risk?.freeze_reason || "Nominal Operations"}
-                        </span>
-                    </div>
+                    <WidgetWindow title="Global Threat Level" icon={Shield}>
+                        <div className={`flex flex-col justify-center items-center h-full text-center ${defconLevel < 2 ? 'bg-red-950/20' : ''}`}>
+                            <div className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-500 mb-1">Defense Condition</div>
+                            <div className="text-6xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                                {defconLevel}
+                            </div>
+                            <div className={`mt-3 px-4 py-1 rounded text-[10px] font-black uppercase tracking-widest border ${defconLevel < 2 ? 'border-red-500 text-red-400' : 'border-slate-800 text-slate-400'}`}>
+                                {risk?.freeze_reason || "Nominal Operations"}
+                            </div>
+                        </div>
+                    </WidgetWindow>
                 </div>
 
                 {/* LEFT COLUMN: Capital Allocation */}
                 <div key="allocation">
-                    <div className="glass-panel p-6 flex flex-col h-full bg-slate-900/40 border border-slate-800 rounded-xl" data-tour-id="capital-allocation-panel">
-                        <h3 className="flex items-center gap-2 text-sm font-bold text-white mb-6 uppercase border-b border-slate-800 pb-3">
-                            <ShieldAlert size={16} className="text-blue-400" /> Capital Allocation
-                        </h3>
-
-                        <div className="flex-1 flex flex-col gap-6">
-                            <div className="relative h-48 w-48 mx-auto">
+                    <WidgetWindow title="Capital Allocation" icon={ShieldAlert}>
+                        <div className="allocation-layout flex flex-col h-full gap-8">
+                            <div className="relative aspect-square w-full max-w-[200px] mx-auto">
                                 <svg viewBox="0 0 36 36" className="w-full h-full rotate-[-90deg]">
-                                    <circle cx="18" cy="18" r="15.915" fill="none" stroke="#1e293b" strokeWidth="4" />
+                                    <circle cx="18" cy="18" r="15.915" fill="none" stroke="#1e293b" strokeWidth="4" className="light:stroke-slate-200" />
                                     <circle cx="18" cy="18" r="15.915" fill="none" stroke="#22c55e" strokeWidth="4"
                                         strokeDasharray={`${allocation.buckets.CASH * 100}, 100`} />
                                     <circle cx="18" cy="18" r="15.915" fill="none" stroke="#ef4444" strokeWidth="4"
@@ -128,94 +125,94 @@ const MissionControl = () => {
                                         strokeDasharray={`${allocation.buckets.SHIELD * 100}, 100`} strokeDashoffset={`-${(allocation.buckets.CASH + allocation.buckets.ALPHA) * 100}`} />
                                 </svg>
                                 <div className="absolute inset-0 flex items-center justify-center flex-col">
-                                    <span className="text-2xl font-bold text-white font-mono">${(execution?.balance / 1000000).toFixed(1)}M</span>
-                                    <span className="text-[10px] text-slate-500 font-bold">NAV</span>
+                                    <span className="text-2xl font-bold text-white font-mono light:text-slate-900">${(execution?.balance / 1000000).toFixed(1)}M</span>
+                                    <span className="text-[10px] text-slate-500 font-bold tracking-widest uppercase">NAV</span>
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
-                                <div className="flex justify-between items-center p-3 bg-blue-900/20 rounded border border-blue-500/20">
-                                    <span className="text-xs text-blue-300 font-bold">SHIELD</span>
-                                    <span className="font-mono text-white">{(allocation.buckets.SHIELD * 100).toFixed(1)}%</span>
+                            <div className="allocation-legend space-y-2 mt-auto">
+                                <div className="flex justify-between items-center p-3 bg-blue-900/10 rounded border border-blue-500/10 light:bg-blue-50 light:border-blue-100">
+                                    <span className="text-[10px] text-blue-400 font-black uppercase">SHIELD</span>
+                                    <span className="font-mono text-sm font-bold text-white light:text-blue-900">{(allocation.buckets.SHIELD * 100).toFixed(1)}%</span>
                                 </div>
-                                <div className="flex justify-between items-center p-3 bg-red-900/20 rounded border border-red-500/20">
-                                    <span className="text-xs text-red-300 font-bold">ALPHA</span>
-                                    <span className="font-mono text-white">{(allocation.buckets.ALPHA * 100).toFixed(1)}%</span>
+                                <div className="flex justify-between items-center p-3 bg-red-900/10 rounded border border-red-500/10 light:bg-red-50 light:border-red-100">
+                                    <span className="text-[10px] text-red-400 font-black uppercase">ALPHA</span>
+                                    <span className="font-mono text-sm font-bold text-white light:text-red-900">{(allocation.buckets.ALPHA * 100).toFixed(1)}%</span>
                                 </div>
-                                <div className="flex justify-between items-center p-3 bg-green-900/20 rounded border border-green-500/20">
-                                    <span className="text-xs text-green-300 font-bold">CASH</span>
-                                    <span className="font-mono text-white">{(allocation.buckets.CASH * 100).toFixed(1)}%</span>
+                                <div className="flex justify-between items-center p-3 bg-green-900/10 rounded border border-green-500/10 light:bg-green-50 light:border-green-100">
+                                    <span className="text-[10px] text-green-400 font-black uppercase">CASH</span>
+                                    <span className="font-mono text-sm font-bold text-white light:text-green-900">{(allocation.buckets.CASH * 100).toFixed(1)}%</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </WidgetWindow>
                 </div>
 
                 {/* CENTER COLUMN: Live Feed & Map */}
                 <div key="map">
-                    <div className="glass-panel p-0 flex-1 relative overflow-hidden bg-slate-900/10 border border-slate-800 rounded-xl h-full">
-                        <NetworkMap />
-                    </div>
+                    <WidgetWindow title="Master Network Mesh" icon={Zap}>
+                        <div className="p-0 h-full relative overflow-hidden rounded-lg">
+                            <NetworkMap />
+                        </div>
+                    </WidgetWindow>
                 </div>
                 
                 <div key="logs">
-                    <div className="glass-panel p-4 h-full bg-slate-900/40 border border-slate-800 rounded-xl flex flex-col" data-tour-id="live-logs-panel">
-                        <h3 className="flex items-center gap-2 text-sm font-bold text-white mb-2 uppercase font-mono">
-                            <Terminal size={16} className="text-green-400" /> Live System Logs
-                        </h3>
-                        <div className="flex-1 overflow-y-auto font-mono text-[10px] space-y-1 pr-2 scrollbar-thin">
-                            {logs.map((log, i) => (
-                                <div key={i} className="flex gap-4 p-2 border-b border-white/5 hover:bg-white/5">
-                                    <span className="text-slate-500">{log.time}</span>
-                                    <span className={`font-bold ${log.source === 'RISK' ? 'text-red-400' : 'text-blue-400'}`}>[{log.source}]</span>
-                                    <span className="text-slate-300">{log.message}</span>
-                                </div>
-                            ))}
+                    <WidgetWindow title="Live System Logs" icon={Terminal}>
+                        <div className="terminal-window h-full flex flex-col p-2">
+                            <div className="flex-1 overflow-y-auto font-mono text-[10px] space-y-1 terminal-sticky-bottom scrollbar-none">
+                                {[...logs].reverse().map((log, i) => (
+                                    <div key={i} className="flex gap-4 py-1.5 border-b border-white/5 hover:bg-white/5 terminal-text">
+                                        <span className="text-slate-500 opacity-60 font-black">{log.time}</span>
+                                        <div className={`px-1.5 py-0.5 rounded text-[8px] font-black tracking-widest ${log.source === 'RISK' ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/20 text-blue-400'}`}>
+                                            {log.source}
+                                        </div>
+                                        <span className="text-slate-300 flex-1 break-words">{log.message}</span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    </WidgetWindow>
                 </div>
 
                 {/* RIGHT COLUMN: Risk Governor */}
                 <div key="risk">
-                    <div className="glass-panel p-6 flex flex-col h-full bg-slate-900/40 border border-slate-800 rounded-xl" data-tour-id="risk-governor-panel">
-                        <h3 className="flex items-center gap-2 text-sm font-bold text-white mb-6 uppercase border-b border-slate-800 pb-3">
-                            <AlertOctagon size={16} className="text-orange-400" /> Risk Governor
-                        </h3>
-
-                        <div className="space-y-8">
-                            <div>
-                                <span className="block text-[10px] uppercase text-slate-500 mb-2 font-bold tracking-widest">Value at Risk (Daily)</span>
-                                <div className="text-4xl font-black text-white font-mono border-l-4 border-orange-500 pl-4">
+                    <WidgetWindow title="Risk Governor" icon={AlertOctagon}>
+                        <div className="space-y-6 flex flex-col h-full">
+                            <div className="border-l-4 border-orange-500 pl-4 py-2 bg-orange-500/5">
+                                <span className="block text-[8px] md:text-[10px] uppercase text-slate-500 mb-1 font-bold tracking-widest">Value at Risk (Daily)</span>
+                                <div className="metric-heavy font-black text-white font-mono light:text-slate-900">
                                     ${risk.var_95_daily.toLocaleString()}
                                 </div>
                             </div>
 
-                            <div>
-                                <span className="block text-[10px] uppercase text-slate-500 mb-2 font-bold tracking-widest">Portfolio Beta</span>
-                                <div className="text-4xl font-black text-white font-mono border-l-4 border-yellow-500 pl-4">
+                            <div className="border-l-4 border-yellow-500 pl-4 py-2 bg-yellow-500/5">
+                                <span className="block text-[8px] md:text-[10px] uppercase text-slate-500 mb-1 font-bold tracking-widest">Portfolio Beta</span>
+                                <div className="metric-heavy font-black text-white font-mono light:text-slate-900">
                                     0.85
                                 </div>
                             </div>
 
                             <div className="space-y-3">
-                                <div className="flex justify-between items-center text-xs font-bold">
-                                    <span className="text-slate-400">Leverage (Max 4x)</span>
-                                    <span className="text-white">1.2x</span>
+                                <div className="flex justify-between items-center text-[10px] font-bold tracking-widest uppercase text-slate-400">
+                                    <span>Leverage (Max 4x)</span>
+                                    <span className="text-white light:text-slate-900">1.2x</span>
                                 </div>
-                                <div className="w-full bg-slate-800 rounded-full h-1.5">
-                                    <div className="bg-orange-500 h-1.5 rounded-full" style={{ width: '30%' }}></div>
+                                <div className="w-full bg-slate-800 light:bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                                    <div className="bg-orange-500 h-1.5 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.3)]" style={{ width: '30%' }}></div>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-2 mt-auto">
                                 {['DRAWDOWN', 'VOLATILITY', 'LIQUIDITY', 'EXPOSURE'].map(type => (
-                                    <div key={type} className="bg-green-900/20 text-green-400 border border-green-500/30 p-2 rounded text-center text-[9px] font-black tracking-tighter">
-                                        {type} NOMINAL
+                                    <div key={type} className="bg-green-900/10 text-green-400 border border-green-500/10 p-2.5 rounded text-center text-[9px] font-black tracking-tighter light:bg-green-50 light:border-green-100 dark:text-green-500">
+                                        <div className="mb-0.5 opacity-60 text-[7px]">{type}</div>
+                                        NOMINAL
                                     </div>
                                 ))}
                             </div>
                         </div>
-                    </div>
+                    </WidgetWindow>
                 </div>
                 </ResponsiveGridLayout>
                 

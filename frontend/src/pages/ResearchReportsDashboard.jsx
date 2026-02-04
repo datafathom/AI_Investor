@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/ResearchReportsDashboard.jsx
  * ROLE: Research Reports Dashboard
- * PURPOSE: Phase 18 - Research Reports & Analysis
+ * PURPOSE:  - Research Reports & Analysis
  *          Displays research reports, report generation, and templates.
  * 
  * INTEGRATION POINTS:
@@ -93,7 +93,7 @@ const ResearchReportsDashboard = () => {
     <div className="full-bleed-page research-reports-dashboard">
       <div className="dashboard-header">
         <h1>Research Reports & Analysis</h1>
-        <p className="subtitle">Phase 18: Research Reports & Analysis</p>
+        <p className="subtitle">: Research Reports & Analysis</p>
       </div>
 
       <div className="scrollable-content-wrapper">

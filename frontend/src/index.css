@@ -56,7 +56,7 @@
 :root {
   font-size: 16px;
 
-  /* ========== TYPOGRAPHY SCALE (Phase 16) ========== */
+  /* ========== TYPOGRAPHY SCALE  ========== */
   --font-data: "JetBrains Mono", monospace;
   --font-display: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 
@@ -102,7 +102,7 @@
   --radius-full: 9999px;
   --blur-strength: 12px;
 
-  /* ========== TRANSITIONS (Phase 17) ========== */
+  /* ========== TRANSITIONS  ========== */
   --transition-premium: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-fast: all 0.15s ease;
   --transition-bounce: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -488,7 +488,7 @@ button {
   animation: fadeIn 0.3s ease-out;
 }
 
-/* ========== MICRO-INTERACTIONS (Phase 17) ========== */
+/* ========== MICRO-INTERACTIONS  ========== */
 
 /* Button Base States */
 button,
@@ -553,7 +553,7 @@ a:focus:not(:focus-visible) {
   transition: var(--transition-fast);
 }
 
-/* ========== ACCESSIBILITY UTILITIES (Phase 20) ========== */
+/* ========== ACCESSIBILITY UTILITIES  ========== */
 
 /* Screen Reader Only */
 .sr-only {

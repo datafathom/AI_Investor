@@ -3,7 +3,7 @@ import { Leaf, Heart, TrendingUp, BarChart3 } from 'lucide-react';
 import './ESGDashboard.css';
 
 /**
- * ESG Score Aggregator (Phase 17)
+ * ESG Score Aggregator 
  * 
  * Environmental, Social, Governance scores with carbon footprint tracking.
  */

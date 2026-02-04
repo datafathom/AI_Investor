@@ -3,7 +3,7 @@ import { Check, X, AlertTriangle, HelpCircle } from 'lucide-react';
 import './ConsensusBar.css';
 
 /**
- * Consensus Progress Bar (Phase 12)
+ * Consensus Progress Bar 
  * 
  * Shows voting agreement among AI agents with 70% threshold.
  */

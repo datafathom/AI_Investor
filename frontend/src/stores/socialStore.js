@@ -6,7 +6,7 @@ const useSocialStore = create((set, get) => ({
     isLoading: false,
     error: null,
 
-    // Social Trading State (Phase 24)
+    // Social Trading State 
     leaderboard: [],
     followedTraders: [],
     copyTrades: [],

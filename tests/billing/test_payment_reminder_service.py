@@ -21,6 +21,7 @@ def service():
 @pytest.mark.asyncio
 async def test_create_reminder(service):
     """Test creating payment reminder."""
+    # Fix Bill missing updated_date
     bill = Bill(
         bill_id="bill_123",
         user_id="user_123",
@@ -30,9 +31,10 @@ async def test_create_reminder(service):
         due_date=datetime.now(timezone.utc) + timedelta(days=7),
         status="pending",
         recurrence="one_time",
-        created_date=datetime.now(timezone.utc)
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
-    
+
     service.bill_service._get_bill = AsyncMock(return_value=bill)
     service._save_reminder = AsyncMock()
     
@@ -54,6 +56,7 @@ async def test_get_upcoming_reminders(service):
             reminder_id="reminder_1",
             bill_id="bill_1",
             reminder_date=datetime.now(timezone.utc) + timedelta(days=1),
+            reminder_type="upcoming",
             sent=False
         )
     ])

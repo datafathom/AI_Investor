@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/NewsSentimentDashboard.jsx
  * ROLE: News & Sentiment Analysis Dashboard
- * PURPOSE: Phase 16 - News Aggregation & Sentiment Analysis
+ * PURPOSE:  - News Aggregation & Sentiment Analysis
  *          Displays news articles, sentiment scores, and market impact analysis.
  * 
  * INTEGRATION POINTS:
@@ -67,7 +67,7 @@ const NewsSentimentDashboard = () => {
     <div className="news-sentiment-dashboard">
       <div className="dashboard-header">
         <h1>News & Sentiment Analysis</h1>
-        <p className="subtitle">Phase 16: News Aggregation & Sentiment Analysis</p>
+        <p className="subtitle">: News Aggregation & Sentiment Analysis</p>
       </div>
 
       <div className="dashboard-content">

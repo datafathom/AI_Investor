@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/IntegrationsDashboard.jsx
  * ROLE: Third-Party Integrations Dashboard
- * PURPOSE: Phase 28 - Third-Party App Integrations
+ * PURPOSE:  - Third-Party App Integrations
  *          Displays available integrations, connection status, and sync management.
  * 
  * INTEGRATION POINTS:
@@ -50,7 +50,7 @@ const IntegrationsDashboard = () => {
     <div className="integrations-dashboard">
       <div className="dashboard-header">
         <h1>Third-Party Integrations</h1>
-        <p className="subtitle">Phase 28: Third-Party App Integrations</p>
+        <p className="subtitle">: Third-Party App Integrations</p>
       </div>
 
       <div className="dashboard-content">

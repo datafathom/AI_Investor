@@ -84,7 +84,7 @@ const SMSAlertSettings = ({ mock = true }) => {
             </div>
 
             <div className="footer">
-                <span>Phase 20 {mock && '(Mock)'}</span>
+                <span> {mock && '(Mock)'}</span>
             </div>
         </div>
     );

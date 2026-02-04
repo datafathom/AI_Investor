@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/EstatePlanningDashboard.jsx
  * ROLE: Estate Planning Dashboard
- * PURPOSE: Phase 9 - Estate Planning & Inheritance Tools
+ * PURPOSE:  - Estate Planning & Inheritance Tools
  * 
  * INTEGRATION POINTS:
  *    - EstateStore: Uses apiClient for all API calls (User Rule 6)
@@ -86,7 +86,7 @@ const EstatePlanningDashboard = () => {
     <div className="full-bleed-page estate-planning-dashboard">
       <div className="dashboard-header">
         <h1>Estate Planning</h1>
-        <p className="subtitle">Phase 9: Estate Planning & Inheritance Tools</p>
+        <p className="subtitle">: Estate Planning & Inheritance Tools</p>
       </div>
 
       <div className="scrollable-content-wrapper">

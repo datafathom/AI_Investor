@@ -1,7 +1,7 @@
 /**
  * BondLadder Widget - Draggable Bond Ladder Visualization
  * 
- * Phase 50: Interactive bond ladder builder with D3.js bars.
+ * : Interactive bond ladder builder with D3.js bars.
  * Supports drag to add/remove bonds, real-time WAL updates,
  * and liquidity gap indicators.
  */

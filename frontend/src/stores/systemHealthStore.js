@@ -1,6 +1,6 @@
 /**
  * System Health Store - Zustand State Management for Infrastructure
- * Phase 62: Manages Kafka, Postgres, Neo4j health and agent load balancing.
+ * : Manages Kafka, Postgres, Neo4j health and agent load balancing.
  */
 import { create } from 'zustand';
 import apiClient from '../services/apiClient';

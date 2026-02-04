@@ -6,7 +6,7 @@
  *     Displays the proprietary Fear & Greed Composite Index (0-100) as an
  *     animated gauge with color-coded zones and real-time updates.
  * 
- * ROADMAP: Phase 12 - The "Fear & Greed" Composite Index
+ * ROADMAP:  - The "Fear & Greed" Composite Index
  * 
  * ZONES:
  *     0-20:  Extreme Fear (Green - BUY zone)
@@ -25,7 +25,7 @@ import './FearGreedGauge.css';
 const API_BASE = '/market'; 
 
 /**
- * FearGreedGauge - Phase 12 Dashboard Widget
+ * FearGreedGauge -  Dashboard Widget
  * 
  * @param {Object} props
  * @param {boolean} props.autoRefresh - Enable auto-refresh (default: true)

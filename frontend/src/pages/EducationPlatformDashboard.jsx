@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/EducationPlatformDashboard.jsx
  * ROLE: Education Platform Dashboard
- * PURPOSE: Phase 21 - Investment Education & Learning Platform
+ * PURPOSE:  - Investment Education & Learning Platform
  * 
  * INTEGRATION POINTS:
  *    - EducationStore: Uses apiClient for all API calls (User Rule 6)
@@ -55,7 +55,7 @@ const EducationPlatformDashboard = () => {
     <div className="education-platform-dashboard">
       <div className="dashboard-header">
         <h1>Investment Education Platform</h1>
-        <p className="subtitle">Phase 21: Investment Education & Learning Platform</p>
+        <p className="subtitle">: Investment Education & Learning Platform</p>
       </div>
 
       <div className="dashboard-content">

@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/WatchlistsAlertsDashboard.jsx
  * ROLE: Watchlists & Alerts Dashboard
- * PURPOSE: Phase 17 - Watchlist Management & Price Alerts
+ * PURPOSE:  - Watchlist Management & Price Alerts
  *          Manages watchlists and price alerts with multi-channel notifications.
  * 
  * INTEGRATION POINTS:
@@ -77,7 +77,7 @@ const WatchlistsAlertsDashboard = () => {
     <div className="watchlists-alerts-dashboard">
       <div className="dashboard-header">
         <h1>Watchlists & Price Alerts</h1>
-        <p className="subtitle">Phase 17: Watchlist Management & Alert System</p>
+        <p className="subtitle">: Watchlist Management & Alert System</p>
       </div>
 
       <div className="dashboard-content">

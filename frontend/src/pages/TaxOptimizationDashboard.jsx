@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/TaxOptimizationDashboard.jsx
  * ROLE: Tax Optimization Dashboard
- * PURPOSE: Phase 4 - Tax-Loss Harvesting & Optimization
+ * PURPOSE:  - Tax-Loss Harvesting & Optimization
  *          Displays tax-loss harvesting opportunities and optimization strategies.
  * 
  * INTEGRATION POINTS:
@@ -95,7 +95,7 @@ const TaxOptimizationDashboard = () => {
     <div className="full-bleed-page tax-optimization-dashboard">
       <div className="dashboard-header">
         <h1>Tax Optimization & Harvesting</h1>
-        <p className="subtitle">Phase 4: Tax-Loss Harvesting & Optimization</p>
+        <p className="subtitle">: Tax-Loss Harvesting & Optimization</p>
       </div>
 
       <div className="scrollable-content-wrapper">

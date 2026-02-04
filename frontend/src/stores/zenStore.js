@@ -1,6 +1,6 @@
 /**
  * Zen Store - Zustand State Management for Homeostasis Mode
- * Phase 68: Manages "Enough" metric, retirement countdown, and autopilot override.
+ * : Manages "Enough" metric, retirement countdown, and autopilot override.
  */
 import { create } from 'zustand';
 import apiClient from '../services/apiClient';

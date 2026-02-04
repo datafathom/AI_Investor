@@ -79,7 +79,7 @@ const AutoCoderDashboard = () => {
                     <Bot className="text-cyan-400" size={24} />
                     <div>
                         <h1 className="text-xl font-bold font-display text-white">Auto-Coder Link</h1>
-                        <span className="text-[10px] font-mono text-cyan-500 uppercase tracking-widest">Phase 39: Self-Improving Logic</span>
+                        <span className="text-[10px] font-mono text-cyan-500 uppercase tracking-widest">: Self-Improving Logic</span>
                     </div>
                 </div>
                 <div className="flex items-center gap-4 text-xs font-mono">

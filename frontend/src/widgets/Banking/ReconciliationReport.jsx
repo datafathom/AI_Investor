@@ -29,7 +29,7 @@ const ReconciliationReport = () => {
         <div className="recon-report-widget">
             <div className="widget-header">
                 <h3><ClipboardCheck size={18} className="text-cyan-400" /> Reconciliation Report</h3>
-                <span className="badge">Phase 11 (V0.1)</span>
+                <span className="badge"> (V0.1)</span>
             </div>
 
             <div className="stats-grid">

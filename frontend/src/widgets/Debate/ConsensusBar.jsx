@@ -6,7 +6,7 @@ import './ConsensusBar.css';
 /**
  * ConsensusBar - Voting Consensus Progress Visualization
  * 
- * Phase 55: Displays real-time voting consensus with 70% threshold,
+ * : Displays real-time voting consensus with 70% threshold,
  * dissent highlighting, and approval status.
  */
 const ConsensusBar = () => {

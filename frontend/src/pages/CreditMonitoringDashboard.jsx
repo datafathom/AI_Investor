@@ -69,7 +69,7 @@ const CreditMonitoringDashboard = () => {
     <div className="full-bleed-page credit-monitoring-dashboard">
       <div className="dashboard-header mb-6">
         <h1>Credit Monitoring & Optimization</h1>
-        <p className="subtitle">Phase 12: Credit Score Monitoring & Improvement</p>
+        <p className="subtitle">: Credit Score Monitoring & Improvement</p>
       </div>
 
       <div className="scrollable-content-wrapper">

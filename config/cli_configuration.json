@@ -59,17 +59,17 @@
             "category": "System Control"
         },
         "dev": {
-            "description": "Developer Mode: Hot-Reload for Backend & Frontend (Auto-check local infra).",
+            "description": "Standard Developer Mode. Starts hot-reloading Backend & Frontend and checks if local Docker services are running. Best for typical local development.",
             "handler": "scripts.runners.dev_runner:start_dev_mode",
             "category": "Development & Infrastructure"
         },
         "dev-full": {
-            "description": "Full Dev Mode: Starts Docker Containers + Backend + Frontend locally.",
+            "description": "Full Stack Mode. Forcefully starts all Docker containers (Postgres, Kafka, etc.) AND the hot-reloading dev environment. Use this if you haven't started infrastructure yet.",
             "handler": "scripts.runners.dev_runner:start_dev_full",
             "category": "Development & Infrastructure"
         },
         "dev-no-db": {
-            "description": "Light Dev Mode: Backend + Frontend ONLY (For 2-Node setups).",
+            "description": "Lightweight / Distributed Mode. Starts Backend & Frontend ONLY without checking for local Docker services. Use this when connecting to a remote LAN database box or a 2-node setup.",
             "handler": "scripts.runners.dev_runner:start_dev_no_db",
             "category": "Development & Infrastructure"
         },
@@ -210,9 +210,13 @@
                     "description": "Run frontend tests (vitest).",
                     "handler": "scripts.runners.test_runner:run_frontend_tests"
                 },
-                "models": {
-                    "description": "Run data model tests.",
-                    "handler": "scripts.runners.test_runner:run_models_tests"
+                "schemas": {
+                    "description": "Run schema validation tests.",
+                    "handler": "scripts.runners.test_runner:run_schemas_tests"
+                },
+                "env": {
+                    "description": "Validate environment variables.",
+                    "handler": "scripts.runners.test_runner:run_env_tests"
                 },
                 "billing": {
                     "description": "Run billing service tests.",

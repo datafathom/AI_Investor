@@ -4,7 +4,7 @@ import useEstateStore from '../../stores/estateStore';
 import './DeadMansSwitch.css';
 
 /**
- * Dead Man's Switch Widget (Phase 15/58)
+ * Dead Man's Switch Widget /58)
  */
 const DeadMansSwitch = () => {
     const { 

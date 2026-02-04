@@ -13,7 +13,7 @@ const DeepDive = () => {
     setLoading(true);
     setReport(null);
     try {
-      // Phase 199: Real AI Research Call
+      // : Real AI Research Call
       const response = await apiClient.post('/research/company-research', {
         user_id: 'default_user', // In real app, get from auth context
         symbol: ticker.toUpperCase(),

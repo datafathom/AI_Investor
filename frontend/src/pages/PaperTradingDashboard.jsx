@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/PaperTradingDashboard.jsx
  * ROLE: Paper Trading & Simulation Dashboard
- * PURPOSE: Phase 14 - Paper Trading & Simulation
+ * PURPOSE:  - Paper Trading & Simulation
  *          Displays virtual portfolios, paper trades, and backtesting results.
  * 
  * INTEGRATION POINTS:
@@ -98,7 +98,7 @@ const PaperTradingDashboard = () => {
     <div className="full-bleed-page paper-trading-dashboard">
       <div className="dashboard-header">
         <h1>Paper Trading & Simulation</h1>
-        <p className="subtitle">Phase 14: Paper Trading & Simulation</p>
+        <p className="subtitle">: Paper Trading & Simulation</p>
       </div>
 
       <div className="scrollable-content-wrapper">

@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import './InteractionHeatmap.css';
 
 /**
- * Interaction Effect Heatmap (Phase 6)
+ * Interaction Effect Heatmap 
  * 
  * 11x11 matrix showing cross-sector interaction effects from Brinson-Fachler attribution.
  */

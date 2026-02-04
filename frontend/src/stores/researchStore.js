@@ -6,7 +6,7 @@ const useResearchStore = create((set, get) => ({
     isLoading: false,
     error: null,
 
-    // Research Reports State (Phase 18)
+    // Research Reports State 
     reports: [],
     templates: [],
 

@@ -1,5 +1,5 @@
 /**
- * Charting Store - Phase 12
+ * Charting Store - 
  * Manages advanced charting data and indicators
  */
 import { create } from 'zustand';

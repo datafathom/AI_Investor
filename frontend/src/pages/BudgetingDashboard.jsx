@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/BudgetingDashboard.jsx
  * ROLE: Budgeting & Expense Tracking Dashboard
- * PURPOSE: Phase 10 - Budgeting & Expense Tracking
+ * PURPOSE:  - Budgeting & Expense Tracking
  * 
  * INTEGRATION POINTS:
  *    - BudgetingStore: Uses apiClient for all API calls (User Rule 6)
@@ -90,7 +90,7 @@ const BudgetingDashboard = () => {
     <div className="full-bleed-page budgeting-dashboard">
       <div className="dashboard-header">
         <h1>Budgeting & Expense Tracking</h1>
-        <p className="subtitle">Phase 10: Budgeting & Expense Tracking</p>
+        <p className="subtitle">: Budgeting & Expense Tracking</p>
       </div>
 
       <div className="scrollable-content-wrapper">

@@ -1,7 +1,7 @@
 /**
  * SectorAttribution Widget - D3.js Diverging Bar Chart
  * 
- * Phase 49: Brinson-Fachler Attribution Visualization
+ * : Brinson-Fachler Attribution Visualization
  * 
  * This widget displays a diverging bar chart showing allocation and selection
  * effects per GICS sector. Positive effects extend right (green), negative

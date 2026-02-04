@@ -12,8 +12,11 @@ import {
     Zap,
     DollarSign,
     PieChart,
-    Search,
-    Layout
+    Layout,
+    Bot,
+    Wallet,
+    ShieldCheck,
+    Search
 } from 'lucide-react';
 
 const SubHeaderNav = () => {
@@ -21,17 +24,20 @@ const SubHeaderNav = () => {
     const location = useLocation();
 
     const navItems = [
-        { path: '/workspace/terminal', label: 'Terminal', icon: <Terminal size={14} /> },
-        { path: '/workspace/mission-control', label: 'Mission Control', icon: <Activity size={14} /> },
-        { path: '/analytics/options', label: 'Options', icon: <PieChart size={14} /> },
-        { path: '/portfolio/backtest', label: 'Backtest', icon: <Zap size={14} /> },
-        { path: '/analytics/political', label: 'Political Alpha', icon: <Globe size={14} /> },
-        { path: '/analytics/strategy', label: 'Strategy', icon: <Cpu size={14} /> },
-        { path: '/workspace/debate', label: 'Debate', icon: <MessageSquare size={14} /> },
-        { path: '/workspace/autocoder', label: 'AutoCoder', icon: <Code size={14} /> },
-        { path: '/scanner/global', label: 'Scanner', icon: <Search size={14} /> },
-        { path: '/portfolio/brokerage', label: 'Brokerage', icon: <DollarSign size={14} /> },
-        { path: '/workspace/vr', label: 'VR Cockpit', icon: <Layout size={14} /> },
+        { path: '/data-scientist/assistant', label: 'AI Colleague', icon: <Bot size={14} /> },
+        { path: '/architect/admin', label: 'Admin', icon: <ShieldCheck size={14} /> },
+        { path: '/strategist/net-worth', label: 'Net Worth', icon: <Wallet size={14} /> },
+        { path: '/orchestrator/terminal', label: 'Terminal', icon: <Terminal size={14} /> },
+        { path: '/orchestrator/mission-control', label: 'Mission Control', icon: <Activity size={14} /> },
+        { path: '/trader/options-analytics', label: 'Options', icon: <PieChart size={14} /> },
+        { path: '/strategist/backtest', label: 'Backtest', icon: <Zap size={14} /> },
+        { path: '/analyst/strategy', label: 'Strategy', icon: <Cpu size={14} /> },
+        { path: '/data-scientist/debate', label: 'Debate', icon: <MessageSquare size={14} /> },
+        { path: '/data-scientist/autocoder', label: 'AutoCoder', icon: <Code size={14} /> },
+        { path: '/trader/scanner', label: 'Scanner', icon: <Search size={14} /> },
+        { path: '/strategist/brokerage', label: 'Brokerage', icon: <DollarSign size={14} /> },
+        { path: '/analyst/political', label: 'Political Alpha', icon: <Globe size={14} /> },
+        { path: '/data-scientist/vr', label: 'VR Cockpit', icon: <Layout size={14} /> },
     ];
 
     return (

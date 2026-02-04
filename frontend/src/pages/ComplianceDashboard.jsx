@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/ComplianceDashboard.jsx
  * ROLE: Compliance & Reporting Dashboard
- * PURPOSE: Phase 32 - Advanced Compliance & Reporting
+ * PURPOSE:  - Advanced Compliance & Reporting
  *          Displays compliance status, violations, and regulatory reports.
  * 
  * INTEGRATION POINTS:
@@ -89,7 +89,7 @@ const ComplianceDashboard = () => {
     <div className="compliance-dashboard">
       <div className="dashboard-header">
         <h1>Compliance & Reporting</h1>
-        <p className="subtitle">Phase 32: Advanced Compliance & Reporting</p>
+        <p className="subtitle">: Advanced Compliance & Reporting</p>
       </div>
 
       <div className="dashboard-content">

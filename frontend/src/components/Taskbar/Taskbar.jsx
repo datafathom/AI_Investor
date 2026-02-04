@@ -9,6 +9,7 @@ import AgentMoodIcons from './AgentMoodIcons';
 import TaskbarClock from './TaskbarClock';
 import SystemHealthMeters from './SystemHealthMeters';
 import FPSCounter from '../Common/FPSCounter';
+import Breadcrumbs from '../Navigation/Breadcrumbs';
 import './Taskbar.css';
 
 const Taskbar = () => {
@@ -72,6 +73,7 @@ const Taskbar = () => {
             </div>
             
             <div className="taskbar-right-section">
+                <Breadcrumbs />
                 <FPSCounter />
                 <KillSwitch />
                 <TaskbarClock />

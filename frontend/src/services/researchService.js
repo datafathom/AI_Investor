@@ -1,6 +1,6 @@
 /**
  * Research Service
- * Phase 18: Research Reports & Analysis
+ * : Research Reports & Analysis
  */
 import apiClient from './apiClient';
 

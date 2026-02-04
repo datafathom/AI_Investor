@@ -1,6 +1,6 @@
 /**
  * Assets Store - Zustand State Management for Illiquid Assets
- * Phase 67: Manages real estate, art, private equity entries and valuations.
+ * : Manages real estate, art, private equity entries and valuations.
  */
 import { create } from 'zustand';
 import apiClient from '../services/apiClient';

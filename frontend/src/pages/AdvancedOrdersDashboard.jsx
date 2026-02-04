@@ -2,7 +2,7 @@
  * ==============================================================================
  * FILE: frontend2/src/pages/AdvancedOrdersDashboard.jsx
  * ROLE: Advanced Orders & Execution Dashboard
- * PURPOSE: Phase 13 - Advanced Order Types & Smart Execution
+ * PURPOSE:  - Advanced Order Types & Smart Execution
  *          Displays advanced order types, execution algorithms, and order management.
  * 
  * INTEGRATION POINTS:
@@ -91,7 +91,7 @@ const AdvancedOrdersDashboard = () => {
     <div className="full-bleed-page advanced-orders-dashboard">
       <div className="dashboard-header">
         <h1>Advanced Orders & Execution</h1>
-        <p className="subtitle">Phase 13: Advanced Order Types & Smart Execution</p>
+        <p className="subtitle">: Advanced Order Types & Smart Execution</p>
       </div>
 
       <div className="scrollable-content-wrapper">

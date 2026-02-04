@@ -3,7 +3,7 @@ import { Smartphone, Fingerprint, Bell, Vibrate, Shield } from 'lucide-react';
 import './MobileActions.css';
 
 /**
- * Mobile Quick Actions Widget (Phase 21)
+ * Mobile Quick Actions Widget 
  * 
  * Biometric kill switch and push notification trade authorization.
  */
