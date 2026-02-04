@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 # Create a Socket.IO server (ASGI version)
 sio = socketio.AsyncServer(
     async_mode='asgi',
-    cors_allowed_origins='*'
+    cors_allowed_origins=["http://localhost:5173", "http://127.0.0.1:5173"]
 )
 
 # ASGI App to be mounted in FastAPI
@@ -44,8 +44,8 @@ async def unsubscribe(sid, data: Dict[str, Any]):
 
 @sio.event
 async def ping(sid):
-    from datetime import datetime
-    await sio.emit('pong', {'timestamp': datetime.utcnow().isoformat() + 'Z'}, to=sid)
+    from datetime import timezone, datetime
+    await sio.emit('pong', {'timestamp': datetime.now(timezone.utc).isoformat() + 'Z'}, to=sid)
 
 @sio.event
 async def update_mutation_rate(sid, data: Dict[str, Any]):
@@ -89,8 +89,8 @@ class FastAPIWebSocketBroadcaster:
         await sio.emit('portfolio_update', data, room='portfolio')
 
     def _get_timestamp(self) -> str:
-        from datetime import datetime
-        return datetime.utcnow().isoformat() + 'Z'
+        from datetime import timezone, datetime
+        return datetime.now(timezone.utc).isoformat() + 'Z'
 
 # Singleton instance
 broadcaster = FastAPIWebSocketBroadcaster()

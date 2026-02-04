@@ -1,74 +1,174 @@
 """
 Tests for Macro API Endpoints
-Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
-from flask import Flask
-from web.api.macro_api import macro_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.macro_api import router, get_macro_provider, get_futures_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(macro_bp)
+def api_app():
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_macro_service():
-    """Mock MacroService."""
-    with patch('web.api.macro_api._macro_service') as mock:
-        service = AsyncMock()
-        service.get_political_insider_trades.return_value = []
-        service.get_cpi_data.return_value = {'country': 'US', 'cpi': 3.2, 'date': '2024-01-01'}
-        service.get_correlations.return_value = {'gold': 0.8, 'commodities': 0.6}
-        service.get_world_map_data.return_value = {}
-        service.get_economic_calendar.return_value = []
-        mock.return_value = service
-        yield service
+def mock_macro_service(api_app):
+    """Mock Macro Service."""
+    service = AsyncMock()
+    
+    # Mock insider trade
+    trade = MagicMock()
+    trade.politician = "Alice Smith"
+    trade.party = "Blue"
+    trade.country = "US"
+    trade.ticker = "AAPL"
+    trade.action = "BUY"
+    trade.amount = 50000
+    trade.trade_date = "2026-01-01"
+    trade.disclosure_date = "2026-01-15"
+    trade.delay_days = 14
+    service.get_political_insider_trades.return_value = [trade]
+    
+    # Mock CPI
+    cpi = MagicMock()
+    cpi.country_code = "US"
+    cpi.country_name = "United States"
+    cpi.current_cpi = 310.5
+    cpi.yoy_change = 3.2
+    cpi.core_cpi = 3.8
+    cpi.updated_at = "2026-01-01T00:00:00"
+    service.get_regional_cpi.return_value = cpi
+    
+    # Mock Correlations
+    matrix = MagicMock()
+    matrix.assets = ["Gold", "BTC"]
+    matrix.correlations = [[1.0, 0.5], [0.5, 1.0]]
+    matrix.best_hedge = "Gold"
+    matrix.worst_hedge = "Silver"
+    service.get_inflation_hedge_correlations.return_value = matrix
+    
+    service.get_world_map_data.return_value = {"US": 1.0}
+    service.get_economic_calendar.return_value = [{"event": "FOMC"}]
+    
+    # Mock regime
+    regime = MagicMock()
+    regime.status = "Expansion"
+    regime.signals = ["High Yield Narrowing"]
+    regime.metrics = {"GDP": 2.5}
+    regime.health_score = 75
+    regime.timestamp.isoformat.return_value = "2026-01-01T00:00:00"
+    service._fred.get_macro_regime = AsyncMock(return_value=regime)
+    
+    api_app.dependency_overrides[get_macro_provider] = lambda: service
+    return service
+
+
+@pytest.fixture
+def mock_futures_service(api_app):
+    """Mock Futures Service."""
+    service = AsyncMock()
+    
+    # Mock Curve
+    curve = MagicMock()
+    curve.commodity = "CL"
+    curve.commodity_name = "Crude Oil"
+    curve.spot_price = 75.0
+    curve.curve_shape = "Backwardation"
+    curve.updated_at = "2026-01-01T00:00:00"
+    
+    contract = MagicMock()
+    contract.symbol = "CLH6"
+    contract.expiry_date = "2026-03-20"
+    contract.price = 74.0
+    contract.volume = 100000
+    contract.open_interest = 500000
+    curve.contracts = [contract]
+    
+    service.get_futures_curve.return_value = curve
+    service.calculate_roll_yield.return_value = 5.2
+    service.get_all_curves.return_value = [curve]
+    
+    # Mock Spread
+    spread = MagicMock()
+    spread.name = "3:2:1 Crack Spread"
+    spread.value = 25.4
+    spread.historical_mean = 20.0
+    spread.z_score = 1.2
+    spread.components = {"WTI": 75.0, "Gasoline": 100.0, "Heating Oil": 95.0}
+    service.calculate_crack_spread.return_value = spread
+    
+    api_app.dependency_overrides[get_futures_provider] = lambda: service
+    return service
 
 
 def test_get_insider_trades_success(client, mock_macro_service):
-    """Test successful insider trades retrieval."""
-    response = client.get('/insider-trades?region=US')
+    """Test getting insider trades."""
+    response = client.get('/api/v1/macro/insider-trades')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'success' in data or 'data' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data'][0]['politician'] == "Alice Smith"
 
 
 def test_get_cpi_success(client, mock_macro_service):
-    """Test successful CPI data retrieval."""
-    response = client.get('/cpi/US')
+    """Test getting CPI."""
+    response = client.get('/api/v1/macro/cpi/US')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'country' in data or 'cpi' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['country_name'] == "United States"
 
 
-def test_get_correlations_success(client, mock_macro_service):
-    """Test successful correlations retrieval."""
-    response = client.get('/correlations')
+def test_get_futures_curve_success(client, mock_futures_service):
+    """Test getting futures curve."""
+    response = client.get('/api/v1/macro/futures/CL')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert isinstance(data, dict) or 'correlations' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['commodity'] == "CL"
 
 
-def test_get_world_map_success(client, mock_macro_service):
-    """Test successful world map data retrieval."""
-    response = client.get('/world-map')
+def test_get_crack_spread_success(client, mock_futures_service):
+    """Test getting crack spread."""
+    response = client.get('/api/v1/macro/crack-spread')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert isinstance(data, dict) or 'map' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['value'] == 25.4
+
+
+def test_get_macro_dashboard_success(client, mock_macro_service):
+    """Test getting macro dashboard."""
+    response = client.get('/api/v1/macro/dashboard')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert 'world_map_data' in data['data']
+    assert 'political_signals' in data['data']
+
+
+def test_get_macro_regime_success(client, mock_macro_service):
+    """Test getting macro regime."""
+    response = client.get('/api/v1/macro/regime')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['status'] == "Expansion"

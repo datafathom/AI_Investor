@@ -1,6 +1,6 @@
 import pytest
 from services.custody.ledger_service import LedgerService
-from models.platform_ledger import PlatformLedger
+from schemas.platform_ledger import PlatformLedger
 from uuid import uuid4
 
 def test_ledger_hashing():

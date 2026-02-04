@@ -26,7 +26,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
-from models.orders import ExecutionStrategy, ExecutionResult
+from schemas.orders import ExecutionStrategy, ExecutionResult
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)

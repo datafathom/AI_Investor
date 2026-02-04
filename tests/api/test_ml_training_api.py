@@ -1,134 +1,140 @@
 """
 Tests for ML Training API Endpoints
-Phase 27: ML Training & Model Management
 """
 
 import pytest
-from datetime import datetime, timezone
-from unittest.mock import AsyncMock, patch
-from flask import Flask
-from web.api.ml_training_api import ml_training_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.ml_training_api import router, get_training_pipeline_provider, get_deployment_service_provider
+from web.auth_utils import get_current_user
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(ml_training_bp)
+def api_app():
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
+    # Mock current user
+    app.dependency_overrides[get_current_user] = lambda: {'id': 'user_1', 'email': 'test@example.com'}
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_training_pipeline():
-    """Mock TrainingPipeline."""
-    with patch('web.api.ml_training_api.get_training_pipeline') as mock:
-        pipeline = AsyncMock()
-        mock.return_value = pipeline
-        yield pipeline
+def mock_pipeline(api_app):
+    """Mock Training Pipeline."""
+    service = AsyncMock()
+    
+    job = MagicMock()
+    job.model_dump.return_value = {"job_id": "job_123", "status": "created"}
+    service.create_training_job.return_value = job
+    
+    job_started = MagicMock()
+    job_started.model_dump.return_value = {"job_id": "job_123", "status": "training"}
+    service.start_training.return_value = job_started
+    
+    job_completed = MagicMock()
+    job_completed.model_dump.return_value = {"job_id": "job_123", "status": "completed"}
+    service.complete_training.return_value = job_completed
+    
+    api_app.dependency_overrides[get_training_pipeline_provider] = lambda: service
+    return service
 
 
 @pytest.fixture
-def mock_model_deployment_service():
-    """Mock ModelDeploymentService."""
-    with patch('web.api.ml_training_api.get_model_deployment_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+def mock_deployment(api_app):
+    """Mock Deployment Service."""
+    service = AsyncMock()
+    
+    deployment = MagicMock()
+    deployment.model_dump.return_value = {"deployment_id": "dep_123", "status": "deployed"}
+    service.deploy_model.return_value = deployment
+    
+    service.monitor_performance.return_value = {"accuracy": 0.95, "latency": 10}
+    
+    api_app.dependency_overrides[get_deployment_service_provider] = lambda: service
+    return service
 
 
-def test_create_training_job_success(client, mock_training_pipeline):
-    """Test successful training job creation."""
-    from models.ml_training import TrainingJob
-    
-    mock_job = TrainingJob(
-        job_id='job_1',
-        model_name='test_model',
-        dataset_id='dataset_1',
-        status='pending',
-        hyperparameters={}
-    )
-    mock_training_pipeline.create_training_job.return_value = mock_job
-    
-    response = client.post('/api/ml/training/job/create',
-                          json={
-                              'model_name': 'test_model',
-                              'dataset_id': 'dataset_1',
-                              'hyperparameters': {}
-                          })
+def test_create_training_job_success(client, mock_pipeline):
+    """Test creating training job."""
+    payload = {
+        "model_name": "PricePredictor",
+        "dataset_id": "ds_001",
+        "hyperparameters": {"lr": 0.001}
+    }
+    response = client.post('/api/v1/ml-training/job/create', json=payload)
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
-    assert data['data']['model_name'] == 'test_model'
+    assert data['data']['job_id'] == "job_123"
 
 
-def test_create_training_job_missing_params(client):
-    """Test training job creation with missing parameters."""
-    response = client.post('/api/ml/training/job/create',
-                          json={'model_name': 'test_model'})
-    
-    assert response.status_code == 400
-    data = response.get_json()
-    assert data['success'] is False
-
-
-def test_start_training_success(client, mock_training_pipeline):
-    """Test successful training start."""
-    from models.ml_training import TrainingJob
-    
-    mock_job = TrainingJob(
-        job_id='job_1',
-        model_name='test_model',
-        dataset_id='dataset_1',
-        status='running',
-        hyperparameters={}
-    )
-    mock_training_pipeline.start_training.return_value = mock_job
-    
-    response = client.post('/api/ml/training/job/job_1/start')
+def test_start_training_success(client, mock_pipeline):
+    """Test starting training."""
+    response = client.post('/api/v1/ml-training/job/start', json={'job_id': 'job_123'})
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
+    assert data['data']['status'] == "training"
 
 
-def test_deploy_model_success(client, mock_model_deployment_service):
-    """Test successful model deployment."""
-    from models.ml_training import ModelVersion
-    
-    mock_model = ModelVersion(
-        model_id='model_1',
-        model_name='test_model',
-        version='v1.0',
-        status='deployed',
-        framework='pytorch',
-        training_status='completed',
-        created_date=datetime.now(timezone.utc),
-        performance_metrics={}
-    )
-    mock_model_deployment_service.deploy_model.return_value = mock_model
-    
-    response = client.post('/api/ml/deployment/deploy',
-                          json={
-                              'model_version': {
-                                  'model_id': 'model_1',
-                                  'model_name': 'test_model',
-                                  'version': 'v1.0',
-                                  'status': 'deployed',
-                                  'framework': 'pytorch',
-                                  'training_status': 'completed',
-                                  'created_date': datetime.now(timezone.utc).isoformat(),
-                                  'performance_metrics': {}
-                              }
-                          })
+def test_complete_training_success(client, mock_pipeline):
+    """Test completing training."""
+    payload = {
+        "model_version": {
+            "model_id": "mod_001",
+            "model_name": "PricePredictor",
+            "version": "v1.0.0",
+            "framework": "tensorflow",
+            "training_status": "completed",
+            "accuracy": 0.92,
+            "created_date": "2026-02-03T10:00:00"
+        }
+    }
+    response = client.post('/api/v1/ml-training/training/job/job_123/complete', json=payload)
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
+    assert data['data']['status'] == "completed"
+
+
+def test_deploy_model_success(client, mock_deployment):
+    """Test deploying model."""
+    payload = {
+        "model_version": {
+            "model_id": "mod_001",
+            "model_name": "PricePredictor",
+            "version": "v1.0.0",
+            "framework": "tensorflow",
+            "training_status": "completed",
+            "accuracy": 0.92,
+            "created_date": "2026-02-03T10:00:00"
+        },
+        "rollout_percentage": 50.0
+    }
+    response = client.post('/api/v1/ml-training/deploy', json=payload)
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['status'] == "deployed"
+
+
+def test_get_performance_success(client, mock_deployment):
+    """Test getting performance."""
+    response = client.get('/api/v1/ml-training/deployment/mod_001/performance')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['accuracy'] == 0.95

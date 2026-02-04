@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.institutional.professional_tools_service import ProfessionalToolsService
-from models.institutional import ProfessionalReport
+from schemas.institutional import ProfessionalReport
 
 
 @pytest.fixture

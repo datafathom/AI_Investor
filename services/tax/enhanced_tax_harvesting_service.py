@@ -44,6 +44,7 @@ class EnhancedHarvestOpportunity:
     net_benefit: float  # After transaction costs
     replacement_suggestions: List[Dict[str, any]]
     wash_sale_risk: bool
+    requires_approval: bool = False
     rank: int = 0
 
 

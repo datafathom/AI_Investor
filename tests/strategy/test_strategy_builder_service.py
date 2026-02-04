@@ -4,10 +4,10 @@ Comprehensive test coverage for strategy creation, rules, and validation
 """
 
 import pytest
-from datetime import datetime
+from datetime import timezone, datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.strategy.strategy_builder_service import StrategyBuilderService
-from models.strategy import TradingStrategy, StrategyRule, StrategyStatus
+from schemas.strategy import TradingStrategy, StrategyRule, StrategyStatus
 
 
 @pytest.fixture
@@ -72,8 +72,8 @@ async def test_add_rule(service):
         strategy_name="Test Strategy",
         rules=[],
         status=StrategyStatus.DRAFT,
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_strategy = AsyncMock(return_value=strategy)
@@ -108,8 +108,8 @@ async def test_validate_strategy(service):
             )
         ],
         status=StrategyStatus.DRAFT,
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_strategy = AsyncMock(return_value=strategy)
@@ -131,8 +131,8 @@ async def test_validate_strategy_invalid(service):
         strategy_name="Test Strategy",
         rules=[],
         status=StrategyStatus.DRAFT,
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_strategy = AsyncMock(return_value=strategy)

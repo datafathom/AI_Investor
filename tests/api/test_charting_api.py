@@ -4,42 +4,40 @@ Phase 5: Advanced Charting & Technical Analysis
 """
 
 import pytest
-from unittest.mock import AsyncMock, patch
-from flask import Flask
-from web.api.charting_api import charting_bp
+from unittest.mock import AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.charting_api import router, get_charting_service, get_technical_analysis_service
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(charting_bp)
+def api_app(mock_charting_service, mock_technical_analysis_service):
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
+    app.dependency_overrides[get_charting_service] = lambda: mock_charting_service
+    app.dependency_overrides[get_technical_analysis_service] = lambda: mock_technical_analysis_service
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
 def mock_charting_service():
     """Mock ChartingService."""
-    with patch('web.api.charting_api.get_charting_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+    service = AsyncMock()
+    return service
 
 
 @pytest.fixture
 def mock_technical_analysis_service():
     """Mock TechnicalAnalysisService."""
-    with patch('web.api.charting_api.get_technical_analysis_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+    service = AsyncMock()
+    return service
 
 
 def test_get_chart_data_success(client, mock_charting_service):
@@ -52,42 +50,16 @@ def test_get_chart_data_success(client, mock_charting_service):
     }
     mock_charting_service.get_chart_data.return_value = mock_chart_data
     
-    response = client.get('/api/charting/data/AAPL?timeframe=1day&chart_type=candlestick')
+    response = client.get('/api/v1/charting/data?symbol=AAPL&timeframe=1day&chart_type=candlestick')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
     assert data['data']['symbol'] == 'AAPL'
 
 
-@pytest.mark.skip(reason="Requires DataFrame mocking - API creates pd.DataFrame from chart data internally")
-def test_get_indicators_success(client, mock_charting_service, mock_technical_analysis_service):
-    """Test successful indicators retrieval."""
-    # Mock chart data that get_indicators needs
-    mock_chart_data = {
-        'symbol': 'AAPL',
-        'timeframe': '1day',
-        'data': [{'open': 150, 'high': 151, 'low': 149, 'close': 150.5, 'volume': 1000}]
-    }
-    mock_charting_service.get_chart_data.return_value = mock_chart_data
-    
-    mock_indicators = {
-        'rsi': 65.5,
-        'macd': {'value': 0.5, 'signal': 0.3},
-        'bollinger_bands': {'upper': 155.0, 'middle': 150.0, 'lower': 145.0}
-    }
-    mock_technical_analysis_service.calculate_indicators.return_value = mock_indicators
-    
-    response = client.get('/api/charting/indicators/AAPL?indicators=rsi,macd,bollinger')
-    
-    assert response.status_code == 200
-    data = response.get_json()
-    assert data['success'] is True
-
-
 def test_get_patterns_success(client, mock_charting_service, mock_technical_analysis_service):
     """Test successful pattern recognition."""
-    # Mock chart data that get_patterns needs
     mock_chart_data = {
         'symbol': 'AAPL',
         'timeframe': '1day',
@@ -100,16 +72,15 @@ def test_get_patterns_success(client, mock_charting_service, mock_technical_anal
     ]
     mock_technical_analysis_service.recognize_patterns.return_value = mock_patterns
     
-    response = client.get('/api/charting/patterns/AAPL')
+    response = client.get('/api/v1/charting/patterns?symbol=AAPL')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
 
 
 def test_get_signals_success(client, mock_charting_service, mock_technical_analysis_service):
     """Test successful trading signals generation."""
-    # Mock chart data that get_signals needs
     mock_chart_data = {
         'symbol': 'AAPL',
         'timeframe': '1day',
@@ -125,8 +96,8 @@ def test_get_signals_success(client, mock_charting_service, mock_technical_analy
     }
     mock_technical_analysis_service.generate_signals.return_value = mock_signals
     
-    response = client.get('/api/charting/signals/AAPL')
+    response = client.get('/api/v1/charting/signals?symbol=AAPL')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True

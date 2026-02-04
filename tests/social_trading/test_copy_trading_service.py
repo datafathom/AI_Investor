@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.social_trading.copy_trading_service import CopyTradingService
-from models.social_trading import CopyTradingConfig, CopyTrade
+from schemas.social_trading import CopyTradingConfig, CopyTrade
 
 
 @pytest.fixture

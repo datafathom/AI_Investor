@@ -1,171 +1,117 @@
 """
 ==============================================================================
 FILE: web/api/solana_api.py
-ROLE: Solana API REST Endpoints
+ROLE: Solana API REST Endpoints (FastAPI)
 PURPOSE: RESTful endpoints for Solana wallet balance and SPL token queries.
-
-INTEGRATION POINTS:
-    - SolanaClient: Wallet balance retrieval
-    - SolanaTokenRegistry: Token metadata lookup
-    - WalletService: Portfolio sync
-
-ENDPOINTS:
-    GET /api/v1/solana/balance/{address} - Get SOL balance
-    GET /api/v1/solana/tokens/{address} - Get SPL token balances
-    GET /api/v1/solana/transactions/{address} - Get transaction history
-    GET /api/v1/solana/token-info/{mint} - Get token metadata
-
-AUTHOR: AI Investor Team
-CREATED: 2026-01-21
 ==============================================================================
 """
 
-from flask import Blueprint, request, jsonify
+from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi.responses import JSONResponse
 import logging
-import asyncio
+
+from services.crypto.solana_client import get_solana_client
+from services.crypto.solana_token_registry import get_token_registry
+
+
+def get_solana_provider():
+    return get_solana_client()
+
+
+def get_token_registry_provider():
+    return get_token_registry()
 
 logger = logging.getLogger(__name__)
 
-solana_bp = Blueprint('solana', __name__, url_prefix='/api/v1/solana')
+router = APIRouter(prefix="/api/v1/solana", tags=["Solana"])
 
 
-def _run_async(coro):
-    """Helper to run async functions in sync context."""
+@router.get("/balance/{address}")
+async def get_balance(address: str, service=Depends(get_solana_provider)):
+    """Get SOL balance for an address."""
     try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-    return loop.run_until_complete(coro)
-
-
-# =============================================================================
-# Get SOL Balance Endpoint
-# =============================================================================
-
-@solana_bp.route('/balance/<address>', methods=['GET'])
-def get_balance(address: str):
-    """
-    Get SOL balance for an address.
-    
-    Returns:
-        JSON with balance
-    """
-    try:
-        from services.crypto.solana_client import get_solana_client
-        client = get_solana_client()
+        balance = await service.get_sol_balance(address)
         
-        balance = _run_async(client.get_sol_balance(address))
-        
-        return jsonify({
-            "address": address,
-            "balance_sol": balance,
-            "balance_lamports": int(balance * 1e9) if balance else 0
-        })
-        
+        return {
+            "success": True,
+            "data": {
+                "address": address,
+                "balance_sol": balance,
+                "balance_lamports": int(balance * 1e9) if balance else 0
+            }
+        }
     except Exception as e:
-        logger.error(f"Failed to get SOL balance: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to get balance",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to get SOL balance")
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "detail": str(e)}
+        )
 
 
-# =============================================================================
-# Get SPL Tokens Endpoint
-# =============================================================================
-
-@solana_bp.route('/tokens/<address>', methods=['GET'])
-def get_tokens(address: str):
-    """
-    Get SPL token balances for an address.
-    
-    Returns:
-        JSON array of token balances
-    """
+@router.get("/tokens/{address}")
+async def get_tokens(address: str, service=Depends(get_solana_provider)):
+    """Get SPL token balances for an address."""
     try:
-        from services.crypto.solana_client import get_solana_client
-        client = get_solana_client()
+        tokens = await service.get_spl_tokens(address)
         
-        tokens = _run_async(client.get_spl_tokens(address))
-        
-        return jsonify({
-            "address": address,
-            "tokens": tokens,
-            "count": len(tokens)
-        })
-        
+        return {
+            "success": True,
+            "data": {
+                "address": address,
+                "tokens": tokens,
+                "count": len(tokens)
+            }
+        }
     except Exception as e:
-        logger.error(f"Failed to get SPL tokens: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to get tokens",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to get SPL tokens")
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "detail": str(e)}
+        )
 
 
-# =============================================================================
-# Get Transaction History Endpoint
-# =============================================================================
-
-@solana_bp.route('/transactions/<address>', methods=['GET'])
-def get_transactions(address: str):
-    """
-    Get transaction history with parsed instructions.
-    
-    Query Params:
-        limit: Maximum transactions (default 50)
-        
-    Returns:
-        JSON array of transactions
-    """
+@router.get("/transactions/{address}")
+async def get_transactions(
+    address: str, 
+    limit: int = Query(50, ge=1, le=100),
+    service=Depends(get_solana_provider)
+):
+    """Get transaction history with parsed instructions."""
     try:
-        limit = int(request.args.get('limit', 50))
+        transactions = await service.get_transaction_history(address, limit=limit)
         
-        from services.crypto.solana_client import get_solana_client
-        client = get_solana_client()
-        
-        transactions = _run_async(client.get_transaction_history(address, limit=limit))
-        
-        return jsonify({
-            "address": address,
-            "transactions": transactions,
-            "count": len(transactions)
-        })
-        
+        return {
+            "success": True,
+            "data": {
+                "address": address,
+                "transactions": transactions,
+                "count": len(transactions)
+            }
+        }
     except Exception as e:
-        logger.error(f"Failed to get transactions: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to get transactions",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to get transactions")
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "detail": str(e)}
+        )
 
 
-# =============================================================================
-# Get Token Info Endpoint
-# =============================================================================
-
-@solana_bp.route('/token-info/<mint>', methods=['GET'])
-def get_token_info(mint: str):
-    """
-    Get token metadata from registry.
-    
-    Returns:
-        JSON with token info
-    """
+@router.get("/token-info/{mint}")
+async def get_token_info(mint: str, registry=Depends(get_token_registry_provider)):
+    """Get token metadata from registry."""
     try:
-        from services.crypto.solana_token_registry import get_token_registry
-        registry = get_token_registry()
-        
         token_info = registry.get_token_info(mint)
         
-        return jsonify({
-            "mint": mint,
-            "token_info": token_info
-        })
-        
+        return {
+            "success": True,
+            "data": {
+                "mint": mint,
+                "token_info": token_info
+            }
+        }
     except Exception as e:
-        logger.error(f"Failed to get token info: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to get token info",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to get token info")
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "detail": str(e)}
+        )

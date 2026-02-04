@@ -1,7 +1,7 @@
 import logging
 from typing import List, Optional
 from uuid import UUID
-from models.index_fund import IndexFund, IndexFundCreate
+from schemas.index_fund import IndexFund, IndexFundCreate
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +12,7 @@ class IndexFundService:
         self.mock_db = {}
 
     def add_fund(self, fund_data: IndexFundCreate) -> IndexFund:
-        new_fund = IndexFund(**fund_data.dict())
+        new_fund = IndexFund(**fund_data.model_dump())
         self.mock_db[new_fund.ticker] = new_fund
         logger.info(f"FUND_LOG: Added fund {new_fund.ticker} ({new_fund.name})")
         return new_fund

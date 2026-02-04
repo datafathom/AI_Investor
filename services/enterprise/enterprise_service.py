@@ -26,7 +26,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
-from models.enterprise import Organization, Team, TeamRole
+from schemas.enterprise import Organization, Team, TeamRole
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -146,7 +146,7 @@ class EnterpriseService:
     async def _save_organization(self, organization: Organization):
         """Save organization to cache."""
         cache_key = f"organization:{organization.organization_id}"
-        self.cache_service.set(cache_key, organization.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, organization.model_dump(), ttl=86400 * 365)
     
     async def _get_team(self, team_id: str) -> Optional[Team]:
         """Get team from cache."""
@@ -159,7 +159,7 @@ class EnterpriseService:
     async def _save_team(self, team: Team):
         """Save team to cache."""
         cache_key = f"team:{team.team_id}"
-        self.cache_service.set(cache_key, team.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, team.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

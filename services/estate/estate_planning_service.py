@@ -27,7 +27,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
-from models.estate import (
+from schemas.estate import (
     EstatePlan, Beneficiary, BeneficiaryType
 )
 from services.portfolio.portfolio_aggregator import get_portfolio_aggregator

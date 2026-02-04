@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime, timedelta, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.trading.simulation_service import SimulationService
-from models.paper_trading import SimulationResult
+from schemas.paper_trading import SimulationResult
 
 
 @pytest.fixture

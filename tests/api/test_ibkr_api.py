@@ -1,97 +1,99 @@
 """
-Tests for Interactive Brokers API Endpoints
-Phase 6: API Endpoint Tests
+Tests for IBKR API Endpoints
 """
 
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
-from flask import Flask
-from web.api.ibkr_api import ibkr_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.ibkr_api import router, get_ibkr_client_provider, get_ibkr_gateway_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(ibkr_bp)
+def api_app():
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_ibkr_client():
-    """Mock IBKRClient."""
-    with patch('web.api.ibkr_api.get_ibkr_client') as mock:
-        client = AsyncMock()
-        client.get_account_summary.return_value = {
-            'account_id': 'acc_1',
-            'net_liquidation': 100000.0,
-            'buying_power': 200000.0
-        }
-        client.get_positions.return_value = [
-            {'symbol': 'AAPL', 'quantity': 100, 'avg_cost': 150.0}
-        ]
-        client.get_orders.return_value = [{'id': 'order_1', 'symbol': 'AAPL', 'status': 'filled'}]
-        client.place_order.return_value = {'order_id': 'order_2', 'status': 'submitted'}
-        client.cancel_order.return_value = True
-        client.get_margin_requirements.return_value = {'maintenance_margin': 25000.0}
-        client.get_currency_exposure.return_value = {'USD': 100000.0, 'EUR': 0.0}
-        mock.return_value = client
-        yield client
+def mock_ibkr_client(api_app):
+    """Mock IBKR Client."""
+    client = AsyncMock()
+    client.connected = True
+    client.get_account_summary.return_value = {'NetLiquidation': 100000}
+    client.get_positions.return_value = [{'symbol': 'AAPL', 'quantity': 10}]
+    client.get_orders.return_value = [{'order_id': 1, 'status': 'Filled'}]
+    client.place_order.return_value = {'order_id': 2, 'status': 'Submitted'}
+    client.cancel_order.return_value = True
+    client.get_margin_requirements.return_value = {'equity_with_loan': 50000}
+    client.get_currency_exposure.return_value = {'USD': 1.0}
+    api_app.dependency_overrides[get_ibkr_client_provider] = lambda: client
+    return client
+
+
+@pytest.fixture
+def mock_ibkr_gateway(api_app):
+    """Mock IBKR Gateway."""
+    gateway = AsyncMock()
+    gateway.get_session_status.return_value = {'status': 'Connected'}
+    api_app.dependency_overrides[get_ibkr_gateway_provider] = lambda: gateway
+    return gateway
 
 
 def test_get_account_summary_success(client, mock_ibkr_client):
-    """Test successful account summary retrieval."""
+    """Test getting account summary."""
     response = client.get('/api/v1/ibkr/account-summary')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'account_id' in data or 'net_liquidation' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['NetLiquidation'] == 100000
 
 
 def test_get_positions_success(client, mock_ibkr_client):
-    """Test successful positions retrieval."""
+    """Test getting positions."""
     response = client.get('/api/v1/ibkr/positions')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert isinstance(data, list) or 'positions' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['count'] == 1
 
 
 def test_place_order_success(client, mock_ibkr_client):
-    """Test successful order placement."""
+    """Test placing an order."""
     response = client.post('/api/v1/ibkr/orders',
-                          json={
-                              'symbol': 'AAPL',
-                              'quantity': 100,
-                              'order_type': 'market',
-                              'side': 'buy'
-                          })
+                           json={'contract': 'AAPL', 'action': 'BUY', 'quantity': 10})
     
-    assert response.status_code == 200
-    data = response.get_json()
-    assert 'order_id' in data or 'status' in data
+    assert response.status_code == 201
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['order']['order_id'] == 2
 
 
 def test_cancel_order_success(client, mock_ibkr_client):
-    """Test successful order cancellation."""
-    response = client.delete('/api/v1/ibkr/orders/order_1')
+    """Test cancelling an order."""
+    response = client.delete('/api/v1/ibkr/orders/1')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'message' in data or 'status' in data
+    data = response.json()
+    assert data['success'] is True
+    assert 'cancelled' in data['data']['message']
 
 
-def test_get_margin_success(client, mock_ibkr_client):
-    """Test successful margin requirements retrieval."""
-    response = client.get('/api/v1/ibkr/margin')
+def test_get_gateway_status_success(client, mock_ibkr_gateway):
+    """Test getting gateway status."""
+    response = client.get('/api/v1/ibkr/gateway/status')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'maintenance_margin' in data or 'margin' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['status'] == 'Connected'

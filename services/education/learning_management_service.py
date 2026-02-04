@@ -23,9 +23,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional
-from models.education import Course, Enrollment, CourseStatus, Certificate
+from schemas.education import Course, Enrollment, CourseStatus, Certificate
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -68,7 +68,7 @@ class LearningManagementService:
         logger.info(f"Creating course: {title}")
         
         course = Course(
-            course_id=f"course_{datetime.utcnow().timestamp()}",
+            course_id=f"course_{datetime.now(timezone.utc).timestamp()}",
             title=title,
             description=description,
             instructor=instructor,
@@ -76,8 +76,8 @@ class LearningManagementService:
             difficulty=difficulty,
             duration_hours=duration_hours,
             lessons=lessons or [],
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Save course
@@ -103,11 +103,11 @@ class LearningManagementService:
         logger.info(f"Enrolling user {user_id} in course {course_id}")
         
         enrollment = Enrollment(
-            enrollment_id=f"enrollment_{user_id}_{course_id}_{datetime.utcnow().timestamp()}",
+            enrollment_id=f"enrollment_{user_id}_{course_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             course_id=course_id,
             status=CourseStatus.NOT_STARTED,
-            started_date=datetime.utcnow()
+            started_date=datetime.now(timezone.utc)
         )
         
         # Save enrollment
@@ -148,11 +148,11 @@ class LearningManagementService:
         # Update status
         if enrollment.progress_percentage >= 100:
             enrollment.status = CourseStatus.COMPLETED
-            enrollment.completed_date = datetime.utcnow()
+            enrollment.completed_date = datetime.now(timezone.utc)
         elif enrollment.progress_percentage > 0:
             enrollment.status = CourseStatus.IN_PROGRESS
         
-        enrollment.updated_date = datetime.utcnow()
+        enrollment.updated_date = datetime.now(timezone.utc)
         await self._save_enrollment(enrollment)
         
         return enrollment
@@ -178,10 +178,10 @@ class LearningManagementService:
             raise ValueError("Course must be completed before issuing certificate")
         
         certificate = Certificate(
-            certificate_id=f"cert_{enrollment.user_id}_{enrollment.course_id}_{datetime.utcnow().timestamp()}",
+            certificate_id=f"cert_{enrollment.user_id}_{enrollment.course_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=enrollment.user_id,
             course_id=enrollment.course_id,
-            issued_date=datetime.utcnow(),
+            issued_date=datetime.now(timezone.utc),
             verification_code=f"VERIFY_{enrollment.user_id}_{enrollment.course_id}"
         )
         
@@ -206,7 +206,7 @@ class LearningManagementService:
     async def _save_course(self, course: Course):
         """Save course to cache."""
         cache_key = f"course:{course.course_id}"
-        self.cache_service.set(cache_key, course.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, course.model_dump(), ttl=86400 * 365)
     
     async def _get_enrollment(self, enrollment_id: str) -> Optional[Enrollment]:
         """Get enrollment from cache."""
@@ -219,12 +219,12 @@ class LearningManagementService:
     async def _save_enrollment(self, enrollment: Enrollment):
         """Save enrollment to cache."""
         cache_key = f"enrollment:{enrollment.enrollment_id}"
-        self.cache_service.set(cache_key, enrollment.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, enrollment.model_dump(), ttl=86400 * 365)
     
     async def _save_certificate(self, certificate: Certificate):
         """Save certificate to cache."""
         cache_key = f"certificate:{certificate.certificate_id}"
-        self.cache_service.set(cache_key, certificate.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, certificate.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

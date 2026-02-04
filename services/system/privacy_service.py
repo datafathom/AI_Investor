@@ -1,7 +1,7 @@
 
 import logging
 import json
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, Any, List
 from utils.database_manager import get_database_manager
 from services.system.logging_service import get_logging_service
@@ -30,7 +30,7 @@ class PrivacyService:
         
         export_data = {
             "metadata": {
-                "exported_at": datetime.utcnow().isoformat(),
+                "exported_at": datetime.now(timezone.utc).isoformat(),
                 "user_id": user_id,
                 "platform": "AI Investor"
             },

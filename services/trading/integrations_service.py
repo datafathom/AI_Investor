@@ -46,31 +46,31 @@ class IntegrationsService:
         self._webhooks = []
         logger.info("IntegrationsService initialized")
 
-    def get_connectors(self) -> List[APIConnector]:
+    async def get_connectors(self) -> List[APIConnector]:
         return self._connectors
 
-    def test_connector(self, connector_id: str) -> Dict:
+    async def test_connector(self, connector_id: str) -> Dict:
         logger.info(f"Testing connector {connector_id}")
         return {"status": "success", "latency": "145ms"}
 
-    def get_api_keys(self) -> List[APIKey]:
+    async def get_api_keys(self) -> List[APIKey]:
         return self._keys
 
-    def create_api_key(self, label: str) -> Dict:
+    async def create_api_key(self, label: str) -> Dict:
         new_id = str(uuid.uuid4())
         key = f"ak_live_{uuid.uuid4().hex}"
         self._keys.append(APIKey(new_id, label, key[:8] + "...", datetime.now().strftime("%Y-%m-%d")))
         return {"id": new_id, "key": key}
 
-    def get_webhooks(self) -> List[Webhook]:
+    async def get_webhooks(self) -> List[Webhook]:
         return self._webhooks
 
-    def add_webhook(self, url: str, events: List[str]) -> Webhook:
+    async def add_webhook(self, url: str, events: List[str]) -> Webhook:
         wh = Webhook(str(uuid.uuid4()), url, events, "active")
         self._webhooks.append(wh)
         return wh
         
-    def test_webhook(self, webhook_id: str) -> Dict:
+    async def test_webhook(self, webhook_id: str) -> Dict:
         logger.info(f"Testing webhook {webhook_id}")
         return {"status": "success", "delivery_rate": "100%"}
 

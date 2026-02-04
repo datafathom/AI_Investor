@@ -1,365 +1,231 @@
 """
 ==============================================================================
 FILE: web/api/calendar_api.py
-ROLE: Google Calendar API REST Endpoints
+ROLE: Google Calendar API REST Endpoints (FastAPI)
 PURPOSE: RESTful endpoints for managing calendar events and syncing earnings.
-
-INTEGRATION POINTS:
-    - GoogleCalendarService: Event management
-    - EarningsSyncService: Earnings calendar sync
-
-ENDPOINTS:
-    POST /api/v1/calendar/events - Create calendar event
-    GET /api/v1/calendar/events - List calendar events
-    PUT /api/v1/calendar/events/{id} - Update event
-    DELETE /api/v1/calendar/events/{id} - Delete event
-    POST /api/v1/calendar/sync/earnings - Sync earnings calendar
-
-AUTHOR: AI Investor Team
-CREATED: 2026-01-21
 ==============================================================================
 """
 
-from flask import Blueprint, request, jsonify
+from fastapi import APIRouter, HTTPException, Header, Query, Path, Body, Depends
+from pydantic import BaseModel
 import logging
-import asyncio
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Optional, List, Dict, Any
+
+from services.calendar.google_calendar_service import get_calendar_service as _get_calendar_service
+from services.calendar.earnings_sync import get_earnings_sync_service as _get_earnings_sync_service
+
+def get_calendar_service():
+    """Dependency for getting the Google calendar service."""
+    return _get_calendar_service()
+
+def get_earnings_sync_service():
+    """Dependency for getting the earnings sync service."""
+    return _get_earnings_sync_service()
 
 logger = logging.getLogger(__name__)
 
-calendar_bp = Blueprint('calendar', __name__, url_prefix='/api/v1/calendar')
+router = APIRouter(prefix="/api/v1/calendar", tags=["Calendar"])
 
 
-def _run_async(coro):
-    """Helper to run async functions in sync context."""
+class CreateEventRequest(BaseModel):
+    title: str
+    description: str = ""
+    start_time: str
+    end_time: Optional[str] = None
+    location: Optional[str] = None
+    event_type: str = "default"
+    access_token: Optional[str] = None
+
+
+class UpdateEventRequest(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    start_time: Optional[str] = None
+    end_time: Optional[str] = None
+    location: Optional[str] = None
+    access_token: Optional[str] = None
+
+
+class SyncEarningsRequest(BaseModel):
+    holdings: Optional[List[str]] = None
+    days_ahead: int = 90
+    access_token: Optional[str] = None
+
+
+def _get_access_token(authorization: Optional[str], body_token: Optional[str]):
+    """Helper to get access token from header or body."""
+    if authorization and authorization.startswith('Bearer '):
+        return authorization[7:]
+    return body_token
+
+
+@router.post("/events")
+async def create_event(
+    request: CreateEventRequest,
+    service = Depends(get_calendar_service),
+    authorization: Optional[str] = Header(None)
+):
+    """Create calendar event."""
     try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-    return loop.run_until_complete(coro)
-
-
-def _get_user_id():
-    """Get current user ID from session/token."""
-    return request.headers.get('X-User-ID', 'demo-user')
-
-
-def _get_access_token():
-    """Get Google access token from request."""
-    auth_header = request.headers.get('Authorization', '')
-    if auth_header.startswith('Bearer '):
-        return auth_header[7:]
-    data = request.json or {}
-    return data.get('access_token')
-
-
-# =============================================================================
-# Create Event Endpoint
-# =============================================================================
-
-@calendar_bp.route('/events', methods=['POST'])
-def create_event():
-    """
-    Create calendar event.
-    
-    Request Body:
-        {
-            "title": "Event Title",
-            "description": "Event Description",
-            "start_time": "2026-01-22T09:30:00",
-            "end_time": "2026-01-22T10:30:00",  // optional
-            "location": "Location",  // optional
-            "event_type": "earnings",  // earnings, dividend, rebalance
-            "access_token": "google_access_token"
-        }
-        
-    Returns:
-        JSON with event_id and details
-    """
-    try:
-        data = request.json or {}
-        
-        title = data.get('title')
-        description = data.get('description', '')
-        start_time_str = data.get('start_time')
-        end_time_str = data.get('end_time')
-        location = data.get('location')
-        event_type = data.get('event_type', 'default')
-        access_token = _get_access_token()
-        
-        if not title or not start_time_str:
-            return jsonify({
-                "error": "Missing required fields: title, start_time"
-            }), 400
-        
+        access_token = _get_access_token(authorization, request.access_token)
         if not access_token:
-            return jsonify({
-                "error": "Missing Google access token"
-            }), 401
+            from fastapi.responses import JSONResponse
+            return JSONResponse(status_code=401, content={"success": False, "detail": "Missing Google access token"})
         
         # Parse datetime
         try:
-            start_time = datetime.fromisoformat(start_time_str.replace('Z', '+00:00'))
-            end_time = datetime.fromisoformat(end_time_str.replace('Z', '+00:00')) if end_time_str else None
+            start_time = datetime.fromisoformat(request.start_time.replace('Z', '+00:00'))
+            end_time = datetime.fromisoformat(request.end_time.replace('Z', '+00:00')) if request.end_time else None
         except Exception as e:
-            return jsonify({
-                "error": f"Invalid datetime format: {str(e)}"
-            }), 400
+            from fastapi.responses import JSONResponse
+            return JSONResponse(status_code=400, content={"success": False, "detail": f"Invalid datetime format: {str(e)}"})
         
-        from services.calendar.google_calendar_service import get_calendar_service
-        calendar_service = get_calendar_service()
-        
-        result = _run_async(calendar_service.create_event(
+        result = await service.create_event(
             access_token=access_token,
-            title=title,
-            description=description,
+            title=request.title,
+            description=request.description,
             start_time=start_time,
             end_time=end_time,
-            location=location,
-            event_type=event_type
-        ))
+            location=request.location,
+            event_type=request.event_type
+        )
         
-        return jsonify({
-            "success": True,
-            "event": result
-        }), 201
-        
+        return {"success": True, "data": result}
     except Exception as e:
-        logger.error(f"Create event failed: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to create event",
-            "message": str(e)
-        }), 500
+        logger.exception("Create event failed")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-# =============================================================================
-# List Events Endpoint
-# =============================================================================
-
-@calendar_bp.route('/events', methods=['GET'])
-def list_events():
-    """
-    List calendar events.
-    
-    Query Params:
-        start_time: Start of time range (ISO format)
-        end_time: End of time range (ISO format)
-        max_results: Maximum events to return (default 50)
-        
-    Returns:
-        JSON array of events
-    """
+@router.get("/events")
+async def list_events(
+    start_time: Optional[str] = Query(None),
+    end_time: Optional[str] = Query(None),
+    max_results: int = Query(50, ge=1, le=250),
+    service = Depends(get_calendar_service),
+    authorization: Optional[str] = Header(None)
+):
+    """List calendar events."""
     try:
-        start_time_str = request.args.get('start_time')
-        end_time_str = request.args.get('end_time')
-        max_results = int(request.args.get('max_results', 50))
-        access_token = _get_access_token()
-        
+        access_token = _get_access_token(authorization, None)
         if not access_token:
-            return jsonify({
-                "error": "Missing Google access token"
-            }), 401
+            from fastapi.responses import JSONResponse
+            return JSONResponse(status_code=401, content={"success": False, "detail": "Missing Google access token"})
         
-        start_time = None
-        end_time = None
+        t_start = None
+        t_end = None
+        if start_time:
+            t_start = datetime.fromisoformat(start_time.replace('Z', '+00:00'))
+        if end_time:
+            t_end = datetime.fromisoformat(end_time.replace('Z', '+00:00'))
         
-        if start_time_str:
-            start_time = datetime.fromisoformat(start_time_str.replace('Z', '+00:00'))
-        if end_time_str:
-            end_time = datetime.fromisoformat(end_time_str.replace('Z', '+00:00'))
-        
-        from services.calendar.google_calendar_service import get_calendar_service
-        calendar_service = get_calendar_service()
-        
-        events = _run_async(calendar_service.list_events(
+        events = await service.list_events(
             access_token=access_token,
-            start_time=start_time,
-            end_time=end_time,
+            start_time=t_start,
+            end_time=t_end,
             max_results=max_results
-        ))
+        )
         
-        return jsonify({
-            "events": events,
-            "count": len(events)
-        })
-        
+        return {"success": True, "data": events, "count": len(events)}
     except Exception as e:
-        logger.error(f"List events failed: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to list events",
-            "message": str(e)
-        }), 500
+        logger.exception("List events failed")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-# =============================================================================
-# Update Event Endpoint
-# =============================================================================
-
-@calendar_bp.route('/events/<event_id>', methods=['PUT'])
-def update_event(event_id: str):
-    """
-    Update calendar event.
-    
-    Request Body:
-        {
-            "title": "New Title",  // optional
-            "description": "New Description",  // optional
-            "start_time": "2026-01-22T09:30:00",  // optional
-            "end_time": "2026-01-22T10:30:00",  // optional
-            "location": "New Location",  // optional
-            "access_token": "google_access_token"
-        }
-        
-    Returns:
-        JSON with updated event details
-    """
+@router.put("/events/{event_id}")
+async def update_event(
+    event_id: str = Path(...),
+    request: UpdateEventRequest = Body(...),
+    service = Depends(get_calendar_service),
+    authorization: Optional[str] = Header(None)
+):
+    """Update calendar event."""
     try:
-        data = request.json or {}
-        access_token = _get_access_token()
-        
+        access_token = _get_access_token(authorization, request.access_token)
         if not access_token:
-            return jsonify({
-                "error": "Missing Google access token"
-            }), 401
+            from fastapi.responses import JSONResponse
+            return JSONResponse(status_code=401, content={"success": False, "detail": "Missing Google access token"})
         
-        # Parse datetime if provided
-        start_time = None
-        end_time = None
+        t_start = None
+        t_end = None
+        if request.start_time:
+            t_start = datetime.fromisoformat(request.start_time.replace('Z', '+00:00'))
+        if request.end_time:
+            t_end = datetime.fromisoformat(request.end_time.replace('Z', '+00:00'))
         
-        if data.get('start_time'):
-            start_time = datetime.fromisoformat(data['start_time'].replace('Z', '+00:00'))
-        if data.get('end_time'):
-            end_time = datetime.fromisoformat(data['end_time'].replace('Z', '+00:00'))
-        
-        from services.calendar.google_calendar_service import get_calendar_service
-        calendar_service = get_calendar_service()
-        
-        result = _run_async(calendar_service.update_event(
+        result = await service.update_event(
             access_token=access_token,
             event_id=event_id,
-            title=data.get('title'),
-            description=data.get('description'),
-            start_time=start_time,
-            end_time=end_time,
-            location=data.get('location')
-        ))
+            title=request.title,
+            description=request.description,
+            start_time=t_start,
+            end_time=t_end,
+            location=request.location
+        )
         
-        return jsonify({
-            "success": True,
-            "event": result
-        })
-        
+        return {"success": True, "data": result}
     except Exception as e:
-        logger.error(f"Update event failed: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to update event",
-            "message": str(e)
-        }), 500
+        logger.exception("Update event failed")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-# =============================================================================
-# Delete Event Endpoint
-# =============================================================================
-
-@calendar_bp.route('/events/<event_id>', methods=['DELETE'])
-def delete_event(event_id: str):
-    """
-    Delete calendar event.
-    
-    Returns:
-        JSON confirmation
-    """
+@router.delete("/events/{event_id}")
+async def delete_event(
+    event_id: str = Path(...),
+    service = Depends(get_calendar_service),
+    authorization: Optional[str] = Header(None)
+):
+    """Delete calendar event."""
     try:
-        access_token = _get_access_token()
-        
+        access_token = _get_access_token(authorization, None)
         if not access_token:
-            return jsonify({
-                "error": "Missing Google access token"
-            }), 401
+            from fastapi.responses import JSONResponse
+            return JSONResponse(status_code=401, content={"success": False, "detail": "Missing Google access token"})
         
-        from services.calendar.google_calendar_service import get_calendar_service
-        calendar_service = get_calendar_service()
-        
-        deleted = _run_async(calendar_service.delete_event(
+        deleted = await service.delete_event(
             access_token=access_token,
             event_id=event_id
-        ))
+        )
         
         if deleted:
-            return jsonify({
-                "success": True,
-                "message": "Event deleted"
-            })
+            return {"success": True, "data": {"message": "Event deleted"}}
         else:
-            return jsonify({
-                "error": "Event not found"
-            }), 404
-        
+            from fastapi.responses import JSONResponse
+            return JSONResponse(status_code=404, content={"success": False, "detail": "Event not found"})
     except Exception as e:
-        logger.error(f"Delete event failed: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to delete event",
-            "message": str(e)
-        }), 500
+        logger.exception("Delete event failed")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-# =============================================================================
-# Sync Earnings Endpoint
-# =============================================================================
-
-@calendar_bp.route('/sync/earnings', methods=['POST'])
-def sync_earnings():
-    """
-    Sync earnings calendar for user's holdings.
-    
-    Request Body:
-        {
-            "holdings": ["AAPL", "MSFT", ...],  // optional, defaults to user's portfolio
-            "days_ahead": 90,  // optional
-            "access_token": "google_access_token"
-        }
-        
-    Returns:
-        JSON with sync statistics
-    """
+@router.post("/sync/earnings")
+async def sync_earnings(
+    request: SyncEarningsRequest,
+    service = Depends(get_earnings_sync_service),
+    authorization: Optional[str] = Header(None),
+    x_user_id: str = Header("demo-user")
+):
+    """Sync earnings calendar for user's holdings."""
     try:
-        data = request.json or {}
-        user_id = _get_user_id()
-        access_token = _get_access_token()
-        
+        access_token = _get_access_token(authorization, request.access_token)
         if not access_token:
-            return jsonify({
-                "error": "Missing Google access token"
-            }), 401
+            from fastapi.responses import JSONResponse
+            return JSONResponse(status_code=401, content={"success": False, "detail": "Missing Google access token"})
         
-        holdings = data.get('holdings', [])
-        days_ahead = int(data.get('days_ahead', 90))
+        holdings = request.holdings or ["AAPL", "MSFT", "GOOGL"]
         
-        # If no holdings provided, get from user's portfolio
-        if not holdings:
-            # TODO: Fetch from PortfolioService
-            holdings = ["AAPL", "MSFT", "GOOGL"]  # Mock for now
-        
-        from services.calendar.earnings_sync import get_earnings_sync_service
-        sync_service = get_earnings_sync_service()
-        
-        result = _run_async(sync_service.sync_earnings_for_user(
-            user_id=user_id,
+        result = await service.sync_earnings_for_user(
+            user_id=x_user_id,
             access_token=access_token,
             holdings=holdings,
-            days_ahead=days_ahead
-        ))
+            days_ahead=request.days_ahead
+        )
         
-        return jsonify({
-            "success": True,
-            "sync_result": result
-        })
-        
+        return {"success": True, "data": result}
     except Exception as e:
-        logger.error(f"Earnings sync failed: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to sync earnings",
-            "message": str(e)
-        }), 500
+        logger.exception("Earnings sync failed")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

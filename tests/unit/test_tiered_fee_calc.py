@@ -1,6 +1,6 @@
 import pytest
 from services.billing.tiered_fee_calc import TieredFeeCalculator
-from models.fee_billing import FeeSchedule
+from schemas.fee_billing import FeeSchedule
 from uuid import uuid4
 from datetime import date
 

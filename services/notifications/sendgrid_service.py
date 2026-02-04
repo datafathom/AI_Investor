@@ -17,6 +17,7 @@ import logging
 import asyncio
 import uuid
 import datetime
+from datetime import timezone
 from typing import Dict, Any, Optional, List
 
 logger = logging.getLogger(__name__)
@@ -48,7 +49,7 @@ class SendGridClient:
                 "from": "reports@ai-investor.com",
                 "subject": subject,
                 "status": "sent",
-                "timestamp": datetime.datetime.utcnow().isoformat()
+                "timestamp": datetime.datetime.now(timezone.utc).isoformat()
             }
         return {}
     

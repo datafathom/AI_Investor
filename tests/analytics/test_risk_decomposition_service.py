@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime, timedelta
 from unittest.mock import Mock, AsyncMock, patch, MagicMock
 from services.analytics.risk_decomposition_service import RiskDecompositionService
-from models.analytics import FactorRiskDecomposition, ConcentrationRiskAnalysis, CorrelationAnalysis, TailRiskContributions
+from schemas.analytics import FactorRiskDecomposition, ConcentrationRiskAnalysis, CorrelationAnalysis, TailRiskContributions
 
 
 @pytest.fixture

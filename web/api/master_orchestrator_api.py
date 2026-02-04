@@ -1,96 +1,133 @@
-from flask import Blueprint, jsonify, request
-from web.auth_utils import login_required
+"""
+==============================================================================
+FILE: web/api/master_orchestrator_api.py
+ROLE: Master Orchestrator API Endpoints (FastAPI)
+PURPOSE: Knowledge graph and orchestration endpoints.
+==============================================================================
+"""
+
+from fastapi import APIRouter, HTTPException, Depends
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from typing import Dict, Any, Optional
+import logging
+
+from web.auth_utils import get_current_user
 from services.neo4j.master_graph import MasterGraph
 from services.neo4j.neo4j_service import neo4j_service
-import logging
+
+
+def get_master_graph_provider():
+    return MasterGraph()
+
+
+def get_neo4j_provider():
+    return neo4j_service
 
 logger = logging.getLogger(__name__)
 
-master_orchestrator_bp = Blueprint('master_orchestrator', __name__, url_prefix='/api/v1/master')
+router = APIRouter(prefix="/api/v1/master", tags=["Master Orchestrator"])
 
-@master_orchestrator_bp.route('/graph', methods=['GET'])
-@login_required
-def get_master_graph():
+
+class BoltProxyRequest(BaseModel):
+    query: str
+    params: Dict[str, Any] = {}
+
+
+class ShockRequest(BaseModel):
+    asset_id: str
+    magnitude: float = -0.1
+
+
+@router.get("/graph")
+async def get_master_graph(
+    current_user: dict = Depends(get_current_user),
+    service=Depends(get_master_graph_provider)
+):
     """
     Retrieve the Unified Knowledge Graph structure.
     Returns: JSON: Node-link structure for D3.js visualization.
     """
     try:
-        service = MasterGraph()
         data = service.get_graph_data()
-        return jsonify({
-            "status": "success",
+        return {
+            "success": True,
             "data": data
-        })
+        }
     except Exception as e:
         logger.exception("Failed to fetch master graph data")
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "detail": str(e)}
+        )
 
-@master_orchestrator_bp.route('/bolt-proxy', methods=['POST'])
-@login_required
-def bolt_proxy():
+
+@router.post("/bolt-proxy")
+async def bolt_proxy(
+    request: BoltProxyRequest,
+    current_user: dict = Depends(get_current_user),
+    service=Depends(get_neo4j_provider)
+):
     """
     Facilitate high-speed graph queries without exposing Neo4j credentials to the browser.
     Expects: { "query": "...", "params": {...} }
     """
     try:
-        data = request.json
-        query = data.get('query')
-        params = data.get('params', {})
-        
-        if not query:
-            return jsonify({"status": "error", "message": "No query provided"}), 400
+        if not request.query:
+            return JSONResponse(
+                status_code=400,
+                content={"success": False, "detail": "No query provided"}
+            )
             
-        results = neo4j_service.execute_query(query, params)
-        return jsonify({
-            "status": "success",
+        results = service.execute_query(request.query, request.params)
+        return {
+            "success": True,
             "data": results
-        })
+        }
     except Exception as e:
         logger.exception("Bolt proxy query failed")
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "detail": str(e)}
+        )
 
-@master_orchestrator_bp.route('/shock', methods=['POST'])
-@login_required
-def trigger_shock():
+
+@router.post("/shock")
+async def trigger_shock(
+    request: ShockRequest,
+    current_user: dict = Depends(get_current_user),
+    service=Depends(get_master_graph_provider)
+):
     """
     Trigger a reflexivity shock simulation.
     Expects: { "asset_id": "...", "magnitude": -0.2 }
     """
     try:
-        data = request.json
-        asset_id = data.get('asset_id')
-        magnitude = data.get('magnitude', -0.1)
-        
-        if not asset_id:
-            return jsonify({"status": "error", "message": "No asset_id provided"}), 400
+        if not request.asset_id:
+            return JSONResponse(
+                status_code=400,
+                content={"success": False, "detail": "No asset_id provided"}
+            )
             
-        service = MasterGraph()
-        shock_results = service.trigger_reflexivity_shock(asset_id, magnitude)
+        shock_results = service.trigger_reflexivity_shock(request.asset_id, request.magnitude)
         
-        return jsonify({
-            "status": "success",
+        return {
+            "success": True,
             "data": shock_results
-        })
+        }
     except AttributeError:
-         # In case service hasn't implemented it yet
-         return jsonify({
-            "status": "success",
+        # In case service hasn't implemented it yet
+        return {
+            "success": True,
             "data": {
-                "affected_nodes": [asset_id],
+                "affected_nodes": [request.asset_id],
                 "contagion_velocity": 0.85,
                 "message": "Shock simulation placeholder (implementation in progress)"
             }
-        })
+        }
     except Exception as e:
         logger.exception("Shock simulation failed")
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "detail": str(e)}
+        )

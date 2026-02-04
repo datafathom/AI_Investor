@@ -6,7 +6,7 @@ Phase 7: Model Validation Tests
 import pytest
 from datetime import datetime
 from pydantic import ValidationError
-from models.ai_assistant import (
+from schemas.ai_assistant import (
     MessageRole,
     ConversationMessage,
     Conversation,

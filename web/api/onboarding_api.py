@@ -1,85 +1,53 @@
 """
-Onboarding API
+Onboarding API - FastAPI Router
 Complete user onboarding flow with preference management
 """
 
 import logging
-from datetime import datetime
-from typing import Optional, Dict, Any
+from datetime import datetime, timezone
+from typing import Optional, Dict, Any, List
 
-from flask import Blueprint, jsonify, request, g
+from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 
-from web.auth_utils import login_required
+from web.auth_utils import get_current_user
 
 logger = logging.getLogger(__name__)
 
-onboarding_api_bp = Blueprint('onboarding', __name__, url_prefix='/api/v1/onboarding')
-onboarding_bp = onboarding_api_bp  # Alias for app.py
+router = APIRouter(prefix="/api/v1/onboarding", tags=["Onboarding"])
 
-# Onboarding steps configuration
+# Models
+class OnboardingStep(BaseModel):
+    id: int
+    name: str
+    title: str
+    required: bool
+
+class StepUpdateRequest(BaseModel):
+    step: int
+    data: Dict[str, Any] = {}
+
+class CompletionRequest(BaseModel):
+    preferences: Dict[str, Any]
+
+class PreferenceUpdateRequest(BaseModel):
+    preferences: Dict[str, Any]
+
+# Steps configuration
 ONBOARDING_STEPS = [
-    {
-        'id': 1,
-        'name': 'welcome',
-        'title': 'Welcome to AI Investor',
-        'required': True
-    },
-    {
-        'id': 2,
-        'name': 'experience',
-        'title': 'Investment Experience',
-        'required': True
-    },
-    {
-        'id': 3,
-        'name': 'goals',
-        'title': 'Investment Goals',
-        'required': True
-    },
-    {
-        'id': 4,
-        'name': 'risk',
-        'title': 'Risk Tolerance',
-        'required': True
-    },
-    {
-        'id': 5,
-        'name': 'preferences',
-        'title': 'Preferences',
-        'required': False
-    },
-    {
-        'id': 6,
-        'name': 'complete',
-        'title': 'Complete',
-        'required': False
-    }
+    {"id": 1, "name": "welcome", "title": "Welcome to AI Investor", "required": True},
+    {"id": 2, "name": "experience", "title": "Investment Experience", "required": True},
+    {"id": 3, "name": "goals", "title": "Investment Goals", "required": True},
+    {"id": 4, "name": "risk", "title": "Risk Tolerance", "required": True},
+    {"id": 5, "name": "preferences", "title": "Preferences", "required": False},
+    {"id": 6, "name": "complete", "title": "Complete", "required": False}
 ]
 
-
-@onboarding_api_bp.route('/status', methods=['GET'])
-@login_required
-def get_onboarding_status():
-    """
-    Get user's onboarding status.
-    Requires authentication.
-
-    Returns:
-        JSON response with onboarding status
-    """
-    user_id = getattr(g, 'user_id', None)
-
-    if not user_id:
-        return jsonify({
-            'success': False,
-            'error': 'Authentication required'
-        }), 401
-
-    # In production, query database for user onboarding status
-    # Example SQL:
-    # SELECT onboarding_completed, onboarding_step, preferences
-    # FROM users WHERE id = :user_id
-
+@router.get('/status')
+async def get_onboarding_status(current_user: Dict[str, Any] = Depends(get_current_user)):
+    user_id = current_user.get("id")
+    
     # Mock response (would come from database)
     onboarding_data = {
         'user_id': user_id,
@@ -92,295 +60,117 @@ def get_onboarding_status():
         'preferences': {}
     }
 
-    return jsonify({
+    return {
         'success': True,
         'data': onboarding_data
-    }), 200
+    }
 
+@router.post('/step')
+async def update_onboarding_step(
+    request_data: StepUpdateRequest,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    user_id = current_user.get("id")
+    step = request_data.step
+    step_data = request_data.data
 
-@onboarding_api_bp.route('/step', methods=['POST'])
-@login_required
-def update_onboarding_step():
-    """
-    Update user's current onboarding step.
-    Requires authentication.
-
-    Request Body:
-        {
-            "step": 2,
-            "data": { ... }
-        }
-
-    Returns:
-        JSON response with updated status
-    """
-    user_id = getattr(g, 'user_id', None)
-
-    if not user_id:
-        return jsonify({
-            'success': False,
-            'error': 'Authentication required'
-        }), 401
-
-    data = request.get_json()
-    step = data.get('step')
-    step_data = data.get('data', {})
-
-    if not step or step < 1 or step > len(ONBOARDING_STEPS):
-        return jsonify({
-            'success': False,
-            'error': 'Invalid step number'
-        }), 400
-
-    # In production, update database
-    # Example SQL:
-    # UPDATE users
-    # SET onboarding_step = :step,
-    #     onboarding_data = jsonb_set(
-    #         COALESCE(onboarding_data, '{}'::jsonb),
-    #         ARRAY[:step_name],
-    #         :step_data::jsonb
-    #     )
-    # WHERE id = :user_id
+    if step < 1 or step > len(ONBOARDING_STEPS):
+        return JSONResponse(status_code=400, content={"success": False, "detail": "Invalid step number"})
 
     logger.info("User %s updated onboarding step to %s", user_id, step)
 
-    return jsonify({
+    return {
         'success': True,
         'data': {
             'user_id': user_id,
             'current_step': step,
             'step_data': step_data,
-            'updated_at': datetime.utcnow().isoformat()
+            'updated_at': datetime.now(timezone.utc).isoformat()
         }
-    }), 200
+    }
 
+@router.post('/complete')
+async def complete_onboarding(
+    request_data: CompletionRequest,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    user_id = current_user.get("id")
+    preferences = request_data.preferences
 
-@onboarding_api_bp.route('/complete', methods=['POST'])
-@login_required
-def complete_onboarding():
-    """
-    Complete onboarding and save user preferences.
-    Requires authentication.
-
-    Request Body:
-        {
-            "preferences": {
-                "experience_level": "intermediate",
-                "investment_goals": ["growth", "income"],
-                "risk_tolerance": "moderate",
-                "notifications": true,
-                "theme": "dark"
-            }
-        }
-
-    Returns:
-        JSON response with completion status
-    """
-    user_id = getattr(g, 'user_id', None)
-
-    if not user_id:
-        return jsonify({
-            'success': False,
-            'error': 'Authentication required'
-        }), 401
-
-    data = request.get_json()
-    preferences = data.get('preferences', {})
-
-    # Validate preferences
     required_fields = ['experience_level', 'risk_tolerance']
     missing_fields = [field for field in required_fields if field not in preferences]
 
     if missing_fields:
-        return jsonify({
-            'success': False,
-            'error': f'Missing required preferences: {missing_fields}'
-        }), 400
-
-    # In production, save to database
-    # Example SQL:
-    # UPDATE users
-    # SET onboarding_completed = TRUE,
-    #     onboarding_completed_at = NOW(),
-    #     preferences = :preferences::jsonb
-    # WHERE id = :user_id
+        return JSONResponse(status_code=400, content={"success": False, "detail": f"Missing required preferences: {missing_fields}"})
 
     logger.info("User %s completed onboarding with preferences: %s", user_id, preferences)
 
-    return jsonify({
+    return {
         'success': True,
         'data': {
             'user_id': user_id,
             'completed': True,
-            'completed_at': datetime.utcnow().isoformat(),
+            'completed_at': datetime.now(timezone.utc).isoformat(),
             'preferences': preferences
         }
-    }), 200
+    }
 
-
-@onboarding_api_bp.route('/preferences', methods=['GET'])
-@login_required
-def get_preferences():
-    """
-    Get user's saved preferences.
-    Requires authentication.
-
-    Returns:
-        JSON response with user preferences
-    """
-    user_id = getattr(g, 'user_id', None)
-
-    if not user_id:
-        return jsonify({
-            'success': False,
-            'error': 'Authentication required'
-        }), 401
-
-    # In production, query database
-    # Example SQL:
-    # SELECT preferences FROM users WHERE id = :user_id
-
-    preferences = {}  # Would come from database
-
-    return jsonify({
+@router.get('/preferences')
+async def get_preferences(current_user: Dict[str, Any] = Depends(get_current_user)):
+    user_id = current_user.get("id")
+    return {
         'success': True,
         'data': {
             'user_id': user_id,
-            'preferences': preferences
+            'preferences': {}
         }
-    }), 200
+    }
 
-
-@onboarding_api_bp.route('/preferences', methods=['PUT'])
-@login_required
-def update_preferences():
-    """
-    Update user preferences.
-    Requires authentication.
-
-    Request Body:
-        {
-            "preferences": {
-                "notifications": false,
-                "theme": "light"
-            }
-        }
-
-    Returns:
-        JSON response with updated preferences
-    """
-    user_id = getattr(g, 'user_id', None)
-
-    if not user_id:
-        return jsonify({
-            'success': False,
-            'error': 'Authentication required'
-        }), 401
-
-    data = request.get_json()
-    preferences = data.get('preferences', {})
+@router.put('/preferences')
+async def update_preferences(
+    request_data: PreferenceUpdateRequest,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    user_id = current_user.get("id")
+    preferences = request_data.preferences
 
     if not preferences:
-        return jsonify({
-            'success': False,
-            'error': 'No preferences provided'
-        }), 400
-
-    # In production, update database
-    # Example SQL:
-    # UPDATE users
-    # SET preferences = jsonb_set(
-    #     COALESCE(preferences, '{}'::jsonb),
-    #     ARRAY[:key],
-    #     :value::jsonb
-    # )
-    # WHERE id = :user_id
+        return JSONResponse(status_code=400, content={"success": False, "detail": "No preferences provided"})
 
     logger.info("User %s updated preferences: %s", user_id, preferences)
 
-    return jsonify({
+    return {
         'success': True,
         'data': {
             'user_id': user_id,
             'preferences': preferences,
-            'updated_at': datetime.utcnow().isoformat()
+            'updated_at': datetime.now(timezone.utc).isoformat()
         }
-    }), 200
+    }
 
-
-@onboarding_api_bp.route('/skip', methods=['POST'])
-@login_required
-def skip_onboarding():
-    """
-    Skip onboarding (mark as complete without preferences).
-    Requires authentication.
-
-    Returns:
-        JSON response with skip status
-    """
-    user_id = getattr(g, 'user_id', None)
-
-    if not user_id:
-        return jsonify({
-            'success': False,
-            'error': 'Authentication required'
-        }), 401
-
-    # In production, update database
-    # Example SQL:
-    # UPDATE users
-    # SET onboarding_completed = TRUE,
-    #     onboarding_skipped = TRUE,
-    #     onboarding_completed_at = NOW()
-    # WHERE id = :user_id
-
+@router.post('/skip')
+async def skip_onboarding(current_user: Dict[str, Any] = Depends(get_current_user)):
+    user_id = current_user.get("id")
     logger.info("User %s skipped onboarding", user_id)
-
-    return jsonify({
+    return {
         'success': True,
         'data': {
             'user_id': user_id,
             'skipped': True,
-            'completed_at': datetime.utcnow().isoformat()
+            'completed_at': datetime.now(timezone.utc).isoformat()
         }
-    }), 200
+    }
 
-
-@onboarding_api_bp.route('/reset', methods=['POST'])
-@login_required
-def reset_onboarding():
-    """
-    Reset onboarding (for testing or re-onboarding).
-    Requires authentication.
-
-    Returns:
-        JSON response with reset status
-    """
-    user_id = getattr(g, 'user_id', None)
-
-    if not user_id:
-        return jsonify({
-            'success': False,
-            'error': 'Authentication required'
-        }), 401
-
-    # In production, reset in database
-    # Example SQL:
-    # UPDATE users
-    # SET onboarding_completed = FALSE,
-    #     onboarding_step = 1,
-    #     onboarding_data = NULL
-    # WHERE id = :user_id
-
+@router.post('/reset')
+async def reset_onboarding(current_user: Dict[str, Any] = Depends(get_current_user)):
+    user_id = current_user.get("id")
     logger.info("User %s reset onboarding", user_id)
-
-    return jsonify({
+    return {
         'success': True,
         'data': {
             'user_id': user_id,
             'reset': True,
             'current_step': 1,
-            'reset_at': datetime.utcnow().isoformat()
+            'reset_at': datetime.now(timezone.utc).isoformat()
         }
-    }), 200
+    }

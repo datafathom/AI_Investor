@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime, timedelta, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.compliance.reporting_service import ReportingService
-from models.compliance import ComplianceReport
+from schemas.compliance import ComplianceReport
 
 
 @pytest.fixture

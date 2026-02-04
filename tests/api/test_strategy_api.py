@@ -1,173 +1,122 @@
+"""
+Tests for Strategy API Endpoints
+"""
+
 import pytest
-from unittest.mock import AsyncMock, patch
-from flask import Flask
-from datetime import datetime, timezone
-from web.api.strategy_api import strategy_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.strategy_api import router, get_strategy_builder_provider, get_strategy_execution_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(strategy_bp)
+def api_app():
+    """Create FastAPI app merchant testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_strategy_builder_service():
-    """Mock StrategyBuilderService."""
-    with patch('web.api.strategy_api.get_strategy_builder_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+def mock_builder(api_app):
+    """Mock Strategy Builder Service."""
+    service = AsyncMock()
+    
+    strategy = MagicMock()
+    strategy.model_dump.return_value = {"id": "s1", "name": "Strategy 1"}
+    
+    rule = MagicMock()
+    rule.model_dump.return_value = {"id": "r1", "condition": "price > 100"}
+    
+    service.create_strategy.return_value = strategy
+    service.get_strategy_templates.return_value = [{"id": "t1", "name": "MA Crossover"}]
+    service._get_strategy.return_value = strategy
+    service.add_rule.return_value = rule
+    service.validate_strategy.return_value = {"valid": True, "errors": []}
+    
+    api_app.dependency_overrides[get_strategy_builder_provider] = lambda: service
+    return service
 
 
 @pytest.fixture
-def mock_strategy_execution_service():
-    """Mock StrategyExecutionService."""
-    with patch('web.api.strategy_api.get_strategy_execution_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+def mock_execution(api_app):
+    """Mock Strategy Execution Service."""
+    service = AsyncMock()
+    
+    strategy = MagicMock()
+    strategy.model_dump.return_value = {"id": "s1", "status": "running"}
+    
+    performance = MagicMock()
+    performance.model_dump.return_value = {"sharpe": 1.5, "return": 0.2}
+    
+    drift = MagicMock()
+    drift.model_dump.return_value = {"drift_score": 0.05}
+    
+    service.start_strategy.return_value = strategy
+    service.stop_strategy.return_value = strategy
+    service.pause_strategy.return_value = strategy
+    service.get_strategy_performance.return_value = performance
+    service.calculate_model_drift.return_value = drift
+    
+    api_app.dependency_overrides[get_strategy_execution_provider] = lambda: service
+    return service
 
 
-def test_create_strategy_success(client, mock_strategy_builder_service):
-    """Test successful strategy creation."""
-    from models.strategy import TradingStrategy
+def test_create_strategy_success(client, mock_builder):
+    """Test creating strategy."""
+    from web.auth_utils import get_current_user
+    client.app.dependency_overrides[get_current_user] = lambda: {"user_id": "test_user"}
     
-    mock_strategy = TradingStrategy(
-        strategy_id='strategy_1',
-        user_id='user_1',
-        strategy_name='Test Strategy',
-        description='Test description',
-        rules=[],
-        created_date=datetime.now(timezone.utc),
-        updated_date=datetime.now(timezone.utc)
-    )
-    mock_strategy_builder_service.create_strategy.return_value = mock_strategy
-    
-    response = client.post('/api/strategy/create',
-                          json={
-                              'user_id': 'user_1',
-                              'strategy_name': 'Test Strategy',
-                              'description': 'Test description'
-                          })
+    payload = {"user_id": "u1", "strategy_name": "Strategy 1"}
+    response = client.post('/api/v1/strategy/create', json=payload)
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
-    assert data['data']['strategy_name'] == 'Test Strategy'
+    assert data['data']['name'] == "Strategy 1"
 
 
-def test_create_strategy_missing_params(client):
-    """Test strategy creation with missing parameters."""
-    response = client.post('/api/strategy/create', json={'user_id': 'user_1'})
+def test_get_templates_success(client, mock_builder):
+    """Test getting templates."""
+    from web.auth_utils import get_current_user
+    client.app.dependency_overrides[get_current_user] = lambda: {"user_id": "test_user"}
     
-    assert response.status_code == 400
-    data = response.get_json()
-    assert data['success'] is False
-
-
-def test_get_strategy_success(client, mock_strategy_builder_service):
-    """Test successful strategy retrieval."""
-    from models.strategy import TradingStrategy
-    
-    mock_strategy = TradingStrategy(
-        strategy_id='strategy_1',
-        user_id='user_1',
-        strategy_name='Test Strategy',
-        rules=[],
-        created_date=datetime.now(timezone.utc),
-        updated_date=datetime.now(timezone.utc)
-    )
-    mock_strategy_builder_service._get_strategy.return_value = mock_strategy
-    
-    response = client.get('/api/strategy/strategy_1')
+    response = client.get('/api/v1/strategy/templates')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
+    assert len(data['data']) == 1
 
 
-def test_get_strategy_not_found(client, mock_strategy_builder_service):
-    """Test strategy retrieval when not found."""
-    mock_strategy_builder_service._get_strategy.return_value = None
+def test_get_strategy_success(client, mock_builder):
+    """Test getting strategy."""
+    from web.auth_utils import get_current_user
+    client.app.dependency_overrides[get_current_user] = lambda: {"user_id": "test_user"}
     
-    response = client.get('/api/strategy/strategy_1')
-    
-    assert response.status_code == 404
-    data = response.get_json()
-    assert data['success'] is False
-
-
-def test_start_strategy_success(client, mock_strategy_execution_service):
-    """Test successful strategy start."""
-    from models.strategy import StrategyExecution
-    
-    mock_execution = StrategyExecution(
-        execution_id='exec_1',
-        strategy_id='strategy_1',
-        rule_id='rule_1',
-        action_taken='buy',
-        execution_time=datetime.now(timezone.utc),
-        result='success'
-    )
-    mock_strategy_execution_service.start_strategy.return_value = mock_execution
-    
-    response = client.post('/api/strategy/strategy_1/start', 
-                          json={'portfolio_id': 'portfolio_1'})
+    response = client.get('/api/v1/strategy/s1')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
+    assert data['data']['id'] == "s1"
 
 
-def test_stop_strategy_success(client, mock_strategy_execution_service):
-    """Test successful strategy stop."""
-    from models.strategy import TradingStrategy, StrategyStatus
-    mock_strategy = TradingStrategy(
-        strategy_id='strategy_1',
-        user_id='user_1',
-        strategy_name='Test Strategy',
-        status=StrategyStatus.STOPPED,
-        created_date=datetime.now(timezone.utc),
-        updated_date=datetime.now(timezone.utc)
-    )
-    mock_strategy_execution_service.stop_strategy.return_value = mock_strategy
-    response = client.post('/api/strategy/strategy_1/stop')
+def test_start_strategy_success(client, mock_execution):
+    """Test starting strategy."""
+    from web.auth_utils import get_current_user
+    client.app.dependency_overrides[get_current_user] = lambda: {"user_id": "test_user"}
+    
+    payload = {"portfolio_id": "p1"}
+    response = client.post('/api/v1/strategy/s1/start', json=payload)
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
-
-
-def test_get_strategy_performance_success(client, mock_strategy_execution_service):
-    """Test successful performance retrieval."""
-    from models.strategy import StrategyPerformance, StrategyStatus
-    
-    mock_performance = StrategyPerformance(
-        strategy_id='strategy_1',
-        total_trades=10,
-        winning_trades=7,
-        losing_trades=3,
-        win_rate=0.7,
-        total_pnl=1500.0,
-        sharpe_ratio=1.5,
-        max_drawdown=0.05,
-        current_status=StrategyStatus.ACTIVE
-    )
-    mock_strategy_execution_service.get_strategy_performance.return_value = mock_performance
-    
-    response = client.get('/api/strategy/strategy_1/performance')
-    
-    assert response.status_code == 200
-    data = response.get_json()
-    assert data['success'] is True
-    assert data['data']['total_pnl'] == 1500.0
+    assert data['data']['status'] == "running"

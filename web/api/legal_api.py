@@ -1,16 +1,22 @@
 """
-Legal Documents API
-Complete legal document management with database integration
+Legal Documents API - FastAPI Router
+Complete legal document management with database integration.
 """
 
-from flask import Blueprint, jsonify, request, g
-from datetime import datetime
 import logging
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Any
+from datetime import timezone, datetime
+from pathlib import Path
+
+from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+
+from web.auth_utils import get_current_user
 
 logger = logging.getLogger(__name__)
 
-legal_bp = Blueprint('legal', __name__, url_prefix='/api/v1/legal')
+router = APIRouter(prefix="/api/v1/legal", tags=["Legal"])
 
 # Legal document versions (in production, store in database)
 LEGAL_DOCUMENTS = {
@@ -40,15 +46,14 @@ LEGAL_DOCUMENTS = {
     }
 }
 
+class AcceptanceRequest(BaseModel):
+    documents: List[str]
+    ip_address: Optional[str] = None
+    user_agent: Optional[str] = None
 
-@legal_bp.route('/documents', methods=['GET'])
-def list_documents():
-    """
-    List all available legal documents with versions.
-    
-    Returns:
-        JSON response with list of documents
-    """
+@router.get('/documents')
+async def list_documents():
+    """List all available legal documents with versions."""
     documents = []
     for doc_id, doc_info in LEGAL_DOCUMENTS.items():
         documents.append({
@@ -60,46 +65,30 @@ def list_documents():
             'url': f'/api/v1/legal/documents/{doc_id}'
         })
     
-    return jsonify({
+    return {
         'success': True,
         'data': documents
-    }), 200
+    }
 
-
-@legal_bp.route('/documents/<document_id>', methods=['GET'])
-def get_document(document_id: str):
-    """
-    Get a specific legal document.
-    
-    Args:
-        document_id: Document identifier
-    
-    Returns:
-        JSON response with document content
-    """
+@router.get('/documents/{document_id}')
+async def get_document(document_id: str):
+    """Get a specific legal document."""
     if document_id not in LEGAL_DOCUMENTS:
-        return jsonify({
-            'success': False,
-            'error': 'Document not found'
-        }), 404
+        return JSONResponse(status_code=404, content={"success": False, "detail": "Document not found"})
     
     doc_info = LEGAL_DOCUMENTS[document_id]
     
     try:
-        from pathlib import Path
         project_root = Path(__file__).parent.parent.parent
         doc_path = project_root / doc_info['file']
         
         if not doc_path.exists():
-            return jsonify({
-                'success': False,
-                'error': 'Document file not found'
-            }), 404
+            return JSONResponse(status_code=404, content={"success": False, "detail": "Document file not found"})
         
         with open(doc_path, 'r', encoding='utf-8') as f:
             content = f.read()
         
-        return jsonify({
+        return {
             'success': True,
             'data': {
                 'id': document_id,
@@ -110,117 +99,64 @@ def get_document(document_id: str):
                 'required': doc_info.get('required', False),
                 'content': content
             }
-        }), 200
-        
+        }
     except Exception as e:
         logger.error(f"Error reading legal document: {e}")
-        return jsonify({
-            'success': False,
-            'error': 'Failed to read document'
-        }), 500
+        return JSONResponse(status_code=500, content={"success": False, "detail": "Failed to read document"})
 
-
-@legal_bp.route('/accept', methods=['POST'])
-def accept_documents():
-    """
-    Record user acceptance of legal documents.
-    Requires authentication.
-    
-    Request Body:
-        {
-            "documents": ["terms_of_service", "privacy_policy"],
-            "ip_address": "optional",
-            "user_agent": "optional"
-        }
-    
-    Returns:
-        JSON response with acceptance records
-    """
-    from web.auth_utils import login_required
-    
-    data = request.get_json()
-    document_ids = data.get('documents', [])
-    user_id = getattr(g, 'user_id', None)
-    
+@router.post('/accept')
+async def accept_documents(
+    request_data: AcceptanceRequest,
+    request: Request,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Record user acceptance of legal documents."""
+    user_id = current_user.get('id')
     if not user_id:
-        return jsonify({
-            'success': False,
-            'error': 'Authentication required'
-        }), 401
+        return JSONResponse(status_code=401, content={"success": False, "detail": "Authentication required"})
     
-    if not document_ids:
-        return jsonify({
-            'success': False,
-            'error': 'No documents specified'
-        }), 400
+    if not request_data.documents:
+        return JSONResponse(status_code=400, content={"success": False, "detail": "No documents specified"})
     
     # Validate document IDs
-    invalid_docs = [doc_id for doc_id in document_ids if doc_id not in LEGAL_DOCUMENTS]
+    invalid_docs = [doc_id for doc_id in request_data.documents if doc_id not in LEGAL_DOCUMENTS]
     if invalid_docs:
-        return jsonify({
-            'success': False,
-            'error': f'Invalid document IDs: {invalid_docs}'
-        }), 400
-    
-    # In production, store in database
-    # Example SQL:
-    # INSERT INTO legal_document_acceptances (user_id, document_id, version, accepted_at, ip_address, user_agent)
-    # VALUES (:user_id, :document_id, :version, NOW(), :ip_address, :user_agent)
+        return JSONResponse(status_code=400, content={"success": False, "detail": f"Invalid document IDs: {invalid_docs}"})
     
     acceptances = []
-    for doc_id in document_ids:
+    for doc_id in request_data.documents:
         doc_info = LEGAL_DOCUMENTS[doc_id]
         acceptance = {
             'document_id': doc_id,
             'version': doc_info['version'],
-            'accepted_at': datetime.utcnow().isoformat(),
+            'accepted_at': datetime.now(timezone.utc).isoformat(),
             'user_id': user_id,
-            'ip_address': request.remote_addr,
+            'ip_address': request.client.host,
             'user_agent': request.headers.get('User-Agent')
         }
         acceptances.append(acceptance)
     
-    logger.info(f"User {user_id} accepted documents: {document_ids}")
+    logger.info(f"User {user_id} accepted documents: {request_data.documents}")
     
-    return jsonify({
+    return {
         'success': True,
         'data': {
             'acceptances': acceptances,
-            'accepted_at': datetime.utcnow().isoformat()
+            'accepted_at': datetime.now(timezone.utc).isoformat()
         }
-    }), 200
+    }
 
-
-@legal_bp.route('/acceptance-status', methods=['GET'])
-def get_acceptance_status():
-    """
-    Get user's legal document acceptance status.
-    Requires authentication.
-    
-    Returns:
-        JSON response with acceptance status
-    """
-    from web.auth_utils import login_required
-    
-    user_id = getattr(g, 'user_id', None)
-    
+@router.get('/acceptance-status')
+async def get_acceptance_status(current_user: Dict[str, Any] = Depends(get_current_user)):
+    """Get user's legal document acceptance status."""
+    user_id = current_user.get('id')
     if not user_id:
-        return jsonify({
-            'success': False,
-            'error': 'Authentication required'
-        }), 401
-    
-    # In production, query database
-    # Example SQL:
-    # SELECT document_id, version, accepted_at 
-    # FROM legal_document_acceptances 
-    # WHERE user_id = :user_id
+        return JSONResponse(status_code=401, content={"success": False, "detail": "Authentication required"})
     
     required_documents = [doc_id for doc_id, info in LEGAL_DOCUMENTS.items() if info.get('required', False)]
     
-    # Mock: assume user has not accepted (in production, check database)
-    # For now, return required documents that need acceptance
-    accepted_documents = []  # Would come from database query
+    # Mock behavior as in legacy
+    accepted_documents = []  
     pending_acceptance = [doc for doc in required_documents if doc not in accepted_documents]
     
     status = {
@@ -232,87 +168,48 @@ def get_acceptance_status():
         'last_updated': None
     }
     
-    return jsonify({
+    return {
         'success': True,
         'data': status
-    }), 200
+    }
 
-
-@legal_bp.route('/acceptance-history', methods=['GET'])
-def get_acceptance_history():
-    """
-    Get user's legal document acceptance history.
-    Requires authentication.
-    
-    Returns:
-        JSON response with acceptance history
-    """
-    from web.auth_utils import login_required
-    
-    user_id = getattr(g, 'user_id', None)
-    
+@router.get('/acceptance-history')
+async def get_acceptance_history(current_user: Dict[str, Any] = Depends(get_current_user)):
+    """Get user's legal document acceptance history."""
+    user_id = current_user.get('id')
     if not user_id:
-        return jsonify({
-            'success': False,
-            'error': 'Authentication required'
-        }), 401
+        return JSONResponse(status_code=401, content={"success": False, "detail": "Authentication required"})
     
-    # In production, query database for full history
-    # Example SQL:
-    # SELECT * FROM legal_document_acceptances 
-    # WHERE user_id = :user_id 
-    # ORDER BY accepted_at DESC
-    
-    history = []  # Would come from database
-    
-    return jsonify({
+    return {
         'success': True,
         'data': {
             'user_id': user_id,
-            'history': history,
-            'total_acceptances': len(history)
+            'history': [],
+            'total_acceptances': 0
         }
-    }), 200
+    }
 
-
-@legal_bp.route('/check-updates', methods=['GET'])
-def check_document_updates():
-    """
-    Check if user needs to accept updated legal documents.
-    Requires authentication.
-    
-    Returns:
-        JSON response with update status
-    """
-    from web.auth_utils import login_required
-    
-    user_id = getattr(g, 'user_id', None)
-    
+@router.get('/check-updates')
+async def check_document_updates(current_user: Dict[str, Any] = Depends(get_current_user)):
+    """Check if user needs to accept updated legal documents."""
+    user_id = current_user.get('id')
     if not user_id:
-        return jsonify({
-            'success': False,
-            'error': 'Authentication required'
-        }), 401
-    
-    # In production, compare user's accepted versions with current versions
-    # Return documents that have been updated since user's acceptance
+        return JSONResponse(status_code=401, content={"success": False, "detail": "Authentication required"})
     
     updates_available = []
     for doc_id, doc_info in LEGAL_DOCUMENTS.items():
-        # Check if user has accepted this version
-        # If not, or if version is newer, add to updates_available
         if doc_info.get('required', False):
             updates_available.append({
                 'document_id': doc_id,
                 'current_version': doc_info['version'],
-                'user_version': None,  # Would come from database
+                'user_version': None,
                 'update_required': True
             })
     
-    return jsonify({
+    return {
         'success': True,
         'data': {
             'updates_available': updates_available,
             'update_required': len(updates_available) > 0
         }
-    }), 200
+    }

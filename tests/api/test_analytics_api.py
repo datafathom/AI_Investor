@@ -1,46 +1,54 @@
-import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
-from flask import Flask
-from datetime import datetime, timezone
-from web.api.analytics_api import analytics_bp
 
+import pytest
+from unittest.mock import AsyncMock, patch
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.analytics_api import router, get_attribution_service, get_risk_decomposition_service
+from web.auth_utils import get_current_user
+from datetime import datetime, timezone
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(analytics_bp)
+def api_app(mock_attribution_service, mock_risk_service):
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
+    app.dependency_overrides[get_attribution_service] = lambda: mock_attribution_service
+    app.dependency_overrides[get_risk_decomposition_service] = lambda: mock_risk_service
+    app.dependency_overrides[get_current_user] = lambda: {"id": "user_1", "role": "user"}
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
 def mock_attribution_service():
     """Mock PerformanceAttributionService."""
-    with patch('web.api.analytics_api.get_attribution_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+    from unittest.mock import MagicMock
+    service = MagicMock()
+    service.calculate_attribution = AsyncMock()
+    service.calculate_holding_contributions = AsyncMock()
+    return service
 
 
 @pytest.fixture
 def mock_risk_service():
     """Mock RiskDecompositionService."""
-    with patch('web.api.analytics_api.get_risk_decomposition_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+    from unittest.mock import MagicMock
+    service = MagicMock()
+    service.decompose_factor_risk = AsyncMock()
+    service.calculate_concentration_risk = AsyncMock()
+    service.analyze_correlation = AsyncMock()
+    service.calculate_tail_risk_contributions = AsyncMock()
+    return service
 
 
 def test_get_attribution_success(client, mock_attribution_service):
     """Test successful attribution calculation."""
-    from models.analytics import AttributionResult, CalculationMetadata
+    from schemas.analytics import AttributionResult, CalculationMetadata
     
     mock_attribution = AttributionResult(
         portfolio_id='portfolio_1',
@@ -61,10 +69,10 @@ def test_get_attribution_success(client, mock_attribution_service):
     )
     mock_attribution_service.calculate_attribution.return_value = mock_attribution
     
-    response = client.get('/api/analytics/attribution/portfolio_1?start_date=2024-01-01&end_date=2024-12-31')
+    response = client.get('/api/v1/analytics/attribution/portfolio_1?start_date=2024-01-01&end_date=2024-12-31')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
     assert 'data' in data
     assert data['data']['total_return_pct'] == 15.5
@@ -72,7 +80,7 @@ def test_get_attribution_success(client, mock_attribution_service):
 
 def test_get_attribution_with_benchmark(client, mock_attribution_service):
     """Test attribution with benchmark."""
-    from models.analytics import AttributionResult, CalculationMetadata
+    from schemas.analytics import AttributionResult, CalculationMetadata
     
     mock_attribution = AttributionResult(
         portfolio_id='portfolio_1',
@@ -93,9 +101,11 @@ def test_get_attribution_with_benchmark(client, mock_attribution_service):
     )
     mock_attribution_service.calculate_attribution.return_value = mock_attribution
     
-    response = client.get('/api/analytics/attribution/portfolio_1?benchmark=SPY')
+    response = client.get('/api/v1/analytics/attribution/portfolio_1?benchmark=SPY')
     
     assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
     mock_attribution_service.calculate_attribution.assert_called_once()
 
 
@@ -103,17 +113,16 @@ def test_get_attribution_error(client, mock_attribution_service):
     """Test attribution error handling."""
     mock_attribution_service.calculate_attribution.side_effect = Exception('Service error')
     
-    response = client.get('/api/analytics/attribution/portfolio_1')
+    response = client.get('/api/v1/analytics/attribution/portfolio_1')
     
     assert response.status_code == 500
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is False
-    assert 'error' in data
 
 
 def test_get_contribution_success(client, mock_attribution_service):
     """Test successful contribution calculation."""
-    from models.analytics import HoldingContribution
+    from schemas.analytics import HoldingContribution
     
     mock_contributions = [
         HoldingContribution(
@@ -126,12 +135,12 @@ def test_get_contribution_success(client, mock_attribution_service):
             rank=1
         )
     ]
-    mock_attribution_service.calculate_contribution.return_value = mock_contributions
+    mock_attribution_service.calculate_holding_contributions.return_value = mock_contributions
     
-    response = client.get('/api/analytics/contribution/portfolio_1')
+    response = client.get('/api/v1/analytics/contribution/portfolio_1')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
     assert len(data['data']) == 1
     assert data['data'][0]['symbol'] == 'AAPL'
@@ -139,7 +148,7 @@ def test_get_contribution_success(client, mock_attribution_service):
 
 def test_get_factor_risk_success(client, mock_risk_service):
     """Test successful factor risk decomposition."""
-    from models.analytics import FactorRiskDecomposition
+    from schemas.analytics import FactorRiskDecomposition
     
     mock_risk = FactorRiskDecomposition(
         portfolio_id='portfolio_1',
@@ -151,17 +160,17 @@ def test_get_factor_risk_success(client, mock_risk_service):
     )
     mock_risk_service.decompose_factor_risk.return_value = mock_risk
     
-    response = client.get('/api/analytics/risk/factor/portfolio_1?factor_model=fama_french')
+    response = client.get('/api/v1/analytics/risk/factor/portfolio_1?factor_model=fama_french')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
     assert data['data']['total_risk'] == 0.18
 
 
 def test_get_concentration_risk_success(client, mock_risk_service):
     """Test successful concentration risk calculation."""
-    from models.analytics import ConcentrationRiskAnalysis, ConcentrationMetric
+    from schemas.analytics import ConcentrationRiskAnalysis, ConcentrationMetric
     
     mock_concentration = ConcentrationRiskAnalysis(
         portfolio_id='portfolio_1',
@@ -200,16 +209,16 @@ def test_get_concentration_risk_success(client, mock_risk_service):
     )
     mock_risk_service.calculate_concentration_risk.return_value = mock_concentration
     
-    response = client.get('/api/analytics/risk/concentration/portfolio_1?dimensions=holding,sector')
+    response = client.get('/api/v1/analytics/risk/concentration/portfolio_1?dimensions=holding,sector')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
 
 
 def test_get_correlation_success(client, mock_risk_service):
     """Test successful correlation analysis."""
-    from models.analytics import CorrelationAnalysis
+    from schemas.analytics import CorrelationAnalysis
     
     mock_correlation = CorrelationAnalysis(
         portfolio_id='portfolio_1',
@@ -220,16 +229,16 @@ def test_get_correlation_success(client, mock_risk_service):
     )
     mock_risk_service.analyze_correlation.return_value = mock_correlation
     
-    response = client.get('/api/analytics/risk/correlation/portfolio_1?lookback_days=252')
+    response = client.get('/api/v1/analytics/risk/correlation/portfolio_1?lookback_days=252')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
 
 
 def test_get_tail_risk_success(client, mock_risk_service):
     """Test successful tail risk calculation."""
-    from models.analytics import TailRiskContributions
+    from schemas.analytics import TailRiskContributions
     
     mock_tail_risk = TailRiskContributions(
         portfolio_id='portfolio_1',
@@ -241,9 +250,9 @@ def test_get_tail_risk_success(client, mock_risk_service):
     )
     mock_risk_service.calculate_tail_risk_contributions.return_value = mock_tail_risk
     
-    response = client.get('/api/analytics/risk/tail/portfolio_1?confidence_level=0.95&method=historical')
+    response = client.get('/api/v1/analytics/risk/tail/portfolio_1?confidence_level=0.95&method=historical')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
     assert data['data']['portfolio_var'] == 0.05

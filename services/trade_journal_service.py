@@ -4,10 +4,10 @@ Orchestrates trade logging, performance calculation, and integrity hashing.
 """
 import logging
 from typing import Any, Dict, List, Optional
-from datetime import datetime
+from datetime import timezone, datetime
 from uuid import UUID
 from utils.db_sqlalchemy import sqlalchemy_manager
-from models.trade_journal import TradeJournal
+from schemas.trade_journal import TradeJournal
 from services.r_multiple_calculator import RMultipleCalculator
 from services.trade_hash_generator import TradeHashGenerator
 
@@ -40,7 +40,7 @@ class TradeJournalService:
                 stop_loss=trade_data['stop_loss'],
                 take_profit=trade_data.get('take_profit'),
                 position_size=trade_data['position_size'],
-                entry_time=trade_data.get('entry_time', datetime.utcnow()),
+                entry_time=trade_data.get('entry_time', datetime.now(timezone.utc)),
                 status='OPEN',
                 agent_id=trade_data['agent_id'],
                 trade_thesis=trade_data['trade_thesis'],
@@ -72,7 +72,7 @@ class TradeJournalService:
                 return None
             
             entry.exit_price = exit_price
-            entry.exit_time = exit_time or datetime.utcnow()
+            entry.exit_time = exit_time or datetime.now(timezone.utc)
             entry.status = 'CLOSED'
             
             # Calculate R-Multiple

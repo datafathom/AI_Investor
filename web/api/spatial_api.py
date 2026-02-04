@@ -1,22 +1,25 @@
 """
 ==============================================================================
 FILE: web/api/spatial_api.py
-ROLE: The Spatial Navigator
+ROLE: The Spatial Navigator (FastAPI)
 PURPOSE:
     Expose endpoints for 3D/Spatial data visualization.
     Converts graph entities into 3D coordinate-ready JSON.
 ==============================================================================
 """
 
-from flask import Blueprint, jsonify
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 import random
 import logging
 
 logger = logging.getLogger(__name__)
-spatial_bp = Blueprint('spatial', __name__, url_prefix='/api/v1/spatial')
 
-@spatial_bp.route('/portfolio', methods=['GET'])
-def get_spatial_portfolio():
+router = APIRouter(prefix="/api/v1/spatial", tags=["Spatial"])
+
+
+@router.get("/portfolio")
+async def get_spatial_portfolio():
     """
     Returns portfolio holdings with synthetic 3D coordinates.
     In a real Neo4j setup, these coords would be derived from relationship clustering.
@@ -43,15 +46,23 @@ def get_spatial_portfolio():
             "target": nodes[i+1]["id"]
         })
 
-    return jsonify({
-        "nodes": nodes,
-        "links": links
-    })
+    return {
+        "success": True,
+        "data": {
+            "nodes": nodes,
+            "links": links
+        }
+    }
 
-@spatial_bp.route('/status', methods=['GET'])
-def get_xr_status():
-    return jsonify({
-        "status": "ready",
-        "mode": "WebXRv1",
-        "engine": "Three.js"
-    })
+
+@router.get("/status")
+async def get_xr_status():
+    """Returns XR engine status."""
+    return {
+        "success": True,
+        "data": {
+            "status": "ready",
+            "mode": "WebXRv1",
+            "engine": "Three.js"
+        }
+    }

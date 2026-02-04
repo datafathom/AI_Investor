@@ -1,408 +1,238 @@
 """
-==============================================================================
-FILE: web/api/advanced_orders_api.py
-ROLE: Advanced Orders API Endpoints
-PURPOSE: REST endpoints for advanced order types and smart execution.
-
-INTEGRATION POINTS:
-    - AdvancedOrderService: Order type management
-    - SmartExecutionService: Execution algorithms
-    - FrontendTrading: Order entry widgets
-
-ENDPOINTS:
-    - POST /api/orders/trailing-stop
-    - POST /api/orders/bracket
-    - POST /api/orders/oco
-    - POST /api/orders/conditional
-    - PUT /api/orders/trailing-stop/:order_id/update
-    - POST /api/execution/twap
-    - POST /api/execution/vwap
-    - POST /api/execution/implementation-shortfall
-
-AUTHOR: AI Investor Team
-CREATED: 2026-01-21
-LAST_MODIFIED: 2026-01-21
-==============================================================================
+Advanced Orders API - FastAPI Router
+REST endpoints for advanced order types and smart execution.
 """
 
-from flask import Blueprint, jsonify, request
-from datetime import datetime
 import logging
+from datetime import datetime
+from typing import Optional, Dict, Any, List
+
+from fastapi import APIRouter, HTTPException, Depends, Request
+from pydantic import BaseModel
+
+from web.auth_utils import get_current_user
 from services.execution.advanced_order_service import get_advanced_order_service
 from services.execution.smart_execution_service import get_smart_execution_service
 
 logger = logging.getLogger(__name__)
 
-advanced_orders_bp = Blueprint('advanced_orders', __name__, url_prefix='/api/v1/execution')
-execution_bp = Blueprint('execution', __name__, url_prefix='/api/v1/execution')
+router = APIRouter(prefix="/api/v1/execution", tags=["Execution"])
 
+# --- Request Models ---
 
-@advanced_orders_bp.route('/trailing-stop', methods=['POST'])
-async def create_trailing_stop():
-    """
-    Create trailing stop order.
-    
-    Request body:
-        user_id: User identifier
-        symbol: Stock symbol
-        quantity: Number of shares
-        trailing_type: "amount" or "percentage"
-        trailing_value: Trailing amount or percentage
-        initial_stop_price: Optional initial stop price
-    """
+class TrailingStopRequest(BaseModel):
+    user_id: str
+    symbol: str
+    quantity: int
+    trailing_type: str = 'percentage'
+    trailing_value: float
+    initial_stop_price: Optional[float] = None
+
+class BracketOrderRequest(BaseModel):
+    user_id: str
+    symbol: str
+    quantity: int
+    entry_price: float
+    profit_target_price: Optional[float] = None
+    stop_loss_price: Optional[float] = None
+
+class OCOOrderRequest(BaseModel):
+    user_id: str
+    symbol: str
+    quantity: int
+    order1: Dict[str, Any]
+    order2: Dict[str, Any]
+
+class ConditionalOrderRequest(BaseModel):
+    user_id: str
+    symbol: str
+    quantity: int
+    order_type: str = 'market'
+    condition_type: str
+    condition_value: float
+
+class PriceUpdateRequest(BaseModel):
+    current_price: float
+
+class TWAPRequest(BaseModel):
+    symbol: str
+    total_quantity: int
+    time_window_minutes: int = 60
+    start_time: Optional[str] = None
+
+class VWAPRequest(BaseModel):
+    symbol: str
+    total_quantity: int
+    time_window_minutes: int = 60
+    start_time: Optional[str] = None
+
+class ImplementationShortfallRequest(BaseModel):
+    symbol: str
+    total_quantity: int
+    urgency: float = 0.5
+
+# --- Endpoints ---
+
+@router.post('/trailing-stop')
+async def create_trailing_stop(
+    request_data: TrailingStopRequest,
+    service = Depends(get_advanced_order_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Create trailing stop order."""
     try:
-        data = request.get_json() or {}
-        user_id = data.get('user_id')
-        symbol = data.get('symbol')
-        quantity = int(data.get('quantity', 0))
-        trailing_type = data.get('trailing_type', 'percentage')
-        trailing_value = float(data.get('trailing_value', 0))
-        initial_stop_price = data.get('initial_stop_price')
-        
-        if not user_id or not symbol or not quantity or not trailing_value:
-            return jsonify({
-                'success': False,
-                'error': 'user_id, symbol, quantity, and trailing_value are required'
-            }), 400
-        
-        service = get_advanced_order_service()
         order = await service.create_trailing_stop(
-            user_id=user_id,
-            symbol=symbol,
-            quantity=quantity,
-            trailing_type=trailing_type,
-            trailing_value=trailing_value,
-            initial_stop_price=initial_stop_price
+            user_id=request_data.user_id,
+            symbol=request_data.symbol,
+            quantity=request_data.quantity,
+            trailing_type=request_data.trailing_type,
+            trailing_value=request_data.trailing_value,
+            initial_stop_price=request_data.initial_stop_price
         )
-        
-        return jsonify({
-            'success': True,
-            'data': order.model_dump()
-        })
-        
+        return {'success': True, 'data': order.model_dump()}
     except Exception as e:
         logger.error(f"Error creating trailing stop: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-
-@advanced_orders_bp.route('/bracket', methods=['POST'])
-async def create_bracket_order():
-    """
-    Create bracket order.
-    
-    Request body:
-        user_id: User identifier
-        symbol: Stock symbol
-        quantity: Number of shares
-        entry_price: Entry price
-        profit_target_price: Optional profit target price
-        stop_loss_price: Optional stop loss price
-    """
+@router.post('/bracket')
+async def create_bracket_order(
+    request_data: BracketOrderRequest,
+    service = Depends(get_advanced_order_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Create bracket order."""
     try:
-        data = request.get_json() or {}
-        user_id = data.get('user_id')
-        symbol = data.get('symbol')
-        quantity = int(data.get('quantity', 0))
-        entry_price = float(data.get('entry_price', 0))
-        profit_target_price = data.get('profit_target_price')
-        stop_loss_price = data.get('stop_loss_price')
-        
-        if not user_id or not symbol or not quantity or not entry_price:
-            return jsonify({
-                'success': False,
-                'error': 'user_id, symbol, quantity, and entry_price are required'
-            }), 400
-        
-        service = get_advanced_order_service()
         bracket = await service.create_bracket_order(
-            user_id=user_id,
-            symbol=symbol,
-            quantity=quantity,
-            entry_price=entry_price,
-            profit_target_price=profit_target_price,
-            stop_loss_price=stop_loss_price
+            user_id=request_data.user_id,
+            symbol=request_data.symbol,
+            quantity=request_data.quantity,
+            entry_price=request_data.entry_price,
+            profit_target_price=request_data.profit_target_price,
+            stop_loss_price=request_data.stop_loss_price
         )
-        
-        return jsonify({
-            'success': True,
-            'data': bracket.model_dump()
-        })
-        
+        return {'success': True, 'data': bracket.model_dump()}
     except Exception as e:
         logger.error(f"Error creating bracket order: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-
-@advanced_orders_bp.route('/oco', methods=['POST'])
-async def create_oco_order():
-    """
-    Create OCO (One-Cancels-Other) order.
-    
-    Request body:
-        user_id: User identifier
-        symbol: Stock symbol
-        quantity: Number of shares
-        order1: First order definition
-        order2: Second order definition
-    """
+@router.post('/oco')
+async def create_oco_order(
+    request_data: OCOOrderRequest,
+    service = Depends(get_advanced_order_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Create OCO (One-Cancels-Other) order."""
     try:
-        data = request.get_json() or {}
-        user_id = data.get('user_id')
-        symbol = data.get('symbol')
-        quantity = int(data.get('quantity', 0))
-        order1 = data.get('order1')
-        order2 = data.get('order2')
-        
-        if not user_id or not symbol or not quantity or not order1 or not order2:
-            return jsonify({
-                'success': False,
-                'error': 'user_id, symbol, quantity, order1, and order2 are required'
-            }), 400
-        
-        service = get_advanced_order_service()
         oco = await service.create_oco_order(
-            user_id=user_id,
-            symbol=symbol,
-            quantity=quantity,
-            order1=order1,
-            order2=order2
+            user_id=request_data.user_id,
+            symbol=request_data.symbol,
+            quantity=request_data.quantity,
+            order1=request_data.order1,
+            order2=request_data.order2
         )
-        
-        return jsonify({
-            'success': True,
-            'data': oco
-        })
-        
+        return {'success': True, 'data': oco}
     except Exception as e:
         logger.error(f"Error creating OCO order: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-
-@advanced_orders_bp.route('/conditional', methods=['POST'])
-async def create_conditional_order():
-    """
-    Create conditional order.
-    
-    Request body:
-        user_id: User identifier
-        symbol: Stock symbol
-        quantity: Number of shares
-        order_type: Order type (market, limit, etc.)
-        condition_type: Condition type (price, time, volume)
-        condition_value: Condition trigger value
-    """
+@router.post('/conditional')
+async def create_conditional_order(
+    request_data: ConditionalOrderRequest,
+    service = Depends(get_advanced_order_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Create conditional order."""
     try:
-        data = request.get_json() or {}
-        user_id = data.get('user_id')
-        symbol = data.get('symbol')
-        quantity = int(data.get('quantity', 0))
-        order_type = data.get('order_type', 'market')
-        condition_type = data.get('condition_type')
-        condition_value = float(data.get('condition_value', 0))
-        
-        if not user_id or not symbol or not quantity or not condition_type or not condition_value:
-            return jsonify({
-                'success': False,
-                'error': 'user_id, symbol, quantity, condition_type, and condition_value are required'
-            }), 400
-        
-        service = get_advanced_order_service()
         order = await service.create_conditional_order(
-            user_id=user_id,
-            symbol=symbol,
-            quantity=quantity,
-            order_type=order_type,
-            condition_type=condition_type,
-            condition_value=condition_value
+            user_id=request_data.user_id,
+            symbol=request_data.symbol,
+            quantity=request_data.quantity,
+            order_type=request_data.order_type,
+            condition_type=request_data.condition_type,
+            condition_value=request_data.condition_value
         )
-        
-        return jsonify({
-            'success': True,
-            'data': order.model_dump()
-        })
-        
+        return {'success': True, 'data': order.model_dump()}
     except Exception as e:
         logger.error(f"Error creating conditional order: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-
-@advanced_orders_bp.route('/trailing-stop/<order_id>/update', methods=['PUT'])
-async def update_trailing_stop(order_id: str):
-    """
-    Update trailing stop with current price.
-    
-    Request body:
-        current_price: Current market price
-    """
+@router.put('/trailing-stop/{order_id}/update')
+async def update_trailing_stop(
+    order_id: str,
+    request_data: PriceUpdateRequest,
+    service = Depends(get_advanced_order_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Update trailing stop with current price."""
     try:
-        data = request.get_json() or {}
-        current_price = float(data.get('current_price', 0))
-        
-        if not current_price:
-            return jsonify({
-                'success': False,
-                'error': 'current_price is required'
-            }), 400
-        
-        service = get_advanced_order_service()
-        updated_order = await service.update_trailing_stop(order_id, current_price)
-        
-        return jsonify({
-            'success': True,
-            'data': updated_order.model_dump()
-        })
-        
+        updated_order = await service.update_trailing_stop(order_id, request_data.current_price)
+        return {'success': True, 'data': updated_order.model_dump()}
     except Exception as e:
         logger.error(f"Error updating trailing stop: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-
-@execution_bp.route('/twap', methods=['POST'])
-async def execute_twap():
-    """
-    Execute order using TWAP algorithm.
-    
-    Request body:
-        symbol: Stock symbol
-        total_quantity: Total quantity to execute
-        time_window_minutes: Time window in minutes
-        start_time: Optional start time (ISO format)
-    """
+@router.post('/twap')
+async def execute_twap(
+    request_data: TWAPRequest,
+    service = Depends(get_smart_execution_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Execute order using TWAP algorithm."""
     try:
-        data = request.get_json() or {}
-        symbol = data.get('symbol')
-        total_quantity = int(data.get('total_quantity', 0))
-        time_window_minutes = int(data.get('time_window_minutes', 60))
-        start_time_str = data.get('start_time')
-        
-        if not symbol or not total_quantity:
-            return jsonify({
-                'success': False,
-                'error': 'symbol and total_quantity are required'
-            }), 400
-        
-        start_time = datetime.fromisoformat(start_time_str) if start_time_str else None
-        
-        service = get_smart_execution_service()
+        start_time = datetime.fromisoformat(request_data.start_time) if request_data.start_time else None
         executions = await service.execute_twap(
-            symbol=symbol,
-            total_quantity=total_quantity,
-            time_window_minutes=time_window_minutes,
+            symbol=request_data.symbol,
+            total_quantity=request_data.total_quantity,
+            time_window_minutes=request_data.time_window_minutes,
             start_time=start_time
         )
-        
-        return jsonify({
-            'success': True,
-            'data': [e.model_dump() for e in executions]
-        })
-        
+        return {'success': True, 'data': [e.model_dump() for e in executions]}
     except Exception as e:
         logger.error(f"Error executing TWAP: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-
-@execution_bp.route('/vwap', methods=['POST'])
-async def execute_vwap():
-    """
-    Execute order using VWAP algorithm.
-    
-    Request body:
-        symbol: Stock symbol
-        total_quantity: Total quantity to execute
-        time_window_minutes: Time window in minutes
-        start_time: Optional start time (ISO format)
-    """
+@router.post('/vwap')
+async def execute_vwap(
+    request_data: VWAPRequest,
+    service = Depends(get_smart_execution_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Execute order using VWAP algorithm."""
     try:
-        data = request.get_json() or {}
-        symbol = data.get('symbol')
-        total_quantity = int(data.get('total_quantity', 0))
-        time_window_minutes = int(data.get('time_window_minutes', 60))
-        start_time_str = data.get('start_time')
-        
-        if not symbol or not total_quantity:
-            return jsonify({
-                'success': False,
-                'error': 'symbol and total_quantity are required'
-            }), 400
-        
-        start_time = datetime.fromisoformat(start_time_str) if start_time_str else None
-        
-        service = get_smart_execution_service()
+        start_time = datetime.fromisoformat(request_data.start_time) if request_data.start_time else None
         executions = await service.execute_vwap(
-            symbol=symbol,
-            total_quantity=total_quantity,
-            time_window_minutes=time_window_minutes,
+            symbol=request_data.symbol,
+            total_quantity=request_data.total_quantity,
+            time_window_minutes=request_data.time_window_minutes,
             start_time=start_time
         )
-        
-        return jsonify({
-            'success': True,
-            'data': [e.model_dump() for e in executions]
-        })
-        
+        return {'success': True, 'data': [e.model_dump() for e in executions]}
     except Exception as e:
         logger.error(f"Error executing VWAP: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-
-@execution_bp.route('/implementation-shortfall', methods=['POST'])
-async def execute_implementation_shortfall():
-    """
-    Execute order using Implementation Shortfall algorithm.
-    
-    Request body:
-        symbol: Stock symbol
-        total_quantity: Total quantity to execute
-        urgency: Urgency factor (0.0-1.0, default: 0.5)
-    """
+@router.post('/implementation-shortfall')
+async def execute_implementation_shortfall(
+    request_data: ImplementationShortfallRequest,
+    service = Depends(get_smart_execution_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Execute order using Implementation Shortfall algorithm."""
     try:
-        data = request.get_json() or {}
-        symbol = data.get('symbol')
-        total_quantity = int(data.get('total_quantity', 0))
-        urgency = float(data.get('urgency', 0.5))
-        
-        if not symbol or not total_quantity:
-            return jsonify({
-                'success': False,
-                'error': 'symbol and total_quantity are required'
-            }), 400
-        
-        service = get_smart_execution_service()
         executions = await service.execute_implementation_shortfall(
-            symbol=symbol,
-            total_quantity=total_quantity,
-            urgency=urgency
+            symbol=request_data.symbol,
+            total_quantity=request_data.total_quantity,
+            urgency=request_data.urgency
         )
-        
-        return jsonify({
-            'success': True,
-            'data': [e.model_dump() for e in executions]
-        })
-        
+        return {'success': True, 'data': [e.model_dump() for e in executions]}
     except Exception as e:
         logger.error(f"Error executing Implementation Shortfall: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

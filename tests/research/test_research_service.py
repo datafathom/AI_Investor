@@ -4,10 +4,10 @@ Comprehensive test coverage for research report generation
 """
 
 import pytest
-from datetime import datetime
+from datetime import timezone, datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.research.research_service import ResearchService
-from models.research import ResearchReport, ReportType, ReportStatus
+from schemas.research import ResearchReport, ReportType, ReportStatus
 
 
 @pytest.fixture
@@ -67,8 +67,8 @@ async def test_get_reports(service):
             title="Report 1",
             content="Content",
             status=ReportStatus.COMPLETED,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
     ])
     

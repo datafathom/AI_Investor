@@ -5,7 +5,7 @@ import psycopg2
 from psycopg2 import pool
 from neo4j import GraphDatabase
 from typing import Optional, Any
-from flask import g
+
 
 logger = logging.getLogger(__name__)
 
@@ -71,14 +71,8 @@ class DatabaseManager:
         
         # Apply Tenant Isolation
         try:
-            # Check if we are inside a Flask context
-            import flask
-            if not flask.has_app_context():
-                 # Standalone script mode: use public schema
-                 schema = "public"
-            else:
-                from services.auth.tenant_manager import tenant_manager
-                schema = tenant_manager.get_current_tenant_schema()
+            # TODO: Implement FastAPI-compatible tenant context
+            schema = "public"
             
             if schema and schema != "public":
                 with conn.cursor() as cur:
@@ -86,7 +80,7 @@ class DatabaseManager:
                     cur.execute(f"SET search_path TO {schema}, public;")
                     logger.debug(f"Switched connection to schema: {schema}")
         except (ImportError, RuntimeError, AttributeError) as e:
-            logger.debug(f"Standalone mode or Error setting tenant schema: {e}")
+            logger.debug(f"Error setting tenant schema: {e}")
             # Fallback to public (default)
             
         return conn

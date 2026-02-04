@@ -1,6 +1,6 @@
 import logging
 from typing import Dict, Any
-from models.fee_billing import FeeSchedule
+from schemas.fee_billing import FeeSchedule
 
 logger = logging.getLogger(__name__)
 

@@ -25,10 +25,10 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional
 import numpy as np
-from models.retirement import RetirementScenario, RetirementProjection
+from schemas.retirement import RetirementScenario, RetirementProjection
 from services.analysis.monte_carlo import MonteCarloEngine
 from services.system.cache_service import get_cache_service
 
@@ -94,7 +94,7 @@ class RetirementProjectionService:
         timeline = await self._generate_timeline(scenario)
         
         return RetirementProjection(
-            scenario_id=f"scenario_{scenario.scenario_name}_{datetime.utcnow().timestamp()}",
+            scenario_id=f"scenario_{scenario.scenario_name}_{datetime.now(timezone.utc).timestamp()}",
             projected_retirement_savings=float(projected_savings),
             projected_annual_income=float(projected_income),
             years_in_retirement=years_in_retirement,

@@ -33,41 +33,58 @@ class ActionResponse(BaseModel):
     ex_date: str
     details: str
 
-@router.get("/earnings", response_model=List[EarningsResponse])
+@router.get("/earnings")
 async def get_earnings(
     days: int = 30,
     service: CorporateService = Depends(get_corporate_service)
 ):
-    earnings = await service.get_earnings_calendar(days)
-    return [EarningsResponse(
-        ticker=e.ticker,
-        date=e.date,
-        time=e.time,
-        estimated_eps=e.estimated_eps,
-        estimated_revenue=e.estimated_revenue
-    ) for e in earnings]
+    try:
+        earnings = await service.get_earnings_calendar(days)
+        data = [EarningsResponse(
+            ticker=e.ticker,
+            date=e.date,
+            time=e.time,
+            estimated_eps=e.estimated_eps,
+            estimated_revenue=e.estimated_revenue
+        ).model_dump() for e in earnings]
+        return {"success": True, "data": data}
+    except Exception as e:
+        logger.exception("Error getting earnings")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-@router.get("/actions", response_model=List[ActionResponse])
+@router.get("/actions")
 async def list_actions(
     service: CorporateService = Depends(get_corporate_service)
 ):
-    actions = await service.get_corporate_actions()
-    return [ActionResponse(
-        ticker=a.ticker,
-        type=a.type,
-        ex_date=a.ex_date,
-        details=a.details
-    ) for a in actions]
+    try:
+        actions = await service.get_corporate_actions()
+        data = [ActionResponse(
+            ticker=a.ticker,
+            type=a.type,
+            ex_date=a.ex_date,
+            details=a.details
+        ).model_dump() for a in actions]
+        return {"success": True, "data": data}
+    except Exception as e:
+        logger.exception("Error listing actions")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 @router.post("/drip")
 async def toggle_drip(
     enabled: bool,
     service: CorporateService = Depends(get_corporate_service)
 ):
-    result = await service.toggle_drip(enabled)
-    return {"status": "success", "drip_enabled": result}
+    try:
+        result = await service.toggle_drip(enabled)
+        return {"success": True, "data": {"drip_enabled": result}}
+    except Exception as e:
+        logger.exception("Error toggling DRIP")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-@router.get("/ipo/upcoming", response_model=List[IPOAnalysis])
+@router.get("/ipo/upcoming")
 async def get_upcoming_ipos(
     mock: bool = False,
     days: int = 30,
@@ -76,8 +93,13 @@ async def get_upcoming_ipos(
     """
     Retrieve upcoming IPOs with analysis.
     """
-    if mock:
-        tracker.finnhub.mock = True
-        
-    analysis = await tracker.get_upcoming_analysis(days)
-    return analysis
+    try:
+        if mock:
+            tracker.finnhub.mock = True
+            
+        analysis = await tracker.get_upcoming_analysis(days)
+        return {"success": True, "data": [a.model_dump() if hasattr(a, 'model_dump') else a for a in analysis]}
+    except Exception as e:
+        logger.exception("Error getting IPOs")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

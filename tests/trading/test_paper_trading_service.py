@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.trading.paper_trading_service import PaperTradingService
-from models.paper_trading import VirtualPortfolio, PaperOrder
+from schemas.paper_trading import VirtualPortfolio, PaperOrder
 
 
 @pytest.fixture

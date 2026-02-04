@@ -4,33 +4,33 @@ Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock
-from flask import Flask
-from web.api.crypto_api import crypto_api_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.crypto_api import router, get_crypto_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(crypto_api_bp)
+def api_app():
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_crypto_client():
+def mock_crypto_client(api_app):
     """Mock CryptoCompare client."""
-    with patch('web.api.crypto_api.get_crypto_client') as mock:
-        client = MagicMock()
-        mock.return_value = client
-        yield client
+    service = AsyncMock()
+    # Mocking price is synchronous in some contexts, but let's assume AsyncMock is safer
+    api_app.dependency_overrides[get_crypto_provider] = lambda: service
+    return service
 
 
 def test_get_crypto_price_success(client, mock_crypto_client):
@@ -40,17 +40,15 @@ def test_get_crypto_price_success(client, mock_crypto_client):
         'ETH': {'USD': 3000.0, 'EUR': 2700.0}
     }
     
-    async def mock_get_price(symbols, currencies):
-        return mock_prices
-    
-    mock_crypto_client.get_price = mock_get_price
+    mock_crypto_client.get_price.return_value = mock_prices
     
     response = client.get('/api/v1/market/crypto/price?symbols=BTC,ETH&currencies=USD,EUR&mock=false')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'BTC' in data
-    assert 'ETH' in data
+    data = response.json()
+    assert data['success'] is True
+    assert 'BTC' in data['data']
+    assert 'ETH' in data['data']
 
 
 def test_get_crypto_volume_success(client, mock_crypto_client):
@@ -65,13 +63,12 @@ def test_get_crypto_volume_success(client, mock_crypto_client):
         )
     ]
     
-    async def mock_get_volume(symbol):
-        return mock_volumes
-    
-    mock_crypto_client.get_top_exchanges_volume = mock_get_volume
+    mock_crypto_client.get_top_exchanges_volume.return_value = mock_volumes
     
     response = client.get('/api/v1/market/crypto/volume/BTC?mock=false')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert isinstance(data, list)
+    data = response.json()
+    assert data['success'] is True
+    assert isinstance(data['data'], list)
+    assert data['data'][0]['exchange'] == 'Binance'

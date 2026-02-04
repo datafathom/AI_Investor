@@ -1,7 +1,7 @@
 import logging
 from decimal import Decimal
 from typing import Optional
-from datetime import datetime
+from datetime import timezone, datetime
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ class DemoResetService:
             "positions_closed": 0,  # Would be populated by actual logic
             "orders_cancelled": 0,
             "history_cleared": clear_history,
-            "reset_timestamp": datetime.utcnow().isoformat()
+            "reset_timestamp": datetime.now(timezone.utc).isoformat()
         }
         
         logger.info(f"Demo account reset complete: {result}")

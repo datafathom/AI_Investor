@@ -44,7 +44,7 @@ from typing import Dict, List, Optional, Tuple
 import pandas as pd
 import numpy as np
 from scipy import stats
-from models.analytics import (
+from schemas.analytics import (
     FactorRiskDecomposition,
     FactorExposure,
     ConcentrationRiskAnalysis,
@@ -115,7 +115,7 @@ class RiskDecompositionService:
         )
         
         # Cache result (1 hour)
-        self.cache_service.set(cache_key, result.dict(), ttl=3600)
+        self.cache_service.set(cache_key, result.model_dump(), ttl=3600)
         
         return result
         

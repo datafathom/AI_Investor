@@ -1,121 +1,140 @@
 """
 Tests for Marketplace API Endpoints
-Phase 30: Extension Marketplace & Custom Tools
 """
 
 import pytest
-from unittest.mock import AsyncMock, patch
-from flask import Flask
-from web.api.marketplace_api import marketplace_bp
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.marketplace_api import router
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(marketplace_bp)
+def api_app():
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
-@pytest.fixture
-def mock_extension_framework():
-    """Mock ExtensionFramework."""
-    with patch('web.api.marketplace_api.get_extension_framework') as mock:
-        framework = AsyncMock()
-        mock.return_value = framework
-        yield framework
-
-
-@pytest.fixture
-def mock_marketplace_service():
-    """Mock MarketplaceService."""
-    with patch('web.api.marketplace_api.get_marketplace_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
-
-
-@pytest.mark.asyncio
-async def test_create_extension_success(client, mock_extension_framework):
-    """Test successful extension creation."""
-    from models.marketplace import Extension
-    
-    mock_extension = Extension(
-        extension_id='ext_1',
-        developer_id='dev_1',
-        extension_name='Test Extension',
-        description='Test description',
-        version='1.0.0',
-        category='analytics',
-        status='pending'
-    )
-    mock_extension_framework.create_extension.return_value = mock_extension
-    
-    response = client.post('/api/marketplace/extension/create',
-                          json={
-                              'developer_id': 'dev_1',
-                              'extension_name': 'Test Extension',
-                              'description': 'Test description',
-                              'version': '1.0.0',
-                              'category': 'analytics'
-                          })
+def test_get_extensions_success(client):
+    """Test getting extensions list."""
+    response = client.get('/api/v1/marketplace/extensions')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
-    assert data['data']['extension_name'] == 'Test Extension'
+    assert len(data['data']) == 3
 
 
-@pytest.mark.asyncio
-async def test_create_extension_missing_params(client):
-    """Test extension creation with missing parameters."""
-    response = client.post('/api/marketplace/extension/create',
-                          json={'developer_id': 'dev_1'})
+def test_get_extensions_filter_success(client):
+    """Test filtering extensions by category."""
+    response = client.get('/api/v1/marketplace/extensions?category=charting')
     
-    assert response.status_code == 400
-    data = response.get_json()
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert len(data['data']) == 1
+    assert data['data'][0]['category'] == 'charting'
+
+
+def test_get_installed_extensions_success(client):
+    """Test getting installed extensions."""
+    response = client.get('/api/v1/marketplace/installed?user_id=user_1')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert len(data['data']) == 2
+
+
+def test_get_extension_details_success(client):
+    """Test getting extension details."""
+    response = client.get('/api/v1/marketplace/extension/ext_001')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['id'] == 'ext_001'
+
+
+def test_get_extension_details_not_found(client):
+    """Test getting non-existent extension details."""
+    response = client.get('/api/v1/marketplace/extension/invalid')
+    
+    assert response.status_code == 404
+    data = response.json()
     assert data['success'] is False
 
 
-@pytest.mark.asyncio
-async def test_get_extensions_success(client, mock_marketplace_service):
-    """Test successful extensions retrieval."""
-    from models.marketplace import Extension
-    
-    mock_extensions = [
-        Extension(
-            extension_id='ext_1',
-            developer_id='dev_1',
-            extension_name='Test Extension',
-            description='Test description',
-            version='1.0.0',
-            category='analytics',
-            status='approved'
-        )
-    ]
-    mock_marketplace_service.get_extensions.return_value = mock_extensions
-    
-    response = client.get('/api/marketplace/extensions?category=analytics')
+def test_create_extension_success(client):
+    """Test creating an extension."""
+    payload = {
+        "developer_id": "dev_123",
+        "extension_name": "New Tool",
+        "description": "Desc",
+        "version": "1.0.0",
+        "category": "utility"
+    }
+    response = client.post('/api/v1/marketplace/extension/create', json=payload)
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
-    assert len(data['data']) == 1
+    assert data['data']['name'] == "New Tool"
 
 
-@pytest.mark.asyncio
-async def test_install_extension_success(client, mock_marketplace_service):
-    """Test successful extension installation."""
-    response = client.post('/api/marketplace/extension/ext_1/install',
-                          json={'user_id': 'user_1'})
+def test_install_extension_success(client):
+    """Test installing an extension."""
+    payload = {"user_id": "user_1"}
+    response = client.post('/api/v1/marketplace/extension/ext_001/install', json=payload)
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
+    assert data['data']['extension_id'] == "ext_001"
+
+
+def test_uninstall_extension_success(client):
+    """Test uninstalling an extension."""
+    payload = {"user_id": "user_1"}
+    response = client.post('/api/v1/marketplace/extension/ext_001/uninstall', json=payload)
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['extension_id'] == "ext_001"
+
+
+def test_add_review_success(client):
+    """Test adding a review."""
+    payload = {
+        "user_id": "user_1",
+        "rating": 5,
+        "comment": "Great!"
+    }
+    response = client.post('/api/v1/marketplace/extension/ext_001/review', json=payload)
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['rating'] == 5
+
+
+def test_add_review_invalid_rating(client):
+    """Test adding a review with invalid rating."""
+    payload = {
+        "user_id": "user_1",
+        "rating": 6,
+        "comment": "Too good!"
+    }
+    response = client.post('/api/v1/marketplace/extension/ext_001/review', json=payload)
+    
+    assert response.status_code == 400
+    data = response.json()
+    assert data['success'] is False

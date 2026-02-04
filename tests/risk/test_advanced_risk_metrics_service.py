@@ -4,11 +4,11 @@ Comprehensive test coverage for VaR, CVaR, drawdown, and risk ratios
 """
 
 import pytest
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from unittest.mock import Mock, AsyncMock, patch
 import numpy as np
 from services.risk.advanced_risk_metrics_service import AdvancedRiskMetricsService
-from models.risk import RiskMetrics
+from schemas.risk import RiskMetrics
 
 
 @pytest.fixture
@@ -116,7 +116,7 @@ async def test_calculate_risk_metrics_cached(service):
     """Test that cached risk metrics are returned when available."""
     cached_data = {
         'portfolio_id': 'test_portfolio',
-        'calculation_date': datetime.utcnow(),
+        'calculation_date': datetime.now(timezone.utc),
         'var_95': 0.02,
         'var_99': 0.03,
         'cvar_95': 0.025,

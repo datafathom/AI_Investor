@@ -1,60 +1,54 @@
 """
 Tests for Twilio API Endpoints
-Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock
-from flask import Flask
-from web.api.twilio_api import twilio_api_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.twilio_api import router, get_twilio_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(twilio_api_bp)
+def api_app():
+    """Create FastAPI app merchant testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_twilio_client():
-    """Mock Twilio client."""
-    with patch('web.api.twilio_api.get_twilio_client') as mock:
-        client = MagicMock()
-        mock.return_value = client
-        yield client
+def mock_twilio_client(api_app):
+    """Mock Twilio Client."""
+    service = AsyncMock()
+    service.send_sms.return_value = {"sid": "SM123", "status": "sent"}
+    
+    api_app.dependency_overrides[get_twilio_provider] = lambda: service
+    return service
 
 
 def test_send_alert_success(client, mock_twilio_client):
-    """Test successful SMS alert sending."""
-    mock_result = {'sid': 'SM123', 'status': 'sent'}
-    
-    async def mock_send_sms(to, message):
-        return mock_result
-    
-    mock_twilio_client.send_sms = mock_send_sms
-    
-    response = client.post('/notifications/twilio/send?mock=true',
-                          json={'to': '+15551234567', 'message': 'Test Alert'})
+    """Test sending SMS alert."""
+    payload = {"to": "+1234567890", "message": "Hello World"}
+    response = client.post('/api/v1/twilio/notifications/twilio/send', json=payload)
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'sid' in data or 'status' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['sid'] == "SM123"
 
 
-def test_send_alert_missing_params(client):
-    """Test SMS sending with missing parameters."""
-    response = client.post('/notifications/twilio/send?mock=true',
-                          json={'to': '+15551234567'})
+def test_send_alert_missing_fields(client):
+    """Test sending SMS with missing fields."""
+    payload = {"to": "", "message": ""}
+    response = client.post('/api/v1/twilio/notifications/twilio/send', json=payload)
     
     assert response.status_code == 400
-    data = response.get_json()
-    assert 'error' in data
+    data = response.json()
+    assert data['success'] is False

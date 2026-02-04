@@ -1,6 +1,6 @@
 import pytest
 from services.compliance.role_conflict_validator import RoleConflictValidator
-from models.professional_role import ProfessionalRole
+from schemas.professional_role import ProfessionalRole
 from uuid import uuid4
 
 def test_exclusive_role_clash():

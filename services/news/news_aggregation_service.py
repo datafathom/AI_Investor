@@ -24,9 +24,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from typing import Dict, List, Optional
-from models.news import NewsArticle, NewsSentiment
+from schemas.news import NewsArticle, NewsSentiment
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -68,11 +68,11 @@ class NewsAggregationService:
         if symbols:
             for symbol in symbols[:5]:  # Limit to 5 symbols
                 article = NewsArticle(
-                    article_id=f"article_{symbol}_{datetime.utcnow().timestamp()}",
+                    article_id=f"article_{symbol}_{datetime.now(timezone.utc).timestamp()}",
                     title=f"{symbol} News Update",
                     content=f"Latest news about {symbol}...",
                     source="Mock News",
-                    published_date=datetime.utcnow() - timedelta(hours=1),
+                    published_date=datetime.now(timezone.utc) - timedelta(hours=1),
                     symbols=[symbol],
                     relevance_score=0.8
                 )
@@ -137,7 +137,7 @@ class NewsAggregationService:
                     relevance += 0.3
         
         # Boost based on recency
-        hours_old = (datetime.utcnow() - article.published_date).total_seconds() / 3600
+        hours_old = (datetime.now(timezone.utc) - article.published_date).total_seconds() / 3600
         if hours_old < 1:
             relevance += 0.2
         elif hours_old < 6:

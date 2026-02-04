@@ -6,7 +6,7 @@ Phase 7: Model Validation Tests
 import pytest
 from datetime import datetime
 from pydantic import ValidationError
-from models.paper_trading import (
+from schemas.paper_trading import (
     PaperOrder,
     VirtualPortfolio,
     SimulationResult

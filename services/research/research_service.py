@@ -25,9 +25,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional
-from models.research import ResearchReport, ReportType, ReportStatus
+from schemas.research import ResearchReport, ReportType, ReportStatus
 from services.system.cache_service import get_cache_service
 from services.analysis.filing_analyzer import FilingAnalyzer
 from services.valuation.dcf_engine import DCFEngine
@@ -64,14 +64,14 @@ class ResearchService:
         logger.info(f"Generating portfolio report for {portfolio_id}")
         
         report = ResearchReport(
-            report_id=f"report_{user_id}_{datetime.utcnow().timestamp()}",
+            report_id=f"report_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             report_type=ReportType.PORTFOLIO_ANALYSIS,
-            title=title or f"Portfolio Analysis Report - {datetime.utcnow().strftime('%Y-%m-%d')}",
+            title=title or f"Portfolio Analysis Report - {datetime.now(timezone.utc).strftime('%Y-%m-%d')}",
             content="",
             status=ReportStatus.GENERATING,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Generate report content (simplified - would use actual portfolio data)
@@ -80,8 +80,8 @@ class ResearchService:
         report.data = await self._collect_portfolio_data(portfolio_id)
         
         report.status = ReportStatus.COMPLETED
-        report.generated_date = datetime.utcnow()
-        report.updated_date = datetime.utcnow()
+        report.generated_date = datetime.now(timezone.utc)
+        report.updated_date = datetime.now(timezone.utc)
         
         # Save report
         await self._save_report(report)
@@ -100,14 +100,14 @@ class ResearchService:
         logger.info(f"Generating company research for {symbol}")
         
         report = ResearchReport(
-            report_id=f"report_{user_id}_{datetime.utcnow().timestamp()}",
+            report_id=f"report_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             report_type=ReportType.COMPANY_RESEARCH,
             title=title or f"{symbol} Research Report",
             content="",
             status=ReportStatus.GENERATING,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # 1. Qualitative Analysis
@@ -132,8 +132,8 @@ class ResearchService:
         ]
         
         report.status = ReportStatus.COMPLETED
-        report.generated_date = datetime.utcnow()
-        report.updated_date = datetime.utcnow()
+        report.generated_date = datetime.now(timezone.utc)
+        report.updated_date = datetime.now(timezone.utc)
         
         await self._save_report(report)
         
@@ -194,7 +194,7 @@ class ResearchService:
     async def _save_report(self, report: ResearchReport):
         """Save report to cache and pretend it's DB."""
         cache_key = f"report:{report.report_id}"
-        self.cache_service.set(cache_key, report.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, report.model_dump(), ttl=86400 * 365)
         
         # Also track in user list
         user_list_key = f"user_reports:{report.user_id}"

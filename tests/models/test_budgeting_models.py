@@ -6,7 +6,7 @@ Phase 7: Model Validation Tests
 import pytest
 from datetime import datetime
 from pydantic import ValidationError
-from models.budgeting import (
+from schemas.budgeting import (
     ExpenseCategory,
     Budget,
     Expense,

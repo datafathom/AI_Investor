@@ -28,7 +28,7 @@ def run_clean_build(**kwargs):
     Sanitizes all JSX files and then runs the frontend build.
     """
     cwd = os.getcwd()
-    frontend_src = os.path.join(cwd, "frontend2", "src")
+    frontend_src = os.path.join(cwd, "frontend", "src")
     
     logger.info("Starting clean build (Sanitization + Build)...")
     print("Sanitizing JSX files (ASCII only)...")
@@ -42,7 +42,7 @@ def run_frontend_build(**kwargs):
     Executes the frontend build process.
     """
     cwd = os.getcwd()
-    frontend_path = os.path.join(cwd, "frontend2")
+    frontend_path = os.path.join(cwd, "frontend")
     
     logger.info("Starting frontend build...")
     print(f"Building frontend in {frontend_path}...")

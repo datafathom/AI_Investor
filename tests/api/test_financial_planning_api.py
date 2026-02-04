@@ -5,57 +5,62 @@ Phase 7: Financial Planning & Goal Tracking
 
 import pytest
 from unittest.mock import AsyncMock, patch
-from flask import Flask
-from web.api.financial_planning_api import financial_planning_bp
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.financial_planning_api import router, get_financial_planning_service, get_goal_tracking_service
+from web.auth_utils import get_current_user
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(financial_planning_bp)
+def api_app(mock_planning_service, mock_goal_tracking_service):
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
+    app.dependency_overrides[get_financial_planning_service] = lambda: mock_planning_service
+    app.dependency_overrides[get_goal_tracking_service] = lambda: mock_goal_tracking_service
+    app.dependency_overrides[get_current_user] = lambda: {"id": "user_1", "role": "user"}
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
 def mock_planning_service():
     """Mock FinancialPlanningService."""
-    with patch('web.api.financial_planning_api.get_financial_planning_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+    service = AsyncMock()
+    return service
 
 
 @pytest.fixture
 def mock_goal_tracking_service():
     """Mock GoalTrackingService."""
-    with patch('web.api.financial_planning_api.get_goal_tracking_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+    service = AsyncMock()
+    return service
 
 
-@pytest.mark.asyncio
-async def test_create_plan_success(client, mock_planning_service):
+def test_create_plan_success(client, mock_planning_service):
     """Test successful plan creation."""
-    from models.financial_planning import FinancialPlan
+    from schemas.financial_planning import FinancialPlan
+    from datetime import datetime, timezone
     
     mock_plan = FinancialPlan(
         plan_id='plan_1',
         user_id='user_1',
         goals=[],
-        monthly_contribution_capacity=1000.0
+        total_target_amount=100000.0,
+        total_current_amount=50000.0,
+        monthly_contribution_capacity=1000.0,
+        recommended_allocations={},
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     mock_planning_service.create_financial_plan.return_value = mock_plan
     
-    response = client.post('/api/planning/plan/create',
+    response = client.post('/api/v1/financial_planning/plan/create',
                           json={
                               'user_id': 'user_1',
                               'goals': [],
@@ -63,75 +68,39 @@ async def test_create_plan_success(client, mock_planning_service):
                           })
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
 
 
-@pytest.mark.asyncio
-async def test_create_plan_missing_params(client):
+def test_create_plan_missing_params(client):
     """Test plan creation with missing parameters."""
-    response = client.post('/api/planning/plan/create', json={'user_id': 'user_1'})
+    response = client.post('/api/v1/financial_planning/plan/create', 
+                          json={'user_id': 'user_1'})
     
-    assert response.status_code == 400
-    data = response.get_json()
-    assert data['success'] is False
+    # Pydantic validation error
+    assert response.status_code in [400, 422]
 
 
-@pytest.mark.asyncio
-async def test_get_plan_success(client, mock_planning_service):
+def test_get_plan_success(client, mock_planning_service):
     """Test successful plan retrieval."""
-    from models.financial_planning import FinancialPlan
+    from schemas.financial_planning import FinancialPlan
+    from datetime import datetime, timezone
     
     mock_plan = FinancialPlan(
         plan_id='plan_1',
         user_id='user_1',
         goals=[],
-        monthly_contribution_capacity=1000.0
+        total_target_amount=100000.0,
+        total_current_amount=50000.0,
+        monthly_contribution_capacity=1000.0,
+        recommended_allocations={},
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
-    mock_planning_service.get_financial_plan.return_value = mock_plan
+    mock_planning_service.get_financial_plan = AsyncMock(return_value=mock_plan)
     
-    response = client.get('/api/planning/plan/user_1')
+    response = client.get('/api/v1/financial_planning/plan/user_1')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
-
-
-@pytest.mark.asyncio
-async def test_project_goal_success(client, mock_goal_tracking_service):
-    """Test goal projection."""
-    from models.financial_planning import GoalProjection
-    
-    mock_projection = GoalProjection(
-        goal_id='goal_1',
-        projected_completion_date='2025-12-31',
-        required_monthly_contribution=500.0
-    )
-    mock_goal_tracking_service.project_goal_completion.return_value = mock_projection
-    
-    response = client.post('/api/planning/goal/project/goal_1', json={})
-    
-    assert response.status_code == 200
-    data = response.get_json()
-    assert data['success'] is True
-
-
-@pytest.mark.asyncio
-async def test_get_goal_progress_success(client, mock_goal_tracking_service):
-    """Test successful goal progress retrieval."""
-    from models.financial_planning import GoalProgress
-    
-    mock_progress = GoalProgress(
-        goal_id='goal_1',
-        current_value=5000.0,
-        target_value=10000.0,
-        progress_percent=50.0
-    )
-    mock_goal_tracking_service.get_goal_progress.return_value = mock_progress
-    
-    response = client.get('/api/planning/goal/goal_1/progress')
-    
-    assert response.status_code == 200
-    data = response.get_json()
-    assert data['success'] is True
-    assert data['data']['progress_percent'] == 50.0

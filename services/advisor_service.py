@@ -1,7 +1,7 @@
 import logging
 from typing import List, Optional
 from uuid import UUID
-from models.advisor import Advisor, AdvisorCreate
+from schemas.advisor import Advisor, AdvisorCreate
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ class AdvisorService:
 
     def create_advisor(self, advisor_data: AdvisorCreate) -> Advisor:
         """Creates a new advisor record."""
-        new_advisor = Advisor(**advisor_data.dict())
+        new_advisor = Advisor(**advisor_data.model_dump())
         self.mock_db[new_advisor.id] = new_advisor
         logger.info(f"ADVISOR_LOG: Created advisor {new_advisor.name} with fiduciary_status={new_advisor.fiduciary_status}")
         return new_advisor

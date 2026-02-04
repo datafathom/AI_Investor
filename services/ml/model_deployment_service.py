@@ -24,9 +24,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional
-from models.ml_training import ModelVersion
+from schemas.ml_training import ModelVersion
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -60,10 +60,10 @@ class ModelDeploymentService:
         logger.info(f"Deploying model {model_version.model_id} with {rollout_percentage}% rollout")
         
         deployment = {
-            "deployment_id": f"deploy_{model_version.model_id}_{datetime.utcnow().timestamp()}",
+            "deployment_id": f"deploy_{model_version.model_id}_{datetime.now(timezone.utc).timestamp()}",
             "model_id": model_version.model_id,
             "rollout_percentage": rollout_percentage,
-            "deployed_date": datetime.utcnow().isoformat(),
+            "deployed_date": datetime.now(timezone.utc).isoformat(),
             "status": "active"
         }
         

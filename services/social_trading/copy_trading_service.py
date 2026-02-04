@@ -26,7 +26,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
-from models.social_trading import CopyTradingConfig, CopyTrade
+from schemas.social_trading import CopyTradingConfig, CopyTrade
 from services.social_trading.social_trading_service import get_social_trading_service
 from services.system.cache_service import get_cache_service
 
@@ -156,12 +156,12 @@ class CopyTradingService:
     async def _save_config(self, config: CopyTradingConfig):
         """Save copy config to cache."""
         cache_key = f"copy_config:{config.config_id}"
-        self.cache_service.set(cache_key, config.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, config.model_dump(), ttl=86400 * 365)
     
     async def _save_copy_trade(self, copy_trade: CopyTrade):
         """Save copy trade to cache."""
         cache_key = f"copy_trade:{copy_trade.copy_trade_id}"
-        self.cache_service.set(cache_key, copy_trade.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, copy_trade.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

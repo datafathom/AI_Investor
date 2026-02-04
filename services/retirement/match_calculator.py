@@ -1,7 +1,7 @@
 import logging
 from decimal import Decimal
 from typing import Dict, Any, Optional
-from models.employer_match import EmployerMatchConfig
+from schemas.employer_match import EmployerMatchConfig
 
 logger = logging.getLogger(__name__)
 

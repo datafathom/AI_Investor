@@ -1,7 +1,7 @@
 import logging
 import hashlib
 from typing import Dict, Any, List
-from models.platform_ledger import PlatformLedger
+from schemas.platform_ledger import PlatformLedger
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ class LedgerService:
         """Validates that each entry's hash matches the checksum of the data + previous hash."""
         # Simple mock logic
         for i in range(1, len(entries)):
-            expected = self.create_entry_hash(entries[i].dict(), entries[i-1].entry_hash)
+            expected = self.create_entry_hash(entries[i].model_dump(), entries[i-1].entry_hash)
             if entries[i].entry_hash != expected:
                 logger.error(f"LEDGER_CRITICAL: Chain break at entry {entries[i].id}")
                 return False

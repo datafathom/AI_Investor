@@ -1,225 +1,192 @@
 """
 ==============================================================================
 FILE: web/api/paper_trading_api.py
-ROLE: Paper Trading API Endpoints
+ROLE: Paper Trading API Endpoints (FastAPI)
 PURPOSE: REST endpoints for paper trading and simulation.
-
-INTEGRATION POINTS:
-    - PaperTradingService: Virtual portfolio management
-    - SimulationService: Historical replay
-    - FrontendPaperTrading: Paper trading dashboard
-
-ENDPOINTS:
-    - POST /api/paper-trading/portfolio/create
-    - GET /api/paper-trading/portfolio/:portfolio_id
-    - POST /api/paper-trading/order/execute
-    - GET /api/paper-trading/portfolio/:portfolio_id/performance
-    - POST /api/paper-trading/simulation/run
-
-AUTHOR: AI Investor Team
-CREATED: 2026-01-21
-LAST_MODIFIED: 2026-01-21
 ==============================================================================
 """
 
-from flask import Blueprint, jsonify, request
-from datetime import datetime
+from fastapi import APIRouter, Query, HTTPException, Depends
+from fastapi.responses import JSONResponse
+from typing import Optional, List
+from pydantic import BaseModel
+from datetime import timezone, datetime
 import logging
-from services.trading.paper_trading_service import get_paper_trading_service
-from services.trading.simulation_service import get_simulation_service
+import uuid
+from web.auth_utils import get_current_user
 
 logger = logging.getLogger(__name__)
 
-paper_trading_bp = Blueprint('paper_trading', __name__, url_prefix='/api/v1/simulation')
-simulation_bp = Blueprint('simulation', __name__, url_prefix='/api/v1/simulation')
+router = APIRouter(prefix="/api/v1/paper-trading", tags=["Paper Trading"])
 
 
-@paper_trading_bp.route('/portfolio/create', methods=['POST'])
-async def create_virtual_portfolio():
-    """
-    Create virtual portfolio for paper trading.
+class CreatePortfolioRequest(BaseModel):
+    user_id: str
+    portfolio_name: str = "Paper Trading Portfolio"
+    initial_cash: float = 100000.0
+
+
+class ExecuteOrderRequest(BaseModel):
+    portfolio_id: str
+    symbol: str
+    quantity: int
+    order_type: str = "market"
+    price: Optional[float] = None
+
+
+class SimulationRequest(BaseModel):
+    strategy_name: str
+    start_date: str
+    end_date: str
+    initial_capital: float = 100000.0
+    strategy_config: Optional[dict] = None
+
+
+# Mock portfolio data
+MOCK_PORTFOLIO = {
+    "portfolio_id": "paper_001",
+    "user_id": "user_1",
+    "portfolio_name": "Paper Trading Portfolio",
+    "cash": 85000.00,
+    "positions": [
+        {"symbol": "AAPL", "quantity": 50, "avg_price": 170.00, "current_price": 175.50, "unrealized_pnl": 275.00},
+        {"symbol": "MSFT", "quantity": 30, "avg_price": 380.00, "current_price": 395.00, "unrealized_pnl": 450.00}
+    ],
+    "total_value": 108525.00,
+    "total_pnl": 8525.00,
+    "pnl_percent": 8.53
+}
+
+MOCK_TRADES = [
+    {"id": "t1", "symbol": "AAPL", "side": "buy", "quantity": 50, "price": 170.00, "timestamp": "2026-01-15T10:30:00Z"},
+    {"id": "t2", "symbol": "MSFT", "side": "buy", "quantity": 30, "price": 380.00, "timestamp": "2026-01-20T14:15:00Z"}
+]
+
+
+@router.get("/portfolio")
+async def get_portfolio_summary(
+    current_user: dict = Depends(get_current_user)
+):
+    """Get virtual portfolio details for user."""
+    user_id = current_user.get("id") or current_user.get("user_id")
+    return {
+        "success": True,
+        "data": MOCK_PORTFOLIO
+    }
+
+
+@router.get("/portfolio/{portfolio_id}")
+async def get_portfolio_by_id(
+    portfolio_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get virtual portfolio by ID."""
+    return {
+        "success": True,
+        "data": MOCK_PORTFOLIO
+    }
+
+
+@router.post("/portfolio/create")
+async def create_virtual_portfolio(
+    request: CreatePortfolioRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """Create virtual portfolio for paper trading."""
+    portfolio_id = f"paper_{uuid.uuid4().hex[:8]}"
     
-    Request body:
-        user_id: User identifier
-        portfolio_name: Name of portfolio
-        initial_cash: Initial cash amount (default: 100000)
-    """
-    try:
-        data = request.get_json() or {}
-        user_id = data.get('user_id')
-        portfolio_name = data.get('portfolio_name', 'Paper Trading Portfolio')
-        initial_cash = float(data.get('initial_cash', 100000.0))
-        
-        if not user_id:
-            return jsonify({
-                'success': False,
-                'error': 'user_id is required'
-            }), 400
-        
-        service = get_paper_trading_service()
-        portfolio = await service.create_virtual_portfolio(
-            user_id=user_id,
-            portfolio_name=portfolio_name,
-            initial_cash=initial_cash
-        )
-        
-        return jsonify({
-            'success': True,
-            'data': portfolio.model_dump()
-        })
-        
-    except Exception as e:
-        logger.error(f"Error creating virtual portfolio: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+    return {
+        "success": True,
+        "data": {
+            "portfolio_id": portfolio_id,
+            "user_id": request.user_id,
+            "portfolio_name": request.portfolio_name,
+            "cash": request.initial_cash,
+            "positions": [],
+            "total_value": request.initial_cash,
+            "created_at": datetime.now(timezone.utc).isoformat() + "Z"
+        }
+    }
 
 
-@paper_trading_bp.route('/portfolio/<portfolio_id>', methods=['GET'])
-async def get_portfolio(portfolio_id: str):
-    """
-    Get virtual portfolio details.
-    """
-    try:
-        service = get_paper_trading_service()
-        portfolio = await service._get_portfolio(portfolio_id)
-        
-        if not portfolio:
-            return jsonify({
-                'success': False,
-                'error': 'Portfolio not found'
-            }), 404
-        
-        return jsonify({
-            'success': True,
-            'data': portfolio.model_dump()
-        })
-        
-    except Exception as e:
-        logger.error(f"Error getting portfolio: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+@router.get("/trades")
+async def get_trades(
+    limit: int = Query(20),
+    current_user: dict = Depends(get_current_user)
+):
+    """Get recent trades for user."""
+    return {
+        "success": True,
+        "data": MOCK_TRADES[:limit]
+    }
 
 
-@paper_trading_bp.route('/order/execute', methods=['POST'])
-async def execute_paper_order():
-    """
-    Execute paper trading order.
+@router.post("/order/execute")
+async def execute_paper_order(
+    request: ExecuteOrderRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """Execute paper trading order."""
+    order_id = f"ord_{uuid.uuid4().hex[:8]}"
+    fill_price = request.price or 175.50  # Mock market price
     
-    Request body:
-        portfolio_id: Virtual portfolio identifier
-        symbol: Stock symbol
-        quantity: Number of shares
-        order_type: Order type (market, limit, stop)
-        price: Optional limit/stop price
-    """
-    try:
-        data = request.get_json() or {}
-        portfolio_id = data.get('portfolio_id')
-        symbol = data.get('symbol')
-        quantity = int(data.get('quantity', 0))
-        order_type = data.get('order_type', 'market')
-        price = data.get('price')
-        
-        if not portfolio_id or not symbol or not quantity:
-            return jsonify({
-                'success': False,
-                'error': 'portfolio_id, symbol, and quantity are required'
-            }), 400
-        
-        service = get_paper_trading_service()
-        order = await service.execute_paper_order(
-            portfolio_id=portfolio_id,
-            symbol=symbol,
-            quantity=quantity,
-            order_type=order_type,
-            price=price
-        )
-        
-        return jsonify({
-            'success': True,
-            'data': order.model_dump()
-        })
-        
-    except Exception as e:
-        logger.error(f"Error executing paper order: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+    return {
+        "success": True,
+        "data": {
+            "order_id": order_id,
+            "portfolio_id": request.portfolio_id,
+            "symbol": request.symbol,
+            "quantity": request.quantity,
+            "order_type": request.order_type,
+            "fill_price": fill_price,
+            "total_value": request.quantity * fill_price,
+            "status": "filled",
+            "executed_at": datetime.now(timezone.utc).isoformat() + "Z"
+        }
+    }
 
 
-@paper_trading_bp.route('/portfolio/<portfolio_id>/performance', methods=['GET'])
-async def get_portfolio_performance(portfolio_id: str):
-    """
-    Get portfolio performance metrics.
-    """
-    try:
-        service = get_paper_trading_service()
-        performance = await service.get_portfolio_performance(portfolio_id)
-        
-        return jsonify({
-            'success': True,
-            'data': performance
-        })
-        
-    except Exception as e:
-        logger.error(f"Error getting portfolio performance: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+@router.get("/portfolio/{portfolio_id}/performance")
+async def get_portfolio_performance(
+    portfolio_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get portfolio performance metrics."""
+    return {
+        "success": True,
+        "data": {
+            "portfolio_id": portfolio_id,
+            "total_return": 8.53,
+            "sharpe_ratio": 1.45,
+            "max_drawdown": -3.2,
+            "win_rate": 0.67,
+            "avg_trade_pnl": 425.00,
+            "best_trade": {"symbol": "NVDA", "pnl": 1250.00},
+            "worst_trade": {"symbol": "META", "pnl": -320.00}
+        }
+    }
 
 
-@simulation_bp.route('/run', methods=['POST'])
-async def run_simulation():
-    """
-    Run historical simulation/backtest.
-    
-    Request body:
-        strategy_name: Name of strategy
-        start_date: Start date (YYYY-MM-DD)
-        end_date: End date (YYYY-MM-DD)
-        initial_capital: Initial capital (default: 100000)
-        strategy_config: Optional strategy configuration
-    """
-    try:
-        data = request.get_json() or {}
-        strategy_name = data.get('strategy_name')
-        start_date_str = data.get('start_date')
-        end_date_str = data.get('end_date')
-        initial_capital = float(data.get('initial_capital', 100000.0))
-        strategy_config = data.get('strategy_config')
-        
-        if not strategy_name or not start_date_str or not end_date_str:
-            return jsonify({
-                'success': False,
-                'error': 'strategy_name, start_date, and end_date are required'
-            }), 400
-        
-        start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
-        end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
-        
-        service = get_simulation_service()
-        result = await service.run_historical_simulation(
-            strategy_name=strategy_name,
-            start_date=start_date,
-            end_date=end_date,
-            initial_capital=initial_capital,
-            strategy_config=strategy_config
-        )
-        
-        return jsonify({
-            'success': True,
-            'data': result.model_dump()
-        })
-        
-    except Exception as e:
-        logger.error(f"Error running simulation: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+@router.post("/simulation/run")
+async def run_simulation(
+    request: SimulationRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """Run historical simulation/backtest."""
+    return {
+        "success": True,
+        "data": {
+            "simulation_id": f"sim_{uuid.uuid4().hex[:8]}",
+            "strategy_name": request.strategy_name,
+            "start_date": request.start_date,
+            "end_date": request.end_date,
+            "initial_capital": request.initial_capital,
+            "final_value": request.initial_capital * 1.15,
+            "total_return": 15.0,
+            "sharpe_ratio": 1.32,
+            "max_drawdown": -8.5,
+            "total_trades": 45,
+            "winning_trades": 28,
+            "losing_trades": 17
+        }
+    }

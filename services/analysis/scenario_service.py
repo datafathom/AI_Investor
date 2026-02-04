@@ -39,7 +39,7 @@ class ScenarioService:
         self._base_portfolio_value = 1000000.0
         logger.info("ScenarioService initialized")
     
-    def apply_shock(self, portfolio_id: str, shock: MacroShock) -> ScenarioResult:
+    async def apply_shock(self, portfolio_id: str, shock: MacroShock) -> ScenarioResult:
         equity_weight = 0.6
         bond_weight = 0.3
         gold_weight = 0.1
@@ -63,20 +63,20 @@ class ScenarioService:
             net_impact=(impact * self._base_portfolio_value)
         )
     
-    def calculate_hedge_sufficiency(self, portfolio_id: str, shock: MacroShock) -> float:
-        result = self.apply_shock(portfolio_id, shock)
+    async def calculate_hedge_sufficiency(self, portfolio_id: str, shock: MacroShock) -> float:
+        result = await self.apply_shock(portfolio_id, shock)
         if result.net_impact >= 0:
             return 1.0
         return min(1.0, result.hedge_offset / abs(result.net_impact))
     
-    def simulate_bank_run(self, portfolio_id: str) -> Dict:
+    async def simulate_bank_run(self, portfolio_id: str) -> Dict:
         return {
             "liquid_assets": self._base_portfolio_value * 0.3,
             "days_of_coverage": 180,
             "vulnerable_positions": ["Corporate Bonds", "REITs"]
         }
     
-    def project_recovery_timeline(self, result: ScenarioResult) -> RecoveryProjection:
+    async def project_recovery_timeline(self, result: ScenarioResult) -> RecoveryProjection:
         drop_pct = abs(result.portfolio_impact)
         # 10 days per 1% drop with a floor
         base_days = max(30, int(drop_pct * 10))  
@@ -99,7 +99,7 @@ class ScenarioService:
             best_case_days=int(base_days * 0.4)
         )
 
-    def run_refined_monte_carlo(
+    async def run_refined_monte_carlo(
         self, 
         initial_value: float, 
         shock: MacroShock,
@@ -133,7 +133,7 @@ class ScenarioService:
             "days": days
         }
 
-    def calculate_liquidity_drain(self, stress_level: float = 1.0) -> Dict:
+    async def calculate_liquidity_drain(self, stress_level: float = 1.0) -> Dict:
         """Detailed liquidity analysis under stress."""
         base_liquid = self._base_portfolio_value * 0.4
         drain_rate = 0.05 * stress_level

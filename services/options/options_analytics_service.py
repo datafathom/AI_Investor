@@ -28,7 +28,7 @@ from datetime import datetime
 from typing import Dict, List, Optional
 import numpy as np
 from scipy.stats import norm
-from models.options import OptionsStrategy, StrategyGreeks, StrategyPnL, Greeks, StrategyAnalysis
+from schemas.options import OptionsStrategy, StrategyGreeks, StrategyPnL, Greeks, StrategyAnalysis
 from services.options.strategy_builder_service import get_strategy_builder_service
 from services.system.cache_service import get_cache_service
 

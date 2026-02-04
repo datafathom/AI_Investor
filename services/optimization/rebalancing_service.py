@@ -28,7 +28,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
-from models.optimization import (
+from schemas.optimization import (
     RebalancingRecommendation,
     RebalancingStrategy,
     RebalancingSchedule,
@@ -254,7 +254,7 @@ class RebalancingService:
         """Record rebalancing event in history cache."""
         cache_key = f"rebalancing_history:{portfolio_id}"
         history_list = self.cache_service.get(cache_key) or []
-        history_list.append(history.dict())
+        history_list.append(history.model_dump())
         return self.cache_service.set(cache_key, history_list, ttl=86400 * 365)
 
     async def _get_history_from_db(self, portfolio_id: str) -> List[Dict]:

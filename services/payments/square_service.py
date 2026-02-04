@@ -22,6 +22,7 @@ import logging
 import asyncio
 import uuid
 import datetime
+from datetime import timezone
 import random
 from typing import Dict, Any, List, Optional
 
@@ -126,7 +127,7 @@ class SquareClient:
                 "source_type": "CARD",
                 "customer_id": customer_id,
                 "reference_id": reference_id,
-                "created_at": datetime.datetime.utcnow().isoformat()
+                "created_at": datetime.datetime.now(timezone.utc).isoformat()
             }
         return {}
     
@@ -160,7 +161,7 @@ class SquareClient:
                 "family_name": family_name,
                 "phone_number": phone_number,
                 "reference_id": reference_id,
-                "created_at": datetime.datetime.utcnow().isoformat()
+                "created_at": datetime.datetime.now(timezone.utc).isoformat()
             }
         return {}
     

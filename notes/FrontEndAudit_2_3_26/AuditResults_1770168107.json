@@ -1,0 +1,562 @@
+[
+  {
+    "route_title": "Ai Assistant (Phase 26)",
+    "route_url": "/ai/assistant",
+    "page_load_time": 6.13,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Ai Predictions (Phase 25)",
+    "route_url": "/ai/predictions",
+    "page_load_time": 5.55,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Overview Analyst",
+    "route_url": "/analyst",
+    "page_load_time": 6.82,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Role Analyst",
+    "route_url": "/analyst/debate",
+    "page_load_time": 5.67,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Overview Analytics",
+    "route_url": "/analytics",
+    "page_load_time": 6.77,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Options",
+    "route_url": "/analytics/options",
+    "page_load_time": 5.51,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Political Alpha",
+    "route_url": "/analytics/political",
+    "page_load_time": 5.81,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Strategy Distillery",
+    "route_url": "/analytics/strategy",
+    "page_load_time": 6.71,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5173/analytics/strategy - Access to XMLHttpRequest at 'http://localhost:5050/socket.io/?EIO=4&transport=polling&t=cfpm5hav' from origin 'http://127.0.0.1:5173' has been blocked by COR"
+  },
+  {
+    "route_title": "Overview Architect",
+    "route_url": "/architect",
+    "page_load_time": 6.21,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Role Api (Phase 23)",
+    "route_url": "/architect/api",
+    "page_load_time": 5.98,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Role Architect (Phase 19)",
+    "route_url": "/architect/system",
+    "page_load_time": 5.21,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Assets (Phase 24)",
+    "route_url": "/assets",
+    "page_load_time": 5.15,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Bill Payment (Phase 11)",
+    "route_url": "/billing/payments",
+    "page_load_time": 5.25,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Budgeting (Phase 10)",
+    "route_url": "/budgeting",
+    "page_load_time": 5.1,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Advanced Charting (Phase 5)",
+    "route_url": "/charting/advanced",
+    "page_load_time": 6.33,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5173/charting/advanced - Access to XMLHttpRequest at 'http://127.0.0.1:5050/api/v1/charting/indicators?symbol=AAPL&timeframe=1d&chart_type=candlestick&limit=100&indicators=sma_20,rsi'"
+  },
+  {
+    "route_title": "Chat",
+    "route_url": "/chat",
+    "page_load_time": 5.8,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Community Forums (Phase 20)",
+    "route_url": "/community/forums",
+    "page_load_time": 6.68,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Compliance",
+    "route_url": "/compliance",
+    "page_load_time": 5.49,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Credit Monitoring (Phase 12)",
+    "route_url": "/credit/monitoring",
+    "page_load_time": 5.63,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Developer Platform (Phase 29)",
+    "route_url": "/developer/platform",
+    "page_load_time": 5.88,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/public-api/usage?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found) ; http://127.0.0.1:5050/api/v1/public-api/keys?user_id=use"
+  },
+  {
+    "route_title": "Education (Phase 21)",
+    "route_url": "/education",
+    "page_load_time": 5.07,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/education/progress?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found) ; http://127.0.0.1:5050/api/v1/education/certifications?"
+  },
+  {
+    "route_title": "Enterprise (Phase 31)",
+    "route_url": "/enterprise",
+    "page_load_time": 5.96,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/enterprise/teams?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found) ; http://127.0.0.1:5173/src/stores/enterpriseStore.js 20:2"
+  },
+  {
+    "route_title": "Frontend interface for EvolutionDashboard (Phase 4: Evolution Lab)",
+    "route_url": "/evolution",
+    "page_load_time": 5.94,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/evolution/start - Failed to load resource: the server responded with a status of 404 (Not Found) ; http://127.0.0.1:5050/api/v1/evolution/start - Failed to load resource: "
+  },
+  {
+    "route_title": "Overview Guardian",
+    "route_url": "/guardian",
+    "page_load_time": 5.62,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Role Guardian",
+    "route_url": "/guardian/compliance",
+    "page_load_time": 5.7,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Role Audit (Phase 16)",
+    "route_url": "/guardian/compliance/audit",
+    "page_load_time": 5.64,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Role Margin (Phase 21)",
+    "route_url": "/guardian/margin",
+    "page_load_time": 6.94,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/margin/status - Failed to load resource: the server responded with a status of 500 (Internal Server Error) ; http://127.0.0.1:5050/api/v1/margin/deleverage - Failed to loa"
+  },
+  {
+    "route_title": "Role Scenarios (Phase 17)",
+    "route_url": "/guardian/scenarios",
+    "page_load_time": 5.63,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Institutional (Phase 33)",
+    "route_url": "/institutional",
+    "page_load_time": 5.1,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Integrations (Phase 28)",
+    "route_url": "/integrations",
+    "page_load_time": 5.96,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Legal Privacy",
+    "route_url": "/legal/privacy",
+    "page_load_time": 5.72,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Legal Terms",
+    "route_url": "/legal/terms",
+    "page_load_time": 6.03,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Marketplace (Phase 30)",
+    "route_url": "/marketplace",
+    "page_load_time": 5.33,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=86919137 63:37 \"Warning: Each child in a list should have a unique \\\"key\\\" prop.%s%s See https://reactjs.org/link/warning-keys "
+  },
+  {
+    "route_title": "Ml Training (Phase 27)",
+    "route_url": "/ml/training",
+    "page_load_time": 7.16,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/ml-training/jobs?user_id=user_1 - Failed to load resource: the server responded with a status of 500 (Internal Server Error) ; http://127.0.0.1:5050/api/v1/ml-training/dep"
+  },
+  {
+    "route_title": "Role Warden (Phase 22)",
+    "route_url": "/mobile",
+    "page_load_time": 5.38,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "News Sentiment (Phase 16)",
+    "route_url": "/news/sentiment",
+    "page_load_time": 5.61,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/news/headlines - Failed to load resource: the server responded with a status of 404 (Not Found) ; http://127.0.0.1:5173/src/stores/newsStore.js 49:20 \"Fetch headlines fail"
+  },
+  {
+    "route_title": "Overview Observer",
+    "route_url": "/observer",
+    "page_load_time": 5.47,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Role Observer",
+    "route_url": "/observer/macro",
+    "page_load_time": 5.14,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/macro-data/regime - Failed to load resource: the server responded with a status of 404 (Not Found) ; http://127.0.0.1:5050/api/v1/macro-data/indicators - Failed to load re"
+  },
+  {
+    "route_title": "Role Orchestrator (Phase 200)",
+    "route_url": "/orchestrator",
+    "page_load_time": 5.43,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Estate Planning (Phase 9)",
+    "route_url": "/planning/estate",
+    "page_load_time": 5.66,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/estate/beneficiaries?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found) ; http://127.0.0.1:5173/src/stores/estateStore.js 37:2"
+  },
+  {
+    "route_title": "Financial Planning (Phase 7)",
+    "route_url": "/planning/financial",
+    "page_load_time": 6.5,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/financial-planning/goals?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found) ; http://127.0.0.1:5050/api/v1/financial-planning/"
+  },
+  {
+    "route_title": "Retirement Planning (Phase 8)",
+    "route_url": "/planning/retirement",
+    "page_load_time": 5.54,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/retirement/withdrawal-strategy?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found) ; http://127.0.0.1:5173/src/stores/wealthSto"
+  },
+  {
+    "route_title": "Overview Portfolio",
+    "route_url": "/portfolio",
+    "page_load_time": 5.51,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Advanced Analytics (Phase 1)",
+    "route_url": "/portfolio/advanced-analytics",
+    "page_load_time": 5.54,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Attribution",
+    "route_url": "/portfolio/attribution",
+    "page_load_time": 5.5,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5173/src/stores/portfolioStore.js 171:14 \"Attribution fetch error:\" Error\n    at fetchAttribution (http://127.0.0.1:5173/src/stores/portfolioStore.js:169:15) ; http://127.0.0.1:5173/s"
+  },
+  {
+    "route_title": "Backtest",
+    "route_url": "/portfolio/backtest",
+    "page_load_time": 5.51,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Brokerage",
+    "route_url": "/portfolio/brokerage",
+    "page_load_time": 5.86,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Cash Flow (Phase 10)",
+    "route_url": "/portfolio/cash-flow",
+    "page_load_time": 5.37,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Crypto",
+    "route_url": "/portfolio/crypto",
+    "page_load_time": 5.07,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Fixed Income",
+    "route_url": "/portfolio/fixed-income",
+    "page_load_time": 5.64,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Portfolio Optimization (Phase 2)",
+    "route_url": "/portfolio/optimization",
+    "page_load_time": 7.61,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Advanced Risk (Phase 3)",
+    "route_url": "/portfolio/risk",
+    "page_load_time": 5.62,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Tax",
+    "route_url": "/portfolio/tax",
+    "page_load_time": 5.74,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/tax-optimization/harvest-candidates?portfolio_id=default_portfolio&min_loss=100 - Failed to load resource: the server responded with a status of 500 (Internal Server Error"
+  },
+  {
+    "route_title": "Tax Optimization (Phase 4)",
+    "route_url": "/portfolio/tax-optimization",
+    "page_load_time": 5.91,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/tax-optimization/harvest-candidates?portfolio_id=portfolio_1 - Failed to load resource: the server responded with a status of 500 (Internal Server Error) ; http://127.0.0."
+  },
+  {
+    "route_title": "Research Reports (Phase 18)",
+    "route_url": "/research/reports",
+    "page_load_time": 5.58,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Overview Scanner",
+    "route_url": "/scanner",
+    "page_load_time": 5.38,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Scanner",
+    "route_url": "/scanner/global",
+    "page_load_time": 5.79,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Frontend interface for SentinelStrategyDashboard",
+    "route_url": "/sentinel/strategy",
+    "page_load_time": 5.57,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Settings",
+    "route_url": "/settings",
+    "page_load_time": 5.33,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Social Trading (Phase 19)",
+    "route_url": "/social/trading",
+    "page_load_time": 5.91,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/social-trading/leaderboard - Failed to load resource: the server responded with a status of 404 (Not Found) ; http://127.0.0.1:5173/src/stores/socialStore.js 25:20 \"Failed"
+  },
+  {
+    "route_title": "Overview Strategist",
+    "route_url": "/strategist",
+    "page_load_time": 5.61,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Role Corporate (Phase 20)",
+    "route_url": "/strategist/corporate",
+    "page_load_time": 5.58,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Role Strategist",
+    "route_url": "/strategist/currency",
+    "page_load_time": 5.42,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Role Estate",
+    "route_url": "/strategist/estate",
+    "page_load_time": 5.41,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/estate/plan?user_id=default_user - Failed to load resource: the server responded with a status of 404 (Not Found) ; http://127.0.0.1:5050/api/v1/estate/beneficiaries?user_"
+  },
+  {
+    "route_title": "Role Impact (Phase 18)",
+    "route_url": "/strategist/impact",
+    "page_load_time": 5.43,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/philanthropy/carbon?value=3247500 - Failed to load resource: the server responded with a status of 500 (Internal Server Error) ; http://127.0.0.1:5050/api/v1/philanthropy/"
+  },
+  {
+    "route_title": "Role Scm (Phase 197)",
+    "route_url": "/strategist/scm",
+    "page_load_time": 5.6,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/economics/clew - Failed to load resource: the server responded with a status of 404 (Not Found) ; http://127.0.0.1:5173/src/pages/SocialClassMaintenance.jsx 71:16 \"SCM Dat"
+  },
+  {
+    "route_title": "Tenant",
+    "route_url": "/tenant",
+    "page_load_time": 5.36,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Advanced Orders (Phase 13)",
+    "route_url": "/trading/advanced-orders",
+    "page_load_time": 5.48,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=86919137 520:37 \"Warning: Received `%s` for a non-boolean attribute `%s`.\\n\\nIf you want to write it to the DOM, pass a string instead"
+  },
+  {
+    "route_title": "Algorithmic Trading (Phase 15)",
+    "route_url": "/trading/algorithmic",
+    "page_load_time": 5.36,
+    "status": "Failed",
+    "fail_reason": "Console Errors: http://127.0.0.1:5050/api/v1/strategy/strategies?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found) ; http://127.0.0.1:5050/api/v1/strategy/strategies?user"
+  },
+  {
+    "route_title": "Options Strategy (Phase 6)",
+    "route_url": "/trading/options",
+    "page_load_time": 5.48,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Paper Trading (Phase 14)",
+    "route_url": "/trading/paper",
+    "page_load_time": 5.51,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Watchlists Alerts (Phase 17)",
+    "route_url": "/watchlists/alerts",
+    "page_load_time": 5.29,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Overview Workspace",
+    "route_url": "/workspace",
+    "page_load_time": 5.4,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Sandbox",
+    "route_url": "/workspace/auto-coder",
+    "page_load_time": 5.51,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Auto Coder",
+    "route_url": "/workspace/autocoder",
+    "page_load_time": 5.38,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Debate Chamber",
+    "route_url": "/workspace/debate",
+    "page_load_time": 5.37,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Mission Control",
+    "route_url": "/workspace/mission-control",
+    "page_load_time": 6.0,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Dashboard",
+    "route_url": "/workspace/terminal",
+    "page_load_time": 5.36,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Vr Cockpit",
+    "route_url": "/workspace/vr",
+    "page_load_time": 5.32,
+    "status": "Success",
+    "fail_reason": null
+  },
+  {
+    "route_title": "Zen (Phase 24)",
+    "route_url": "/zen",
+    "page_load_time": 5.32,
+    "status": "Success",
+    "fail_reason": null
+  }
+]

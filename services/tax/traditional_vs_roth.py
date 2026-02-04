@@ -1,6 +1,6 @@
 import logging
 import math
-from models.ira_optimization import IRAOptimizationProfile, AnalysisResult
+from schemas.ira_optimization import IRAOptimizationProfile, AnalysisResult
 
 logger = logging.getLogger(__name__)
 

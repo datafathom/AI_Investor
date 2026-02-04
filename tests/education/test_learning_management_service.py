@@ -4,10 +4,10 @@ Comprehensive test coverage for courses, enrollments, and progress tracking
 """
 
 import pytest
-from datetime import datetime
+from datetime import timezone, datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.education.learning_management_service import LearningManagementService
-from models.education import Course, Enrollment, CourseStatus, Certificate
+from schemas.education import Course, Enrollment, CourseStatus, Certificate
 
 
 @pytest.fixture
@@ -49,8 +49,8 @@ async def test_enroll_in_course(service):
         difficulty="beginner",
         duration_hours=5.0,
         lessons=[],
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_course = AsyncMock(return_value=course)
@@ -77,8 +77,8 @@ async def test_update_progress(service):
         course_id="course_123",
         status=CourseStatus.IN_PROGRESS,
         progress_percentage=0.0,
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_enrollment = AsyncMock(return_value=enrollment)
@@ -103,8 +103,8 @@ async def test_get_user_courses(service):
             course_id="course_1",
             status=CourseStatus.IN_PROGRESS,
             progress_percentage=50.0,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
     ])
     

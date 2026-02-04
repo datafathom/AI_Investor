@@ -25,12 +25,12 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from typing import Dict, List, Optional, Tuple, Any
 import numpy as np
 import pandas as pd
 from scipy import stats
-from models.risk import RiskMetrics, RiskMetricMethod
+from schemas.risk import RiskMetrics, RiskMetricMethod
 from services.portfolio.portfolio_aggregator import get_portfolio_aggregator
 from services.system.cache_service import get_cache_service
 from services.analysis.monte_carlo import MonteCarloEngine
@@ -100,7 +100,7 @@ class AdvancedRiskMetricsService:
         
         result = RiskMetrics(
             portfolio_id=portfolio_id,
-            calculation_date=datetime.utcnow(),
+            calculation_date=datetime.now(timezone.utc),
             var_95=var_95,
             var_99=var_99,
             cvar_95=cvar_95,
@@ -116,7 +116,7 @@ class AdvancedRiskMetricsService:
         )
         
         # Cache result (1 hour)
-        self.cache_service.set(cache_key, result.dict(), ttl=3600)
+        self.cache_service.set(cache_key, result.model_dump(), ttl=3600)
         
         return result
     

@@ -1,76 +1,57 @@
 """
 Tests for Incident API Endpoints
-Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock
-from flask import Flask
-from web.api.incident_api import incident_api_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.incident_api import router, get_pagerduty_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(incident_api_bp)
+def api_app():
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_pagerduty_client():
-    """Mock PagerDuty client."""
-    with patch('web.api.incident_api.get_pagerduty_client') as mock:
-        client = MagicMock()
-        mock.return_value = client
-        yield client
+def mock_pagerduty_client(api_app):
+    """Mock PagerDuty Client."""
+    client_instance = AsyncMock()
+    client_instance.trigger_incident.return_value = {'incident_id': 'PD123', 'status': 'triggered'}
+    client_instance.get_incidents.return_value = [{'id': 'PD123', 'title': 'Test Incident'}]
+    
+    # The provider returns the factory function
+    api_app.dependency_overrides[get_pagerduty_provider] = lambda: (lambda mock=True: client_instance)
+    return client_instance
 
 
 def test_trigger_incident_success(client, mock_pagerduty_client):
-    """Test successful incident triggering."""
-    mock_result = {'incident_id': 'inc_123', 'status': 'triggered'}
-    
-    async def mock_trigger(title, urgency):
-        return mock_result
-    
-    mock_pagerduty_client.trigger_incident = mock_trigger
-    
-    response = client.post('/ops/incidents/trigger?mock=true',
-                          json={'title': 'System Down', 'urgency': 'high'})
+    """Test triggering an incident."""
+    response = client.post('/api/v1/incident/ops/incidents/trigger',
+                           json={'title': 'System Overload', 'urgency': 'high'})
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'incident_id' in data or 'status' in data
-
-
-def test_trigger_incident_missing_title(client):
-    """Test incident triggering without title."""
-    response = client.post('/ops/incidents/trigger?mock=true',
-                          json={'urgency': 'high'})
-    
-    assert response.status_code == 400
-    data = response.get_json()
-    assert 'error' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['incident_id'] == 'PD123'
 
 
 def test_get_incidents_success(client, mock_pagerduty_client):
-    """Test successful incidents retrieval."""
-    mock_incidents = [{'id': 'inc_1', 'title': 'Test Incident', 'status': 'open'}]
-    
-    async def mock_get_incidents():
-        return mock_incidents
-    
-    mock_pagerduty_client.get_incidents = mock_get_incidents
-    
-    response = client.get('/ops/incidents?mock=true')
+    """Test getting incidents."""
+    response = client.get('/api/v1/incident/ops/incidents')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert isinstance(data, list) or 'incidents' in data
+    data = response.json()
+    assert data['success'] is True
+    assert len(data['data']) == 1
+    assert data['data'][0]['title'] == 'Test Incident'

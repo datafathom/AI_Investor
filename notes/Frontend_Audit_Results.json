@@ -1,0 +1,1006 @@
+[
+    {
+        "route": "/ai/assistant",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\ai_assistant.png"
+    },
+    {
+        "route": "/ai/predictions",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\ai_predictions.png"
+    },
+    {
+        "route": "/analyst",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\analyst.png"
+    },
+    {
+        "route": "/analyst/debate",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\analyst_debate.png"
+    },
+    {
+        "route": "/analytics",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\analytics.png"
+    },
+    {
+        "route": "/analytics/options",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\analytics_options.png"
+    },
+    {
+        "route": "/analytics/political",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\analytics_political.png"
+    },
+    {
+        "route": "/analytics/strategy",
+        "status": "PASS",
+        "error_count": 0,
+        "warning_count": 0,
+        "errors": [],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\analytics_strategy.png"
+    },
+    {
+        "route": "/architect",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\architect.png"
+    },
+    {
+        "route": "/architect/api",
+        "status": "PASS",
+        "error_count": 0,
+        "warning_count": 0,
+        "errors": [],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\architect_api.png"
+    },
+    {
+        "route": "/architect/system",
+        "status": "PASS",
+        "error_count": 0,
+        "warning_count": 0,
+        "errors": [],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\architect_system.png"
+    },
+    {
+        "route": "/assets",
+        "status": "PASS",
+        "error_count": 0,
+        "warning_count": 0,
+        "errors": [],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\assets.png"
+    },
+    {
+        "route": "/billing/payments",
+        "status": "PASS",
+        "error_count": 0,
+        "warning_count": 0,
+        "errors": [],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\billing_payments.png"
+    },
+    {
+        "route": "/budgeting",
+        "status": "PASS",
+        "error_count": 0,
+        "warning_count": 0,
+        "errors": [],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\budgeting.png"
+    },
+    {
+        "route": "/charting/advanced",
+        "status": "FAIL",
+        "error_count": 4,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5173/charting/advanced - Access to XMLHttpRequest at 'http://127.0.0.1:5050/api/v1/charting/indicators?symbol=AAPL&timeframe=1d&chart_type=candlestick&limit=100&indicators=sma_20,rsi' from origin 'http://127.0.0.1:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+            "http://127.0.0.1:5050/api/v1/charting/indicators?symbol=AAPL&timeframe=1d&chart_type=candlestick&limit=100&indicators=sma_20,rsi - Failed to load resource: net::ERR_FAILED",
+            "http://127.0.0.1:5173/charting/advanced - Access to XMLHttpRequest at 'http://127.0.0.1:5050/api/v1/charting/indicators?symbol=AAPL&timeframe=1d&chart_type=candlestick&limit=100&indicators=sma_20,rsi' from origin 'http://127.0.0.1:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+            "http://127.0.0.1:5050/api/v1/charting/indicators?symbol=AAPL&timeframe=1d&chart_type=candlestick&limit=100&indicators=sma_20,rsi - Failed to load resource: net::ERR_FAILED"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\charting_advanced.png"
+    },
+    {
+        "route": "/chat",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\chat.png"
+    },
+    {
+        "route": "/community/forums",
+        "status": "PASS",
+        "error_count": 0,
+        "warning_count": 0,
+        "errors": [],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\community_forums.png"
+    },
+    {
+        "route": "/compliance",
+        "status": "PASS",
+        "error_count": 0,
+        "warning_count": 0,
+        "errors": [],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\compliance.png"
+    },
+    {
+        "route": "/credit/monitoring",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\credit_monitoring.png"
+    },
+    {
+        "route": "/developer/platform",
+        "status": "FAIL",
+        "error_count": 4,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/public-api/keys?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/public-api/usage?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/public-api/keys?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/public-api/usage?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\developer_platform.png"
+    },
+    {
+        "route": "/education",
+        "status": "FAIL",
+        "error_count": 4,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/education/progress?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/education/certifications?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/education/progress?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/education/certifications?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\education.png"
+    },
+    {
+        "route": "/enterprise",
+        "status": "FAIL",
+        "error_count": 12,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/enterprise/teams?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/enterpriseStore.js 20:20 \"Failed to fetch teams:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/enterprise/organizations?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/enterpriseStore.js 31:20 \"Failed to fetch organizations:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/enterprise/teams?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/enterpriseStore.js 20:20 \"Failed to fetch teams:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/enterprise/organizations?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/enterpriseStore.js 31:20 \"Failed to fetch organizations:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/enterprise/shared-portfolios?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/enterpriseStore.js 42:20 \"Failed to fetch shared portfolios:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/enterprise/shared-portfolios?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/enterpriseStore.js 42:20 \"Failed to fetch shared portfolios:\" AxiosError"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\enterprise.png"
+    },
+    {
+        "route": "/evolution",
+        "status": "FAIL",
+        "error_count": 2,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/evolution/start - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/evolution/start - Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\evolution.png"
+    },
+    {
+        "route": "/guardian",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\guardian.png"
+    },
+    {
+        "route": "/guardian/compliance",
+        "status": "PASS",
+        "error_count": 0,
+        "warning_count": 0,
+        "errors": [],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\guardian_compliance.png"
+    },
+    {
+        "route": "/guardian/compliance/audit",
+        "status": "FAIL",
+        "error_count": 14,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: (sarAlerts || []).filter is not a function\n    at AbuseMonitor (http://127.0.0.1:5173/src/widgets/Compliance/AbuseMonitor.jsx:31:41)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:11548:26)\n    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:14582:28)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:15924:22)\n    at HTMLUnknownElement.callCallback2 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3674:22)\n    at Object.invokeGuardedCallbackDev (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3699:24)\n    at invokeGuardedCallback (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3733:39)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19765:15)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19198:20)\n    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19137:13) Object",
+            "http://127.0.0.1:5173/src/widgets/Compliance/AbuseMonitor.jsx 30:40 Uncaught TypeError: (sarAlerts || []).filter is not a function",
+            "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: (sarAlerts || []).find is not a function\n    at SARWorkflow (http://127.0.0.1:5173/src/widgets/Compliance/SARWorkflow.jsx:28:40)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:11548:26)\n    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:14582:28)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:15924:22)\n    at HTMLUnknownElement.callCallback2 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3674:22)\n    at Object.invokeGuardedCallbackDev (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3699:24)\n    at invokeGuardedCallback (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3733:39)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19765:15)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19198:20)\n    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19137:13) Object",
+            "http://127.0.0.1:5173/src/widgets/Compliance/SARWorkflow.jsx 27:39 Uncaught TypeError: (sarAlerts || []).find is not a function",
+            "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: (sarAlerts || []).filter is not a function\n    at AbuseMonitor (http://127.0.0.1:5173/src/widgets/Compliance/AbuseMonitor.jsx:31:41)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:11548:26)\n    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:14582:28)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:15924:22)\n    at HTMLUnknownElement.callCallback2 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3674:22)\n    at Object.invokeGuardedCallbackDev (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3699:24)\n    at invokeGuardedCallback (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3733:39)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19765:15)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19198:20)\n    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19137:13) Object",
+            "http://127.0.0.1:5173/src/widgets/Compliance/AbuseMonitor.jsx 30:40 Uncaught TypeError: (sarAlerts || []).filter is not a function",
+            "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: (sarAlerts || []).find is not a function\n    at SARWorkflow (http://127.0.0.1:5173/src/widgets/Compliance/SARWorkflow.jsx:28:40)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:11548:26)\n    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:14582:28)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:15924:22)\n    at HTMLUnknownElement.callCallback2 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3674:22)\n    at Object.invokeGuardedCallbackDev (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3699:24)\n    at invokeGuardedCallback (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3733:39)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19765:15)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19198:20)\n    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19137:13) Object",
+            "http://127.0.0.1:5173/src/widgets/Compliance/SARWorkflow.jsx 27:39 Uncaught TypeError: (sarAlerts || []).find is not a function",
+            "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91 14031:30 \"The above error occurred in the \\u003CAbuseMonitor> component:\\n\\n    at AbuseMonitor (http://127.0.0.1:5173/src/widgets/Compliance/AbuseMonitor.jsx:24:78)\\n    at div\\n    at div\\n    at GlassCard (http://127.0.0.1:5173/src/components/Common/GlassCard.jsx:20:3)\\n    at div\\n    at Resizable (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:2432:9)\\n    at DraggableCore (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:1462:9)\\n    at GridItem (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:2991:9)\\n    at div\\n    at ReactGridLayout (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:3539:9)\\n    at ResponsiveReactGridLayout (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:4286:9)\\n    at WidthProvider (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:5039:11)\\n    at div\\n    at AuditDashboard\\n    at RenderedRoute (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4131:5)\\n    at Routes (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4601:5)\\n    at Suspense\\n    at div\\n    at main\\n    at AuthGuard (http://127.0.0.1:5173/src/components/AuthGuard.jsx:20:37)\\n    at div\\n    at GlobalErrorBoundary (http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx:8:5)\\n    at AppContent (http://127.0.0.1:5173/src/App.jsx:197:20)\\n    at ToastProvider (http://127.0.0.1:5173/src/context/ToastContext.jsx:31:33)\\n    at ThemeProvider (http://127.0.0.1:5173/src/context/ThemeContext.jsx:29:33)\\n    at App\\n    at Router (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4544:15)\\n    at BrowserRouter (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:5290:5)\\n    at ErrorBoundaryClass (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:22:5)\\n    at ErrorBoundary (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:115:26)\\n\\nReact will try to recreate this component tree from scratch using the error boundary you provided, GlobalErrorBoundary.\"",
+            "http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx 14:12 \"Global Error Boundary caught an error\" TypeError: (sarAlerts || []).filter is not a function\n    at AbuseMonitor (http://127.0.0.1:5173/src/widgets/Compliance/AbuseMonitor.jsx:31:41)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:11548:26)\n    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:14582:28)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:15924:22)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19753:22)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19198:20)\n    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19137:13)\n    at renderRootSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19116:15)\n    at recoverFromConcurrentError (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:18736:28)\n    at performSyncWorkOnRoot (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:18879:28) Object",
+            "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: (sarAlerts || []).filter is not a function\n    at AbuseMonitor (http://127.0.0.1:5173/src/widgets/Compliance/AbuseMonitor.jsx:31:41)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:11548:26)\n    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:14582:28)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:15924:22)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19753:22)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19198:20)\n    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19137:13)\n    at renderRootSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19116:15)\n    at recoverFromConcurrentError (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:18736:28)\n    at performSyncWorkOnRoot (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:18879:28) Object",
+            "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91 14031:30 \"The above error occurred in the \\u003CSARWorkflow> component:\\n\\n    at SARWorkflow (http://127.0.0.1:5173/src/widgets/Compliance/SARWorkflow.jsx:24:69)\\n    at div\\n    at div\\n    at GlassCard (http://127.0.0.1:5173/src/components/Common/GlassCard.jsx:20:3)\\n    at div\\n    at Resizable (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:2432:9)\\n    at DraggableCore (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:1462:9)\\n    at GridItem (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:2991:9)\\n    at div\\n    at ReactGridLayout (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:3539:9)\\n    at ResponsiveReactGridLayout (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:4286:9)\\n    at WidthProvider (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:5039:11)\\n    at div\\n    at AuditDashboard\\n    at RenderedRoute (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4131:5)\\n    at Routes (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4601:5)\\n    at Suspense\\n    at div\\n    at main\\n    at AuthGuard (http://127.0.0.1:5173/src/components/AuthGuard.jsx:20:37)\\n    at div\\n    at GlobalErrorBoundary (http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx:8:5)\\n    at AppContent (http://127.0.0.1:5173/src/App.jsx:197:20)\\n    at ToastProvider (http://127.0.0.1:5173/src/context/ToastContext.jsx:31:33)\\n    at ThemeProvider (http://127.0.0.1:5173/src/context/ThemeContext.jsx:29:33)\\n    at App\\n    at Router (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4544:15)\\n    at BrowserRouter (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:5290:5)\\n    at ErrorBoundaryClass (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:22:5)\\n    at ErrorBoundary (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:115:26)\\n\\nReact will try to recreate this component tree from scratch using the error boundary you provided, GlobalErrorBoundary.\"",
+            "http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx 14:12 \"Global Error Boundary caught an error\" TypeError: (sarAlerts || []).find is not a function\n    at SARWorkflow (http://127.0.0.1:5173/src/widgets/Compliance/SARWorkflow.jsx:28:40)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:11548:26)\n    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:14582:28)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:15924:22)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19753:22)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19198:20)\n    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19137:13)\n    at renderRootSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19116:15)\n    at recoverFromConcurrentError (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:18736:28)\n    at performSyncWorkOnRoot (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:18879:28) Object",
+            "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: (sarAlerts || []).find is not a function\n    at SARWorkflow (http://127.0.0.1:5173/src/widgets/Compliance/SARWorkflow.jsx:28:40)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:11548:26)\n    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:14582:28)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:15924:22)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19753:22)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19198:20)\n    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19137:13)\n    at renderRootSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19116:15)\n    at recoverFromConcurrentError (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:18736:28)\n    at performSyncWorkOnRoot (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:18879:28) Object"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\guardian_compliance_audit.png"
+    },
+    {
+        "route": "/guardian/margin",
+        "status": "FAIL",
+        "error_count": 18,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5173/guardian/margin - Access to XMLHttpRequest at 'http://127.0.0.1:5050/api/v1/margin/status' from origin 'http://127.0.0.1:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+            "http://127.0.0.1:5173/src/stores/marginStore.js 41:20 \"Fetch margin failed:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/margin/status - Failed to load resource: net::ERR_FAILED",
+            "http://127.0.0.1:5173/guardian/margin - Access to XMLHttpRequest at 'http://127.0.0.1:5050/api/v1/margin/deleverage' from origin 'http://127.0.0.1:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+            "http://127.0.0.1:5173/src/stores/marginStore.js 52:20 \"Deleverage plan failed:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/margin/deleverage - Failed to load resource: net::ERR_FAILED",
+            "http://127.0.0.1:5173/guardian/margin - Access to XMLHttpRequest at 'http://127.0.0.1:5050/api/v1/margin/deleverage' from origin 'http://127.0.0.1:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+            "http://127.0.0.1:5173/src/stores/marginStore.js 52:20 \"Deleverage plan failed:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/margin/deleverage - Failed to load resource: net::ERR_FAILED",
+            "http://127.0.0.1:5173/guardian/margin - Access to XMLHttpRequest at 'http://127.0.0.1:5050/api/v1/margin/status' from origin 'http://127.0.0.1:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+            "http://127.0.0.1:5173/src/pages/MarginDashboard.jsx 56:16 \"Failed to load margin data:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/margin/status - Failed to load resource: net::ERR_FAILED",
+            "http://127.0.0.1:5173/guardian/margin - Access to XMLHttpRequest at 'http://127.0.0.1:5050/api/v1/margin/status' from origin 'http://127.0.0.1:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+            "http://127.0.0.1:5173/src/stores/marginStore.js 41:20 \"Fetch margin failed:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/margin/status - Failed to load resource: net::ERR_FAILED",
+            "http://127.0.0.1:5173/guardian/margin - Access to XMLHttpRequest at 'http://127.0.0.1:5050/api/v1/margin/status' from origin 'http://127.0.0.1:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+            "http://127.0.0.1:5173/src/pages/MarginDashboard.jsx 56:16 \"Failed to load margin data:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/margin/status - Failed to load resource: net::ERR_FAILED"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\guardian_margin.png"
+    },
+    {
+        "route": "/guardian/scenarios",
+        "status": "FAIL",
+        "error_count": 2,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5173/guardian/scenarios - Access to XMLHttpRequest at 'http://127.0.0.1:5050/api/v1/scenario/bank-run?stress_level=1' from origin 'http://127.0.0.1:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+            "http://127.0.0.1:5050/api/v1/scenario/bank-run?stress_level=1 - Failed to load resource: net::ERR_FAILED"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\guardian_scenarios.png"
+    },
+    {
+        "route": "/institutional",
+        "status": "PASS",
+        "error_count": 0,
+        "warning_count": 0,
+        "errors": [],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\institutional.png"
+    },
+    {
+        "route": "/integrations",
+        "status": "PASS",
+        "error_count": 0,
+        "warning_count": 0,
+        "errors": [],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\integrations.png"
+    },
+    {
+        "route": "/legal/privacy",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\legal_privacy.png"
+    },
+    {
+        "route": "/legal/terms",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\legal_terms.png"
+    },
+    {
+        "route": "/marketplace",
+        "status": "FAIL",
+        "error_count": 4,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/marketplace/extensions - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/marketplace/installed?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/marketplace/extensions - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/marketplace/installed?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\marketplace.png"
+    },
+    {
+        "route": "/ml/training",
+        "status": "FAIL",
+        "error_count": 12,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/ml-training/jobs?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/mlStore.js 19:20 \"Failed to fetch training jobs:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/ml-training/models?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/mlStore.js 30:20 \"Failed to fetch model versions:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/ml-training/deployments?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/mlStore.js 41:20 \"Failed to fetch deployments:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/ml-training/jobs?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/mlStore.js 19:20 \"Failed to fetch training jobs:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/ml-training/models?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/mlStore.js 30:20 \"Failed to fetch model versions:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/ml-training/deployments?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/mlStore.js 41:20 \"Failed to fetch deployments:\" AxiosError"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\ml_training.png"
+    },
+    {
+        "route": "/mobile",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\mobile.png"
+    },
+    {
+        "route": "/news/sentiment",
+        "status": "FAIL",
+        "error_count": 8,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/news/headlines - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/newsStore.js 49:20 \"Fetch headlines failed:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/news/analyze/AAPL - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/newsStore.js 64:20 \"Analyze topic AAPL failed:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/news/headlines - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/newsStore.js 49:20 \"Fetch headlines failed:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/news/analyze/AAPL - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/newsStore.js 64:20 \"Analyze topic AAPL failed:\" AxiosError"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\news_sentiment.png"
+    },
+    {
+        "route": "/observer",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\observer.png"
+    },
+    {
+        "route": "/observer/macro",
+        "status": "FAIL",
+        "error_count": 9,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5173/src/widgets/Macro/InflationMatrix.jsx - Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+            "http://127.0.0.1:5173/src/widgets/Macro/FuturesCurve.jsx - Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+            "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/MacroDashboard.jsx Object",
+            "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-OU5AQDZK.js?v=44042f91 902:12 Uncaught TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/MacroDashboard.jsx",
+            "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/MacroDashboard.jsx Object",
+            "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-OU5AQDZK.js?v=44042f91 902:12 Uncaught TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/MacroDashboard.jsx",
+            "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91 14031:30 \"The above error occurred in one of your React components:\\n\\n    at Lazy\\n    at RenderedRoute (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4131:5)\\n    at Routes (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4601:5)\\n    at Suspense\\n    at div\\n    at main\\n    at AuthGuard (http://127.0.0.1:5173/src/components/AuthGuard.jsx:20:37)\\n    at div\\n    at GlobalErrorBoundary (http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx:8:5)\\n    at AppContent (http://127.0.0.1:5173/src/App.jsx:197:20)\\n    at ToastProvider (http://127.0.0.1:5173/src/context/ToastContext.jsx:31:33)\\n    at ThemeProvider (http://127.0.0.1:5173/src/context/ThemeContext.jsx:29:33)\\n    at App\\n    at Router (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4544:15)\\n    at BrowserRouter (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:5290:5)\\n    at ErrorBoundaryClass (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:22:5)\\n    at ErrorBoundary (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:115:26)\\n\\nReact will try to recreate this component tree from scratch using the error boundary you provided, GlobalErrorBoundary.\"",
+            "http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx 14:12 \"Global Error Boundary caught an error\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/MacroDashboard.jsx Object",
+            "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/MacroDashboard.jsx Object"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\observer_macro.png"
+    },
+    {
+        "route": "/orchestrator",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\orchestrator.png"
+    },
+    {
+        "route": "/planning/estate",
+        "status": "FAIL",
+        "error_count": 8,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/estate/plan?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 25:20 \"Failed to fetch estate plan:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/beneficiaries?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 37:20 \"Failed to fetch beneficiaries:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/plan?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 25:20 \"Failed to fetch estate plan:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/beneficiaries?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 37:20 \"Failed to fetch beneficiaries:\" AxiosError"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\planning_estate.png"
+    },
+    {
+        "route": "/planning/financial",
+        "status": "FAIL",
+        "error_count": 6,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/financial-planning/goals?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/financial-planning/recommendations?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/wealthStore.js 90:16 AxiosError",
+            "http://127.0.0.1:5050/api/v1/financial-planning/goals?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/financial-planning/recommendations?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/wealthStore.js 90:16 AxiosError"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\planning_financial.png"
+    },
+    {
+        "route": "/planning/retirement",
+        "status": "FAIL",
+        "error_count": 4,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/retirement/withdrawal-strategy?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/wealthStore.js 110:18 AxiosError",
+            "http://127.0.0.1:5050/api/v1/retirement/withdrawal-strategy?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/wealthStore.js 110:18 AxiosError"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\planning_retirement.png"
+    },
+    {
+        "route": "/portfolio",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\portfolio.png"
+    },
+    {
+        "route": "/portfolio/advanced-analytics",
+        "status": "FAIL",
+        "error_count": 10,
+        "warning_count": 4,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/analytics/performance-attribution?portfolio_id=portfolio_1 - Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+            "http://127.0.0.1:5050/api/v1/analytics/performance-attribution?portfolio_id=portfolio_1 - Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+            "http://127.0.0.1:5050/api/v1/analytics/risk-decomposition?portfolio_id=portfolio_1 - Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+            "http://127.0.0.1:5050/api/v1/analytics/performance-attribution?portfolio_id=portfolio_1 - Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+            "http://127.0.0.1:5173/src/pages/AdvancedPortfolioAnalytics.jsx 66:14 \"Error loading analytics:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/analytics/risk-decomposition?portfolio_id=portfolio_1 - Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+            "http://127.0.0.1:5050/api/v1/analytics/performance-attribution?portfolio_id=portfolio_1 - Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+            "http://127.0.0.1:5173/src/pages/AdvancedPortfolioAnalytics.jsx 66:14 \"Error loading analytics:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/analytics/risk-decomposition?portfolio_id=portfolio_1 - Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+            "http://127.0.0.1:5050/api/v1/analytics/risk-decomposition?portfolio_id=portfolio_1 - Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+        ],
+        "warnings": [
+            "http://127.0.0.1:5173/src/services/apiClient.js 117:14 \"Server error, retrying request...\" \"/analytics/performance-attribution\"",
+            "http://127.0.0.1:5173/src/services/apiClient.js 117:14 \"Server error, retrying request...\" \"/analytics/performance-attribution\"",
+            "http://127.0.0.1:5173/src/services/apiClient.js 117:14 \"Server error, retrying request...\" \"/analytics/risk-decomposition\"",
+            "http://127.0.0.1:5173/src/services/apiClient.js 117:14 \"Server error, retrying request...\" \"/analytics/risk-decomposition\""
+        ],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\portfolio_advanced-analytics.png"
+    },
+    {
+        "route": "/portfolio/attribution",
+        "status": "FAIL",
+        "error_count": 4,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5173/src/stores/portfolioStore.js 171:14 \"Attribution fetch error:\" Error\n    at fetchAttribution (http://127.0.0.1:5173/src/stores/portfolioStore.js:169:15)",
+            "http://127.0.0.1:5173/src/stores/portfolioStore.js 171:14 \"Attribution fetch error:\" Error\n    at fetchAttribution (http://127.0.0.1:5173/src/stores/portfolioStore.js:169:15)",
+            "http://127.0.0.1:5173/src/stores/portfolioStore.js 171:14 \"Attribution fetch error:\" Error\n    at fetchAttribution (http://127.0.0.1:5173/src/stores/portfolioStore.js:169:15)",
+            "http://127.0.0.1:5173/src/stores/portfolioStore.js 171:14 \"Attribution fetch error:\" Error\n    at fetchAttribution (http://127.0.0.1:5173/src/stores/portfolioStore.js:169:15)"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\portfolio_attribution.png"
+    },
+    {
+        "route": "/portfolio/backtest",
+        "status": "FAIL",
+        "error_count": 7,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Cannot destructure property 'is_overfit' of 'overfitData' as it is undefined.\n    at OverfitWarning (http://127.0.0.1:5173/src/widgets/Backtest/OverfitWarning.jsx:40:11)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:11548:26)\n    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:14582:28)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:15924:22)\n    at HTMLUnknownElement.callCallback2 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3674:22)\n    at Object.invokeGuardedCallbackDev (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3699:24)\n    at invokeGuardedCallback (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3733:39)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19765:15)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19198:20)\n    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19137:13) Object",
+            "http://127.0.0.1:5173/src/widgets/Backtest/OverfitWarning.jsx 39:10 Uncaught TypeError: Cannot destructure property 'is_overfit' of 'overfitData' as it is undefined.",
+            "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Cannot destructure property 'is_overfit' of 'overfitData' as it is undefined.\n    at OverfitWarning (http://127.0.0.1:5173/src/widgets/Backtest/OverfitWarning.jsx:40:11)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:11548:26)\n    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:14582:28)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:15924:22)\n    at HTMLUnknownElement.callCallback2 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3674:22)\n    at Object.invokeGuardedCallbackDev (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3699:24)\n    at invokeGuardedCallback (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3733:39)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19765:15)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19198:20)\n    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19137:13) Object",
+            "http://127.0.0.1:5173/src/widgets/Backtest/OverfitWarning.jsx 39:10 Uncaught TypeError: Cannot destructure property 'is_overfit' of 'overfitData' as it is undefined.",
+            "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91 14031:30 \"The above error occurred in the \\u003COverfitWarning> component:\\n\\n    at OverfitWarning (http://127.0.0.1:5173/src/widgets/Backtest/OverfitWarning.jsx:25:22)\\n    at div\\n    at Resizable (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:2432:9)\\n    at DraggableCore (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:1462:9)\\n    at GridItem (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:2991:9)\\n    at div\\n    at ReactGridLayout (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:3539:9)\\n    at ResponsiveReactGridLayout (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:4286:9)\\n    at WidthProvider (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:5039:11)\\n    at div\\n    at BacktestPortfolio (http://127.0.0.1:5173/src/pages/BacktestPortfolio.jsx:41:33)\\n    at RenderedRoute (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4131:5)\\n    at Routes (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4601:5)\\n    at Suspense\\n    at div\\n    at main\\n    at AuthGuard (http://127.0.0.1:5173/src/components/AuthGuard.jsx:20:37)\\n    at div\\n    at GlobalErrorBoundary (http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx:8:5)\\n    at AppContent (http://127.0.0.1:5173/src/App.jsx:197:20)\\n    at ToastProvider (http://127.0.0.1:5173/src/context/ToastContext.jsx:31:33)\\n    at ThemeProvider (http://127.0.0.1:5173/src/context/ThemeContext.jsx:29:33)\\n    at App\\n    at Router (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4544:15)\\n    at BrowserRouter (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:5290:5)\\n    at ErrorBoundaryClass (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:22:5)\\n    at ErrorBoundary (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:115:26)\\n\\nReact will try to recreate this component tree from scratch using the error boundary you provided, GlobalErrorBoundary.\"",
+            "http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx 14:12 \"Global Error Boundary caught an error\" TypeError: Cannot destructure property 'is_overfit' of 'overfitData' as it is undefined.\n    at OverfitWarning (http://127.0.0.1:5173/src/widgets/Backtest/OverfitWarning.jsx:40:11)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:11548:26)\n    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:14582:28)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:15924:22)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19753:22)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19198:20)\n    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19137:13)\n    at renderRootSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19116:15)\n    at recoverFromConcurrentError (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:18736:28)\n    at performConcurrentWorkOnRoot (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:18684:30) Object",
+            "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Cannot destructure property 'is_overfit' of 'overfitData' as it is undefined.\n    at OverfitWarning (http://127.0.0.1:5173/src/widgets/Backtest/OverfitWarning.jsx:40:11)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:11548:26)\n    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:14582:28)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:15924:22)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19753:22)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19198:20)\n    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19137:13)\n    at renderRootSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19116:15)\n    at recoverFromConcurrentError (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:18736:28)\n    at performConcurrentWorkOnRoot (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:18684:30) Object"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\portfolio_backtest.png"
+    },
+    {
+        "route": "/portfolio/brokerage",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\portfolio_brokerage.png"
+    },
+    {
+        "route": "/portfolio/cash-flow",
+        "status": "PASS",
+        "error_count": 0,
+        "warning_count": 0,
+        "errors": [],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\portfolio_cash-flow.png"
+    },
+    {
+        "route": "/portfolio/crypto",
+        "status": "FAIL",
+        "error_count": 20,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/web3/lp/current - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/web3Store.js 36:14 \"LP fetch error:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/web3/gas/ethereum - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/web3Store.js 52:14 \"Gas fetch error:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/web3/portfolio/current - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/web3/lp/current - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/web3Store.js 36:14 \"LP fetch error:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/web3/gas/ethereum - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/web3Store.js 52:14 \"Gas fetch error:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/web3/lp/current - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/web3Store.js 36:14 \"LP fetch error:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/web3/portfolio/current - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/web3/lp/current - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/web3Store.js 36:14 \"LP fetch error:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/web3/gas/ethereum - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/web3Store.js 52:14 \"Gas fetch error:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/web3/gas/ethereum - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/web3Store.js 52:14 \"Gas fetch error:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/web3/gas/ethereum - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/web3Store.js 52:14 \"Gas fetch error:\" AxiosError"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\portfolio_crypto.png"
+    },
+    {
+        "route": "/portfolio/fixed-income",
+        "status": "FAIL",
+        "error_count": 16,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/fixed-income/wal - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/fixedIncomeStore.js 102:14 \"WAL calculation error:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/fixed-income/gaps/default - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/fixedIncomeStore.js 64:14 \"Gaps fetch error:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/fixed-income/rate-shock - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/fixed-income/wal - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/fixedIncomeStore.js 102:14 \"WAL calculation error:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/fixed-income/yield-curve - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/fixed-income/rate-shock - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/fixed-income/gaps/default - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/fixedIncomeStore.js 64:14 \"Gaps fetch error:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/fixed-income/yield-curve/history?months=12 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/fixedIncomeStore.js 41:14 \"Historical curves fetch error:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/fixed-income/yield-curve - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/fixed-income/yield-curve/history?months=12 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/fixedIncomeStore.js 41:14 \"Historical curves fetch error:\" AxiosError"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\portfolio_fixed-income.png"
+    },
+    {
+        "route": "/portfolio/optimization",
+        "status": "FAIL",
+        "error_count": 8,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/optimization/rebalancing-recommendations?portfolio_id=portfolio_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/pages/PortfolioOptimizationDashboard.jsx 64:14 \"Error loading rebalancing recommendations:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/optimization/rebalancing-history?portfolio_id=portfolio_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/pages/PortfolioOptimizationDashboard.jsx 75:14 \"Error loading rebalancing history:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/optimization/rebalancing-recommendations?portfolio_id=portfolio_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/pages/PortfolioOptimizationDashboard.jsx 64:14 \"Error loading rebalancing recommendations:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/optimization/rebalancing-history?portfolio_id=portfolio_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/pages/PortfolioOptimizationDashboard.jsx 75:14 \"Error loading rebalancing history:\" AxiosError"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\portfolio_optimization.png"
+    },
+    {
+        "route": "/portfolio/risk",
+        "status": "FAIL",
+        "error_count": 4,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/advanced-risk/risk-metrics?portfolio_id=portfolio_1&confidence_level=0.95 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/pages/AdvancedRiskDashboard.jsx 63:14 \"Error loading risk metrics:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/advanced-risk/risk-metrics?portfolio_id=portfolio_1&confidence_level=0.95 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/pages/AdvancedRiskDashboard.jsx 63:14 \"Error loading risk metrics:\" AxiosError"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\portfolio_risk.png"
+    },
+    {
+        "route": "/portfolio/tax",
+        "status": "FAIL",
+        "error_count": 9,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Cannot read properties of undefined (reading 'reduce')\n    at TaxLossHarvesting (http://127.0.0.1:5173/src/widgets/Tax/TaxLossHarvesting.jsx:97:40)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:11548:26)\n    at mountIndeterminateComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:14926:21)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:15914:22)\n    at HTMLUnknownElement.callCallback2 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3674:22)\n    at Object.invokeGuardedCallbackDev (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3699:24)\n    at invokeGuardedCallback (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3733:39)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19765:15)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19198:20)\n    at workLoopConcurrent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19189:13) Object",
+            "http://127.0.0.1:5173/src/widgets/Tax/TaxLossHarvesting.jsx 96:39 Uncaught TypeError: Cannot read properties of undefined (reading 'reduce')",
+            "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Cannot read properties of undefined (reading 'reduce')\n    at TaxLossHarvesting (http://127.0.0.1:5173/src/widgets/Tax/TaxLossHarvesting.jsx:97:40)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:11548:26)\n    at mountIndeterminateComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:14926:21)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:15914:22)\n    at HTMLUnknownElement.callCallback2 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3674:22)\n    at Object.invokeGuardedCallbackDev (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3699:24)\n    at invokeGuardedCallback (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3733:39)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19765:15)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19198:20)\n    at workLoopConcurrent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19189:13) Object",
+            "http://127.0.0.1:5173/src/widgets/Tax/TaxLossHarvesting.jsx 96:39 Uncaught TypeError: Cannot read properties of undefined (reading 'reduce')",
+            "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Cannot read properties of undefined (reading 'reduce')\n    at TaxLossHarvesting (http://127.0.0.1:5173/src/widgets/Tax/TaxLossHarvesting.jsx:97:40)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:11548:26)\n    at mountIndeterminateComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:14926:21)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:15914:22)\n    at HTMLUnknownElement.callCallback2 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3674:22)\n    at Object.invokeGuardedCallbackDev (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3699:24)\n    at invokeGuardedCallback (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:3733:39)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19765:15)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19198:20)\n    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19137:13) Object",
+            "http://127.0.0.1:5173/src/widgets/Tax/TaxLossHarvesting.jsx 96:39 Uncaught TypeError: Cannot read properties of undefined (reading 'reduce')",
+            "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91 14031:30 \"The above error occurred in the \\u003CTaxLossHarvesting> component:\\n\\n    at TaxLossHarvesting (http://127.0.0.1:5173/src/widgets/Tax/TaxLossHarvesting.jsx:31:7)\\n    at div\\n    at div\\n    at GlassCard (http://127.0.0.1:5173/src/components/Common/GlassCard.jsx:20:3)\\n    at div\\n    at Resizable (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:2432:9)\\n    at DraggableCore (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:1462:9)\\n    at GridItem (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:2991:9)\\n    at div\\n    at ReactGridLayout (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:3539:9)\\n    at ResponsiveReactGridLayout (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:4286:9)\\n    at WidthProvider (http://127.0.0.1:5173/node_modules/.vite/deps/react-grid-layout.js?v=44042f91:5039:11)\\n    at div\\n    at div\\n    at TaxDashboard (http://127.0.0.1:5173/src/pages/TaxDashboard.jsx:40:39)\\n    at RenderedRoute (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4131:5)\\n    at Routes (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4601:5)\\n    at Suspense\\n    at div\\n    at main\\n    at AuthGuard (http://127.0.0.1:5173/src/components/AuthGuard.jsx:20:37)\\n    at div\\n    at GlobalErrorBoundary (http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx:8:5)\\n    at AppContent (http://127.0.0.1:5173/src/App.jsx:197:20)\\n    at ToastProvider (http://127.0.0.1:5173/src/context/ToastContext.jsx:31:33)\\n    at ThemeProvider (http://127.0.0.1:5173/src/context/ThemeContext.jsx:29:33)\\n    at App\\n    at Router (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4544:15)\\n    at BrowserRouter (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:5290:5)\\n    at ErrorBoundaryClass (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:22:5)\\n    at ErrorBoundary (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:115:26)\\n\\nReact will try to recreate this component tree from scratch using the error boundary you provided, GlobalErrorBoundary.\"",
+            "http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx 14:12 \"Global Error Boundary caught an error\" TypeError: Cannot read properties of undefined (reading 'reduce')\n    at TaxLossHarvesting (http://127.0.0.1:5173/src/widgets/Tax/TaxLossHarvesting.jsx:97:40)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:11548:26)\n    at mountIndeterminateComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:14926:21)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:15914:22)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19753:22)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19198:20)\n    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19137:13)\n    at renderRootSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19116:15)\n    at recoverFromConcurrentError (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:18736:28)\n    at performConcurrentWorkOnRoot (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:18684:30) Object",
+            "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Cannot read properties of undefined (reading 'reduce')\n    at TaxLossHarvesting (http://127.0.0.1:5173/src/widgets/Tax/TaxLossHarvesting.jsx:97:40)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:11548:26)\n    at mountIndeterminateComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:14926:21)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:15914:22)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19753:22)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19198:20)\n    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19137:13)\n    at renderRootSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:19116:15)\n    at recoverFromConcurrentError (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:18736:28)\n    at performConcurrentWorkOnRoot (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91:18684:30) Object"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\portfolio_tax.png"
+    },
+    {
+        "route": "/portfolio/tax-optimization",
+        "status": "FAIL",
+        "error_count": 8,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/tax-optimization/harvest-candidates?portfolio_id=portfolio_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/pages/TaxOptimizationDashboard.jsx 60:14 \"Error loading harvest candidates:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/tax-optimization/tax-projection?portfolio_id=portfolio_1&tax_year=2026 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/pages/TaxOptimizationDashboard.jsx 68:14 \"Error loading tax projection:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/tax-optimization/harvest-candidates?portfolio_id=portfolio_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/tax-optimization/tax-projection?portfolio_id=portfolio_1&tax_year=2026 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/pages/TaxOptimizationDashboard.jsx 60:14 \"Error loading harvest candidates:\" AxiosError",
+            "http://127.0.0.1:5173/src/pages/TaxOptimizationDashboard.jsx 68:14 \"Error loading tax projection:\" AxiosError"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\portfolio_tax-optimization.png"
+    },
+    {
+        "route": "/research/reports",
+        "status": "PASS",
+        "error_count": 0,
+        "warning_count": 0,
+        "errors": [],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\research_reports.png"
+    },
+    {
+        "route": "/scanner",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\scanner.png"
+    },
+    {
+        "route": "/scanner/global",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\scanner_global.png"
+    },
+    {
+        "route": "/sentinel/strategy",
+        "status": "FAIL",
+        "error_count": 4,
+        "warning_count": 3,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/risk/regime - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/pages/SentinelStrategyDashboard.jsx 35:16 \"Failed to load sentinel data\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/risk/regime - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/pages/SentinelStrategyDashboard.jsx 35:16 \"Failed to load sentinel data\" AxiosError"
+        ],
+        "warnings": [
+            "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-FGGQ3AL3.js?v=44042f91 6744:16 \"MUI Grid: The `item` prop has been removed and is no longer necessary. You can safely remove it.\\n\"",
+            "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-FGGQ3AL3.js?v=44042f91 6744:16 \"MUI Grid: The `xs` prop has been removed. See https://mui.com/material-ui/migration/upgrade-to-grid-v2/ for migration instructions.\\n\"",
+            "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-FGGQ3AL3.js?v=44042f91 6744:16 \"MUI Grid: The `md` prop has been removed. See https://mui.com/material-ui/migration/upgrade-to-grid-v2/ for migration instructions.\\n\""
+        ],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\sentinel_strategy.png"
+    },
+    {
+        "route": "/settings",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\settings.png"
+    },
+    {
+        "route": "/social/trading",
+        "status": "FAIL",
+        "error_count": 12,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/social-trading/leaderboard - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/socialStore.js 25:20 \"Failed to fetch leaderboard:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/social-trading/following?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/socialStore.js 36:20 \"Failed to fetch followed traders:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/social-trading/leaderboard - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/socialStore.js 25:20 \"Failed to fetch leaderboard:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/social-trading/copy-trades?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/socialStore.js 47:20 \"Failed to fetch copy trades:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/social-trading/following?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/socialStore.js 36:20 \"Failed to fetch followed traders:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/social-trading/copy-trades?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/socialStore.js 47:20 \"Failed to fetch copy trades:\" AxiosError"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\social_trading.png"
+    },
+    {
+        "route": "/strategist",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\strategist.png"
+    },
+    {
+        "route": "/strategist/corporate",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\strategist_corporate.png"
+    },
+    {
+        "route": "/strategist/currency",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\strategist_currency.png"
+    },
+    {
+        "route": "/strategist/estate",
+        "status": "FAIL",
+        "error_count": 48,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/estate/plan?user_id=default_user - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 25:20 \"Failed to fetch estate plan:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/beneficiaries?user_id=default_user - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 37:20 \"Failed to fetch beneficiaries:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/graph - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 101:20 \"Failed to fetch entity graph:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/plan?user_id=default_user - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 25:20 \"Failed to fetch estate plan:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/beneficiaries?user_id=default_user - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 37:20 \"Failed to fetch beneficiaries:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/graph - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 101:20 \"Failed to fetch entity graph:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/plan?user_id=default_user - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 25:20 \"Failed to fetch estate plan:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/beneficiaries?user_id=default_user - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 37:20 \"Failed to fetch beneficiaries:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/graph - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 101:20 \"Failed to fetch entity graph:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/plan?user_id=default_user - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 25:20 \"Failed to fetch estate plan:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/beneficiaries?user_id=default_user - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 37:20 \"Failed to fetch beneficiaries:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/graph - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 101:20 \"Failed to fetch entity graph:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/plan?user_id=default_user - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 25:20 \"Failed to fetch estate plan:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/beneficiaries?user_id=default_user - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 37:20 \"Failed to fetch beneficiaries:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/graph - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 101:20 \"Failed to fetch entity graph:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/plan?user_id=default_user - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 25:20 \"Failed to fetch estate plan:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/beneficiaries?user_id=default_user - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 37:20 \"Failed to fetch beneficiaries:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/graph - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 101:20 \"Failed to fetch entity graph:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/plan?user_id=default_user - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 25:20 \"Failed to fetch estate plan:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/graph - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 101:20 \"Failed to fetch entity graph:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/beneficiaries?user_id=default_user - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 37:20 \"Failed to fetch beneficiaries:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/plan?user_id=default_user - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 25:20 \"Failed to fetch estate plan:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/graph - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 101:20 \"Failed to fetch entity graph:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/estate/beneficiaries?user_id=default_user - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/estateStore.js 37:20 \"Failed to fetch beneficiaries:\" AxiosError"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\strategist_estate.png"
+    },
+    {
+        "route": "/strategist/impact",
+        "status": "FAIL",
+        "error_count": 16,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/philanthropy/history - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/impactStore.js 54:20 AxiosError",
+            "http://127.0.0.1:5050/api/v1/philanthropy/esg - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/philanthropy/carbon?value=3247500 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/impactStore.js 44:20 AxiosError",
+            "http://127.0.0.1:5050/api/v1/philanthropy/esg - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/philanthropy/carbon?value=3247500 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/impactStore.js 44:20 AxiosError",
+            "http://127.0.0.1:5050/api/v1/philanthropy/history - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/impactStore.js 54:20 AxiosError",
+            "http://127.0.0.1:5050/api/v1/philanthropy/carbon?value=3247500 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/impactStore.js 44:20 AxiosError",
+            "http://127.0.0.1:5050/api/v1/philanthropy/esg - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/philanthropy/carbon?value=3247500 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/stores/impactStore.js 44:20 AxiosError",
+            "http://127.0.0.1:5050/api/v1/philanthropy/esg - Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\strategist_impact.png"
+    },
+    {
+        "route": "/strategist/scm",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\strategist_scm.png"
+    },
+    {
+        "route": "/tenant",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\tenant.png"
+    },
+    {
+        "route": "/trading/advanced-orders",
+        "status": "FAIL",
+        "error_count": 5,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=44042f91 520:37 \"Warning: Received `%s` for a non-boolean attribute `%s`.\\n\\nIf you want to write it to the DOM, pass a string instead: %s=\\\"%s\\\" or %s={value.toString()}.%s\" \"true\" \"className\" \"className\" \"true\" \"className\" \"\\n    at div\\n    at div\\n    at div\\n    at div\\n    at div\\n    at div\\n    at AdvancedOrdersDashboard (http://127.0.0.1:5173/src/pages/AdvancedOrdersDashboard.jsx:34:7)\\n    at RenderedRoute (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4131:5)\\n    at Routes (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4601:5)\\n    at Suspense\\n    at div\\n    at main\\n    at AuthGuard (http://127.0.0.1:5173/src/components/AuthGuard.jsx:20:37)\\n    at div\\n    at GlobalErrorBoundary (http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx:8:5)\\n    at AppContent (http://127.0.0.1:5173/src/App.jsx:197:20)\\n    at ToastProvider (http://127.0.0.1:5173/src/context/ToastContext.jsx:31:33)\\n    at ThemeProvider (http://127.0.0.1:5173/src/context/ThemeContext.jsx:29:33)\\n    at App\\n    at Router (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:4544:15)\\n    at BrowserRouter (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=44042f91:5290:5)\\n    at ErrorBoundaryClass (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:22:5)\\n    at ErrorBoundary (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:115:26)\"",
+            "http://127.0.0.1:5050/api/v1/advanced-orders/orders?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/advanced-orders/templates - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/advanced-orders/orders?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/advanced-orders/templates - Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\trading_advanced-orders.png"
+    },
+    {
+        "route": "/trading/algorithmic",
+        "status": "FAIL",
+        "error_count": 2,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/strategy/strategies?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/strategy/strategies?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\trading_algorithmic.png"
+    },
+    {
+        "route": "/trading/options",
+        "status": "FAIL",
+        "error_count": 2,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/options/chain?symbol=AAPL - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/options/chain?symbol=AAPL - Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\trading_options.png"
+    },
+    {
+        "route": "/trading/paper",
+        "status": "FAIL",
+        "error_count": 4,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/paper-trading/portfolio?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/paper-trading/trades?user_id=user_1&limit=20 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/paper-trading/portfolio?user_id=user_1 - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5050/api/v1/paper-trading/trades?user_id=user_1&limit=20 - Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\trading_paper.png"
+    },
+    {
+        "route": "/watchlists/alerts",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\watchlists_alerts.png"
+    },
+    {
+        "route": "/workspace",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\workspace.png"
+    },
+    {
+        "route": "/workspace/auto-coder",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\workspace_auto-coder.png"
+    },
+    {
+        "route": "/workspace/autocoder",
+        "status": "FAIL",
+        "error_count": 4,
+        "warning_count": 0,
+        "errors": [
+            "http://127.0.0.1:5050/api/v1/dev/status - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/services/autocoderService.js 54:20 \"AutoCoder Store Error [status]:\" AxiosError",
+            "http://127.0.0.1:5050/api/v1/dev/status - Failed to load resource: the server responded with a status of 404 (Not Found)",
+            "http://127.0.0.1:5173/src/services/autocoderService.js 54:20 \"AutoCoder Store Error [status]:\" AxiosError"
+        ],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\workspace_autocoder.png"
+    },
+    {
+        "route": "/workspace/debate",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\workspace_debate.png"
+    },
+    {
+        "route": "/workspace/mission-control",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\workspace_mission-control.png"
+    },
+    {
+        "route": "/workspace/terminal",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\workspace_terminal.png"
+    },
+    {
+        "route": "/workspace/vr",
+        "status": "PASS",
+        "errors": [],
+        "screenshot": "screenshots/audit\\workspace_vr.png"
+    },
+    {
+        "route": "/zen",
+        "status": "PASS",
+        "error_count": 0,
+        "warning_count": 0,
+        "errors": [],
+        "warnings": [],
+        "modal_visible": false,
+        "screenshot": "screenshots/final_audit\\zen.png"
+    }
+]

@@ -1,75 +1,72 @@
 """
 Tests for Social API Endpoints
-Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock
-from flask import Flask
-from web.api.social_api import social_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.social_api import router, get_reddit_provider
+
+
+class MockPost:
+    def __init__(self, id, title):
+        self.id = id
+        self.title = title
+    def model_dump(self):
+        return {"id": self.id, "title": self.title}
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(social_bp)
+def api_app():
+    """Create FastAPI app merchant testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_reddit_client():
-    """Mock RedditClient."""
-    with patch('web.api.social_api.get_reddit_client') as mock:
-        client = MagicMock()
-        mock.return_value = client
-        yield client
+def mock_client(api_app):
+    """Mock Reddit Client."""
+    service = AsyncMock()
+    service.get_subreddit_posts.return_value = [MockPost("p1", "GME to the moon")]
+    service.analyze_sentiment.return_value = {"ticker": "GME", "sentiment": 0.8}
+    
+    api_app.dependency_overrides[get_reddit_provider] = lambda: service
+    return service
 
 
-def test_get_reddit_posts_success(client, mock_reddit_client):
-    """Test successful Reddit posts retrieval."""
-    from models.social import RedditPost
-    
-    mock_posts = [
-        RedditPost(
-            post_id='post_1',
-            title='Test Post',
-            subreddit='wallstreetbets',
-            score=100,
-            upvote_ratio=0.95
-        )
-    ]
-    
-    async def mock_get_posts(subreddit, limit):
-        return mock_posts
-    
-    mock_reddit_client.get_subreddit_posts = mock_get_posts
-    
-    response = client.get('/reddit/posts?subreddit=wallstreetbets&limit=10&mock=true')
+def test_get_reddit_posts_success(client, mock_client):
+    """Test getting reddit posts."""
+    response = client.get('/api/v1/social/reddit/posts?subreddit=wallstreetbets')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert isinstance(data, list)
+    data = response.json()
+    assert data['success'] is True
+    assert data['data'][0]['title'] == "GME to the moon"
 
 
-def test_analyze_ticker_sentiment_success(client, mock_reddit_client):
-    """Test successful ticker sentiment analysis."""
-    mock_result = {'sentiment': 'bullish', 'score': 0.75, 'mentions': 50}
-    
-    async def mock_analyze(ticker):
-        return mock_result
-    
-    mock_reddit_client.analyze_sentiment = mock_analyze
-    
-    response = client.get('/reddit/analyze/AAPL?mock=true')
+def test_analyze_ticker_sentiment_success(client, mock_client):
+    """Test analyzing ticker sentiment."""
+    response = client.get('/api/v1/social/reddit/analyze/GME')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'sentiment' in data or 'score' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['sentiment'] == 0.8
+
+
+def test_get_sentiment_heatmap_success(client):
+    """Test getting sentiment heatmap."""
+    response = client.get('/api/v1/social/sentiment/heatmap')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert len(data['data']) == 6

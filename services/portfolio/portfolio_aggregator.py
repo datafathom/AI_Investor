@@ -197,6 +197,16 @@ class PortfolioAggregator:
             "position_count": len(positions_data["positions"])
         }
 
+    async def get_portfolio(self, portfolio_id: str) -> Dict[str, Any]:
+        """
+        Get unified portfolio data for a specific ID.
+        Alias for aggregate_positions for standard interface support.
+        """
+        # In a real app, we'd lookup which brokerages are connected to this portfolio/user
+        data = await self.aggregate_positions(portfolio_id)
+        data['portfolio_id'] = portfolio_id
+        return data
+
 
 # Singleton instance
 _portfolio_aggregator: Optional[PortfolioAggregator] = None

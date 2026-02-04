@@ -1,78 +1,85 @@
 """
 Tests for Solana API Endpoints
-Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
-from flask import Flask
-from web.api.solana_api import solana_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.solana_api import router, get_solana_provider, get_token_registry_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(solana_bp)
+def api_app():
+    """Create FastAPI app merchant testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_solana_client():
-    """Mock SolanaClient."""
-    with patch('web.api.solana_api.get_solana_client') as mock:
-        client = AsyncMock()
-        client.get_sol_balance.return_value = 10.5
-        client.get_token_balances.return_value = [
-            {'mint': 'USDC', 'balance': 500.0, 'decimals': 6}
-        ]
-        client.get_transactions.return_value = [
-            {'signature': 'sig_123', 'type': 'transfer', 'amount': 1.0}
-        ]
-        client.get_token_info.return_value = {'name': 'USDC', 'symbol': 'USDC', 'decimals': 6}
-        mock.return_value = client
-        yield client
+def mock_service(api_app):
+    """Mock Solana Service."""
+    service = AsyncMock()
+    service.get_sol_balance.return_value = 1.5
+    service.get_spl_tokens.return_value = [{"symbol": "USDC", "balance": 100}]
+    service.get_transaction_history.return_value = [{"sig": "tx1", "slot": 1000}]
+    
+    api_app.dependency_overrides[get_solana_provider] = lambda: service
+    return service
 
 
-def test_get_balance_success(client, mock_solana_client):
-    """Test successful SOL balance retrieval."""
-    response = client.get('/api/v1/solana/balance/9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM')
+@pytest.fixture
+def mock_registry(api_app):
+    """Mock Token Registry."""
+    registry = MagicMock()
+    registry.get_token_info.return_value = {"name": "USD Coin", "symbol": "USDC"}
+    
+    api_app.dependency_overrides[get_token_registry_provider] = lambda: registry
+    return registry
+
+
+def test_get_balance_success(client, mock_service):
+    """Test getting balance."""
+    response = client.get('/api/v1/solana/balance/addr1')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'address' in data
-    assert 'balance' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['balance_sol'] == 1.5
 
 
-def test_get_tokens_success(client, mock_solana_client):
-    """Test successful token balances retrieval."""
-    response = client.get('/api/v1/solana/tokens/9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM')
+def test_get_tokens_success(client, mock_service):
+    """Test getting tokens."""
+    response = client.get('/api/v1/solana/tokens/addr1')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert isinstance(data, list) or 'tokens' in data
+    data = response.json()
+    assert data['success'] is True
+    assert len(data['data']['tokens']) == 1
 
 
-def test_get_transactions_success(client, mock_solana_client):
-    """Test successful transactions retrieval."""
-    response = client.get('/api/v1/solana/transactions/9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM')
+def test_get_transactions_success(client, mock_service):
+    """Test getting transactions."""
+    response = client.get('/api/v1/solana/transactions/addr1?limit=10')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert isinstance(data, list) or 'transactions' in data
+    data = response.json()
+    assert data['success'] is True
+    assert len(data['data']['transactions']) == 1
 
 
-def test_get_token_info_success(client, mock_solana_client):
-    """Test successful token info retrieval."""
-    response = client.get('/api/v1/solana/token-info/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
+def test_get_token_info_success(client, mock_registry):
+    """Test getting token info."""
+    response = client.get('/api/v1/solana/token-info/mint1')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'name' in data or 'symbol' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['token_info']['symbol'] == "USDC"

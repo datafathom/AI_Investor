@@ -1,5 +1,5 @@
 import pytest
-from models.advisor import Advisor, AdvisorCreate
+from schemas.advisor import Advisor, AdvisorCreate
 from uuid import UUID
 
 def test_advisor_creation():

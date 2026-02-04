@@ -1,6 +1,6 @@
 import pytest
 from services.tax.bracket_forecaster import TaxBracketForecaster
-from models.ira_optimization import IRAOptimizationProfile
+from schemas.ira_optimization import IRAOptimizationProfile
 from uuid import uuid4
 
 def test_sunset_prediction():

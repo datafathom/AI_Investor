@@ -16,6 +16,7 @@ CREATED: 2026-01-22
 import logging
 import asyncio
 import datetime
+from datetime import timezone
 from typing import Dict, Any, Optional, List
 
 logger = logging.getLogger(__name__)
@@ -38,7 +39,7 @@ class SlackClient:
         if self.mock:
             await asyncio.sleep(0.4) # Simulate network latency
             
-            ts = str(datetime.datetime.utcnow().timestamp())
+            ts = str(datetime.datetime.now(timezone.utc).timestamp())
             logger.info(f"[Slack Mock] Posted to {channel}: {text}")
             
             return {

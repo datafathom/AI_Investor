@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.estate.estate_planning_service import EstatePlanningService
-from models.estate import EstatePlan, Beneficiary, BeneficiaryType
+from schemas.estate import EstatePlan, Beneficiary, BeneficiaryType
 
 
 @pytest.fixture

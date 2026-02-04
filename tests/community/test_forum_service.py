@@ -4,10 +4,10 @@ Comprehensive test coverage for forum threads, replies, and moderation
 """
 
 import pytest
-from datetime import datetime
+from datetime import timezone, datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.community.forum_service import ForumService
-from models.community import ForumThread, ThreadReply, ThreadCategory
+from schemas.community import ForumThread, ThreadReply, ThreadCategory
 
 
 @pytest.fixture
@@ -45,8 +45,8 @@ async def test_add_reply(service):
         category=ThreadCategory.GENERAL,
         title="Test Thread",
         content="Content",
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_thread = AsyncMock(return_value=thread)
@@ -75,8 +75,8 @@ async def test_upvote_thread(service):
         title="Test Thread",
         content="Content",
         upvotes=5,
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_thread = AsyncMock(return_value=thread)
@@ -98,8 +98,8 @@ async def test_get_threads_by_category(service):
             category=ThreadCategory.GENERAL,
             title="Thread 1",
             content="Content",
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
     ])
     

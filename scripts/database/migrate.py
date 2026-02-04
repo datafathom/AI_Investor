@@ -20,8 +20,8 @@ from utils.database_manager import get_database_manager
 from utils.core.config import POSTGRES_HOST, POSTGRES_PORT, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB
 
 
-MIGRATIONS_DIR = _project_root / "migrations"
-METADATA_FILE = MIGRATIONS_DIR / ".migration_metadata.json"
+MIGRATIONS_DIR = _project_root / "schemas" / "postgres"
+METADATA_FILE = MIGRATIONS_DIR / "migration_metadata.json"
 
 
 class MigrationRunner:
@@ -52,7 +52,30 @@ class MigrationRunner:
     def get_pending_migrations(self) -> List[Path]:
         """Get list of pending migration files."""
         applied = set(self.get_applied_migrations())
-        migrations = sorted(MIGRATIONS_DIR.glob("*.sql"))
+        
+        # Check for manifest file
+        manifest_path = MIGRATIONS_DIR / "schema_manifest.json"
+        
+        if manifest_path.exists():
+            try:
+                with open(manifest_path, 'r') as f:
+                    manifest = json.load(f)
+                
+                # Convert manifest entries to Path objects
+                migrations = []
+                for filename in manifest:
+                    file_path = MIGRATIONS_DIR / filename
+                    if file_path.exists():
+                        migrations.append(file_path)
+                    else:
+                        print(f"⚠️ Warning: Manifest entry not found: {filename}")
+            except Exception as e:
+                print(f"❌ Error reading manifest: {e}")
+                # Fallback to glob
+                migrations = sorted(MIGRATIONS_DIR.glob("*.sql"))
+        else:
+            migrations = sorted(MIGRATIONS_DIR.glob("*.sql"))
+            
         # Exclude rollback files
         migrations = [m for m in migrations if not m.name.endswith('_rollback.sql') and not m.name.endswith('rollback.sql')]
         return [m for m in migrations if m.stem not in applied]

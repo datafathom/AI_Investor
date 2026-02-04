@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.credit.credit_improvement_service import CreditImprovementService
-from models.credit import CreditRecommendation, CreditProjection
+from schemas.credit import CreditRecommendation, CreditProjection
 
 
 @pytest.fixture

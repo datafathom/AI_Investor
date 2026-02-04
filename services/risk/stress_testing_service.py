@@ -27,7 +27,7 @@ import logging
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 import numpy as np
-from models.risk import StressTestResult, StressScenario, MonteCarloResult
+from schemas.risk import StressTestResult, StressScenario, MonteCarloResult
 from services.portfolio.portfolio_aggregator import get_portfolio_aggregator
 from services.system.cache_service import get_cache_service
 from services.analysis.monte_carlo import MonteCarloEngine

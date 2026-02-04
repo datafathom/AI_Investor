@@ -24,7 +24,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Any
-from models.paper_trading import SimulationResult, VirtualPortfolio
+from schemas.paper_trading import SimulationResult, VirtualPortfolio
 from services.trading.paper_trading_service import get_paper_trading_service
 from services.system.cache_service import get_cache_service
 

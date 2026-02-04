@@ -6,7 +6,7 @@ Phase 7: Model Validation Tests
 import pytest
 from datetime import datetime
 from pydantic import ValidationError
-from models.watchlist import (
+from schemas.watchlist import (
     AlertType,
     AlertStatus,
     Watchlist,

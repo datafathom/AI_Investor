@@ -1,17 +1,16 @@
 """
 Tests for Margin API Endpoints
-Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
-from fastapi.testclient import TestClient
+from unittest.mock import MagicMock, AsyncMock
 from fastapi import FastAPI
-from web.api.margin_api import router
+from fastapi.testclient import TestClient
+from web.api.margin_api import router, get_margin_provider
 
 
 @pytest.fixture
-def app():
+def api_app():
     """Create FastAPI app for testing."""
     app = FastAPI()
     app.include_router(router)
@@ -19,54 +18,64 @@ def app():
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return TestClient(app)
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_margin_service():
-    """Mock MarginService."""
-    with patch('web.api.margin_api.get_margin_service') as mock:
-        service = AsyncMock()
-        from services.risk.margin_service import MarginStatus
-        mock_status = MarginStatus(
-            margin_buffer=10000.0,
-            margin_used=5000.0,
-            margin_available=5000.0,
-            liquidation_distance=0.5,
-            maintenance_margin=2500.0
-        )
-        service.get_margin_status.return_value = mock_status
-        from services.risk.margin_service import DeleveragePlan
-        mock_plan = DeleveragePlan(
-            positions_to_close=[],
-            total_to_sell=0.0,
-            new_buffer=15000.0,
-            urgency='low'
-        )
-        service.generate_deleverage_plan.return_value = mock_plan
-        mock.return_value = service
-        yield service
+def mock_margin_service(api_app):
+    """Mock Margin Service."""
+    service = AsyncMock()
+    
+    # Mock MarginStatus
+    status = MagicMock()
+    status.margin_buffer = 0.25
+    status.margin_used = 100000.0
+    status.margin_available = 400000.0
+    status.liquidation_distance = 0.15
+    status.maintenance_margin = 0.10
+    service.get_margin_status.return_value = status
+    
+    # Mock DeleveragePlan
+    plan = MagicMock()
+    plan.positions_to_close = ["AAPL", "TSLA"]
+    plan.total_to_sell = 50000.0
+    plan.new_buffer = 0.35
+    plan.urgency = "high"
+    service.generate_deleverage_plan.return_value = plan
+    
+    service.check_danger_zone.return_value = True
+    
+    api_app.dependency_overrides[get_margin_provider] = lambda: service
+    return service
 
 
 def test_get_margin_status_success(client, mock_margin_service):
-    """Test successful margin status retrieval."""
-    response = client.get('/api/v1/margin/status?portfolio_id=portfolio_1')
+    """Test getting margin status."""
+    response = client.get('/api/v1/margin/status')
     
     assert response.status_code == 200
     data = response.json()
-    assert 'buffer' in data
-    assert 'used' in data
-    assert 'available' in data
+    assert data['success'] is True
+    assert data['data']['buffer'] == 0.25
 
 
 def test_generate_deleverage_plan_success(client, mock_margin_service):
-    """Test successful deleverage plan generation."""
-    response = client.post('/api/v1/margin/deleverage',
-                          json={'target_buffer': 15000.0})
+    """Test generating deleverage plan."""
+    response = client.post('/api/v1/margin/deleverage', json={'target_buffer': 0.35})
     
     assert response.status_code == 200
     data = response.json()
-    assert 'status' in data
-    assert 'plan' in data
+    assert data['success'] is True
+    assert data['data']['new_buffer'] == 0.35
+
+
+def test_check_danger_zone_success(client, mock_margin_service):
+    """Test checking danger zone."""
+    response = client.get('/api/v1/margin/danger-zone')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['is_danger'] is True

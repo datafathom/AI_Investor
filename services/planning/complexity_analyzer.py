@@ -1,6 +1,6 @@
 import logging
 from typing import Dict, Any
-from models.financial_plan import FinancialPlan
+from schemas.financial_plan import FinancialPlan
 
 logger = logging.getLogger(__name__)
 

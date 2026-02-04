@@ -4,37 +4,36 @@ Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
-from flask import Flask
-from web.api.discord_api import discord_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.discord_api import router, get_discord_bot_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(discord_bp)
+def api_app():
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_discord_bot():
+def mock_discord_bot(api_app):
     """Mock DiscordBot."""
-    with patch('web.api.discord_api.get_discord_bot') as mock:
-        bot = AsyncMock()
-        bot.get_recent_mentions.return_value = [
-            {'message_id': 'msg_1', 'content': 'Test mention', 'timestamp': '2024-01-01'}
-        ]
-        bot.get_hype_score.return_value = {'score': 0.75, 'trend': 'bullish'}
-        mock.return_value = bot
-        yield bot
+    bot = AsyncMock()
+    bot.get_recent_mentions.return_value = [
+        {'message_id': 'msg_1', 'content': 'Test mention', 'timestamp': '2024-01-01'}
+    ]
+    bot.get_hype_score.return_value = {'score': 0.75, 'trend': 'bullish'}
+    api_app.dependency_overrides[get_discord_bot_provider] = lambda: bot
+    return bot
 
 
 def test_get_mentions_success(client, mock_discord_bot):
@@ -42,9 +41,10 @@ def test_get_mentions_success(client, mock_discord_bot):
     response = client.get('/api/v1/discord/mentions/AAPL?limit=10')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'ticker' in data
-    assert 'mentions' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['ticker'] == 'AAPL'
+    assert len(data['data']['mentions']) == 1
 
 
 def test_get_hype_success(client, mock_discord_bot):
@@ -52,5 +52,6 @@ def test_get_hype_success(client, mock_discord_bot):
     response = client.get('/api/v1/discord/hype/AAPL')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'score' in data or 'hype' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['score'] == 0.75

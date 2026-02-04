@@ -26,7 +26,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
-from models.credit import (
+from schemas.credit import (
     CreditScore, CreditRecommendation, CreditProjection, CreditFactor
 )
 from services.credit.credit_monitoring_service import get_credit_monitoring_service

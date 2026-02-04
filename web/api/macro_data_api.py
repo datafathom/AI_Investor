@@ -1,187 +1,124 @@
 """
 ==============================================================================
 FILE: web/api/macro_data_api.py
-ROLE: Macro Data REST API
+ROLE: Macro Data REST API (FastAPI)
 PURPOSE: RESTful endpoints for FRED macroeconomic data consumption by frontend.
-         Provides regime analysis, yield curve, and indicator endpoints.
-
-INTEGRATION POINTS:
-    - FredMacroService: Data source
-    - MacroService: Regime analysis
-    - macroStore.js: Frontend state management
-
-ENDPOINTS:
-    GET /api/v1/macro-data/regime - Current economic regime
-    GET /api/v1/macro-data/yield-curve - Full yield curve
-    GET /api/v1/macro-data/series/<series_id> - Historical series data
-    GET /api/v1/macro-data/indicators - Key indicator summary
-    GET /api/v1/macro-data/health - Data source health
-
-AUTHENTICATION: JWT Bearer token recommended
-RATE LIMITING: Inherits from APIGovernor (FRED limits)
-
-AUTHOR: AI Investor Team
-CREATED: 2026-01-21
 ==============================================================================
 """
 
-from flask import Blueprint, jsonify, request
+from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi.responses import JSONResponse
 import logging
-import asyncio
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List, Dict, Any
+
+from services.data.fred_service import TransformType
 
 logger = logging.getLogger(__name__)
 
-macro_data_bp = Blueprint('macro_data', __name__, url_prefix='/api/v1/macro_data')
+router = APIRouter(prefix="/api/v1/macro_data", tags=["Macro Data"])
+# Hyphenated alias router for frontend compatibility
+router_hyphen = APIRouter(prefix="/api/v1/macro-data", tags=["Macro Data"])
 
 
-def _get_fred_service():
-    """Lazy-load FRED service."""
-    from services.data.fred_service import get_fred_service
+from services.data.fred_service import get_fred_service
+
+
+def get_fred_provider():
+    """Provider for FRED service."""
     return get_fred_service()
-
-
-def _run_async(coro):
-    """Helper to run async functions in sync context."""
-    try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-    return loop.run_until_complete(coro)
 
 
 def _build_response(data, source: str = "fred", cache_hit: bool = False):
     """Build standardized API response."""
     return {
-        "data": data,
-        "meta": {
-            "request_id": str(hash(datetime.now())),
-            "timestamp": datetime.now().isoformat(),
-            "source": source,
-            "cache_hit": cache_hit,
-        },
-        "errors": []
+        "success": True,
+        "data": {
+            "content": data,
+            "meta": {
+                "request_id": str(hash(datetime.now())),
+                "timestamp": datetime.now().isoformat(),
+                "source": source,
+                "cache_hit": cache_hit,
+            }
+        }
     }
 
 
-def _build_error_response(error_code: str, message: str, vendor: str = "fred"):
+def _build_error_response(status_code: int, error_code: str, message: str, vendor: str = "fred"):
     """Build standardized error response."""
-    return {
-        "data": None,
-        "meta": {
-            "request_id": str(hash(datetime.now())),
-            "timestamp": datetime.now().isoformat(),
-            "source": vendor,
-            "cache_hit": False,
-        },
-        "errors": [{
-            "error_code": error_code,
-            "message": message,
-            "vendor": vendor
-        }]
-    }
+    return JSONResponse(
+        status_code=status_code,
+        content={
+            "success": False,
+            "detail": message,
+            "data": {
+                "error_code": error_code,
+                "vendor": vendor,
+                "meta": {
+                    "timestamp": datetime.now().isoformat(),
+                    "source": vendor,
+                }
+            }
+        }
+    )
 
 
-# =============================================================================
-# Regime Endpoint
-# =============================================================================
-
-@macro_data_bp.route('/regime', methods=['GET'])
-def get_regime():
-    """
-    Retrieve current economic regime based on macro indicators.
-
-    Returns:
-        JSON with regime status, signals, metrics, and health score
-    """
+@router.get("/regime")
+@router_hyphen.get("/regime")
+async def get_regime(service = Depends(get_fred_provider)):
+    """Retrieve current economic regime based on macro indicators."""
     try:
-        service = _get_fred_service()
-        regime = _run_async(service.get_macro_regime())
+        regime = await service.get_macro_regime()
 
-        return jsonify(_build_response({
+        return _build_response({
             "status": regime.status,
             "signals": regime.signals,
             "metrics": regime.metrics,
             "health_score": regime.health_score,
             "timestamp": regime.timestamp.isoformat()
-        }))
-
+        })
     except Exception as e:
-        logger.error(f"Regime fetch failed: {e}")
-        return jsonify(_build_error_response(
-            "INTERNAL_ERROR",
-            f"Failed to fetch regime: {str(e)}"
-        )), 500
+        logger.exception("Regime fetch failed")
+        return _build_error_response(500, "INTERNAL_ERROR", f"Failed to fetch regime: {str(e)}")
 
 
-# =============================================================================
-# Yield Curve Endpoint
-# =============================================================================
-
-@macro_data_bp.route('/yield-curve', methods=['GET'])
-def get_yield_curve():
-    """
-    Retrieve full yield curve data with all maturities.
-
-    Returns:
-        JSON with yields for each maturity (1M to 30Y)
-    """
+@router.get("/yield-curve")
+@router_hyphen.get("/yield-curve")
+async def get_yield_curve(service = Depends(get_fred_provider)):
+    """Retrieve full yield curve data with all maturities."""
     try:
-        service = _get_fred_service()
-        curve = _run_async(service.get_yield_curve_data())
+        curve = await service.get_yield_curve_data()
 
         if not curve:
-            return jsonify(_build_error_response(
-                "NO_DATA",
-                "Unable to fetch yield curve data"
-            )), 404
+            return _build_error_response(404, "NO_DATA", "Unable to fetch yield curve data")
 
-        # Calculate inversion status
         is_inverted = False
         if "2Y" in curve and "10Y" in curve:
             is_inverted = curve["10Y"] < curve["2Y"]
 
-        return jsonify(_build_response({
+        return _build_response({
             "curve": curve,
             "is_inverted": is_inverted,
             "spread_10y_2y": round(curve.get("10Y", 0) - curve.get("2Y", 0), 2) if "2Y" in curve and "10Y" in curve else None
-        }))
-
+        })
     except Exception as e:
-        logger.error(f"Yield curve fetch failed: {e}")
-        return jsonify(_build_error_response(
-            "INTERNAL_ERROR",
-            f"Failed to fetch yield curve: {str(e)}"
-        )), 500
+        logger.exception("Yield curve fetch failed")
+        return _build_error_response(500, "INTERNAL_ERROR", f"Failed to fetch yield curve: {str(e)}")
 
 
-# =============================================================================
-# Series Endpoint
-# =============================================================================
-
-@macro_data_bp.route('/series/<series_id>', methods=['GET'])
-def get_series(series_id: str):
-    """
-    Retrieve historical data for a specific FRED series.
-
-    Args:
-        series_id: FRED series identifier (e.g., CPIAUCSL, UNRATE)
-
-    Query Params:
-        limit: Number of observations (default: 100)
-        transform: Transformation type - "raw", "yoy", "mom" (default: raw)
-
-    Returns:
-        JSON array of observations with date and value
-    """
+@router.get("/series/{series_id}")
+@router_hyphen.get("/series/{series_id}")
+async def get_series(
+    series_id: str,
+    limit: int = Query(100),
+    transform_str: str = Query("raw", alias="transform"),
+    service = Depends(get_fred_provider)
+):
+    """Retrieve historical data for a specific FRED series."""
     try:
         series_id = series_id.upper().strip()
-        limit = request.args.get('limit', 100, type=int)
-        transform_str = request.args.get('transform', 'raw').lower()
-
-        from services.data.fred_service import TransformType
+        
         transform_map = {
             "raw": TransformType.RAW,
             "yoy": TransformType.YOY,
@@ -189,21 +126,15 @@ def get_series(series_id: str):
             "level": TransformType.LEVEL
         }
 
-        transform = transform_map.get(transform_str, TransformType.RAW)
-
-        service = _get_fred_service()
-        data = _run_async(service.get_series(series_id, transform=transform, limit=limit))
+        transform = transform_map.get(transform_str.lower(), TransformType.RAW)
+        data = await service.get_series(series_id, transform=transform, limit=limit)
 
         if not data:
-            return jsonify(_build_error_response(
-                "SERIES_NOT_FOUND",
-                f"No data found for series: {series_id}"
-            )), 404
+            return _build_error_response(404, "SERIES_NOT_FOUND", f"No data found for series: {series_id}")
 
-        # Get metadata
-        metadata = _run_async(service.get_series_metadata(series_id))
+        metadata = await service.get_series_metadata(series_id)
 
-        return jsonify(_build_response({
+        return _build_response({
             "series_id": series_id,
             "title": metadata.title if metadata else series_id,
             "units": metadata.units if metadata else "Units",
@@ -214,32 +145,18 @@ def get_series(series_id: str):
                 for dp in data if dp.value is not None
             ],
             "count": len([dp for dp in data if dp.value is not None])
-        }))
-
+        })
     except Exception as e:
-        logger.error(f"Series fetch failed for {series_id}: {e}")
-        return jsonify(_build_error_response(
-            "INTERNAL_ERROR",
-            f"Failed to fetch series: {str(e)}"
-        )), 500
+        logger.exception(f"Series fetch failed for {series_id}")
+        return _build_error_response(500, "INTERNAL_ERROR", f"Failed to fetch series: {str(e)}")
 
 
-# =============================================================================
-# Indicators Summary Endpoint
-# =============================================================================
-
-@macro_data_bp.route('/indicators', methods=['GET'])
-def get_indicators():
-    """
-    Retrieve summary of key economic indicators.
-
-    Returns:
-        JSON with current values and YoY changes for major indicators
-    """
+@router.get("/indicators")
+@router_hyphen.get("/indicators")
+async def get_indicators(service = Depends(get_fred_provider)):
+    """Retrieve summary of key economic indicators."""
     try:
-        service = _get_fred_service()
 
-        # Define indicators to fetch
         indicators = [
             ("CPI", "CPIAUCSL"),
             ("Unemployment", "UNRATE"),
@@ -251,11 +168,11 @@ def get_indicators():
 
         results = []
         for name, series_id in indicators:
-            current = _run_async(service.get_latest_value(series_id))
+            current = await service.get_latest_value(series_id)
 
             yoy_change = None
             if series_id in ["CPIAUCSL", "CPILFESL"]:
-                yoy_change = _run_async(service.calculate_yoy_change(series_id))
+                yoy_change = await service.calculate_yoy_change(series_id)
 
             results.append({
                 "name": name,
@@ -265,33 +182,20 @@ def get_indicators():
                 "units": "Percent" if series_id != "CPIAUCSL" else "Index"
             })
 
-        return jsonify(_build_response({
+        return _build_response({
             "indicators": results,
             "count": len(results)
-        }))
-
+        })
     except Exception as e:
-        logger.error(f"Indicators fetch failed: {e}")
-        return jsonify(_build_error_response(
-            "INTERNAL_ERROR",
-            f"Failed to fetch indicators: {str(e)}"
-        )), 500
+        logger.exception("Indicators fetch failed")
+        return _build_error_response(500, "INTERNAL_ERROR", f"Failed to fetch indicators: {str(e)}")
 
 
-# =============================================================================
-# Health Check Endpoint
-# =============================================================================
-
-@macro_data_bp.route('/health', methods=['GET'])
-def get_health():
-    """
-    Get health status of FRED data source.
-
-    Returns:
-        JSON with status and API quota information
-    """
+@router.get("/health")
+@router_hyphen.get("/health")
+async def get_health():
+    """Get health status of FRED data source."""
     try:
-        # Check APIGovernor for usage stats
         try:
             from services.system.api_governance import get_governor
             governor = get_governor()
@@ -305,18 +209,14 @@ def get_health():
             remaining_daily = -1
             remaining_minute = -1
 
-        return jsonify(_build_response({
+        return _build_response({
             "source": "FRED",
             "status": "online" if remaining_daily > 0 else "rate_limited",
             "requests_remaining": {
                 "daily": max(0, remaining_daily),
                 "per_minute": max(0, remaining_minute)
             }
-        }))
-
+        })
     except Exception as e:
-        logger.error(f"Health check failed: {e}")
-        return jsonify(_build_error_response(
-            "INTERNAL_ERROR",
-            f"Health check failed: {str(e)}"
-        )), 500
+        logger.exception("Health check failed")
+        return _build_error_response(500, "INTERNAL_ERROR", f"Health check failed: {str(e)}")

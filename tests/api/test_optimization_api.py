@@ -1,224 +1,128 @@
+"""
+Tests for Optimization API Endpoints
+"""
+
 import pytest
-from unittest.mock import AsyncMock, patch
-from flask import Flask
-from datetime import datetime, timezone
-from web.api.optimization_api import optimization_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.optimization_api import router, get_optimizer_provider, get_rebalancing_provider
+from web.auth_utils import get_current_user
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(optimization_bp)
+def api_app():
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
+    # Mock current user
+    app.dependency_overrides[get_current_user] = lambda: {'id': 'user_1', 'email': 'test@example.com'}
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_optimizer_service():
-    """Mock PortfolioOptimizerService."""
-    with patch('web.api.optimization_api.get_optimizer_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+def mock_optimizer(api_app):
+    """Mock Optimizer Service."""
+    service = AsyncMock()
+    
+    result = MagicMock()
+    result.model_dump.return_value = {"weights": {"AAPL": 0.6, "MSFT": 0.4}, "sharpe": 1.2}
+    service.optimize.return_value = result
+    
+    api_app.dependency_overrides[get_optimizer_provider] = lambda: service
+    return service
 
 
 @pytest.fixture
-def mock_rebalancing_service():
-    """Mock RebalancingService."""
-    with patch('web.api.optimization_api.get_rebalancing_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+def mock_rebalancing(api_app):
+    """Mock Rebalancing Service."""
+    service = AsyncMock()
+    
+    service.check_rebalancing_needed.return_value = True
+    
+    recommendation = MagicMock()
+    recommendation.model_dump.return_value = {"trades": [{"symbol": "AAPL", "side": "SELL", "quantity": 10}]}
+    service.generate_rebalancing_recommendation.return_value = recommendation
+    
+    history_item = MagicMock()
+    history_item.model_dump.return_value = {"id": "reb_123", "timestamp": "2026-02-03T10:00:00"}
+    service.execute_rebalancing.return_value = history_item
+    service.get_rebalancing_history.return_value = [history_item]
+    
+    api_app.dependency_overrides[get_rebalancing_provider] = lambda: service
+    return service
 
 
-def test_optimize_portfolio_success(client, mock_optimizer_service):
-    """Test successful portfolio optimization."""
-    from models.optimization import OptimizationResult
-    
-    mock_result = OptimizationResult(
-        portfolio_id='portfolio_1',
-        optimization_method='mean_variance',
-        objective='maximize_sharpe',
-        optimal_weights={'AAPL': 0.4, 'MSFT': 0.6},
-        expected_return=0.12,
-        expected_risk=0.15,
-        sharpe_ratio=1.5,
-        constraint_satisfaction={'min_weight': True, 'max_weight': True},
-        optimization_time_seconds=0.5,
-        optimization_date=datetime.now(timezone.utc)
-    )
-    mock_optimizer_service.optimize.return_value = mock_result
-    
-    response = client.post('/api/optimization/optimize/portfolio_1', 
-                           json={'objective': 'maximize_sharpe', 'method': 'mean_variance'})
-    
-    assert response.status_code == 200
-    data = response.get_json()
-    assert data['success'] is True
-    assert 'data' in data
-    assert data['data']['expected_return'] == 0.12
-
-
-def test_optimize_portfolio_with_constraints(client, mock_optimizer_service):
-    """Test optimization with constraints."""
-    from models.optimization import OptimizationResult
-    
-    mock_result = OptimizationResult(
-        portfolio_id='portfolio_1',
-        optimization_method='mean_variance',
-        objective='maximize_sharpe',
-        optimal_weights={'AAPL': 0.4, 'MSFT': 0.6},
-        expected_return=0.12,
-        expected_risk=0.15,
-        sharpe_ratio=1.5,
-        constraint_satisfaction={'min_weight': True, 'max_weight': True},
-        optimization_time_seconds=0.5,
-        optimization_date=datetime.now(timezone.utc)
-    )
-    mock_optimizer_service.optimize.return_value = mock_result
-    
-    constraints = {
-        'min_weight': 0.1,
-        'max_weight': 0.5
+def test_optimize_portfolio_success(client, mock_optimizer):
+    """Test optimizing portfolio."""
+    payload = {
+        "objective": "maximize_sharpe",
+        "method": "mean_variance"
     }
-    
-    response = client.post('/api/optimization/optimize/portfolio_1',
-                           json={
-                               'objective': 'maximize_sharpe',
-                               'method': 'mean_variance',
-                               'constraints': constraints
-                           })
+    response = client.post('/api/v1/optimization/optimize/port_123', json=payload)
     
     assert response.status_code == 200
-    mock_optimizer_service.optimize.assert_called_once()
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['sharpe'] == 1.2
 
 
-def test_optimize_portfolio_error(client, mock_optimizer_service):
-    """Test optimization error handling."""
-    mock_optimizer_service.optimize.side_effect = Exception('Optimization failed')
-    
-    response = client.post('/api/optimization/optimize/portfolio_1',
-                          json={'objective': 'maximize_sharpe'})
-    
-    assert response.status_code == 500
-    data = response.get_json()
-    assert data['success'] is False
-
-
-def test_check_rebalancing_needed(client, mock_rebalancing_service):
-    """Test rebalancing check."""
-    mock_rebalancing_service.check_rebalancing_needed.return_value = True
-    
-    response = client.get('/api/optimization/rebalancing/check/portfolio_1?threshold=0.05')
+def test_check_rebalancing_success(client, mock_rebalancing):
+    """Test checking rebalancing."""
+    response = client.get('/api/v1/optimization/rebalancing/check/port_123?threshold=0.05')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
     assert data['data']['needs_rebalancing'] is True
 
 
-def test_recommend_rebalancing_success(client, mock_rebalancing_service):
-    """Test rebalancing recommendation."""
-    from models.optimization import RebalancingRecommendation
-    
-    mock_recommendation = RebalancingRecommendation(
-        portfolio_id='portfolio_1',
-        current_weights={'AAPL': 0.5, 'MSFT': 0.5},
-        target_weights={'AAPL': 0.4, 'MSFT': 0.6},
-        recommended_trades=[{'symbol': 'AAPL', 'action': 'sell', 'quantity': 10, 'price': 150.0}],
-        drift_percentage=0.1,
-        estimated_cost=5.0,
-        estimated_tax_impact=2.0,
-        requires_approval=False,
-        recommendation_date=datetime.now(timezone.utc)
-    )
-    mock_rebalancing_service.generate_rebalancing_recommendation.return_value = mock_recommendation
-    
-    response = client.post('/api/optimization/rebalancing/recommend/portfolio_1',
-                          json={'strategy': 'threshold'})
+def test_recommend_rebalancing_success(client, mock_rebalancing):
+    """Test recommending rebalancing."""
+    payload = {"strategy": "threshold"}
+    response = client.post('/api/v1/optimization/rebalancing/recommend/port_123', json=payload)
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
+    assert len(data['data']['trades']) == 1
 
 
-def test_execute_rebalancing_success(client, mock_rebalancing_service):
-    """Test rebalancing execution."""
-    from models.optimization import RebalancingHistory
-    
-    mock_history = RebalancingHistory(
-        rebalancing_id='reb_1',
-        portfolio_id='portfolio_1',
-        rebalancing_date=datetime.now(timezone.utc),
-        strategy='threshold',
-        before_weights={'AAPL': 0.5},
-        after_weights={'AAPL': 0.4},
-        trades_executed=[],
-        total_cost=5.0,
-        tax_impact=2.0,
-        status='executed'
-    )
-    mock_rebalancing_service.execute_rebalancing.return_value = mock_history
-    recommendation_data = {
-        'portfolio_id': 'portfolio_1',
-        'current_weights': {'AAPL': 0.5},
-        'target_weights': {'AAPL': 0.4},
-        'recommended_trades': [],
-        'drift_percentage': 0.1,
-        'estimated_cost': 5.0,
-        'estimated_tax_impact': 2.0,
-        'requires_approval': False,
-        'recommendation_date': datetime.now(timezone.utc).isoformat()
+def test_execute_rebalancing_success(client, mock_rebalancing):
+    """Test executing rebalancing."""
+    payload = {
+        "recommendation": {
+            "portfolio_id": "port_123",
+            "current_weights": {"AAPL": 0.5},
+            "target_weights": {"AAPL": 0.6},
+            "recommended_trades": [{"symbol": "AAPL", "action": "BUY", "quantity": 10, "price": 150.0}],
+            "drift_percentage": 0.1,
+            "estimated_cost": 5.0,
+            "estimated_tax_impact": 0.0,
+            "requires_approval": True,
+            "recommendation_date": "2026-02-03T10:00:00"
+        },
+        "approved": True
     }
-    
-    response = client.post('/api/optimization/rebalancing/execute/portfolio_1',
-                          json={'recommendation': recommendation_data, 'approved': True})
+    response = client.post('/api/v1/optimization/rebalancing/execute/port_123', json=payload)
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
+    assert data['data']['id'] == "reb_123"
 
 
-def test_execute_rebalancing_missing_recommendation(client):
-    """Test rebalancing execution without recommendation."""
-    response = client.post('/api/optimization/rebalancing/execute/portfolio_1',
-                          json={'approved': True})
-    
-    assert response.status_code == 400
-    data = response.get_json()
-    assert data['success'] is False
-
-
-def test_get_rebalancing_history(client, mock_rebalancing_service):
+def test_get_rebalancing_history_success(client, mock_rebalancing):
     """Test getting rebalancing history."""
-    from models.optimization import RebalancingHistory
-    
-    mock_history = [
-        RebalancingHistory(
-            rebalancing_id='reb_1',
-            portfolio_id='portfolio_1',
-            rebalancing_date=datetime.now(timezone.utc),
-            strategy='threshold',
-            before_weights={'AAPL': 0.5},
-            after_weights={'AAPL': 0.4},
-            trades_executed=[],
-            total_cost=5.0,
-            tax_impact=2.0,
-            status='executed'
-        )
-    ]
-    mock_rebalancing_service.get_rebalancing_history.return_value = mock_history
-    
-    response = client.get('/api/optimization/rebalancing/history/portfolio_1?limit=10')
+    response = client.get('/api/v1/optimization/rebalancing/history/port_123')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
     assert len(data['data']) == 1

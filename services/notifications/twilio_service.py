@@ -1,3 +1,4 @@
+from datetime import timezone
 """
 ==============================================================================
 FILE: services/notifications/twilio_service.py
@@ -48,7 +49,7 @@ class TwilioClient:
                 "from": "+15550109999", # Mock Twilio number
                 "body": body,
                 "status": "delivered",
-                "date_created": datetime.datetime.utcnow().isoformat(),
+                "date_created": datetime.datetime.now(timezone.utc).isoformat(),
                 "price": "0.0075",
                 "direction": "outbound-api"
             }

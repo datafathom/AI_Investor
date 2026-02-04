@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import List, Dict, Any
 from config.database import SessionLocal
 from sqlalchemy import text
@@ -39,7 +39,7 @@ class PriceTelemetryService:
         try:
             db = SessionLocal()
             db.execute(query, {
-                "time": datetime.utcnow(),
+                "time": datetime.now(timezone.utc),
                 "symbol": symbol,
                 "price": price,
                 "volume": volume,

@@ -1,85 +1,73 @@
 """
 Tests for Homeostasis API Endpoints
-Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock
-from flask import Flask
-from web.api.homeostasis_api import homeostasis_api
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.homeostasis_api import router, get_homeostasis_provider, get_philanthropy_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(homeostasis_api)
+def api_app():
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_homeostasis_service():
+def mock_homeostasis_service(api_app):
     """Mock HomeostasisService."""
-    with patch('web.api.homeostasis_api.homeostasis_service') as mock:
-        service = MagicMock()
-        service.get_homeostasis_status.return_value = {
-            'net_worth': 100000.0,
-            'target': 100000.0,
-            'excess': 0.0
-        }
-        service.update_net_worth.return_value = None
-        mock.return_value = service
-        yield service
+    service = MagicMock()
+    service.get_homeostasis_status.return_value = {'net_worth': 1000000, 'excess_alpha': 50000}
+    api_app.dependency_overrides[get_homeostasis_provider] = lambda: service
+    return service
 
 
 @pytest.fixture
-def mock_philanthropy_service():
+def mock_philanthropy_service(api_app):
     """Mock PhilanthropyService."""
-    with patch('web.api.homeostasis_api.philanthropy_service') as mock:
-        service = MagicMock()
-        service.donate_excess_alpha.return_value = None
-        mock.return_value = service
-        yield service
+    service = MagicMock()
+    api_app.dependency_overrides[get_philanthropy_provider] = lambda: service
+    return service
 
 
 def test_get_status_success(client, mock_homeostasis_service):
-    """Test successful status retrieval."""
-    with patch('web.api.homeostasis_api.g') as mock_g:
-        mock_g.get.return_value = 'default'
-        response = client.get('/status')
-        
-        assert response.status_code == 200
-        data = response.get_json()
-        assert 'net_worth' in data or 'status' in data
+    """Test getting homeostasis status."""
+    response = client.get('/api/v1/homeostasis/status')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['net_worth'] == 1000000
 
 
 def test_update_metrics_success(client, mock_homeostasis_service):
-    """Test successful metrics update."""
-    with patch('web.api.homeostasis_api.g') as mock_g:
-        mock_g.get.return_value = 'default'
-        response = client.post('/update',
-                              json={'net_worth': 110000.0})
-        
-        assert response.status_code == 200
-        data = response.get_json()
-        assert 'net_worth' in data or 'status' in data
+    """Test updating net worth."""
+    response = client.post('/api/v1/homeostasis/update',
+                           json={'net_worth': 1100000})
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    mock_homeostasis_service.update_net_worth.assert_called_once_with('default', 1100000)
 
 
 def test_manual_donate_success(client, mock_philanthropy_service):
-    """Test successful manual donation."""
-    with patch('web.api.homeostasis_api.g') as mock_g:
-        mock_g.get.return_value = 'default'
-        response = client.post('/donate',
-                              json={'amount': 1000.0})
-        
-        assert response.status_code == 200
-        data = response.get_json()
-        assert data['status'] == 'success'
-        assert 'amount' in data
+    """Test manual donation."""
+    response = client.post('/api/v1/homeostasis/donate',
+                           json={'amount': 10000})
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['amount'] == 10000
+    mock_philanthropy_service.donate_excess_alpha.assert_called_once_with('default', 10000)

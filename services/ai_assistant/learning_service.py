@@ -24,9 +24,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional
-from models.ai_assistant import UserPreference, Recommendation
+from schemas.ai_assistant import UserPreference, Recommendation
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -66,8 +66,8 @@ class LearningService:
                 category=category,
                 value=value,
                 confidence=1.0,
-                learned_date=datetime.utcnow(),
-                updated_date=datetime.utcnow()
+                learned_date=datetime.now(timezone.utc),
+                updated_date=datetime.now(timezone.utc)
             )
             updated_prefs.append(pref)
             await self._save_preferences(pref)
@@ -137,14 +137,14 @@ class LearningService:
         
         # Generate investment recommendation
         rec1 = Recommendation(
-            recommendation_id=f"rec_{user_id}_{datetime.utcnow().timestamp()}",
+            recommendation_id=f"rec_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             recommendation_type="investment",
             title="Diversify Portfolio",
             description="Consider adding international stocks to diversify your portfolio",
             confidence=0.75,
             reasoning="Based on your current portfolio allocation",
-            created_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc)
         )
         recommendations.append(rec1)
         
@@ -157,12 +157,12 @@ class LearningService:
     async def _save_recommendation(self, recommendation: Recommendation):
         """Save recommendation to cache."""
         cache_key = f"recommendation:{recommendation.recommendation_id}"
-        self.cache_service.set(cache_key, recommendation.dict(), ttl=86400 * 30)
+        self.cache_service.set(cache_key, recommendation.model_dump(), ttl=86400 * 30)
         
     async def _save_preferences(self, preference: UserPreference):
         """Save preference to cache."""
         cache_key = f"preference:{preference.user_id}:{preference.category}"
-        self.cache_service.set(cache_key, preference.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, preference.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

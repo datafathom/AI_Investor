@@ -27,7 +27,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
-from models.billing import Bill, BillStatus, RecurrenceType, PaymentHistory
+from schemas.billing import Bill, BillStatus, RecurrenceType, PaymentHistory
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)

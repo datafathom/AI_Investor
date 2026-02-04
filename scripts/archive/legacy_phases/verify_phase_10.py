@@ -4,7 +4,7 @@ Simulates trade journaling lifecycle.
 """
 import sys
 import uuid
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from unittest.mock import MagicMock, patch
 
 # Create a mock session to avoid real DB connection in verification script if DB not ready
@@ -39,7 +39,7 @@ def run_verification():
             'entry_price': 1.1000,
             'stop_loss': 1.0950,
             'position_size': 100000,
-            'entry_time': datetime.utcnow(),
+            'entry_time': datetime.now(timezone.utc),
             'agent_id': 'searcher-001',
             'trade_thesis': 'Bullish BOS'
         }

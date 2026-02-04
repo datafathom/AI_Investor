@@ -1,44 +1,63 @@
+"""
+==============================================================================
+FILE: web/api/privacy_api.py
+ROLE: Privacy Endpoints (FastAPI)
+PURPOSE: GDPR data export and account deletion endpoints.
+==============================================================================
+"""
 
-from flask import Blueprint, jsonify, request, Response
+from fastapi import APIRouter, HTTPException, Depends, Response
+from fastapi.responses import JSONResponse
 from services.system.privacy_service import get_privacy_service
-from web.auth_utils import login_required
-from flask import g
+from web.auth_utils import get_current_user
+
+
+def get_privacy_provider():
+    return get_privacy_service()
 import json
+import logging
 
-privacy_bp = Blueprint('privacy_api', __name__, url_prefix='/api/v1/privacy')
+logger = logging.getLogger(__name__)
 
-@privacy_bp.route('/export', methods=['GET'])
-@login_required
-def export_data():
+router = APIRouter(prefix="/api/v1/privacy", tags=["Privacy"])
+
+
+@router.get("/export")
+async def export_data(
+    current_user: dict = Depends(get_current_user),
+    service=Depends(get_privacy_provider)
+):
     """
     Trigger a GDPR data export for the authenticated user.
     """
-    user_id = getattr(g, 'user_id', None)
+    user_id = current_user.get("id") or current_user.get("user_id")
     if not user_id:
-        return jsonify({"error": "Unauthorized"}), 401
-    service = get_privacy_service()
+        return JSONResponse(status_code=401, content={"success": False, "detail": "Unauthorized"})
     try:
         data = service.export_user_data(user_id)
         return Response(
-            json.dumps(data, indent=2),
-            mimetype='application/json',
+            content=json.dumps({"success": True, "data": data}, indent=2),
+            media_type='application/json',
             headers={'Content-Disposition': 'attachment;filename=my_data.json'}
         )
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logger.exception("Failed to export user data")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-@privacy_bp.route('/forget-me', methods=['DELETE'])
-@login_required
-def delete_account():
+
+@router.delete("/forget-me")
+async def delete_account(
+    current_user: dict = Depends(get_current_user),
+    service=Depends(get_privacy_provider)
+):
     """
     Trigger the 'Right to be Forgotten' for the authenticated user.
     """
-    user_id = getattr(g, 'user_id', None)
+    user_id = current_user.get("id") or current_user.get("user_id")
     if not user_id:
-        return jsonify({"error": "Unauthorized"}), 401
+        return JSONResponse(status_code=401, content={"success": False, "detail": "Unauthorized"})
 
-    service = get_privacy_service()
     success = service.delete_user_account(user_id)
     if success:
-        return jsonify({"message": "Account and data deleted successfully"}), 200
-    return jsonify({"error": "Failed to delete account"}), 500
+        return {"success": True, "data": {"message": "Account and data deleted successfully"}}
+    return JSONResponse(status_code=500, content={"success": False, "detail": "Failed to delete account"})

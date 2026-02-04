@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.options.strategy_builder_service import OptionsStrategyBuilderService
-from models.options import OptionsStrategy, OptionLeg, OptionType, OptionAction
+from schemas.options import OptionsStrategy, OptionLeg, OptionType, OptionAction
 
 
 @pytest.fixture

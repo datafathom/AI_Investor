@@ -6,7 +6,7 @@ Phase 7: Model Validation Tests
 import pytest
 from datetime import datetime
 from pydantic import ValidationError
-from models.ai_predictions import (
+from schemas.ai_predictions import (
     PredictionType,
     PricePrediction,
     TrendPrediction,

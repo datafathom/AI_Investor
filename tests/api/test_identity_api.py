@@ -5,72 +5,69 @@ Phase 6: API Endpoint Tests
 
 import pytest
 from unittest.mock import patch, MagicMock
-from flask import Flask
-from web.api.identity_api import identity_api
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.identity_api import router
+from web.auth_utils import get_current_user
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(identity_api)
+def api_app():
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
+    app.dependency_overrides[get_current_user] = lambda: {
+        "id": "user_1",
+        "username": "testuser",
+        "role": "user"
+    }
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
 def mock_identity_service():
     """Mock IdentityService."""
-    with patch('web.api.identity_api.identity_service') as mock:
-        service = MagicMock()
-        service.get_identity_profile.return_value = {
+    with patch('web.api.identity_api._identity_service') as mock:
+        mock.get_identity_profile.return_value = {
             'user_id': 'user_1',
             'trust_score': 0.95,
             'verified': True
         }
-        service.reconcile_identity.return_value = {
+        mock.reconcile_identity.return_value = {
             'user_id': 'user_1',
             'trust_score': 0.95
         }
-        mock.return_value = service
-        yield service
+        yield mock
 
 
 def test_get_profile_success(client, mock_identity_service):
     """Test successful profile retrieval."""
-    with patch('web.api.identity_api.login_required', lambda f: f):
-        with patch('web.api.identity_api.g') as mock_g:
-            mock_g.user_id = 'user_1'
-            response = client.get('/profile')
-            
-            assert response.status_code == 200
-            data = response.get_json()
-            assert 'user_id' in data or 'trust_score' in data
+    response = client.get('/api/v1/identity/profile')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert 'user_id' in data or 'trust_score' in data
 
 
 def test_reconcile_success(client, mock_identity_service):
     """Test successful identity reconciliation."""
-    with patch('web.api.identity_api.login_required', lambda f: f):
-        with patch('web.api.identity_api.g') as mock_g:
-            mock_g.user_id = 'user_1'
-            response = client.post('/reconcile')
-            
-            assert response.status_code == 200
-            data = response.get_json()
-            assert 'message' in data or 'data' in data
+    response = client.post('/api/v1/identity/reconcile')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert 'message' in data or 'data' in data
 
 
 def test_manual_verify_success(client):
     """Test successful manual verification."""
-    with patch('web.api.identity_api.login_required', lambda f: f):
-        response = client.post('/manual-verify')
-        
-        assert response.status_code == 200
-        data = response.get_json()
-        assert 'message' in data
+    response = client.post('/api/v1/identity/manual-verify')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert 'message' in data

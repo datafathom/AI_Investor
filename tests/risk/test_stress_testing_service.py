@@ -8,7 +8,7 @@ from datetime import datetime
 from unittest.mock import Mock, AsyncMock, patch
 import numpy as np
 from services.risk.stress_testing_service import StressTestingService
-from models.risk import StressTestResult, StressScenario, MonteCarloResult
+from schemas.risk import StressTestResult, StressScenario, MonteCarloResult
 
 
 @pytest.fixture

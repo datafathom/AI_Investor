@@ -4,10 +4,10 @@ Comprehensive test coverage for model deployment, A/B testing, and rollback
 """
 
 import pytest
-from datetime import datetime
+from datetime import timezone, datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.ml.model_deployment_service import ModelDeploymentService
-from models.ml_training import ModelVersion
+from schemas.ml_training import ModelVersion
 
 
 @pytest.fixture
@@ -20,7 +20,7 @@ def service():
 @pytest.fixture
 def mock_model_version():
     """Mock model version."""
-    from models.ml_training import TrainingStatus
+    from schemas.ml_training import TrainingStatus
     return ModelVersion(
         model_id="model_123",
         model_name="price_predictor",
@@ -28,7 +28,7 @@ def mock_model_version():
         framework="tensorflow",
         training_status=TrainingStatus.COMPLETED,
         accuracy=0.85,
-        created_date=datetime.utcnow(),
+        created_date=datetime.now(timezone.utc),
         metadata={'training_job_id': 'job_123'}
     )
 

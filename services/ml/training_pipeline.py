@@ -24,9 +24,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional
-from models.ml_training import TrainingJob, ModelVersion, TrainingStatus
+from schemas.ml_training import TrainingJob, ModelVersion, TrainingStatus
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -61,7 +61,7 @@ class TrainingPipeline:
         logger.info(f"Creating training job for model {model_name}")
         
         job = TrainingJob(
-            job_id=f"job_{model_name}_{datetime.utcnow().timestamp()}",
+            job_id=f"job_{model_name}_{datetime.now(timezone.utc).timestamp()}",
             model_name=model_name,
             dataset_id=dataset_id,
             hyperparameters=hyperparameters or {},
@@ -91,7 +91,7 @@ class TrainingPipeline:
             raise ValueError(f"Job {job_id} not found")
         
         job.status = TrainingStatus.RUNNING
-        job.started_date = datetime.utcnow()
+        job.started_date = datetime.now(timezone.utc)
         await self._save_job(job)
         
         # In production, would start actual training process
@@ -119,7 +119,7 @@ class TrainingPipeline:
             raise ValueError(f"Job {job_id} not found")
         
         job.status = TrainingStatus.COMPLETED
-        job.completed_date = datetime.utcnow()
+        job.completed_date = datetime.now(timezone.utc)
         await self._save_job(job)
         
         # Save model version
@@ -138,12 +138,12 @@ class TrainingPipeline:
     async def _save_job(self, job: TrainingJob):
         """Save training job to cache."""
         cache_key = f"training_job:{job.job_id}"
-        self.cache_service.set(cache_key, job.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, job.model_dump(), ttl=86400 * 365)
     
     async def _save_model_version(self, model_version: ModelVersion):
         """Save model version to cache."""
         cache_key = f"model_version:{model_version.model_id}"
-        self.cache_service.set(cache_key, model_version.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, model_version.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

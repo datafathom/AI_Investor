@@ -8,7 +8,7 @@ import json
 import hashlib
 import logging
 from typing import Any, Optional, Callable
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from functools import wraps
 
 logger = logging.getLogger(__name__)
@@ -73,7 +73,7 @@ class PerformanceCache:
                 # Fallback to local cache
                 if key in self._local_cache:
                     entry = self._local_cache[key]
-                    if entry['expires_at'] > datetime.utcnow():
+                    if entry['expires_at'] > datetime.now(timezone.utc):
                         return entry['value']
                     else:
                         del self._local_cache[key]
@@ -95,7 +95,7 @@ class PerformanceCache:
                 # Fallback to local cache
                 self._local_cache[key] = {
                     'value': value,
-                    'expires_at': datetime.utcnow() + timedelta(seconds=ttl)
+                    'expires_at': datetime.now(timezone.utc) + timedelta(seconds=ttl)
                 }
                 # Cleanup old entries
                 if len(self._local_cache) > 1000:
@@ -136,7 +136,7 @@ class PerformanceCache:
     
     def _cleanup_local_cache(self):
         """Remove expired entries from local cache."""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         expired_keys = [
             k for k, v in self._local_cache.items()
             if v['expires_at'] <= now

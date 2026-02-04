@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime, timedelta, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.optimization.rebalancing_service import RebalancingService
-from models.optimization import RebalancingRecommendation, RebalancingHistory
+from schemas.optimization import RebalancingRecommendation, RebalancingHistory
 
 
 @pytest.fixture

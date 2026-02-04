@@ -6,7 +6,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 def get_frontend_routes_metadata():
-    app_jsx_path = os.path.abspath("frontend2/src/App.jsx")
+    app_jsx_path = os.path.abspath("frontend/src/App.jsx")
     if not os.path.exists(app_jsx_path):
         logger.error(f"App.jsx not found at {app_jsx_path}")
         return []

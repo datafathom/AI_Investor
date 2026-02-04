@@ -4,33 +4,35 @@ Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock
-from flask import Flask
-from web.api.debate_api import debate_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.debate_api import router, get_debate_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(debate_bp)
+def api_app():
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_debate_agent():
+def mock_debate_agent(api_app):
     """Mock DebateAgent."""
-    with patch('web.api.debate_api.get_debate_agent') as mock:
-        agent = MagicMock()
-        mock.return_value = agent
-        yield agent
+    agent = AsyncMock()
+    # transcript and consensus are attributes, not methods
+    agent.transcript = []
+    agent.consensus = {}
+    api_app.dependency_overrides[get_debate_provider] = lambda: agent
+    return agent
 
 
 def test_run_debate_success(client, mock_debate_agent):
@@ -42,13 +44,42 @@ def test_run_debate_success(client, mock_debate_agent):
         'consensus': 'bullish'
     }
     
-    async def mock_conduct_debate(ticker):
-        return mock_result
+    mock_debate_agent.conduct_debate.return_value = mock_result
     
-    mock_debate_agent.conduct_debate = mock_conduct_debate
-    
-    response = client.post('/debate/run/AAPL?mock=true')
+    response = client.post('/api/v1/ai/debate/run/AAPL?mock=true')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'ticker' in data or 'consensus' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['ticker'] == 'AAPL'
+    assert data['data']['consensus'] == 'bullish'
+
+
+def test_start_debate_success(client, mock_debate_agent):
+    """Test starting a debate via the /start endpoint."""
+    mock_result = {
+        'ticker': 'SPY',
+        'status': 'started'
+    }
+    mock_debate_agent.conduct_debate.return_value = mock_result
+    
+    response = client.post('/api/v1/ai/debate/start', json={'ticker': 'SPY'})
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['ticker'] == 'SPY'
+
+
+def test_stream_debate_success(client, mock_debate_agent):
+    """Test streaming debate state."""
+    mock_debate_agent.transcript = ["Argument 1"]
+    mock_debate_agent.consensus = {"bias": "neutral"}
+    
+    response = client.get('/api/v1/ai/debate/stream')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['status'] == 'active'
+    assert data['data']['transcript'] == ["Argument 1"]

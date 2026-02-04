@@ -18,7 +18,7 @@ ROADMAP: Phase 20 - Risk Monitor
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import List, Dict, Any
 import pandas as pd
 import numpy as np
@@ -184,7 +184,7 @@ class RiskMonitor:
             },
             "risk_verdict": analysis["rating"],
             "reasons": analysis["reasons"],
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
 
     def trigger_liquidity_markdown(self, asset_id: str, markdown_pct: float):
@@ -193,7 +193,7 @@ class RiskMonitor:
         Triggers a markdown on private assets when a public liquidity event (forced sale/downround) occurs.
         """
         message = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "asset_id": asset_id,
             "markdown_pct": markdown_pct,
             "reason": "PUBLIC_PROXY_LIQUIDITY_EVENT"

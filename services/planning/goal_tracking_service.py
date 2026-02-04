@@ -27,7 +27,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Optional
-from models.financial_planning import (
+from schemas.financial_planning import (
     FinancialGoal, GoalStatus, GoalProjection
 )
 from services.planning.financial_planning_service import get_financial_planning_service
@@ -107,8 +107,8 @@ class GoalTrackingService:
         milestones = await self._get_milestones(goal)
         
         return {
-            'goal': goal.dict(),
-            'projection': projection.dict(),
+            'goal': goal.model_dump(),
+            'projection': projection.model_dump(),
             'progress_percentage': progress_pct,
             'milestones': milestones,
             'status': goal.status.value
@@ -210,7 +210,7 @@ class GoalTrackingService:
     async def _save_goal(self, goal: FinancialGoal):
         """Save goal to cache or database."""
         cache_key = f"goal:{goal.goal_id}"
-        self.cache_service.set(cache_key, goal.dict(), ttl=86400 * 365)  # 1 year
+        self.cache_service.set(cache_key, goal.model_dump(), ttl=86400 * 365)  # 1 year
     
     async def _get_milestones(self, goal: FinancialGoal) -> List[Dict]:
         """Get milestone information for goal."""

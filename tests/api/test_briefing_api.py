@@ -1,49 +1,39 @@
-"""
-Tests for Briefing API Endpoints
-Phase 6: API Endpoint Tests
-"""
 
 import pytest
-from unittest.mock import patch, MagicMock
-from flask import Flask
-from web.api.briefing_api import briefing_bp
-
+from unittest.mock import AsyncMock, patch, MagicMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.briefing_api import router, get_briefing_gen
+from web.auth_utils import get_current_user
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(briefing_bp)
+def api_app(mock_briefing_generator):
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
+    app.dependency_overrides[get_briefing_gen] = lambda: mock_briefing_generator
+    app.dependency_overrides[get_current_user] = lambda: {"id": "user_1", "role": "user"}
     return app
 
-
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
-
+    return TestClient(api_app)
 
 @pytest.fixture
 def mock_briefing_generator():
     """Mock BriefingGenerator."""
-    with patch('web.api.briefing_api.get_briefing_generator') as mock:
-        generator = MagicMock()
-        mock.return_value = generator
-        yield generator
-
+    generator = AsyncMock()
+    return generator
 
 def test_get_daily_briefing_success(client, mock_briefing_generator):
     """Test successful daily briefing retrieval."""
     mock_result = {'briefing': 'Good morning, Commander. Your portfolio is performing well.'}
+    mock_briefing_generator.get_daily_briefing.return_value = mock_result
     
-    async def mock_get_briefing():
-        return mock_result
-    
-    mock_briefing_generator.get_daily_briefing = mock_get_briefing
-    
-    response = client.get('/briefing/daily?mock=true')
+    response = client.get('/api/v1/ai/briefing/daily?mock=true')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'briefing' in data or 'content' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['briefing'] == 'Good morning, Commander. Your portfolio is performing well.'

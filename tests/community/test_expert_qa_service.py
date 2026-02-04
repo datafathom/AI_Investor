@@ -4,10 +4,10 @@ Comprehensive test coverage for expert questions, answers, and routing
 """
 
 import pytest
-from datetime import datetime
+from datetime import timezone, datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.community.expert_qa_service import ExpertQAService
-from models.community import ExpertQuestion, ThreadReply
+from schemas.community import ExpertQuestion, ThreadReply
 
 
 @pytest.fixture
@@ -48,8 +48,8 @@ async def test_submit_answer(service):
         category="investing",
         expert_id="expert_123",
         status="open",
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_question = AsyncMock(return_value=question)
@@ -75,7 +75,7 @@ async def test_get_expert_answers(service):
             thread_id="question_123",
             user_id="expert_123",
             content="Expert answer",
-            created_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc)
         )
     ])
     

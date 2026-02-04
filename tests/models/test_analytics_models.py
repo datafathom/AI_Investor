@@ -6,7 +6,7 @@ Phase 7: Model Validation Tests
 import pytest
 from datetime import datetime
 from pydantic import ValidationError
-from models.analytics import (
+from schemas.analytics import (
     AttributionType,
     AttributionBreakdown,
     HoldingAttribution,
@@ -72,7 +72,7 @@ class TestPerformanceAttribution:
     
     def test_valid_performance_attribution(self):
         """Test valid performance attribution creation."""
-        from models.analytics import CalculationMetadata
+        from schemas.analytics import CalculationMetadata
         
         attribution = PerformanceAttribution(
             portfolio_id="portfolio_1",

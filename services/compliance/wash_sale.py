@@ -1,6 +1,6 @@
 import logging
 from typing import Optional
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +35,7 @@ class WashSaleGuardService:
         if last_purchase_date is None:
             return True
             
-        days_since_purchase = (datetime.utcnow() - last_purchase_date).days
+        days_since_purchase = (datetime.now(timezone.utc) - last_purchase_date).days
         
         if days_since_purchase <= self.wash_window_days:
             logger.warning(f"WASH-SALE RISK: {symbol} purchased {days_since_purchase} days ago")
@@ -54,7 +54,7 @@ class WashSaleGuardService:
         if last_sale_date is None:
             return True
             
-        days_since_sale = (datetime.utcnow() - last_sale_date).days
+        days_since_sale = (datetime.now(timezone.utc) - last_sale_date).days
         
         if days_since_sale <= self.wash_window_days:
             logger.warning(f"WASH-SALE RISK: {symbol} sold {days_since_sale} days ago")

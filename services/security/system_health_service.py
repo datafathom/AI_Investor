@@ -60,7 +60,7 @@ class SystemHealthService:
             
         return results
 
-    def get_health_status(self) -> Dict:
+    async def get_health_status(self) -> Dict:
         """Aggregate health status from all systems. Optimized for responsiveness."""
         # 1. Kafka Health (via Monitor Service with 1s timeout)
         kafka_pulse = kafka_monitor_service.get_cluster_status()
@@ -114,7 +114,7 @@ class SystemHealthService:
             "overall_status": "healthy" if kafka_pulse["status"] == "healthy" else "warning"
         }
 
-    def restart_service(self, service_name: str) -> bool:
+    async def restart_service(self, service_name: str) -> bool:
         logger.warning(f"RESTARTING SERVICE: {service_name}")
         return True
 

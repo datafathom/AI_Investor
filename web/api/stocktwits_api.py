@@ -1,107 +1,89 @@
 """
 ==============================================================================
 FILE: web/api/stocktwits_api.py
-ROLE: StockTwits API REST Endpoints
+ROLE: StockTwits API REST Endpoints (FastAPI)
 PURPOSE: RESTful endpoints for StockTwits sentiment and message streams.
-
-INTEGRATION POINTS:
-    - StockTwitsClient: Message retrieval
-    - StockTwitsSentimentAnalyzer: Sentiment analysis
-
-ENDPOINTS:
-    GET /api/v1/stocktwits/stream/{symbol} - Get symbol stream
-    GET /api/v1/stocktwits/trending - Get trending symbols
-    GET /api/v1/stocktwits/sentiment/{symbol} - Analyze sentiment
-    GET /api/v1/stocktwits/volume-spike/{symbol} - Detect volume spikes
-
-AUTHOR: AI Investor Team
-CREATED: 2026-01-21
 ==============================================================================
 """
 
-from flask import Blueprint, request, jsonify
+from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi.responses import JSONResponse
 import logging
-import asyncio
+
+from services.social.stocktwits_client import get_stocktwits_client
+from services.analysis.stocktwits_sentiment import get_stocktwits_sentiment
+
+
+def get_stocktwits_provider():
+    return get_stocktwits_client()
+
+
+def get_sentiment_provider():
+    return get_stocktwits_sentiment()
 
 logger = logging.getLogger(__name__)
 
-stocktwits_bp = Blueprint('stocktwits', __name__, url_prefix='/api/v1/stocktwits')
+router = APIRouter(prefix="/api/v1/stocktwits", tags=["StockTwits"])
 
 
-def _run_async(coro):
-    """Helper to run async functions in sync context."""
-    try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-    return loop.run_until_complete(coro)
-
-
-@stocktwits_bp.route('/stream/<symbol>', methods=['GET'])
-def get_stream(symbol: str):
+@router.get("/stream/{symbol}")
+async def get_stream(symbol: str, client=Depends(get_stocktwits_provider)):
     """Get message stream for a symbol."""
     try:
-        from services.social.stocktwits_client import get_stocktwits_client
-        client = get_stocktwits_client()
+        data = await client.get_symbol_stream(symbol)
         
-        stream = _run_async(client.get_symbol_stream(symbol))
-        
-        return jsonify({
-            "symbol": symbol,
-            "messages": stream,
-            "count": len(stream)
-        })
+        return {
+            "success": True,
+            "data": {
+                "symbol": symbol,
+                "messages": data,
+                "count": len(data)
+            }
+        }
     except Exception as e:
-        logger.error(f"Failed to get stream: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
+        logger.exception("Failed to get stream")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@stocktwits_bp.route('/trending', methods=['GET'])
-def get_trending():
+@router.get("/trending")
+async def get_trending(client=Depends(get_stocktwits_provider)):
     """Get trending symbols."""
     try:
-        from services.social.stocktwits_client import get_stocktwits_client
-        client = get_stocktwits_client()
+        data = await client.get_trending_symbols()
         
-        trending = _run_async(client.get_trending_symbols())
-        
-        return jsonify({
-            "trending": trending,
-            "count": len(trending)
-        })
+        return {
+            "success": True,
+            "data": {
+                "trending": data,
+                "count": len(data)
+            }
+        }
     except Exception as e:
-        logger.error(f"Failed to get trending: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
+        logger.exception("Failed to get trending")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@stocktwits_bp.route('/sentiment/<symbol>', methods=['GET'])
-def analyze_sentiment(symbol: str):
+@router.get("/sentiment/{symbol}")
+async def analyze_sentiment(symbol: str, analyzer=Depends(get_sentiment_provider)):
     """Analyze sentiment for a symbol."""
     try:
-        from services.analysis.stocktwits_sentiment import get_stocktwits_sentiment
-        analyzer = get_stocktwits_sentiment()
-        
-        result = _run_async(analyzer.analyze_symbol(symbol))
-        
-        return jsonify(result)
+        data = await analyzer.analyze_symbol(symbol)
+        return {"success": True, "data": data}
     except Exception as e:
-        logger.error(f"Failed to analyze sentiment: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
+        logger.exception("Failed to analyze sentiment")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@stocktwits_bp.route('/volume-spike/<symbol>', methods=['GET'])
-def detect_volume_spike(symbol: str):
+@router.get("/volume-spike/{symbol}")
+async def detect_volume_spike(
+    symbol: str, 
+    threshold: int = Query(50, description="Volume spike threshold percentage"),
+    analyzer=Depends(get_sentiment_provider)
+):
     """Detect volume spikes."""
     try:
-        threshold = int(request.args.get('threshold', 50))
-        
-        from services.analysis.stocktwits_sentiment import get_stocktwits_sentiment
-        analyzer = get_stocktwits_sentiment()
-        
-        result = _run_async(analyzer.detect_volume_spikes(symbol, threshold))
-        
-        return jsonify(result)
+        data = await analyzer.detect_volume_spikes(symbol, threshold)
+        return {"success": True, "data": data}
     except Exception as e:
-        logger.error(f"Failed to detect volume spike: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
+        logger.exception("Failed to detect volume spike")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

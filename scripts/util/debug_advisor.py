@@ -3,7 +3,7 @@ import os
 sys.path.append(os.getcwd())
 
 try:
-    from models.advisor import Advisor
+    from schemas.advisor import Advisor
     data = {
         "name": "Jane Fiduciary",
         "email": "jane@fiduciary.test",

@@ -6,7 +6,7 @@ Phase 7: Model Validation Tests
 import pytest
 from datetime import datetime
 from pydantic import ValidationError
-from models.ml_training import (
+from schemas.ml_training import (
     TrainingStatus,
     ModelVersion,
     TrainingJob

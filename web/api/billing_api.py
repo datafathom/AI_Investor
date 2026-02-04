@@ -1,249 +1,176 @@
 """
-==============================================================================
-FILE: web/api/billing_api.py
-ROLE: Bill Payment API Endpoints
-PURPOSE: REST endpoints for bill payment tracking and reminders.
-
-INTEGRATION POINTS:
-    - BillPaymentService: Bill management
-    - PaymentReminderService: Reminder system
-    - FrontendBilling: Bill payment dashboard
-
-ENDPOINTS:
-    - POST /api/billing/bill/create
-    - GET /api/billing/bill/upcoming/:user_id
-    - POST /api/billing/payment/schedule
-    - GET /api/billing/payment/history/:user_id
-    - POST /api/billing/reminder/create
-    - POST /api/billing/reminder/send/:user_id
-
-AUTHOR: AI Investor Team
-CREATED: 2026-01-21
-LAST_MODIFIED: 2026-01-21
-==============================================================================
+Billing API - FastAPI Router
+REST endpoints for bill payment tracking and reminders.
 """
 
-from flask import Blueprint, jsonify, request
-from datetime import datetime
 import logging
+from typing import Optional, Dict, Any, List
+from datetime import datetime
+
+from fastapi import APIRouter, HTTPException, Depends, Query
+from pydantic import BaseModel
+
+from web.auth_utils import get_current_user
 from services.billing.bill_payment_service import get_bill_payment_service
 from services.billing.payment_reminder_service import get_payment_reminder_service
 
 logger = logging.getLogger(__name__)
 
-billing_bp = Blueprint('billing', __name__, url_prefix='/api/v1/billing')
+router = APIRouter(prefix="/api/v1/billing", tags=["Billing"])
 
+class BillCreateRequest(BaseModel):
+    user_id: str
+    bill_name: str
+    merchant: str
+    amount: float
+    due_date: str
+    recurrence: str = 'one_time'
+    account_id: Optional[str] = None
 
-@billing_bp.route('/bill/create', methods=['POST'])
-async def create_bill():
-    """
-    Create a new bill.
-    
-    Request body:
-        user_id: User identifier
-        bill_name: Name of bill
-        merchant: Merchant name
-        amount: Bill amount
-        due_date: Due date (YYYY-MM-DD)
-        recurrence: Recurrence type (default: one_time)
-        account_id: Optional account for payment
-    """
+class PaymentScheduleRequest(BaseModel):
+    bill_id: str
+    payment_date: str
+    payment_method: str = 'bank_transfer'
+
+class ReminderCreateRequest(BaseModel):
+    bill_id: str
+    reminder_days_before: int = 7
+
+@router.post('/bill/create')
+async def create_bill(
+    request_data: BillCreateRequest,
+    current_user: dict = Depends(get_current_user),
+    service = Depends(get_bill_payment_service)
+):
+    """Create a new bill."""
     try:
-        data = request.get_json() or {}
-        user_id = data.get('user_id')
-        bill_name = data.get('bill_name')
-        merchant = data.get('merchant')
-        amount = float(data.get('amount', 0))
-        due_date_str = data.get('due_date')
-        recurrence = data.get('recurrence', 'one_time')
-        account_id = data.get('account_id')
-        
-        if not user_id or not bill_name or not merchant or not amount or not due_date_str:
-            return jsonify({
-                'success': False,
-                'error': 'user_id, bill_name, merchant, amount, and due_date are required'
-            }), 400
-        
-        due_date = datetime.strptime(due_date_str, '%Y-%m-%d')
-        
-        service = get_bill_payment_service()
+        due_date = datetime.strptime(request_data.due_date, '%Y-%m-%d')
         bill = await service.create_bill(
-            user_id=user_id,
-            bill_name=bill_name,
-            merchant=merchant,
-            amount=amount,
+            user_id=request_data.user_id,
+            bill_name=request_data.bill_name,
+            merchant=request_data.merchant,
+            amount=request_data.amount,
             due_date=due_date,
-            recurrence=recurrence,
-            account_id=account_id
+            recurrence=request_data.recurrence,
+            account_id=request_data.account_id
         )
-        
-        return jsonify({
-            'success': True,
-            'data': bill.model_dump()
-        })
-        
+        return {'success': True, 'data': bill.model_dump()}
     except Exception as e:
-        logger.error(f"Error creating bill: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        logger.exception(f"Error creating bill: {e}")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
 
-
-@billing_bp.route('/bill/upcoming/<user_id>', methods=['GET'])
-async def get_upcoming_bills(user_id: str):
-    """
-    Get upcoming bills for user.
-    
-    Query params:
-        days_ahead: Number of days to look ahead (default: 30)
-    """
+@router.get('/bills')
+async def get_all_bills(
+    user_id: str = Query(...),
+    current_user: dict = Depends(get_current_user),
+    service = Depends(get_bill_payment_service)
+):
+    """Get all bills for user."""
     try:
-        days_ahead = int(request.args.get('days_ahead', 30))
-        
-        service = get_bill_payment_service()
+        bills = await service.get_upcoming_bills(user_id, 365) 
+        return {'success': True, 'data': [b.model_dump() for b in bills]}
+    except Exception as e:
+        logger.exception(f"Error getting bills: {e}")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
+
+@router.get('/upcoming')
+async def get_upcoming_bills(
+    user_id: str = Query(...),
+    days_ahead: int = Query(30),
+    current_user: dict = Depends(get_current_user),
+    service = Depends(get_bill_payment_service)
+):
+    """Get upcoming bills for user."""
+    try:
         bills = await service.get_upcoming_bills(user_id, days_ahead)
-        
-        return jsonify({
-            'success': True,
-            'data': [b.model_dump() for b in bills]
-        })
-        
+        return {'success': True, 'data': [b.model_dump() for b in bills]}
     except Exception as e:
-        logger.error(f"Error getting upcoming bills: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        logger.exception(f"Error getting upcoming bills: {e}")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
 
-
-@billing_bp.route('/payment/schedule', methods=['POST'])
-async def schedule_payment():
-    """
-    Schedule bill payment.
-    
-    Request body:
-        bill_id: Bill identifier
-        payment_date: Payment date (YYYY-MM-DD)
-        payment_method: Payment method (default: bank_transfer)
-    """
+@router.get('/history')
+async def get_payment_history(
+    user_id: str = Query(...),
+    limit: int = Query(50),
+    current_user: dict = Depends(get_current_user)
+):
+    """Get payment history for user."""
     try:
-        data = request.get_json() or {}
-        bill_id = data.get('bill_id')
-        payment_date_str = data.get('payment_date')
-        payment_method = data.get('payment_method', 'bank_transfer')
-        
-        if not bill_id or not payment_date_str:
-            return jsonify({
-                'success': False,
-                'error': 'bill_id and payment_date are required'
-            }), 400
-        
-        payment_date = datetime.strptime(payment_date_str, '%Y-%m-%d')
-        
-        service = get_bill_payment_service()
-        payment = await service.schedule_payment(
-            bill_id=bill_id,
-            payment_date=payment_date,
-            payment_method=payment_method
-        )
-        
-        return jsonify({
-            'success': True,
-            'data': payment.model_dump()
-        })
-        
-    except Exception as e:
-        logger.error(f"Error scheduling payment: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
-
-
-@billing_bp.route('/payment/history/<user_id>', methods=['GET'])
-async def get_payment_history(user_id: str):
-    """
-    Get payment history for user.
-    
-    Query params:
-        limit: Maximum number of records (default: 50)
-    """
-    try:
-        limit = int(request.args.get('limit', 50))
-        
         service = get_bill_payment_service()
         history = await service.get_payment_history(user_id, limit)
-        
-        return jsonify({
-            'success': True,
-            'data': [h.model_dump() for h in history]
-        })
-        
+        return {'success': True, 'data': [h.model_dump() for h in history]}
     except Exception as e:
-        logger.error(f"Error getting payment history: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        logger.exception(f"Error getting payment history: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
+@router.get('/upcoming/{user_id}')
+async def get_upcoming_bills_path(
+    user_id: str,
+    days_ahead: int = 30,
+    current_user: dict = Depends(get_current_user),
+    service = Depends(get_bill_payment_service)
+):
+    return await get_upcoming_bills(user_id, days_ahead, current_user, service)
 
-@billing_bp.route('/reminder/create', methods=['POST'])
-async def create_reminder():
-    """
-    Create payment reminder.
-    
-    Request body:
-        bill_id: Bill identifier
-        reminder_days_before: Days before due date (default: 7)
-    """
+@router.get('/history/{user_id}')
+async def get_payment_history_path(
+    user_id: str,
+    limit: int = 50,
+    current_user: dict = Depends(get_current_user),
+    service = Depends(get_bill_payment_service)
+):
+    return await get_payment_history(user_id, limit, current_user, service)
+
+@router.post('/payment/schedule')
+async def schedule_payment(
+    request_data: PaymentScheduleRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """Schedule bill payment."""
     try:
-        data = request.get_json() or {}
-        bill_id = data.get('bill_id')
-        reminder_days_before = int(data.get('reminder_days_before', 7))
-        
-        if not bill_id:
-            return jsonify({
-                'success': False,
-                'error': 'bill_id is required'
-            }), 400
-        
-        service = get_payment_reminder_service()
-        reminder = await service.create_reminder(
-            bill_id=bill_id,
-            reminder_days_before=reminder_days_before
+        payment_date = datetime.strptime(request_data.payment_date, '%Y-%m-%d')
+        service = get_bill_payment_service()
+        payment = await service.schedule_payment(
+            bill_id=request_data.bill_id,
+            payment_date=payment_date,
+            payment_method=request_data.payment_method
         )
-        
-        return jsonify({
-            'success': True,
-            'data': reminder.model_dump()
-        })
-        
+        return {'success': True, 'data': payment.model_dump()}
     except Exception as e:
-        logger.error(f"Error creating reminder: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        logger.exception(f"Error scheduling payment: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
+@router.post('/reminder/create')
+async def create_reminder(
+    request_data: ReminderCreateRequest,
+    current_user: dict = Depends(get_current_user),
+    service = Depends(get_payment_reminder_service)
+):
+    """Create payment reminder."""
+    try:
+        reminder = await service.create_reminder(
+            bill_id=request_data.bill_id,
+            reminder_days_before=request_data.reminder_days_before
+        )
+        return {'success': True, 'data': reminder.model_dump()}
+    except Exception as e:
+        logger.exception(f"Error creating reminder: {e}")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
 
-@billing_bp.route('/reminder/send/<user_id>', methods=['POST'])
-async def send_reminders(user_id: str):
-    """
-    Send reminders for upcoming bills.
-    """
+@router.post('/reminder/send')
+async def send_reminders(
+    user_id: str = Query(...),
+    current_user: dict = Depends(get_current_user)
+):
+    """Send reminders for upcoming bills."""
     try:
         service = get_payment_reminder_service()
         reminders = await service.send_reminders(user_id)
-        
-        return jsonify({
-            'success': True,
-            'data': [r.model_dump() for r in reminders]
-        })
-        
+        return {'success': True, 'data': [r.model_dump() for r in reminders]}
     except Exception as e:
-        logger.error(f"Error sending reminders: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        logger.exception(f"Error sending reminders: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

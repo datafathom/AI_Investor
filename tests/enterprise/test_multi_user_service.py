@@ -4,10 +4,10 @@ Comprehensive test coverage for shared resources and collaboration
 """
 
 import pytest
-from datetime import datetime
+from datetime import timezone, datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.enterprise.multi_user_service import MultiUserService
-from models.enterprise import SharedResource
+from schemas.enterprise import SharedResource
 
 
 @pytest.fixture
@@ -44,8 +44,8 @@ async def test_get_shared_resources(service):
             resource_type="portfolio",
             team_id="team_123",
             permissions={'read': True},
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
     ])
     

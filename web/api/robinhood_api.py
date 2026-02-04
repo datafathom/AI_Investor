@@ -1,250 +1,157 @@
 """
 ==============================================================================
 FILE: web/api/robinhood_api.py
-ROLE: Robinhood API REST Endpoints
+ROLE: Robinhood API REST Endpoints (FastAPI)
 PURPOSE: RESTful endpoints for Robinhood portfolio sync and connection management.
-
-INTEGRATION POINTS:
-    - RobinhoodClient: Portfolio data retrieval
-    - PortfolioAggregator: Unified portfolio aggregation
-
-ENDPOINTS:
-    POST /api/v1/robinhood/connect - Connect Robinhood account
-    GET /api/v1/robinhood/holdings - Get portfolio holdings
-    GET /api/v1/robinhood/orders - Get order history
-    GET /api/v1/robinhood/transactions - Get historical transactions
-    GET /api/v1/robinhood/cost-basis - Calculate cost basis
-
-AUTHOR: AI Investor Team
-CREATED: 2026-01-21
 ==============================================================================
 """
 
-from flask import Blueprint, request, jsonify
+from fastapi import APIRouter, HTTPException, Header, Query, Depends
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from typing import Optional, Any
 import logging
 import asyncio
-from typing import Optional
+
+from services.brokerage.robinhood_client import get_robinhood_client
+
+
+def get_robinhood_provider():
+    return get_robinhood_client()
 
 logger = logging.getLogger(__name__)
 
-robinhood_bp = Blueprint('robinhood', __name__, url_prefix='/api/v1/robinhood')
+router = APIRouter(prefix="/api/v1/robinhood", tags=["Robinhood"])
 
 
-def _run_async(coro):
-    """Helper to run async functions in sync context."""
-    try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-    return loop.run_until_complete(coro)
+class ConnectRequest(BaseModel):
+    username: str
+    password: str
+    mfa_code: Optional[str] = None
 
 
-def _get_user_id():
-    """Get current user ID from session/token."""
-    return request.headers.get('X-User-ID', 'demo-user')
-
-
-# =============================================================================
-# Connect Account Endpoint
-# =============================================================================
-
-@robinhood_bp.route('/connect', methods=['POST'])
-def connect_account():
+@router.post("/connect")
+async def connect_account(
+    request: ConnectRequest,
+    service=Depends(get_robinhood_provider)
+):
     """
     Connect Robinhood account with credentials.
-    
-    Request Body:
-        {
-            "username": "robinhood_username",
-            "password": "robinhood_password",
-            "mfa_code": "123456"  // optional if MFA required
-        }
-        
-    Returns:
-        JSON with connection status
     """
     try:
-        data = request.json or {}
-        username = data.get('username')
-        password = data.get('password')
-        mfa_code = data.get('mfa_code')
-        
-        if not username or not password:
-            return jsonify({
-                "error": "Missing username or password"
-            }), 400
-        
-        from services.brokerage.robinhood_client import get_robinhood_client
-        client = get_robinhood_client()
-        
-        success = _run_async(client.login(username, password, mfa_code))
+        success = await service.login(request.username, request.password, request.mfa_code)
         
         if success:
-            # In production: Store encrypted credentials securely
-            return jsonify({
+            return {
                 "success": True,
-                "message": "Robinhood account connected successfully",
-                "connected_at": asyncio.get_event_loop().time() if asyncio.get_event_loop().is_running() else 0
-            })
+                "data": {
+                    "message": "Robinhood account connected successfully",
+                    "connected_at": asyncio.get_event_loop().time() if asyncio.get_event_loop().is_running() else 0
+                }
+            }
         else:
-            return jsonify({
-                "error": "Authentication failed",
-                "message": "Invalid credentials or MFA code"
-            }), 401
-        
+            return JSONResponse(
+                status_code=401, 
+                content={"success": False, "detail": "Invalid credentials or MFA code"}
+            )
+            
     except Exception as e:
-        logger.error(f"Robinhood connection failed: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to connect Robinhood account",
-            "message": str(e)
-        }), 500
+        logger.exception("Robinhood connection failed")
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "detail": str(e)}
+        )
 
 
-# =============================================================================
-# Get Holdings Endpoint
-# =============================================================================
-
-@robinhood_bp.route('/holdings', methods=['GET'])
-def get_holdings():
-    """
-    Get portfolio holdings.
-    
-    Returns:
-        JSON array of holdings
-    """
+@router.get("/holdings")
+async def get_holdings(service=Depends(get_robinhood_provider)):
+    """Get portfolio holdings."""
     try:
-        from services.brokerage.robinhood_client import get_robinhood_client
-        client = get_robinhood_client()
+        holdings = await service.get_holdings()
         
-        holdings = _run_async(client.get_holdings())
-        
-        return jsonify({
-            "holdings": holdings,
-            "count": len(holdings)
-        })
-        
+        return {
+            "success": True,
+            "data": {
+                "holdings": holdings,
+                "count": len(holdings)
+            }
+        }
     except Exception as e:
-        logger.error(f"Failed to get holdings: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to get holdings",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to get holdings")
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "detail": str(e)}
+        )
 
 
-# =============================================================================
-# Get Orders Endpoint
-# =============================================================================
-
-@robinhood_bp.route('/orders', methods=['GET'])
-def get_orders():
-    """
-    Get order history.
-    
-    Query Params:
-        limit: Maximum orders to return (default 100)
-        
-    Returns:
-        JSON array of orders
-    """
+@router.get("/orders")
+async def get_orders(
+    limit: int = Query(100, ge=1, le=500),
+    service=Depends(get_robinhood_provider)
+):
+    """Get order history."""
     try:
-        limit = int(request.args.get('limit', 100))
+        orders = await service.get_orders(limit=limit)
         
-        from services.brokerage.robinhood_client import get_robinhood_client
-        client = get_robinhood_client()
-        
-        orders = _run_async(client.get_orders(limit=limit))
-        
-        return jsonify({
-            "orders": orders,
-            "count": len(orders)
-        })
-        
+        return {
+            "success": True,
+            "data": {
+                "orders": orders,
+                "count": len(orders)
+            }
+        }
     except Exception as e:
-        logger.error(f"Failed to get orders: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to get orders",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to get orders")
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "detail": str(e)}
+        )
 
 
-# =============================================================================
-# Get Transactions Endpoint
-# =============================================================================
-
-@robinhood_bp.route('/transactions', methods=['GET'])
-def get_transactions():
-    """
-    Get historical transactions for tax reporting.
-    
-    Query Params:
-        start_date: Start date (YYYY-MM-DD)
-        end_date: End date (YYYY-MM-DD)
-        
-    Returns:
-        JSON array of transactions
-    """
+@router.get("/transactions")
+async def get_transactions(
+    start_date: Optional[str] = Query(None, description="YYYY-MM-DD"),
+    end_date: Optional[str] = Query(None, description="YYYY-MM-DD"),
+    service=Depends(get_robinhood_provider)
+):
+    """Get historical transactions for tax reporting."""
     try:
-        start_date = request.args.get('start_date')
-        end_date = request.args.get('end_date')
-        
-        from services.brokerage.robinhood_client import get_robinhood_client
-        client = get_robinhood_client()
-        
-        transactions = _run_async(client.get_historical_transactions(
+        transactions = await service.get_historical_transactions(
             start_date=start_date,
             end_date=end_date
-        ))
+        )
         
-        return jsonify({
-            "transactions": transactions,
-            "count": len(transactions)
-        })
-        
+        return {
+            "success": True,
+            "data": {
+                "transactions": transactions,
+                "count": len(transactions)
+            }
+        }
     except Exception as e:
-        logger.error(f"Failed to get transactions: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to get transactions",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to get transactions")
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "detail": str(e)}
+        )
 
 
-# =============================================================================
-# Calculate Cost Basis Endpoint
-# =============================================================================
-
-@robinhood_bp.route('/cost-basis', methods=['GET'])
-def calculate_cost_basis():
-    """
-    Calculate cost basis and gains for a position.
-    
-    Query Params:
-        symbol: Stock or crypto symbol
-        
-    Returns:
-        JSON with cost basis calculation
-    """
+@router.get("/cost-basis")
+async def calculate_cost_basis(
+    symbol: str = Query(..., description="Stock or crypto symbol"),
+    service=Depends(get_robinhood_provider)
+):
+    """Calculate cost basis and gains for a position."""
     try:
-        symbol = request.args.get('symbol')
-        
-        if not symbol:
-            return jsonify({
-                "error": "Missing symbol parameter"
-            }), 400
-        
-        from services.brokerage.robinhood_client import get_robinhood_client
-        client = get_robinhood_client()
-        
-        result = _run_async(client.calculate_cost_basis(symbol))
+        result = await service.calculate_cost_basis(symbol)
         
         if "error" in result:
-            return jsonify(result), 404
+            return JSONResponse(status_code=404, content={"success": False, "detail": result.get("error")})
         
-        return jsonify(result)
-        
+        return {"success": True, "data": result}
     except Exception as e:
-        logger.error(f"Failed to calculate cost basis: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to calculate cost basis",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to calculate cost basis")
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "detail": str(e)}
+        )

@@ -6,7 +6,7 @@ Phase 7: Model Validation Tests
 import pytest
 from datetime import datetime
 from pydantic import ValidationError
-from models.options import (
+from schemas.options import (
     OptionType,
     OptionAction,
     OptionLeg,

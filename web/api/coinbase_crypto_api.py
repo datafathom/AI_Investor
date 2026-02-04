@@ -1,285 +1,133 @@
 """
 ==============================================================================
 FILE: web/api/coinbase_crypto_api.py
-ROLE: Coinbase Crypto API REST Endpoints
+ROLE: Coinbase Crypto API REST Endpoints (FastAPI)
 PURPOSE: RESTful endpoints for Coinbase trading and custody management.
-
-INTEGRATION POINTS:
-    - CoinbaseClient: Trading and account management
-    - CoinbaseCustody: Vault balance management
-
-ENDPOINTS:
-    GET /api/v1/coinbase/accounts - Get trading accounts
-    GET /api/v1/coinbase/trading-pairs - Get available trading pairs
-    POST /api/v1/coinbase/orders - Place order
-    GET /api/v1/coinbase/orders - Get order history
-    GET /api/v1/coinbase/vaults - Get vault balances
-    POST /api/v1/coinbase/vaults/withdraw - Request withdrawal
-
-AUTHOR: AI Investor Team
-CREATED: 2026-01-21
 ==============================================================================
 """
 
-from flask import Blueprint, request, jsonify
+from fastapi import APIRouter, HTTPException, Query, Body, Depends
+from pydantic import BaseModel
 import logging
-import asyncio
+from typing import Optional, List, Dict, Any
+
+from services.crypto.coinbase_client import get_coinbase_client as _get_coinbase_client
+from services.crypto.coinbase_custody import get_coinbase_custody as _get_coinbase_custody
+
+def get_coinbase_service():
+    """Dependency for getting the Coinbase client."""
+    return _get_coinbase_client()
+
+def get_coinbase_custody_service():
+    """Dependency for getting the Coinbase custody service."""
+    return _get_coinbase_custody()
 
 logger = logging.getLogger(__name__)
 
-coinbase_crypto_bp = Blueprint('coinbase_crypto', __name__, url_prefix='/api/v1/coinbase_crypto')
+router = APIRouter(prefix="/api/v1/coinbase_crypto", tags=["Coinbase Crypto"])
 
 
-def _run_async(coro):
-    """Helper to run async functions in sync context."""
+class OrderRequest(BaseModel):
+    product_id: str
+    side: str
+    order_configuration: Dict[str, Any]
+
+
+class WithdrawalRequest(BaseModel):
+    vault_id: str
+    currency: str
+    amount: float
+    destination: str
+
+
+@router.get("/accounts")
+async def get_accounts(service = Depends(get_coinbase_service)):
+    """Get all trading accounts/balances."""
     try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-    return loop.run_until_complete(coro)
-
-
-# =============================================================================
-# Get Accounts Endpoint
-# =============================================================================
-
-@coinbase_crypto_bp.route('/accounts', methods=['GET'])
-def get_accounts():
-    """
-    Get all trading accounts/balances.
-    
-    Returns:
-        JSON array of accounts
-    """
-    try:
-        from services.crypto.coinbase_client import get_coinbase_client
-        client = get_coinbase_client()
-        
-        accounts = _run_async(client.get_accounts())
-        
-        return jsonify({
-            "accounts": accounts,
-            "count": len(accounts)
-        })
-        
+        accounts = await service.get_accounts()
+        return {"success": True, "data": {"accounts": accounts, "count": len(accounts)}}
     except Exception as e:
-        logger.error(f"Failed to get accounts: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to get accounts",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to get accounts")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-# =============================================================================
-# Get Trading Pairs Endpoint
-# =============================================================================
-
-@coinbase_crypto_bp.route('/trading-pairs', methods=['GET'])
-def get_trading_pairs():
-    """
-    Get available trading pairs.
-    
-    Returns:
-        JSON array of product IDs
-    """
+@router.get("/trading-pairs")
+async def get_trading_pairs(service = Depends(get_coinbase_service)):
+    """Get available trading pairs."""
     try:
-        from services.crypto.coinbase_client import get_coinbase_client
-        client = get_coinbase_client()
-        
-        pairs = _run_async(client.get_trading_pairs())
-        
-        return jsonify({
-            "trading_pairs": pairs,
-            "count": len(pairs)
-        })
-        
+        pairs = await service.get_trading_pairs()
+        return {"success": True, "data": {"trading_pairs": pairs, "count": len(pairs)}}
     except Exception as e:
-        logger.error(f"Failed to get trading pairs: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to get trading pairs",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to get trading pairs")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-# =============================================================================
-# Place Order Endpoint
-# =============================================================================
-
-@coinbase_crypto_bp.route('/orders', methods=['POST'])
-def place_order():
-    """
-    Place a trade order.
-    
-    Request Body:
-        {
-            "product_id": "BTC-USD",
-            "side": "buy",
-            "order_configuration": {
-                "market_market_ioc": {
-                    "quote_size": "100.00"
-                }
-            }
-        }
-        
-    Returns:
-        JSON with order confirmation
-    """
+@router.post("/orders")
+async def place_order(
+    request_data: OrderRequest,
+    service = Depends(get_coinbase_service)
+):
+    """Place a trade order."""
     try:
-        data = request.json or {}
-        product_id = data.get('product_id')
-        side = data.get('side')
-        order_config = data.get('order_configuration')
-        
-        if not product_id or not side or not order_config:
-            return jsonify({
-                "error": "Missing required fields: product_id, side, order_configuration"
-            }), 400
-        
-        from services.crypto.coinbase_client import get_coinbase_client
-        client = get_coinbase_client()
-        
-        result = _run_async(client.place_order(
-            product_id=product_id,
-            side=side,
-            order_configuration=order_config
-        ))
-        
-        return jsonify({
-            "success": True,
-            "order": result
-        }), 201
-        
+        result = await service.place_order(
+            product_id=request_data.product_id,
+            side=request_data.side,
+            order_configuration=request_data.order_configuration
+        )
+        return {"success": True, "data": result}
     except Exception as e:
-        logger.error(f"Failed to place order: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to place order",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to place order")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-# =============================================================================
-# Get Orders Endpoint
-# =============================================================================
-
-@coinbase_crypto_bp.route('/orders', methods=['GET'])
-def get_orders():
-    """
-    Get order history.
-    
-    Query Params:
-        limit: Maximum orders (default 100)
-        
-    Returns:
-        JSON array of orders
-    """
+@router.get("/orders")
+async def get_orders(
+    limit: int = Query(100, ge=1, le=1000),
+    service = Depends(get_coinbase_service)
+):
+    """Get order history."""
     try:
-        limit = int(request.args.get('limit', 100))
-        
-        from services.crypto.coinbase_client import get_coinbase_client
-        client = get_coinbase_client()
-        
-        orders = _run_async(client.get_orders(limit=limit))
-        
-        return jsonify({
-            "orders": orders,
-            "count": len(orders)
-        })
-        
+        orders = await service.get_orders(limit=limit)
+        return {"success": True, "data": {"orders": orders, "count": len(orders)}}
     except Exception as e:
-        logger.error(f"Failed to get orders: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to get orders",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to get orders")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-# =============================================================================
-# Get Vault Balances Endpoint
-# =============================================================================
-
-@coinbase_crypto_bp.route('/vaults', methods=['GET'])
-def get_vaults():
-    """
-    Get vault balances.
-    
-    Query Params:
-        vault_id: Optional vault ID filter
-        
-    Returns:
-        JSON array of vault balances
-    """
+@router.get("/vaults")
+async def get_vaults(
+    vault_id: Optional[str] = Query(None),
+    service = Depends(get_coinbase_custody_service)
+):
+    """Get vault balances."""
     try:
-        vault_id = request.args.get('vault_id')
-        
-        from services.crypto.coinbase_custody import get_coinbase_custody
-        custody = get_coinbase_custody()
-        
-        balances = _run_async(custody.get_vault_balances(vault_id=vault_id))
-        
-        return jsonify({
-            "vault_balances": balances,
-            "count": len(balances)
-        })
-        
+        balances = await service.get_vault_balances(vault_id=vault_id)
+        return {"success": True, "data": {"vault_balances": balances, "count": len(balances)}}
     except Exception as e:
-        logger.error(f"Failed to get vault balances: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to get vault balances",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to get vault balances")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-# =============================================================================
-# Request Withdrawal Endpoint
-# =============================================================================
-
-@coinbase_crypto_bp.route('/vaults/withdraw', methods=['POST'])
-def request_withdrawal():
-    """
-    Request withdrawal from vault (requires multi-party approval).
-    
-    Request Body:
-        {
-            "vault_id": "vault_primary",
-            "currency": "BTC",
-            "amount": 0.5,
-            "destination": "bc1q..."
-        }
-        
-    Returns:
-        JSON with withdrawal request
-    """
+@router.post("/vaults/withdraw")
+async def request_withdrawal(
+    request_data: WithdrawalRequest,
+    service = Depends(get_coinbase_custody_service)
+):
+    """Request withdrawal from vault."""
     try:
-        data = request.json or {}
-        vault_id = data.get('vault_id')
-        currency = data.get('currency')
-        amount = data.get('amount')
-        destination = data.get('destination')
-        
-        if not all([vault_id, currency, amount, destination]):
-            return jsonify({
-                "error": "Missing required fields: vault_id, currency, amount, destination"
-            }), 400
-        
-        from services.crypto.coinbase_custody import get_coinbase_custody
-        custody = get_coinbase_custody()
-        
-        result = _run_async(custody.request_withdrawal(
-            vault_id=vault_id,
-            currency=currency,
-            amount=amount,
-            destination=destination
-        ))
-        
-        return jsonify({
-            "success": True,
-            "withdrawal_request": result
-        }), 201
-        
+        result = await service.request_withdrawal(
+            vault_id=request_data.vault_id,
+            currency=request_data.currency,
+            amount=request_data.amount,
+            destination=request_data.destination
+        )
+        return {"success": True, "data": result}
     except Exception as e:
-        logger.error(f"Failed to request withdrawal: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to request withdrawal",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to request withdrawal")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

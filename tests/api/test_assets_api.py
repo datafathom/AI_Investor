@@ -1,95 +1,88 @@
-"""
-Tests for Assets API Endpoints
-Phase 6: API Endpoint Tests
-"""
 
 import pytest
-from unittest.mock import patch, MagicMock
-from flask import Flask
-from web.api.assets_api import assets_bp
-
+from unittest.mock import AsyncMock, patch, MagicMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.assets_api import router, get_assets_service
+from web.auth_utils import get_current_user
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(assets_bp)
+def api_app(mock_assets_service):
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
+    app.dependency_overrides[get_assets_service] = lambda: mock_assets_service
+    app.dependency_overrides[get_current_user] = lambda: {"id": "user_1", "role": "user"}
     return app
-
-
-@pytest.fixture
-def client(app):
-    """Create test client."""
-    return app.test_client()
-
 
 @pytest.fixture
 def mock_assets_service():
     """Mock AssetsService."""
-    with patch('web.api.assets_api.assets_service') as mock_service:
-        mock_service.get_all_assets.return_value = [
-            {'id': 'asset_1', 'name': 'House', 'value': 500000.0}
-        ]
-        mock_service.add_asset.return_value = {'id': 'asset_2', 'name': 'Car', 'value': 30000.0}
-        mock_service.update_asset.return_value = {'id': 'asset_1', 'name': 'House', 'value': 550000.0}
-        mock_service.delete_asset.return_value = True
-        mock_service.get_total_valuation.return_value = 530000.0
-        yield mock_service
+    service = MagicMock()
+    service.get_all_assets.return_value = [
+        {'id': 'asset_1', 'name': 'House', 'value': 500000.0}
+    ]
+    service.add_asset.return_value = {'id': 'asset_2', 'name': 'Car', 'value': 30000.0}
+    service.update_asset.return_value = {'id': 'asset_1', 'name': 'House', 'value': 550000.0}
+    service.delete_asset.return_value = True
+    service.get_total_valuation.return_value = 530000.0
+    return service
 
+@pytest.fixture
+def client(api_app):
+    """Create test client."""
+    return TestClient(api_app)
 
 def test_get_assets_success(client, mock_assets_service):
     """Test successful assets retrieval."""
-    response = client.get('/')
+    response = client.get('/api/v1/assets/')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert isinstance(data, list)
-
+    data = response.json()
+    assert data['success'] is True
+    assert isinstance(data['data'], list)
 
 def test_create_asset_success(client, mock_assets_service):
     """Test successful asset creation."""
-    response = client.post('/',
+    response = client.post('/api/v1/assets/',
                           json={'name': 'Car', 'value': 30000.0})
     
     assert response.status_code == 201
-    data = response.get_json()
-    assert 'id' in data
-    assert data['name'] == 'Car'
-
+    data = response.json()
+    assert data['success'] is True
+    assert 'id' in data['data']
+    assert data['data']['name'] == 'Car'
 
 def test_create_asset_missing_params(client):
     """Test asset creation with missing parameters."""
-    response = client.post('/', json={'name': 'Car'})
+    response = client.post('/api/v1/assets/', json={'name': 'Car'})
     
-    assert response.status_code == 400
-    data = response.get_json()
-    assert 'error' in data
-
+    assert response.status_code in [400, 422]
 
 def test_update_asset_success(client, mock_assets_service):
     """Test successful asset update."""
-    response = client.put('/asset_1',
+    response = client.put('/api/v1/assets/asset_1',
                          json={'name': 'House', 'value': 550000.0})
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert data['value'] == 550000.0
-
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['value'] == 550000.0
 
 def test_delete_asset_success(client, mock_assets_service):
     """Test successful asset deletion."""
-    response = client.delete('/asset_1')
+    response = client.delete('/api/v1/assets/asset_1')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'message' in data
-
+    data = response.json()
+    assert data['success'] is True
+    assert 'message' in data['data']
 
 def test_get_valuation_success(client, mock_assets_service):
     """Test successful valuation retrieval."""
-    response = client.get('/valuation')
+    response = client.get('/api/v1/assets/valuation')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'total_valuation' in data
+    data = response.json()
+    assert data['success'] is True
+    assert 'total_valuation' in data['data']

@@ -1,6 +1,6 @@
 import logging
 import json
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, Any, Optional
 from config.database import SessionLocal, Base
 from sqlalchemy import Column, Integer, String, DateTime, JSON
@@ -55,7 +55,7 @@ class UnifiedActivityService:
                     action_type=action_type,
                     action_payload=payload,
                     metadata_json=meta,
-                    timestamp=datetime.utcnow()
+                    timestamp=datetime.now(timezone.utc)
                 )
                 db.add(log_entry)
                 db.commit()

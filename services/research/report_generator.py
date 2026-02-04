@@ -26,7 +26,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime
 from typing import Dict, List, Optional
-from models.research import ResearchReport, ReportType
+from schemas.research import ResearchReport, ReportType
 from services.research.research_service import get_research_service
 from services.system.cache_service import get_cache_service
 

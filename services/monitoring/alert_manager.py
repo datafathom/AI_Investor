@@ -6,7 +6,7 @@ Handles real-time alerting for critical errors and system issues
 import os
 import logging
 from typing import Dict, Any, Optional, List
-from datetime import datetime
+from datetime import timezone, datetime
 from enum import Enum
 
 logger = logging.getLogger(__name__)
@@ -65,7 +65,7 @@ class AlertManager:
         alert_data = {
             'message': message,
             'level': level.value,
-            'timestamp': datetime.utcnow().isoformat(),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             **kwargs
         }
         

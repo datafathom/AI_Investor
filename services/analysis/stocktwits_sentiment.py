@@ -1,3 +1,4 @@
+from datetime import timezone
 """
 ==============================================================================
 FILE: services/analysis/stocktwits_sentiment.py
@@ -66,7 +67,7 @@ class StockTwitsSentimentAnalyzer:
             "total_messages": total,
             "sentiment_score": round((bullish - bearish) / max(total, 1), 2),
             "volume_spike": volume_spike,
-            "analyzed_at": datetime.utcnow().isoformat()
+            "analyzed_at": datetime.now(timezone.utc).isoformat()
         }
         
         # Store sentiment history (in production, save to database)

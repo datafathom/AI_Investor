@@ -3,7 +3,7 @@ Level 2 Market Data Parser.
 Normalizes heterogeneous level 2 order book data into a consistent internal format.
 """
 from typing import Any, Dict, List, Optional
-from datetime import datetime
+from datetime import timezone, datetime
 import logging
 
 logger = logging.getLogger(__name__)
@@ -36,9 +36,9 @@ class Level2Parser:
                 try:
                     timestamp = datetime.fromisoformat(timestamp_raw.replace('Z', '+00:00'))
                 except ValueError:
-                    timestamp = datetime.utcnow()
+                    timestamp = datetime.now(timezone.utc)
             else:
-                timestamp = datetime.utcnow()
+                timestamp = datetime.now(timezone.utc)
 
             # Extract Bids and Asks
             bids = payload.get('bids', [])

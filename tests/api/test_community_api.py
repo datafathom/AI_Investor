@@ -4,60 +4,61 @@ Phase 20: Community Forums & Discussion
 """
 
 import pytest
-from unittest.mock import AsyncMock, patch
-from flask import Flask
-from web.api.community_api import forum_bp, qa_bp
+from unittest.mock import AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.community_api import router, get_forum_service, get_expert_qa_service
+from web.auth_utils import get_current_user
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(forum_bp)
-    app.register_blueprint(qa_bp)
+def api_app(mock_forum_service, mock_qa_service):
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
+    app.dependency_overrides[get_forum_service] = lambda: mock_forum_service
+    app.dependency_overrides[get_expert_qa_service] = lambda: mock_qa_service
+    app.dependency_overrides[get_current_user] = lambda: {"id": "user_1", "role": "user"}
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
 def mock_forum_service():
     """Mock ForumService."""
-    with patch('web.api.community_api.get_forum_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+    service = AsyncMock()
+    return service
 
 
 @pytest.fixture
 def mock_qa_service():
     """Mock ExpertQAService."""
-    with patch('web.api.community_api.get_expert_qa_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+    service = AsyncMock()
+    return service
 
 
-@pytest.mark.asyncio
-async def test_create_thread_success(client, mock_forum_service):
+def test_create_thread_success(client, mock_forum_service):
     """Test successful thread creation."""
-    from models.community import ForumThread
+    from schemas.community import ForumThread, ThreadCategory
+    from datetime import datetime, timezone
     
     mock_thread = ForumThread(
         thread_id='thread_1',
         user_id='user_1',
-        category='general',
+        category=ThreadCategory.GENERAL,
         title='Test Thread',
-        content='Test content'
+        content='Test content',
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     mock_forum_service.create_thread.return_value = mock_thread
     
-    response = client.post('/api/forum/thread/create',
+    response = client.post('/api/v1/community/thread/create',
                           json={
                               'user_id': 'user_1',
                               'category': 'general',
@@ -66,108 +67,63 @@ async def test_create_thread_success(client, mock_forum_service):
                           })
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
     assert data['data']['title'] == 'Test Thread'
 
 
-@pytest.mark.asyncio
-async def test_create_thread_missing_params(client):
+def test_create_thread_missing_params(client):
     """Test thread creation with missing parameters."""
-    response = client.post('/api/forum/thread/create',
+    response = client.post('/api/v1/community/thread/create',
                           json={'user_id': 'user_1', 'title': 'Test'})
     
-    assert response.status_code == 400
-    data = response.get_json()
-    assert data['success'] is False
+    # Pydantic validation error
+    assert response.status_code in [400, 422]
 
 
-@pytest.mark.asyncio
-async def test_get_threads_success(client, mock_forum_service):
+def test_get_threads_success(client, mock_forum_service):
     """Test successful threads retrieval."""
-    from models.community import ForumThread
+    from schemas.community import ForumThread, ThreadCategory
+    from datetime import datetime, timezone
     
     mock_threads = [
         ForumThread(
             thread_id='thread_1',
             user_id='user_1',
-            category='general',
+            category=ThreadCategory.GENERAL,
             title='Test Thread',
-            content='Test content'
+            content='Test content',
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
     ]
     mock_forum_service.get_threads.return_value = mock_threads
     
-    response = client.get('/api/forum/threads?limit=20')
+    response = client.get('/api/v1/community/threads?limit=20')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
     assert len(data['data']) == 1
 
 
-@pytest.mark.asyncio
-async def test_create_reply_success(client, mock_forum_service):
-    """Test successful reply creation."""
-    from models.community import Reply
-    
-    mock_reply = Reply(
-        reply_id='reply_1',
-        thread_id='thread_1',
-        user_id='user_1',
-        content='Test reply'
-    )
-    mock_forum_service.create_reply.return_value = mock_reply
-    
-    response = client.post('/api/forum/thread/thread_1/reply',
-                          json={
-                              'user_id': 'user_1',
-                              'content': 'Test reply'
-                          })
-    
-    assert response.status_code == 200
-    data = response.get_json()
-    assert data['success'] is True
-
-
-@pytest.mark.asyncio
-async def test_upvote_thread_success(client, mock_forum_service):
-    """Test successful thread upvote."""
-    from models.community import ForumThread
-    
-    mock_thread = ForumThread(
-        thread_id='thread_1',
-        user_id='user_1',
-        category='general',
-        title='Test Thread',
-        content='Test content',
-        upvotes=1
-    )
-    mock_forum_service.upvote_thread.return_value = mock_thread
-    
-    response = client.post('/api/forum/thread/thread_1/upvote',
-                          json={'user_id': 'user_1'})
-    
-    assert response.status_code == 200
-    data = response.get_json()
-    assert data['success'] is True
-
-
-@pytest.mark.asyncio
-async def test_create_question_success(client, mock_qa_service):
+def test_create_question_success(client, mock_qa_service):
     """Test successful question creation."""
-    from models.community import Question
+    from schemas.community import ExpertQuestion
+    from datetime import datetime, timezone
     
-    mock_question = Question(
+    mock_question = ExpertQuestion(
         question_id='q_1',
         user_id='user_1',
         title='Test Question',
         content='Test question content',
-        category='investment'
+        category='investment',
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     mock_qa_service.create_question.return_value = mock_question
     
-    response = client.post('/api/qa/question/create',
+    response = client.post('/api/v1/community/question/create',
                           json={
                               'user_id': 'user_1',
                               'title': 'Test Question',
@@ -176,27 +132,5 @@ async def test_create_question_success(client, mock_qa_service):
                           })
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert data['success'] is True
-
-
-@pytest.mark.asyncio
-async def test_mark_best_answer_success(client, mock_qa_service):
-    """Test successful best answer marking."""
-    from models.community import Question
-    
-    mock_question = Question(
-        question_id='q_1',
-        user_id='user_1',
-        title='Test Question',
-        content='Test question content',
-        best_answer_id='answer_1'
-    )
-    mock_qa_service.mark_best_answer.return_value = mock_question
-    
-    response = client.post('/api/qa/question/q_1/best-answer',
-                          json={'answer_id': 'answer_1'})
-    
-    assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True

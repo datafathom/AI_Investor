@@ -1,151 +1,111 @@
 """
-==============================================================================
-FILE: web/api/ai_assistant_api.py
-ROLE: AI Assistant API Endpoints
-PURPOSE: REST endpoints for AI assistant conversations and recommendations.
-
-INTEGRATION POINTS:
-    - AssistantService: Conversation management
-    - LearningService: Recommendations
-    - FrontendAI: Chat interface
-
-ENDPOINTS:
-    - POST /api/ai-assistant/conversation/create
-    - GET /api/ai-assistant/conversation/:conversation_id
-    - POST /api/ai-assistant/conversation/:conversation_id/message
-    - GET /api/ai-assistant/recommendations/:user_id
-
-AUTHOR: AI Investor Team
-CREATED: 2026-01-21
-LAST_MODIFIED: 2026-01-21
-==============================================================================
+AI Assistant API - FastAPI Router
+REST endpoints for AI assistant conversations and recommendations.
 """
 
-from flask import Blueprint, jsonify, request
 import logging
+from typing import Optional, Dict, Any, List
+
+from fastapi import APIRouter, HTTPException, Depends, Request
+from pydantic import BaseModel
+
+from web.auth_utils import get_current_user
 from services.ai_assistant.assistant_service import get_assistant_service
 from services.ai_assistant.learning_service import get_learning_service
 
 logger = logging.getLogger(__name__)
 
-ai_assistant_bp = Blueprint('ai_assistant', __name__, url_prefix='/api/v1/ai_assistant')
+router = APIRouter(prefix="/api/v1/ai_assistant", tags=["AI Assistant"])
 
+# --- Request Models ---
 
-@ai_assistant_bp.route('/conversation/create', methods=['POST'])
-async def create_conversation():
-    """
-    Create a new conversation.
-    
-    Request body:
-        user_id: User identifier
-        title: Optional conversation title
-    """
+class ConversationCreateRequest(BaseModel):
+    user_id: str
+    title: Optional[str] = None
+
+class MessageRequest(BaseModel):
+    message: str
+
+# --- Endpoints ---
+
+@router.post('/conversation/create')
+async def create_conversation(
+    request_data: ConversationCreateRequest,
+    service = Depends(get_assistant_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Create a new conversation."""
     try:
-        data = request.get_json() or {}
-        user_id = data.get('user_id')
-        title = data.get('title')
+        conversation = await service.create_conversation(request_data.user_id, request_data.title)
         
-        if not user_id:
-            return jsonify({
-                'success': False,
-                'error': 'user_id is required'
-            }), 400
-        
-        service = get_assistant_service()
-        conversation = await service.create_conversation(user_id, title)
-        
-        return jsonify({
+        return {
             'success': True,
             'data': conversation.model_dump()
-        })
-        
+        }
     except Exception as e:
-        logger.error(f"Error creating conversation: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        logger.error(f"Error creating/getting/sending: {e}")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-
-@ai_assistant_bp.route('/conversation/<conversation_id>', methods=['GET'])
-async def get_conversation(conversation_id: str):
-    """
-    Get conversation details.
-    """
+@router.get('/conversation/{conversation_id}')
+async def get_conversation(
+    conversation_id: str,
+    service = Depends(get_assistant_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Get conversation details."""
     try:
-        service = get_assistant_service()
         conversation = await service._get_conversation(conversation_id)
         
         if not conversation:
-            return jsonify({
-                'success': False,
-                'error': 'Conversation not found'
-            }), 404
+            raise HTTPException(status_code=404, detail="Conversation not found")
         
-        return jsonify({
+        return {
             'success': True,
             'data': conversation.model_dump()
-        })
-        
+        }
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error getting conversation: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-
-@ai_assistant_bp.route('/conversation/<conversation_id>/message', methods=['POST'])
-async def send_message(conversation_id: str):
-    """
-    Send message and get AI response.
-    
-    Request body:
-        message: User message content
-    """
+@router.post('/conversation/{conversation_id}/message')
+async def send_message(
+    conversation_id: str,
+    request_data: MessageRequest,
+    service = Depends(get_assistant_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Send message and get AI response."""
     try:
-        data = request.get_json() or {}
-        user_message = data.get('message')
+        response = await service.send_message(conversation_id, request_data.message)
         
-        if not user_message:
-            return jsonify({
-                'success': False,
-                'error': 'message is required'
-            }), 400
-        
-        service = get_assistant_service()
-        response = await service.send_message(conversation_id, user_message)
-        
-        return jsonify({
+        return {
             'success': True,
             'data': response.model_dump()
-        })
-        
+        }
     except Exception as e:
         logger.error(f"Error sending message: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-
-@ai_assistant_bp.route('/recommendations/<user_id>', methods=['GET'])
-async def get_recommendations(user_id: str):
-    """
-    Get personalized recommendations.
-    """
+@router.get('/recommendations/{user_id}')
+async def get_recommendations(
+    user_id: str,
+    service = Depends(get_learning_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Get personalized recommendations."""
     try:
-        service = get_learning_service()
         recommendations = await service.generate_recommendations(user_id)
         
-        return jsonify({
+        return {
             'success': True,
             'data': [r.model_dump() for r in recommendations]
-        })
-        
+        }
     except Exception as e:
         logger.error(f"Error getting recommendations: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

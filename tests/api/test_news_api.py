@@ -5,46 +5,46 @@ Phase 16: News & Sentiment Analysis
 
 import pytest
 from unittest.mock import AsyncMock, patch
-from flask import Flask
-from web.api.news_api import news_bp
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.news_api import router, get_news_aggregation_service, get_sentiment_analysis_service
+from web.auth_utils import get_current_user
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(news_bp)
+def api_app(mock_news_aggregation_service, mock_sentiment_analysis_service):
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
+    app.dependency_overrides[get_news_aggregation_service] = lambda: mock_news_aggregation_service
+    app.dependency_overrides[get_sentiment_analysis_service] = lambda: mock_sentiment_analysis_service
+    app.dependency_overrides[get_current_user] = lambda: {"id": "user_1", "role": "user"}
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
 def mock_news_aggregation_service():
     """Mock NewsAggregationService."""
-    with patch('web.api.news_api.get_news_aggregation_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+    service = AsyncMock()
+    return service
 
 
 @pytest.fixture
 def mock_sentiment_analysis_service():
     """Mock SentimentAnalysisService."""
-    with patch('web.api.news_api.get_sentiment_analysis_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+    service = AsyncMock()
+    return service
 
 
 def test_get_news_articles_success(client, mock_news_aggregation_service):
     """Test successful news articles retrieval."""
-    from models.news import NewsArticle
+    from schemas.news import NewsArticle
     from datetime import datetime, timezone
     
     mock_articles = [
@@ -60,17 +60,17 @@ def test_get_news_articles_success(client, mock_news_aggregation_service):
     ]
     mock_news_aggregation_service.fetch_news.return_value = mock_articles
     
-    response = client.get('/api/news/articles?symbols=AAPL,MSFT&limit=50')
+    response = client.get('/api/v1/news/articles?symbols=AAPL&limit=50')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
     assert len(data['data']) == 1
 
 
 def test_get_news_for_symbol_success(client, mock_news_aggregation_service):
     """Test successful symbol-specific news retrieval."""
-    from models.news import NewsArticle
+    from schemas.news import NewsArticle
     from datetime import datetime, timezone
     
     mock_articles = [
@@ -86,16 +86,16 @@ def test_get_news_for_symbol_success(client, mock_news_aggregation_service):
     ]
     mock_news_aggregation_service.get_news_for_symbol.return_value = mock_articles
     
-    response = client.get('/api/news/symbol/AAPL?limit=20')
+    response = client.get('/api/v1/news/symbol/AAPL?limit=20')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
 
 
 def test_get_sentiment_success(client, mock_sentiment_analysis_service):
     """Test successful sentiment analysis."""
-    from models.news import NewsSentiment, SentimentScore
+    from schemas.news import NewsSentiment, SentimentScore
     from datetime import datetime, timezone
     
     mock_sentiment = NewsSentiment(
@@ -111,10 +111,11 @@ def test_get_sentiment_success(client, mock_sentiment_analysis_service):
     )
     mock_sentiment_analysis_service.get_symbol_sentiment.return_value = mock_sentiment
     
-    response = client.get('/api/news/sentiment/AAPL')
+    response = client.get('/api/v1/news/sentiment/AAPL')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
+    print(f"DEBUG SENTIMENT RESPONSE: {data}")
     assert data['success'] is True
     assert data['data']['symbol'] == 'AAPL'
     assert data['data']['overall_sentiment'] == 0.65

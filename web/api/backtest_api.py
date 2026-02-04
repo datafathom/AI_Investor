@@ -41,50 +41,58 @@ class DrawdownResponse(BaseModel):
     pain_index: float
     recovery_days: int
 
-@router.post("/monte-carlo", response_model=SimulationResponse)
+@router.post("/monte-carlo")
 async def run_monte_carlo(
     request: SimulationRequest,
     service: MonteCarloService = Depends(get_monte_carlo_service)
-) -> SimulationResponse:
+):
     try:
-        result = await service.run_gbm_simulation(
+        result = service.run_gbm_simulation(
             initial_value=request.initial_value,
             mu=request.mu,
             sigma=request.sigma,
             days=request.days,
             paths=request.paths
         )
-        return SimulationResponse(
-            paths=result.paths,
-            quantiles=result.quantiles,
-            ruin_probability=result.ruin_probability,
-            median_final=result.median_final,
-            mean_final=result.mean_final
-        )
+        return {
+            "success": True,
+            "data": {
+                "paths": result.paths,
+                "quantiles": result.quantiles,
+                "ruin_probability": result.ruin_probability,
+                "median_final": result.median_final,
+                "mean_final": result.mean_final
+            }
+        }
     except Exception as e:
         logger.exception("Error running simulation")
-        raise HTTPException(status_code=500, detail=str(e))
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-@router.get("/drawdown", response_model=DrawdownResponse)
+@router.get("/drawdown")
 async def get_drawdown_metrics(
     service: MonteCarloService = Depends(get_monte_carlo_service)
-) -> DrawdownResponse:
+):
     """Calculate metrics for a sample path."""
     try:
         # Mock path
         sample_path = [100 * (1 + 0.01 * i + 0.02 * (0.5 - i/10)) for i in range(100)]
-        metrics = await service.calculate_drawdown_metrics(sample_path)
-        return DrawdownResponse(
-            max_drawdown=metrics.max_drawdown,
-            avg_drawdown=metrics.avg_drawdown,
-            max_duration_days=metrics.max_duration_days,
-            ulcer_index=metrics.ulcer_index,
-            pain_index=metrics.pain_index,
-            recovery_days=metrics.recovery_days
-        )
+        metrics = service.calculate_drawdown_metrics(sample_path)
+        return {
+            "success": True,
+            "data": {
+                "max_drawdown": metrics.max_drawdown,
+                "avg_drawdown": metrics.avg_drawdown,
+                "max_duration_days": metrics.max_duration_days,
+                "ulcer_index": metrics.ulcer_index,
+                "pain_index": metrics.pain_index,
+                "recovery_days": metrics.recovery_days
+            }
+        }
     except Exception as e:
         logger.exception("Error calculating drawdown")
-        raise HTTPException(status_code=500, detail=str(e))
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 @router.get("/overfit")
 async def check_overfit(
@@ -92,5 +100,13 @@ async def check_overfit(
     oos_sharpe: float = 1.0,
     service: MonteCarloService = Depends(get_monte_carlo_service)
 ):
-    is_overfit, variance = await service.detect_overfit(is_sharpe, oos_sharpe)
-    return {"is_overfit": is_overfit, "variance": variance}
+    try:
+        is_overfit, variance = service.detect_overfit(is_sharpe, oos_sharpe)
+        return {
+            "success": True,
+            "data": {"is_overfit": is_overfit, "variance": variance}
+        }
+    except Exception as e:
+        logger.exception("Error checking overfit")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

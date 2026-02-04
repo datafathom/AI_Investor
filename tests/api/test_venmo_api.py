@@ -1,50 +1,44 @@
 """
 Tests for Venmo API Endpoints
-Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock
-from flask import Flask
-from web.api.venmo_api import venmo_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.venmo_api import router, get_venmo_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(venmo_bp)
+def api_app():
+    """Create FastAPI app merchant testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_venmo_client():
-    """Mock Venmo client."""
-    with patch('web.api.venmo_api.get_venmo_client') as mock:
-        client = MagicMock()
-        mock.return_value = client
-        yield client
+def mock_venmo_client(api_app):
+    """Mock Venmo Client."""
+    service = AsyncMock()
+    service.process_payment.return_value = {"payment_id": "V123", "status": "settled"}
+    
+    api_app.dependency_overrides[get_venmo_provider] = lambda: service
+    return service
 
 
 def test_pay_success(client, mock_venmo_client):
-    """Test successful Venmo payment."""
-    mock_result = {'status': 'completed', 'payment_id': 'venmo_123'}
-    
-    async def mock_process_payment(amount, username):
-        return mock_result
-    
-    mock_venmo_client.process_payment = mock_process_payment
-    
-    response = client.post('/payment/venmo/pay?mock=true',
-                          json={'amount': 29.00})
+    """Test Venmo payment."""
+    payload = {"amount": 29.00}
+    response = client.post('/api/v1/venmo/payment/venmo/pay', json=payload)
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert data['status'] == 'completed'
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['payment_id'] == "V123"

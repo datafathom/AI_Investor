@@ -8,7 +8,7 @@ import sys
 import logging
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple
-from datetime import datetime
+from datetime import timezone, datetime
 import json
 import subprocess
 
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 class MigrationManager:
     """Complete migration management system."""
     
-    def __init__(self, migrations_dir: str = "migrations", db_url: Optional[str] = None):
+    def __init__(self, migrations_dir: str = "schemas/postgres", db_url: Optional[str] = None):
         self.migrations_dir = Path(migrations_dir)
         self.migrations_dir.mkdir(exist_ok=True)
         self.db_url = db_url or os.getenv('DATABASE_URL')
@@ -46,7 +46,7 @@ class MigrationManager:
     
     def create_migration(self, name: str, description: str = "") -> Tuple[Path, Path]:
         """Create new migration files."""
-        timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         migration_id = f"{timestamp}_{name}"
         
         forward_file = self.migrations_dir / f"{migration_id}.sql"
@@ -55,7 +55,7 @@ class MigrationManager:
         # Create forward migration template
         forward_content = f"""-- Migration: {name}
 -- Description: {description}
--- Created: {datetime.utcnow().isoformat()}
+-- Created: {datetime.now(timezone.utc).isoformat()}
 -- ID: {migration_id}
 
 BEGIN;
@@ -74,7 +74,7 @@ COMMIT;
         # Create rollback migration template
         rollback_content = f"""-- Rollback Migration: {name}
 -- Description: Rollback for {description}
--- Created: {datetime.utcnow().isoformat()}
+-- Created: {datetime.now(timezone.utc).isoformat()}
 -- ID: {migration_id}
 
 BEGIN;
@@ -152,7 +152,7 @@ COMMIT;
                         self.metadata['applied_migrations'].append(mig_id)
                         if 'migration_dates' not in self.metadata:
                             self.metadata['migration_dates'] = {}
-                        self.metadata['migration_dates'][mig_id] = datetime.utcnow().isoformat()
+                        self.metadata['migration_dates'][mig_id] = datetime.now(timezone.utc).isoformat()
                         self.metadata['last_migration'] = mig_id
                         self.metadata['schema_version'] += 1
                         self._save_metadata()

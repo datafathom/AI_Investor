@@ -1,129 +1,116 @@
 """
 ==============================================================================
 FILE: web/api/discord_api.py
-ROLE: Discord API REST Endpoints
+ROLE: Discord API REST Endpoints (FastAPI)
 PURPOSE: RESTful endpoints for Discord bot and webhook management.
-
-INTEGRATION POINTS:
-    - DiscordBot: Channel monitoring
-    - DiscordWebhook: Alert dispatch
-
-ENDPOINTS:
-    GET /api/v1/discord/mentions/{ticker} - Get ticker mentions
-    GET /api/v1/discord/hype/{ticker} - Get hype score
-    POST /api/v1/discord/webhook/test - Test webhook
-    POST /api/v1/discord/webhook/alert - Send alert
-
-AUTHOR: AI Investor Team
-CREATED: 2026-01-21
 ==============================================================================
 """
 
-from flask import Blueprint, request, jsonify
+from fastapi import APIRouter, HTTPException, Query, Path, Body, Depends
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 import logging
-import asyncio
+from services.social.discord_bot import get_discord_bot as _get_discord_bot
+from services.communication.discord_webhook import get_discord_webhook as _get_discord_webhook
+
+def get_discord_bot_provider():
+    return _get_discord_bot()
+
+def get_discord_webhook_provider(url: str):
+    return _get_discord_webhook(url=url)
 
 logger = logging.getLogger(__name__)
 
-discord_bp = Blueprint('discord', __name__, url_prefix='/api/v1/discord')
+router = APIRouter(prefix="/api/v1/discord", tags=["Discord"])
 
 
-def _run_async(coro):
-    """Helper to run async functions in sync context."""
-    try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-    return loop.run_until_complete(coro)
+class WebhookTestRequest(BaseModel):
+    webhook_url: str
 
 
-@discord_bp.route('/mentions/<ticker>', methods=['GET'])
-def get_mentions(ticker: str):
+class WebhookAlertRequest(BaseModel):
+    webhook_url: str
+    title: str
+    description: str
+    color: int = 0x00ff00
+
+
+@router.get("/mentions/{ticker}")
+async def get_mentions(
+    ticker: str = Path(...),
+    limit: int = Query(50, ge=1, le=100),
+    bot = Depends(get_discord_bot_provider)
+):
     """Get Discord mentions for a ticker."""
     try:
-        limit = int(request.args.get('limit', 50))
+        mentions = await bot.get_recent_mentions(ticker, limit=limit)
         
-        from services.social.discord_bot import get_discord_bot
-        bot = get_discord_bot()
-        
-        mentions = _run_async(bot.get_recent_mentions(ticker, limit=limit))
-        
-        return jsonify({
-            "ticker": ticker,
-            "mentions": mentions,
-            "count": len(mentions)
-        })
+        return {
+            "success": True,
+            "data": {
+                "ticker": ticker,
+                "mentions": mentions,
+                "count": len(mentions)
+            }
+        }
     except Exception as e:
-        logger.error(f"Failed to get mentions: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
+        logger.exception("Failed to get mentions")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@discord_bp.route('/hype/<ticker>', methods=['GET'])
-def get_hype(ticker: str):
+@router.get("/hype/{ticker}")
+async def get_hype(
+    ticker: str = Path(...),
+    bot = Depends(get_discord_bot_provider)
+):
     """Get hype score for a ticker."""
     try:
-        from services.social.discord_bot import get_discord_bot
-        bot = get_discord_bot()
-        
-        hype = _run_async(bot.get_hype_score(ticker))
-        
-        return jsonify(hype)
+        hype = await bot.get_hype_score(ticker)
+        return {"success": True, "data": hype}
     except Exception as e:
-        logger.error(f"Failed to get hype: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
+        logger.exception("Failed to get hype")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@discord_bp.route('/webhook/test', methods=['POST'])
-def test_webhook():
-    """Test webhook configuration."""
+@router.post("/webhook/test")
+async def test_webhook(request: WebhookTestRequest):
+    """Test webhook configuration (Manual injection for now)."""
     try:
-        data = request.json or {}
-        webhook_url = data.get('webhook_url')
+        webhook = _get_discord_webhook(url=request.webhook_url)
         
-        if not webhook_url:
-            return jsonify({"error": "Missing webhook_url"}), 400
-        
-        from services.communication.discord_webhook import get_discord_webhook
-        webhook = get_discord_webhook(url=webhook_url)
-        
-        success = _run_async(webhook.send_alert(
+        success = await webhook.send_alert(
             title="Test Alert",
             description="This is a test alert from AI Investor Terminal",
             color=0x00ff00
-        ))
+        )
         
-        return jsonify({
-            "success": success,
-            "message": "Test alert sent"
-        })
+        return {
+            "success": True,
+            "data": {
+                "success": success,
+                "message": "Test alert sent"
+            }
+        }
     except Exception as e:
-        logger.error(f"Webhook test failed: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
+        logger.exception("Webhook test failed")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@discord_bp.route('/webhook/alert', methods=['POST'])
-def send_alert():
-    """Send alert via webhook."""
+@router.post("/webhook/alert")
+async def send_alert(request: WebhookAlertRequest):
+    """Send alert via webhook (Manual injection for now)."""
     try:
-        data = request.json or {}
-        webhook_url = data.get('webhook_url')
-        title = data.get('title')
-        description = data.get('description')
-        color = data.get('color', 0x00ff00)
+        webhook = _get_discord_webhook(url=request.webhook_url)
         
-        if not all([webhook_url, title, description]):
-            return jsonify({"error": "Missing required fields"}), 400
+        success = await webhook.send_alert(request.title, request.description, request.color)
         
-        from services.communication.discord_webhook import get_discord_webhook
-        webhook = get_discord_webhook(url=webhook_url)
-        
-        success = _run_async(webhook.send_alert(title, description, color))
-        
-        return jsonify({
-            "success": success,
-            "message": "Alert sent"
-        })
+        return {
+            "success": True,
+            "data": {
+                "success": success,
+                "message": "Alert sent"
+            }
+        }
     except Exception as e:
-        logger.error(f"Failed to send alert: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
+        logger.exception("Failed to send alert")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

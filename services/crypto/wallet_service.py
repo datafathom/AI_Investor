@@ -1,7 +1,7 @@
 
 import logging
 from typing import List, Dict, Any, Optional
-from datetime import datetime
+from datetime import timezone, datetime
 from enum import Enum
 from pydantic import BaseModel
 from services.system.secret_manager import get_secret_manager
@@ -147,7 +147,7 @@ class WalletService:
                 Balance(token="SOL", chain=Chain.SOLANA, amount=20.0, usd_value=2000.0, price=100.0)
             ],
             wallets=["0x123...", "789..."],
-            last_updated=datetime.utcnow()
+            last_updated=datetime.now(timezone.utc)
         )
 
     async def verify_connection(self, wallet_type: str) -> bool:

@@ -4,7 +4,7 @@ Tracks individual agent votes for specific trade proposals.
 """
 from typing import Dict, List, Any, Optional
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from config.consensus_thresholds import PERSONA_WEIGHTS
 
 logger = logging.getLogger(__name__)
@@ -33,7 +33,7 @@ class VoteAggregator:
             'persona': persona,
             'vote': vote,
             'reason': reason,
-            'timestamp': datetime.utcnow(),
+            'timestamp': datetime.now(timezone.utc),
             'weight': PERSONA_WEIGHTS.get(persona, 1.0)
         }
         

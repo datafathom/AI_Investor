@@ -16,7 +16,7 @@
             "category": "System Control"
         },
         "start-backend": {
-            "description": "Start the Flask backend on the host (Windows).",
+            "description": "Start the FastAPI backend on the host (Windows).",
             "handler": "scripts.runners.system_control:start_backend",
             "category": "General"
         },
@@ -97,7 +97,7 @@
             "category": "System Control"
         },
         "build-frontend": {
-            "description": "Build the frontend2 production bundle.",
+            "description": "Build the frontend production bundle.",
             "handler": "scripts.runners.frontend_control:run_frontend_build",
             "category": "Development & Infrastructure"
         },
@@ -205,6 +205,38 @@
                 "integration": {
                     "description": "Run integration tests.",
                     "handler": "scripts.runners.test_runner:run_integration_tests"
+                },
+                "frontend": {
+                    "description": "Run frontend tests (vitest).",
+                    "handler": "scripts.runners.test_runner:run_frontend_tests"
+                },
+                "models": {
+                    "description": "Run data model tests.",
+                    "handler": "scripts.runners.test_runner:run_models_tests"
+                },
+                "billing": {
+                    "description": "Run billing service tests.",
+                    "handler": "scripts.runners.test_runner:run_billing_tests"
+                },
+                "web": {
+                    "description": "Run web automation tests.",
+                    "handler": "scripts.runners.test_runner:run_web_tests"
+                },
+                "e2e": {
+                    "description": "Run end-to-end tests.",
+                    "handler": "scripts.runners.test_runner:run_e2e_tests"
+                },
+                "load": {
+                    "description": "Run load/stress tests.",
+                    "handler": "scripts.runners.test_runner:run_load_tests"
+                },
+                "smoke": {
+                    "description": "Run smoke tests.",
+                    "handler": "scripts.runners.test_runner:run_smoke_tests"
+                },
+                "system": {
+                    "description": "Run system-level tests.",
+                    "handler": "scripts.runners.test_runner:run_system_tests"
                 }
             },
             "category": "Testing & QA"

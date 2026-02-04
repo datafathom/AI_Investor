@@ -1,0 +1,562 @@
+[
+    {
+        "route_title": "Ai Assistant (Phase 26)",
+        "route_url": "/ai/assistant",
+        "page_load_time": 4.97,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Ai Predictions (Phase 25)",
+        "route_url": "/ai/predictions",
+        "page_load_time": 4.49,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Overview Analyst",
+        "route_url": "/analyst",
+        "page_load_time": 4.43,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Role Analyst",
+        "route_url": "/analyst/debate",
+        "page_load_time": 4.43,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Overview Analytics",
+        "route_url": "/analytics",
+        "page_load_time": 5.68,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Options",
+        "route_url": "/analytics/options",
+        "page_load_time": 4.38,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Political Alpha",
+        "route_url": "/analytics/political",
+        "page_load_time": 4.43,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Strategy Distillery",
+        "route_url": "/analytics/strategy",
+        "page_load_time": 4.79,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Overview Architect",
+        "route_url": "/architect",
+        "page_load_time": 4.13,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Role Api (Phase 23)",
+        "route_url": "/architect/api",
+        "page_load_time": 4.97,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Role Architect (Phase 19)",
+        "route_url": "/architect/system",
+        "page_load_time": 4.5,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Assets (Phase 24)",
+        "route_url": "/assets",
+        "page_load_time": 4.54,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Bill Payment (Phase 11)",
+        "route_url": "/billing/payments",
+        "page_load_time": 4.49,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Budgeting (Phase 10)",
+        "route_url": "/budgeting",
+        "page_load_time": 4.41,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Advanced Charting (Phase 5)",
+        "route_url": "/charting/advanced",
+        "page_load_time": 4.74,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Chat",
+        "route_url": "/chat",
+        "page_load_time": 5.84,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Community Forums (Phase 20)",
+        "route_url": "/community/forums",
+        "page_load_time": 4.31,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Compliance",
+        "route_url": "/compliance",
+        "page_load_time": 5.03,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Credit Monitoring (Phase 12)",
+        "route_url": "/credit/monitoring",
+        "page_load_time": 4.57,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Developer Platform (Phase 29)",
+        "route_url": "/developer/platform",
+        "page_load_time": 5.58,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Education (Phase 21)",
+        "route_url": "/education",
+        "page_load_time": 4.67,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Enterprise (Phase 31)",
+        "route_url": "/enterprise",
+        "page_load_time": 4.6,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Frontend interface for EvolutionDashboard (Phase 4: Evolution Lab)",
+        "route_url": "/evolution",
+        "page_load_time": 4.7,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Overview Guardian",
+        "route_url": "/guardian",
+        "page_load_time": 4.41,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Role Guardian",
+        "route_url": "/guardian/compliance",
+        "page_load_time": 4.07,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Role Audit (Phase 16)",
+        "route_url": "/guardian/compliance/audit",
+        "page_load_time": 4.04,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Role Margin (Phase 21)",
+        "route_url": "/guardian/margin",
+        "page_load_time": 4.69,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Role Scenarios (Phase 17)",
+        "route_url": "/guardian/scenarios",
+        "page_load_time": 4.39,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Institutional (Phase 33)",
+        "route_url": "/institutional",
+        "page_load_time": 4.54,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Integrations (Phase 28)",
+        "route_url": "/integrations",
+        "page_load_time": 4.36,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Legal Privacy",
+        "route_url": "/legal/privacy",
+        "page_load_time": 4.41,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Legal Terms",
+        "route_url": "/legal/terms",
+        "page_load_time": 4.33,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Marketplace (Phase 30)",
+        "route_url": "/marketplace",
+        "page_load_time": 4.33,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Ml Training (Phase 27)",
+        "route_url": "/ml/training",
+        "page_load_time": 4.29,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Role Warden (Phase 22)",
+        "route_url": "/mobile",
+        "page_load_time": 4.57,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "News Sentiment (Phase 16)",
+        "route_url": "/news/sentiment",
+        "page_load_time": 4.51,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Overview Observer",
+        "route_url": "/observer",
+        "page_load_time": 4.46,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Role Observer",
+        "route_url": "/observer/macro",
+        "page_load_time": 4.61,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Role Orchestrator (Phase 200)",
+        "route_url": "/orchestrator",
+        "page_load_time": 4.37,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Estate Planning (Phase 9)",
+        "route_url": "/planning/estate",
+        "page_load_time": 4.4,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Financial Planning (Phase 7)",
+        "route_url": "/planning/financial",
+        "page_load_time": 4.38,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Retirement Planning (Phase 8)",
+        "route_url": "/planning/retirement",
+        "page_load_time": 4.56,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Overview Portfolio",
+        "route_url": "/portfolio",
+        "page_load_time": 4.33,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Advanced Analytics (Phase 1)",
+        "route_url": "/portfolio/advanced-analytics",
+        "page_load_time": 5.46,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Attribution",
+        "route_url": "/portfolio/attribution",
+        "page_load_time": 4.54,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Backtest",
+        "route_url": "/portfolio/backtest",
+        "page_load_time": 4.67,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Brokerage",
+        "route_url": "/portfolio/brokerage",
+        "page_load_time": 4.62,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Cash Flow (Phase 10)",
+        "route_url": "/portfolio/cash-flow",
+        "page_load_time": 4.43,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Crypto",
+        "route_url": "/portfolio/crypto",
+        "page_load_time": 4.06,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Fixed Income",
+        "route_url": "/portfolio/fixed-income",
+        "page_load_time": 4.71,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Portfolio Optimization (Phase 2)",
+        "route_url": "/portfolio/optimization",
+        "page_load_time": 4.44,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Advanced Risk (Phase 3)",
+        "route_url": "/portfolio/risk",
+        "page_load_time": 4.92,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Tax",
+        "route_url": "/portfolio/tax",
+        "page_load_time": 6.26,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Tax Optimization (Phase 4)",
+        "route_url": "/portfolio/tax-optimization",
+        "page_load_time": 4.76,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Research Reports (Phase 18)",
+        "route_url": "/research/reports",
+        "page_load_time": 4.53,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Overview Scanner",
+        "route_url": "/scanner",
+        "page_load_time": 4.73,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Scanner",
+        "route_url": "/scanner/global",
+        "page_load_time": 4.73,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Frontend interface for SentinelStrategyDashboard",
+        "route_url": "/sentinel/strategy",
+        "page_load_time": 4.95,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Settings",
+        "route_url": "/settings",
+        "page_load_time": 4.81,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Social Trading (Phase 19)",
+        "route_url": "/social/trading",
+        "page_load_time": 5.23,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Overview Strategist",
+        "route_url": "/strategist",
+        "page_load_time": 4.06,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Role Corporate (Phase 20)",
+        "route_url": "/strategist/corporate",
+        "page_load_time": 5.21,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Role Strategist",
+        "route_url": "/strategist/currency",
+        "page_load_time": 4.13,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Role Estate",
+        "route_url": "/strategist/estate",
+        "page_load_time": 4.06,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Role Impact (Phase 18)",
+        "route_url": "/strategist/impact",
+        "page_load_time": 4.56,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Role Scm (Phase 197)",
+        "route_url": "/strategist/scm",
+        "page_load_time": 5.04,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Tenant",
+        "route_url": "/tenant",
+        "page_load_time": 4.12,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Advanced Orders (Phase 13)",
+        "route_url": "/trading/advanced-orders",
+        "page_load_time": 5.26,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Algorithmic Trading (Phase 15)",
+        "route_url": "/trading/algorithmic",
+        "page_load_time": 4.47,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Options Strategy (Phase 6)",
+        "route_url": "/trading/options",
+        "page_load_time": 4.67,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Paper Trading (Phase 14)",
+        "route_url": "/trading/paper",
+        "page_load_time": 4.05,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Watchlists Alerts (Phase 17)",
+        "route_url": "/watchlists/alerts",
+        "page_load_time": 4.69,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Overview Workspace",
+        "route_url": "/workspace",
+        "page_load_time": 4.69,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Sandbox",
+        "route_url": "/workspace/auto-coder",
+        "page_load_time": 4.55,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Auto Coder",
+        "route_url": "/workspace/autocoder",
+        "page_load_time": 4.46,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Debate Chamber",
+        "route_url": "/workspace/debate",
+        "page_load_time": 4.4,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Mission Control",
+        "route_url": "/workspace/mission-control",
+        "page_load_time": 4.53,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Dashboard",
+        "route_url": "/workspace/terminal",
+        "page_load_time": 4.85,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Vr Cockpit",
+        "route_url": "/workspace/vr",
+        "page_load_time": 5.98,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    },
+    {
+        "route_title": "Zen (Phase 24)",
+        "route_url": "/zen",
+        "page_load_time": 4.67,
+        "status": "Failed",
+        "fail_reason": "cannot access local variable 'status' where it is not associated with a value"
+    }
+]

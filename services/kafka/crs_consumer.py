@@ -1,6 +1,6 @@
 import logging
 import json
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, Any, Optional
 
 logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ class CRSConsumer:
                 "account_id": account_id,
                 "country": reporting_country,
                 "balance": balance,
-                "processed_at": datetime.utcnow().isoformat(),
+                "processed_at": datetime.now(timezone.utc).isoformat(),
                 "requires_audit": balance > 50000
             }
         except Exception as e:

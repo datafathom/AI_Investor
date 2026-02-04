@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 import numpy as np
 from services.optimization.portfolio_optimizer_service import PortfolioOptimizerService
-from models.optimization import OptimizationResult, OptimizationConstraints, OptimizationObjective
+from schemas.optimization import OptimizationResult, OptimizationConstraints, OptimizationObjective
 
 
 @pytest.fixture

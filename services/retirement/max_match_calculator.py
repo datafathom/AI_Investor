@@ -2,7 +2,7 @@ import logging
 from decimal import Decimal
 from typing import Dict, Any
 from services.retirement.match_calculator import MatchCalculator
-from models.employer_match import EmployerMatchConfig
+from schemas.employer_match import EmployerMatchConfig
 
 logger = logging.getLogger(__name__)
 

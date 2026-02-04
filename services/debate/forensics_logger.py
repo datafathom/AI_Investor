@@ -5,7 +5,7 @@ Persists agent debate metadata and dissent records for post-trade analysis.
 import logging
 import json
 from typing import Dict, Any, List
-from datetime import datetime
+from datetime import timezone, datetime
 from utils.database_manager import get_database_manager
 
 logger = logging.getLogger(__name__)
@@ -40,7 +40,7 @@ class ForensicsLogger:
                     decision, 
                     json.dumps(votes), 
                     json.dumps(metadata or {}), 
-                    datetime.utcnow()
+                    datetime.now(timezone.utc)
                 ))
                 logger.info(f"Debate Logged: {proposal_id} ({decision})")
         except Exception as e:

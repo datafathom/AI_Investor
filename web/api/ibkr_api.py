@@ -1,351 +1,205 @@
 """
 ==============================================================================
 FILE: web/api/ibkr_api.py
-ROLE: Interactive Brokers API REST Endpoints
+ROLE: Interactive Brokers API REST Endpoints (FastAPI)
 PURPOSE: RESTful endpoints for IBKR account management and order execution.
-
-INTEGRATION POINTS:
-    - IBKRClient: Order execution and account data
-    - IBKRGatewayManager: Gateway lifecycle management
-
-ENDPOINTS:
-    GET /api/v1/ibkr/account-summary - Get account summary
-    GET /api/v1/ibkr/positions - Get all positions
-    GET /api/v1/ibkr/orders - Get order history
-    POST /api/v1/ibkr/orders - Place order
-    DELETE /api/v1/ibkr/orders/{id} - Cancel order
-    GET /api/v1/ibkr/margin - Get margin requirements
-    GET /api/v1/ibkr/currency-exposure - Get currency exposure
-    GET /api/v1/ibkr/gateway/status - Get gateway status
-
-AUTHOR: AI Investor Team
-CREATED: 2026-01-21
 ==============================================================================
 """
 
-from flask import Blueprint, request, jsonify
+from fastapi import APIRouter, HTTPException, Query, Body, Path, Depends
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 import logging
-import asyncio
-from typing import Optional
+from typing import Optional, List, Dict, Any
+
+from services.brokerage.ibkr_client import get_ibkr_client
+from services.brokerage.ibkr_gateway_manager import get_ibkr_gateway
+
+
+def get_ibkr_client_provider():
+    return get_ibkr_client()
+
+
+def get_ibkr_gateway_provider():
+    return get_ibkr_gateway()
 
 logger = logging.getLogger(__name__)
 
-ibkr_bp = Blueprint('ibkr', __name__, url_prefix='/api/v1/ibkr')
+router = APIRouter(prefix="/api/v1/ibkr", tags=["IBKR"])
 
 
-def _run_async(coro):
-    """Helper to run async functions in sync context."""
+class OrderRequest(BaseModel):
+    contract: str
+    action: str
+    quantity: float
+    order_type: str = "MKT"
+    price: Optional[float] = None
+    account_id: Optional[str] = None
+
+
+@router.get("/account-summary")
+async def get_account_summary(
+    account_id: Optional[str] = Query(None),
+    client = Depends(get_ibkr_client_provider)
+):
+    """Get comprehensive account summary."""
     try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-    return loop.run_until_complete(coro)
-
-
-# =============================================================================
-# Account Summary Endpoint
-# =============================================================================
-
-@ibkr_bp.route('/account-summary', methods=['GET'])
-def get_account_summary():
-    """
-    Get comprehensive account summary.
-    
-    Query Params:
-        account_id: Optional account ID filter
-        
-    Returns:
-        JSON with account summary
-    """
-    try:
-        account_id = request.args.get('account_id')
-        
-        from services.brokerage.ibkr_client import get_ibkr_client
-        client = get_ibkr_client()
-        
-        # Ensure connected
         if not client.connected:
-            _run_async(client.connect())
+            await client.connect()
         
-        summary = _run_async(client.get_account_summary())
-        
-        return jsonify(summary)
-        
+        summary = await client.get_account_summary()
+        return {"success": True, "data": summary}
     except Exception as e:
-        logger.error(f"Failed to get account summary: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to get account summary",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to get account summary")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-# =============================================================================
-# Positions Endpoint
-# =============================================================================
-
-@ibkr_bp.route('/positions', methods=['GET'])
-def get_positions():
-    """
-    Get all open positions across asset classes.
-    
-    Returns:
-        JSON array of positions
-    """
+@router.get("/positions")
+async def get_positions(client = Depends(get_ibkr_client_provider)):
+    """Get all open positions across asset classes."""
     try:
-        from services.brokerage.ibkr_client import get_ibkr_client
-        client = get_ibkr_client()
-        
         if not client.connected:
-            _run_async(client.connect())
+            await client.connect()
         
-        positions = _run_async(client.get_positions())
-        
-        return jsonify({
-            "positions": positions,
-            "count": len(positions)
-        })
-        
-    except Exception as e:
-        logger.error(f"Failed to get positions: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to get positions",
-            "message": str(e)
-        }), 500
-
-
-# =============================================================================
-# Orders Endpoints
-# =============================================================================
-
-@ibkr_bp.route('/orders', methods=['GET'])
-def get_orders():
-    """
-    Get order history.
-    
-    Query Params:
-        account_id: Optional account filter
-        
-    Returns:
-        JSON array of orders
-    """
-    try:
-        account_id = request.args.get('account_id')
-        
-        from services.brokerage.ibkr_client import get_ibkr_client
-        client = get_ibkr_client()
-        
-        if not client.connected:
-            _run_async(client.connect())
-        
-        orders = _run_async(client.get_orders(account_id=account_id))
-        
-        return jsonify({
-            "orders": orders,
-            "count": len(orders)
-        })
-        
-    except Exception as e:
-        logger.error(f"Failed to get orders: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to get orders",
-            "message": str(e)
-        }), 500
-
-
-@ibkr_bp.route('/orders', methods=['POST'])
-def place_order():
-    """
-    Place an order.
-    
-    Request Body:
-        {
-            "contract": "AAPL",
-            "action": "BUY",
-            "quantity": 100,
-            "order_type": "MKT",
-            "price": 150.00,  // optional for limit orders
-            "account_id": "U12345678"  // optional
-        }
-        
-    Returns:
-        JSON with order confirmation
-    """
-    try:
-        data = request.json or {}
-        
-        contract = data.get('contract')
-        action = data.get('action')
-        quantity = data.get('quantity')
-        order_type = data.get('order_type', 'MKT')
-        price = data.get('price')
-        account_id = data.get('account_id')
-        
-        if not contract or not action or not quantity:
-            return jsonify({
-                "error": "Missing required fields: contract, action, quantity"
-            }), 400
-        
-        from services.brokerage.ibkr_client import get_ibkr_client
-        client = get_ibkr_client()
-        
-        if not client.connected:
-            _run_async(client.connect())
-        
-        result = _run_async(client.place_order(
-            contract=contract,
-            action=action,
-            quantity=quantity,
-            order_type=order_type,
-            price=price,
-            account_id=account_id
-        ))
-        
-        return jsonify({
+        positions = await client.get_positions()
+        return {
             "success": True,
-            "order": result
-        }), 201
-        
+            "data": {
+                "positions": positions,
+                "count": len(positions)
+            }
+        }
     except Exception as e:
-        logger.error(f"Failed to place order: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to place order",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to get positions")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@ibkr_bp.route('/orders/<int:order_id>', methods=['DELETE'])
-def cancel_order(order_id: int):
-    """
-    Cancel an order.
-    
-    Returns:
-        JSON confirmation
-    """
+@router.get("/orders")
+async def get_orders(
+    account_id: Optional[str] = Query(None),
+    client = Depends(get_ibkr_client_provider)
+):
+    """Get order history."""
     try:
-        from services.brokerage.ibkr_client import get_ibkr_client
-        client = get_ibkr_client()
-        
         if not client.connected:
-            _run_async(client.connect())
+            await client.connect()
         
-        cancelled = _run_async(client.cancel_order(order_id))
+        orders = await client.get_orders(account_id=account_id)
+        return {
+            "success": True,
+            "data": {
+                "orders": orders,
+                "count": len(orders)
+            }
+        }
+    except Exception as e:
+        logger.exception("Failed to get orders")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
+
+
+@router.post("/orders", status_code=201)
+async def place_order(
+    request: OrderRequest,
+    client = Depends(get_ibkr_client_provider)
+):
+    """Place an order."""
+    try:
+        if not client.connected:
+            await client.connect()
+        
+        result = await client.place_order(
+            contract=request.contract,
+            action=request.action,
+            quantity=request.quantity,
+            order_type=request.order_type,
+            price=request.price,
+            account_id=request.account_id
+        )
+        
+        return {
+            "success": True,
+            "data": {
+                "order": result
+            }
+        }
+    except Exception as e:
+        logger.exception("Failed to place order")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
+
+
+@router.delete("/orders/{order_id}")
+async def cancel_order(
+    order_id: int = Path(...),
+    client = Depends(get_ibkr_client_provider)
+):
+    """Cancel an order."""
+    try:
+        if not client.connected:
+            await client.connect()
+        
+        cancelled = await client.cancel_order(order_id)
         
         if cancelled:
-            return jsonify({
+            return {
                 "success": True,
-                "message": f"Order {order_id} cancelled"
-            })
+                "data": {
+                    "message": f"Order {order_id} cancelled"
+                }
+            }
         else:
-            return jsonify({
-                "error": "Failed to cancel order"
-            }), 500
-        
+            return JSONResponse(status_code=500, content={"success": False, "detail": "Failed to cancel order"})
     except Exception as e:
-        logger.error(f"Failed to cancel order: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to cancel order",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to cancel order")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-# =============================================================================
-# Margin Endpoint
-# =============================================================================
-
-@ibkr_bp.route('/margin', methods=['GET'])
-def get_margin():
-    """
-    Get margin requirements and utilization.
-    
-    Query Params:
-        account_id: Optional account filter
-        
-    Returns:
-        JSON with margin information
-    """
+@router.get("/margin")
+async def get_margin(
+    account_id: Optional[str] = Query(None),
+    client = Depends(get_ibkr_client_provider)
+):
+    """Get margin requirements and utilization."""
     try:
-        account_id = request.args.get('account_id')
-        
-        from services.brokerage.ibkr_client import get_ibkr_client
-        client = get_ibkr_client()
-        
         if not client.connected:
-            _run_async(client.connect())
+            await client.connect()
         
-        margin = _run_async(client.get_margin_requirements(account_id=account_id))
-        
-        return jsonify(margin)
-        
+        margin = await client.get_margin_requirements(account_id=account_id)
+        return {"success": True, "data": margin}
     except Exception as e:
-        logger.error(f"Failed to get margin: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to get margin requirements",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to get margin")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-# =============================================================================
-# Currency Exposure Endpoint
-# =============================================================================
-
-@ibkr_bp.route('/currency-exposure', methods=['GET'])
-def get_currency_exposure():
-    """
-    Get currency exposure across all positions.
-    
-    Query Params:
-        account_id: Optional account filter
-        
-    Returns:
-        JSON array of currency exposures
-    """
+@router.get("/currency-exposure")
+async def get_currency_exposure(
+    account_id: Optional[str] = Query(None),
+    client = Depends(get_ibkr_client_provider)
+):
+    """Get currency exposure across all positions."""
     try:
-        account_id = request.args.get('account_id')
-        
-        from services.brokerage.ibkr_client import get_ibkr_client
-        client = get_ibkr_client()
-        
         if not client.connected:
-            _run_async(client.connect())
+            await client.connect()
         
-        exposure = _run_async(client.get_currency_exposure(account_id=account_id))
-        
-        return jsonify({
-            "currency_exposure": exposure
-        })
-        
+        exposure = await client.get_currency_exposure(account_id=account_id)
+        return {
+            "success": True,
+            "data": {
+                "currency_exposure": exposure
+            }
+        }
     except Exception as e:
-        logger.error(f"Failed to get currency exposure: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to get currency exposure",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to get currency exposure")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-# =============================================================================
-# Gateway Status Endpoint
-# =============================================================================
-
-@ibkr_bp.route('/gateway/status', methods=['GET'])
-def get_gateway_status():
-    """
-    Get IBKR Gateway status.
-    
-    Returns:
-        JSON with gateway status
-    """
+@router.get("/gateway/status")
+async def get_gateway_status(
+    gateway = Depends(get_ibkr_gateway_provider)
+):
+    """Get IBKR Gateway status."""
     try:
-        from services.brokerage.ibkr_gateway_manager import get_ibkr_gateway
-        gateway = get_ibkr_gateway()
-        
-        status = _run_async(gateway.get_session_status())
-        
-        return jsonify(status)
-        
+        status = await gateway.get_session_status()
+        return {"success": True, "data": status}
     except Exception as e:
-        logger.error(f"Failed to get gateway status: {e}", exc_info=True)
-        return jsonify({
-            "error": "Failed to get gateway status",
-            "message": str(e)
-        }), 500
+        logger.exception("Failed to get gateway status")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

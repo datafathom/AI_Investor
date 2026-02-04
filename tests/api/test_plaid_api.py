@@ -1,75 +1,105 @@
 """
 Tests for Plaid API Endpoints
-Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
-from flask import Flask
-from web.api.plaid_api import plaid_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.plaid_api import router, get_plaid_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(plaid_bp)
+def api_app():
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_plaid_service():
-    """Mock PlaidService."""
-    with patch('web.api.plaid_api.get_plaid_service') as mock:
-        service = AsyncMock()
-        service.create_link_token.return_value = 'link_token_123'
-        service.exchange_public_token.return_value = 'access_token_456'
-        service.get_accounts.return_value = [{'account_id': 'acc_1'}]
-        service.get_balance.return_value = {'available': 1000.0, 'current': 1000.0}
-        mock.return_value = service
-        yield service
+def mock_plaid_service(api_app):
+    """Mock Plaid Service."""
+    service = AsyncMock()
+    service.create_link_token.return_value = "link-token-123"
+    service.exchange_public_token.return_value = {
+        "item_id": "item_123",
+        "accounts": ["acc_1"],
+        "access_token": "access_123"
+    }
+    service.get_accounts.return_value = [{"id": "acc_1", "name": "Checking"}]
+    service.get_balance.return_value = {"acc_1": 5000.0}
+    service.check_overdraft_protection.return_value = {"safe": True}
+    
+    api_app.dependency_overrides[get_plaid_provider] = lambda: service
+    return service
 
 
 def test_create_link_token_success(client, mock_plaid_service):
-    """Test successful link token creation."""
-    response = client.post('/api/v1/plaid/link-token',
-                          json={'client_name': 'AI Investor'})
+    """Test creating link token."""
+    response = client.post('/api/v1/plaid/link-token', json={"client_name": "Test"})
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'link_token' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['link_token'] == "link-token-123"
 
 
 def test_exchange_token_success(client, mock_plaid_service):
-    """Test successful public token exchange."""
-    response = client.post('/api/v1/plaid/exchange-token',
-                          json={'public_token': 'public_token_123'})
+    """Test exchanging token."""
+    response = client.post('/api/v1/plaid/exchange-token', json={"public_token": "public_123"})
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'access_token' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['access_token'] == "access_123"
 
 
 def test_get_accounts_success(client, mock_plaid_service):
-    """Test successful accounts retrieval."""
-    response = client.get('/api/v1/plaid/accounts')
+    """Test getting accounts."""
+    headers = {"Authorization": "Bearer access_123"}
+    response = client.get('/api/v1/plaid/accounts', headers=headers)
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert isinstance(data, list)
+    data = response.json()
+    assert data['success'] is True
+    assert len(data['data']['accounts']) == 1
 
 
 def test_get_balance_success(client, mock_plaid_service):
-    """Test successful balance retrieval."""
-    response = client.get('/api/v1/plaid/balance?account_id=acc_1')
+    """Test getting balance."""
+    headers = {"Authorization": "Bearer access_123"}
+    response = client.get('/api/v1/plaid/balance', headers=headers)
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'available' in data or 'current' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['acc_1'] == 5000.0
+
+
+def test_check_overdraft_success(client, mock_plaid_service):
+    """Test checking overdraft."""
+    headers = {"Authorization": "Bearer access_123"}
+    payload = {"account_id": "acc_1", "deposit_amount": 100.0}
+    response = client.post('/api/v1/plaid/check-overdraft', json=payload, headers=headers)
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['safe'] is True
+
+
+def test_get_accounts_invalid_header(client, mock_plaid_service):
+    """Test with invalid auth header."""
+    headers = {"Authorization": "Invalid access_123"}
+    response = client.get('/api/v1/plaid/accounts', headers=headers)
+    
+    assert response.status_code == 401
+    data = response.json()
+    assert data['success'] is False

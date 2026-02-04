@@ -1,7 +1,7 @@
 import logging
 from datetime import date
 from typing import List, Dict, Any
-from models.private_banking_client import TaxDeferralStrategy
+from schemas.private_banking_client import TaxDeferralStrategy
 
 logger = logging.getLogger(__name__)
 

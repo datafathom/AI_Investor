@@ -26,6 +26,7 @@ import asyncio
 import uuid
 import random
 import datetime
+from datetime import timezone
 from typing import Dict, Any, List, Optional
 
 logger = logging.getLogger(__name__)
@@ -108,10 +109,10 @@ class AlpacaClient:
             return {
                 "id": order_id,
                 "client_order_id": f"client_{uuid.uuid4().hex[:8]}",
-                "created_at": datetime.datetime.utcnow().isoformat() + "Z",
-                "updated_at": datetime.datetime.utcnow().isoformat() + "Z",
-                "submitted_at": datetime.datetime.utcnow().isoformat() + "Z",
-                "filled_at": datetime.datetime.utcnow().isoformat() + "Z" if type == "market" else None,
+                "created_at": datetime.datetime.now(timezone.utc).isoformat() + "Z",
+                "updated_at": datetime.datetime.now(timezone.utc).isoformat() + "Z",
+                "submitted_at": datetime.datetime.now(timezone.utc).isoformat() + "Z",
+                "filled_at": datetime.datetime.now(timezone.utc).isoformat() + "Z" if type == "market" else None,
                 "expired_at": None,
                 "canceled_at": None,
                 "failed_at": None,

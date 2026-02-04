@@ -21,9 +21,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional
-from models.watchlist import Watchlist
+from schemas.watchlist import Watchlist
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -58,12 +58,12 @@ class WatchlistService:
         logger.info(f"Creating watchlist {watchlist_name} for user {user_id}")
         
         watchlist = Watchlist(
-            watchlist_id=f"watchlist_{user_id}_{datetime.utcnow().timestamp()}",
+            watchlist_id=f"watchlist_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             watchlist_name=watchlist_name,
             symbols=symbols or [],
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Save watchlist
@@ -92,7 +92,7 @@ class WatchlistService:
         
         if symbol not in watchlist.symbols:
             watchlist.symbols.append(symbol)
-            watchlist.updated_date = datetime.utcnow()
+            watchlist.updated_date = datetime.now(timezone.utc)
             await self._save_watchlist(watchlist)
         
         return watchlist
@@ -118,7 +118,7 @@ class WatchlistService:
         
         if symbol in watchlist.symbols:
             watchlist.symbols.remove(symbol)
-            watchlist.updated_date = datetime.utcnow()
+            watchlist.updated_date = datetime.now(timezone.utc)
             await self._save_watchlist(watchlist)
         
         return watchlist
@@ -150,7 +150,7 @@ class WatchlistService:
     async def _save_watchlist(self, watchlist: Watchlist):
         """Save watchlist to cache."""
         cache_key = f"watchlist:{watchlist.watchlist_id}"
-        self.cache_service.set(cache_key, watchlist.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, watchlist.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

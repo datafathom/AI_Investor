@@ -1,57 +1,98 @@
+"""
+==============================================================================
+FILE: web/api/workspace_api.py
+ROLE: Workspace API Endpoints (FastAPI)
+PURPOSE: User workspace layout management.
+==============================================================================
+"""
 
-from flask import Blueprint, jsonify, request, g
+from fastapi import APIRouter, HTTPException, Depends, Query
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from typing import Dict, Any, Optional, List
+import logging
+
 from services.workspace.user_preferences_service import get_user_preferences_service, WorkspaceLayout
-from web.auth_utils import login_required
+from web.auth_utils import get_current_user
 
-workspace_bp = Blueprint('workspace_api', __name__, url_prefix='/api/v1/user')
 
-@workspace_bp.route('/workspace', methods=['GET'])
-@login_required
-def get_user_workspace():
+def get_user_preferences_provider():
+    return get_user_preferences_service()
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter(prefix="/api/v1/user", tags=["Workspace"])
+
+
+class SaveWorkspaceRequest(BaseModel):
+    name: str
+    layout: Dict[str, Any]
+    panels: List[Dict[str, Any]] = []
+    is_default: bool = False
+
+
+@router.get("/workspace")
+async def get_user_workspace(
+    name: Optional[str] = Query(None),
+    current_user: dict = Depends(get_current_user),
+    service=Depends(get_user_preferences_provider)
+):
     """Retrieve user workspace layout."""
-    user_id = getattr(g, 'user_id', None)
+    user_id = current_user.get("user_id")
     if not user_id:
-        return jsonify({"error": "Unauthorized"}), 401
+        return JSONResponse(status_code=401, content={"success": False, "detail": "Unauthorized"})
         
-    name = request.args.get('name')
-    service = get_user_preferences_service()
     workspace = service.get_workspace(user_id, name)
     
     if workspace:
-        return jsonify(workspace.model_dump(by_alias=True)), 200
-    return jsonify({"error": "Workspace not found"}), 404
+        return {
+            "success": True,
+            "data": workspace.model_dump(by_alias=True)
+        }
+    return JSONResponse(status_code=404, content={"success": False, "detail": "Workspace not found"})
 
-@workspace_bp.route('/workspace', methods=['POST'])
-@login_required
-def save_user_workspace():
+
+@router.post("/workspace")
+async def save_user_workspace(
+    request: SaveWorkspaceRequest,
+    current_user: dict = Depends(get_current_user),
+    service=Depends(get_user_preferences_provider)
+):
     """Save user workspace layout."""
-    user_id = getattr(g, 'user_id', None)
+    user_id = current_user.get("user_id")
     if not user_id:
-        return jsonify({"error": "Unauthorized"}), 401
-
-    data = request.get_json()
-    if not data:
-        return jsonify({"error": "Missing layout data"}), 400
+        return JSONResponse(status_code=401, content={"success": False, "detail": "Unauthorized"})
         
     try:
-        workspace = WorkspaceLayout(**data)
-        is_default = data.get('is_default', False)
+        workspace = WorkspaceLayout(
+            name=request.name,
+            layout=request.layout,
+            panels=request.panels
+        )
         
-        service = get_user_preferences_service()
-        ws_id = service.save_workspace(user_id, workspace, is_default)
+        ws_id = service.save_workspace(user_id, workspace, request.is_default)
         
-        return jsonify({"message": "Workspace saved", "id": ws_id}), 200
+        return {
+            "success": True,
+            "data": {"message": "Workspace saved", "id": ws_id}
+        }
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        logger.exception("Failed to save workspace")
+        return JSONResponse(status_code=400, content={"success": False, "detail": str(e)})
 
-@workspace_bp.route('/workspaces', methods=['GET'])
-@login_required
-def list_user_workspaces():
+
+@router.get("/workspaces")
+async def list_user_workspaces(
+    current_user: dict = Depends(get_current_user),
+    service=Depends(get_user_preferences_provider)
+):
     """List all workspaces for user."""
-    user_id = getattr(g, 'user_id', None)
+    user_id = current_user.get("user_id")
     if not user_id:
-        return jsonify({"error": "Unauthorized"}), 401
+        return JSONResponse(status_code=401, content={"success": False, "detail": "Unauthorized"})
         
-    service = get_user_preferences_service()
     workspaces = service.list_workspaces(user_id)
-    return jsonify(workspaces), 200
+    return {
+        "success": True,
+        "data": workspaces
+    }

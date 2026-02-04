@@ -4,10 +4,10 @@ Comprehensive test coverage for news fetching, filtering, and aggregation
 """
 
 import pytest
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from unittest.mock import Mock, AsyncMock, patch
 from services.news.news_aggregation_service import NewsAggregationService
-from models.news import NewsArticle
+from schemas.news import NewsArticle
 
 
 @pytest.fixture
@@ -81,7 +81,7 @@ async def test_filter_news_by_relevance(service):
             title="Test Article 1",
             content="Content",
             source="Source",
-            published_date=datetime.utcnow(),
+            published_date=datetime.now(timezone.utc),
             symbols=['AAPL'],
             relevance_score=0.9
         ),
@@ -90,7 +90,7 @@ async def test_filter_news_by_relevance(service):
             title="Test Article 2",
             content="Content",
             source="Source",
-            published_date=datetime.utcnow(),
+            published_date=datetime.now(timezone.utc),
             symbols=['AAPL'],
             relevance_score=0.3
         ),

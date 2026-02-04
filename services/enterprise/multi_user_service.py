@@ -26,7 +26,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
-from models.enterprise import SharedResource
+from schemas.enterprise import SharedResource
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ class MultiUserService:
         logger.info(f"Sharing {resource_type} {resource_id} with team {team_id}")
         
         shared_resource = SharedResource(
-            resource_id=f"shared_{resource_type}_{resource_id}_{datetime.utcnow().timestamp()}",
+            resource_id=f"shared_{resource_type}_{resource_id}_{datetime.now(timezone.utc).timestamp()}",
             resource_type=resource_type,
             team_id=team_id,
             permissions=permissions,
@@ -96,7 +96,7 @@ class MultiUserService:
     async def _save_shared_resource(self, resource: SharedResource):
         """Save shared resource to cache."""
         cache_key = f"shared_resource:{resource.resource_id}"
-        self.cache_service.set(cache_key, resource.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, resource.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

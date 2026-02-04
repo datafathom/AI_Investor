@@ -1,39 +1,42 @@
 """
-Macro API - REST endpoints for global macroeconomic data.
+Macro API - REST endpoints for global macroeconomic data. (FastAPI)
 
 Phase 53: Provides endpoints for political trading, CPI data,
 world map visualization, and futures curves.
-
-Endpoints:
-    GET  /api/v1/macro/insider-trades      - Political insider trades
-    GET  /api/v1/macro/cpi/<country>       - CPI data by country
-    GET  /api/v1/macro/correlations        - Inflation hedge correlations
-    GET  /api/v1/macro/world-map           - World map data
-    GET  /api/v1/macro/calendar            - Economic events calendar
-    GET  /api/v1/macro/futures/<commodity> - Futures curve
-    GET  /api/v1/macro/crack-spread        - Crack spread calculation
 """
 
-from flask import Blueprint, jsonify, request
+from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi.responses import JSONResponse
+import logging
+from typing import Optional, List, Dict, Any
+
 from services.analysis.macro_service import MacroService
 from services.market.futures_service import FuturesService
-import logging
+
+
+def get_macro_provider() -> MacroService:
+    return MacroService()
+
+
+def get_futures_provider() -> FuturesService:
+    return FuturesService()
 
 logger = logging.getLogger(__name__)
 
-macro_bp = Blueprint('macro', __name__, url_prefix='/api/v1/macro')
-_macro_service = MacroService()
-_futures_service = FuturesService()
+router = APIRouter(prefix="/api/v1/macro", tags=["Macro"])
 
 
-@macro_bp.route('/insider-trades', methods=['GET'])
-async def get_insider_trades():
+
+@router.get("/insider-trades")
+async def get_insider_trades(
+    region: Optional[str] = Query(None),
+    macro_service: MacroService = Depends(get_macro_provider)
+):
     """Get political insider trading data."""
     try:
-        region = request.args.get('region')
-        trades = await _macro_service.get_political_insider_trades(region)
+        trades = await macro_service.get_political_insider_trades(region)
         
-        return jsonify({
+        return {
             "success": True,
             "data": [
                 {
@@ -49,20 +52,22 @@ async def get_insider_trades():
                 }
                 for t in trades
             ]
-        })
-        
+        }
     except Exception as e:
-        logger.error(f"Insider trades fetch failed: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
+        logger.exception("Insider trades fetch failed")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@macro_bp.route('/cpi/<country>', methods=['GET'])
-async def get_cpi(country: str):
+@router.get("/cpi/{country}")
+async def get_cpi(
+    country: str,
+    macro_service: MacroService = Depends(get_macro_provider)
+):
     """Get CPI data for a country."""
     try:
-        cpi = await _macro_service.get_regional_cpi(country)
+        cpi = await macro_service.get_regional_cpi(country)
         
-        return jsonify({
+        return {
             "success": True,
             "data": {
                 "country_code": cpi.country_code,
@@ -72,20 +77,19 @@ async def get_cpi(country: str):
                 "core_cpi": cpi.core_cpi,
                 "updated_at": cpi.updated_at
             }
-        })
-        
+        }
     except Exception as e:
-        logger.error(f"CPI fetch failed: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
+        logger.exception("CPI fetch failed")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@macro_bp.route('/correlations', methods=['GET'])
-async def get_correlations():
+@router.get("/correlations")
+async def get_correlations(macro_service: MacroService = Depends(get_macro_provider)):
     """Get inflation hedge correlation matrix."""
     try:
-        matrix = await _macro_service.get_inflation_hedge_correlations()
+        matrix = await macro_service.get_inflation_hedge_correlations()
         
-        return jsonify({
+        return {
             "success": True,
             "data": {
                 "assets": matrix.assets,
@@ -93,54 +97,56 @@ async def get_correlations():
                 "best_hedge": matrix.best_hedge,
                 "worst_hedge": matrix.worst_hedge
             }
-        })
-        
+        }
     except Exception as e:
-        logger.error(f"Correlations fetch failed: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
+        logger.exception("Correlations fetch failed")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@macro_bp.route('/world-map', methods=['GET'])
-async def get_world_map():
+@router.get("/world-map")
+async def get_world_map(macro_service: MacroService = Depends(get_macro_provider)):
     """Get data for world map visualization."""
     try:
-        data = await _macro_service.get_world_map_data()
+        data = await macro_service.get_world_map_data()
         
-        return jsonify({
+        return {
             "success": True,
             "data": data
-        })
-        
+        }
     except Exception as e:
-        logger.error(f"World map data fetch failed: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
+        logger.exception("World map data fetch failed")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@macro_bp.route('/calendar', methods=['GET'])
-async def get_calendar():
+@router.get("/calendar")
+async def get_calendar(
+    days: int = Query(7),
+    macro_service: MacroService = Depends(get_macro_provider)
+):
     """Get economic events calendar."""
     try:
-        days = request.args.get('days', 7, type=int)
-        events = await _macro_service.get_economic_calendar(days)
+        events = await macro_service.get_economic_calendar(days)
         
-        return jsonify({
+        return {
             "success": True,
             "data": events
-        })
-        
+        }
     except Exception as e:
-        logger.error(f"Calendar fetch failed: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
+        logger.exception("Calendar fetch failed")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@macro_bp.route('/futures/<commodity>', methods=['GET'])
-async def get_futures_curve(commodity: str):
+@router.get("/futures/{commodity}")
+async def get_futures_curve(
+    commodity: str,
+    futures_service: FuturesService = Depends(get_futures_provider)
+):
     """Get futures curve for a commodity."""
     try:
-        curve = await _futures_service.get_futures_curve(commodity)
-        roll_yield = await _futures_service.calculate_roll_yield(curve)
+        curve = await futures_service.get_futures_curve(commodity)
+        roll_yield = await futures_service.calculate_roll_yield(curve)
         
-        return jsonify({
+        return {
             "success": True,
             "data": {
                 "commodity": curve.commodity,
@@ -160,20 +166,19 @@ async def get_futures_curve(commodity: str):
                 ],
                 "updated_at": curve.updated_at
             }
-        })
-        
+        }
     except Exception as e:
-        logger.error(f"Futures curve fetch failed: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
+        logger.exception("Futures curve fetch failed")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@macro_bp.route('/futures', methods=['GET'])
-async def get_all_futures():
+@router.get("/futures")
+async def get_all_futures(futures_service: FuturesService = Depends(get_futures_provider)):
     """Get futures curves for all commodities."""
     try:
-        curves = await _futures_service.get_all_curves()
+        curves = await futures_service.get_all_curves()
         
-        return jsonify({
+        return {
             "success": True,
             "data": [
                 {
@@ -184,20 +189,19 @@ async def get_all_futures():
                 }
                 for c in curves
             ]
-        })
-        
+        }
     except Exception as e:
-        logger.error(f"Futures curves fetch failed: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
+        logger.exception("Futures curves fetch failed")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@macro_bp.route('/crack-spread', methods=['GET'])
-async def get_crack_spread():
+@router.get("/crack-spread")
+async def get_crack_spread(futures_service: FuturesService = Depends(get_futures_provider)):
     """Get crack spread calculation."""
     try:
-        spread = await _futures_service.calculate_crack_spread()
+        spread = await futures_service.calculate_crack_spread()
         
-        return jsonify({
+        return {
             "success": True,
             "data": {
                 "name": spread.name,
@@ -206,20 +210,19 @@ async def get_crack_spread():
                 "z_score": spread.z_score,
                 "components": spread.components
             }
-        })
-        
+        }
     except Exception as e:
-        logger.error(f"Crack spread fetch failed: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
+        logger.exception("Crack spread fetch failed")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@macro_bp.route('/dashboard', methods=['GET'])
-async def get_macro_dashboard():
+@router.get("/dashboard")
+async def get_macro_dashboard(macro_service: MacroService = Depends(get_macro_provider)):
     """Combined dashboard data for the frontend."""
     try:
-        world_map = await _macro_service.get_world_map_data()
-        political = await _macro_service.get_political_insider_trades()
-        # Mocking shipping/commodities as they are secondary to core macro
+        world_map = await macro_service.get_world_map_data()
+        political = await macro_service.get_political_insider_trades()
+        
         shipping = [
             {"route": "Suez Canal", "volume": 850000, "change": -12, "status": "congested"},
             {"route": "Panama Canal", "volume": 420000, "change": -2, "status": "normal"}
@@ -229,27 +232,29 @@ async def get_macro_dashboard():
             {"name": "Gold", "price": 2045.0, "change": -0.5, "unit": "oz"}
         ]
         
-        return jsonify({
+        return {
             "success": True,
-            "world_map_data": world_map,
-            "political_signals": [
-                {"region": t.country, "signal": "BULLISH" if t.action == "BUY" else "BEARISH", "reason": f"Political {t.action} of {t.ticker}", "source": t.politician}
-                for t in political
-            ],
-            "shipping_routes": shipping,
-            "commodities": commodities
-        })
+            "data": {
+                "world_map_data": world_map,
+                "political_signals": [
+                    {"region": t.country, "signal": "BULLISH" if t.action == "BUY" else "BEARISH", "reason": f"Political {t.action} of {t.ticker}", "source": t.politician}
+                    for t in political
+                ],
+                "shipping_routes": shipping,
+                "commodities": commodities
+            }
+        }
     except Exception as e:
-        logger.error(f"Macro dashboard fetch failed: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
+        logger.exception("Macro dashboard fetch failed")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@macro_bp.route('/regime', methods=['GET'])
-async def get_macro_regime():
+@router.get("/regime")
+async def get_macro_regime(macro_service: MacroService = Depends(get_macro_provider)):
     """Get the current economic regime classification."""
     try:
-        regime = await _macro_service._fred.get_macro_regime()
-        return jsonify({
+        regime = await macro_service._fred.get_macro_regime()
+        return {
             "success": True,
             "data": {
                 "status": regime.status,
@@ -258,7 +263,7 @@ async def get_macro_regime():
                 "health_score": regime.health_score,
                 "timestamp": regime.timestamp.isoformat()
             }
-        })
+        }
     except Exception as e:
-        logger.error(f"Regime detection failed: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
+        logger.exception("Regime detection failed")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

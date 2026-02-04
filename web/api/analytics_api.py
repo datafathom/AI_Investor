@@ -1,240 +1,218 @@
 """
-==============================================================================
-FILE: web/api/analytics_api.py
-ROLE: Analytics API Endpoints
-PURPOSE: REST endpoints for portfolio analytics including performance
-         attribution and risk decomposition.
-
-INTEGRATION POINTS:
-    - PerformanceAttributionService: Attribution calculations
-    - RiskDecompositionService: Risk analysis
-    - FrontendAnalytics: Dashboard widgets
-
-ENDPOINTS:
-    - GET /api/analytics/attribution/:portfolio_id
-    - GET /api/analytics/contribution/:portfolio_id
-    - GET /api/analytics/risk/factor/:portfolio_id
-    - GET /api/analytics/risk/concentration/:portfolio_id
-    - GET /api/analytics/risk/correlation/:portfolio_id
-    - GET /api/analytics/risk/tail/:portfolio_id
-
-AUTHOR: AI Investor Team
-CREATED: 2026-01-21
-LAST_MODIFIED: 2026-01-21
-==============================================================================
+Analytics API - FastAPI Router
+REST endpoints for portfolio analytics including performance 
+attribution and risk decomposition.
 """
 
-from flask import Blueprint, jsonify, request
-from datetime import datetime
 import logging
+from datetime import datetime
+from typing import Optional, Dict, Any, List
+
+from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+
+from web.auth_utils import get_current_user
 from services.analytics.performance_attribution_service import get_attribution_service
 from services.analytics.risk_decomposition_service import get_risk_decomposition_service
 
 logger = logging.getLogger(__name__)
 
-analytics_bp = Blueprint('analytics', __name__, url_prefix='/api/v1/analytics')
+router = APIRouter(prefix="/api/v1/analytics", tags=["Analytics"])
 
-
-@analytics_bp.route('/attribution/<portfolio_id>', methods=['GET'])
-async def get_attribution(portfolio_id: str):
+@router.get('/attribution/{portfolio_id}')
+@router.get('/performance-attribution')
+async def get_performance_attribution(
+    portfolio_id: Optional[str] = None,
+    start_date: str = '2024-01-01',
+    end_date: Optional[str] = None,
+    benchmark: Optional[str] = None,
+    attribution_type: str = 'multi_factor',
+    service = Depends(get_attribution_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
     """
     Get performance attribution for a portfolio.
-    
-    Query params:
-        start_date: Start date (YYYY-MM-DD)
-        end_date: End date (YYYY-MM-DD)
-        benchmark: Optional benchmark symbol (e.g., SPY)
-        attribution_type: Type of attribution (multi_factor, hierarchical, simple)
+    Supports both path param (Legacy/Standard) and query param (analyticsService.js).
     """
     try:
-        start_date_str = request.args.get('start_date', '2024-01-01')
-        end_date_str = request.args.get('end_date', datetime.now().strftime('%Y-%m-%d'))
-        benchmark = request.args.get('benchmark')
-        attribution_type = request.args.get('attribution_type', 'multi_factor')
+        # Use provided ID or default
+        pid = portfolio_id or "default-portfolio"
         
-        start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
-        end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
+        if end_date is None:
+            end_date = datetime.now().strftime('%Y-%m-%d')
+            
+        start_dt = datetime.strptime(start_date, '%Y-%m-%d')
+        end_dt = datetime.strptime(end_date, '%Y-%m-%d')
         
-        service = get_attribution_service()
         attribution = await service.calculate_attribution(
-            portfolio_id=portfolio_id,
-            start_date=start_date,
-            end_date=end_date,
+            portfolio_id=pid,
+            start_date=start_dt,
+            end_date=end_dt,
             benchmark=benchmark,
             attribution_type=attribution_type
         )
         
-        return jsonify({
+        return {
             'success': True,
-            'data': attribution.dict()
-        })
-        
+            'data': attribution.model_dump()
+        }
     except Exception as e:
         logger.error(f"Error calculating attribution: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-
-@analytics_bp.route('/contribution/<portfolio_id>', methods=['GET'])
-async def get_contribution(portfolio_id: str):
+@router.get('/risk-decomposition')
+async def get_risk_decomposition(
+    portfolio_id: Optional[str] = None,
+    factor_model: str = 'fama_french',
+    lookback_days: int = 252,
+    service = Depends(get_risk_decomposition_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
     """
-    Get contribution analysis for a portfolio.
-    
-    Query params:
-        start_date: Start date (YYYY-MM-DD)
-        end_date: End date (YYYY-MM-DD)
+    Get factor risk decomposition.
+    Specifically requested by AdvancedPortfolioAnalytics.jsx
     """
     try:
-        start_date_str = request.args.get('start_date', '2024-01-01')
-        end_date_str = request.args.get('end_date', datetime.now().strftime('%Y-%m-%d'))
+        pid = portfolio_id or "default-portfolio"
+        risk_analysis = await service.decompose_factor_risk(
+            portfolio_id=pid,
+            factor_model=factor_model,
+            lookback_days=lookback_days
+        )
+        return {
+            'success': True,
+            'data': risk_analysis.model_dump()
+        }
+    except Exception as e:
+        logger.error(f"Error calculating risk decomposition: {e}")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
+
+@router.get('/contribution/{portfolio_id}')
+async def get_contribution(
+    portfolio_id: str,
+    start_date: str = '2024-01-01',
+    end_date: Optional[str] = None,
+    service = Depends(get_attribution_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """
+    Get holding contribution analysis.
+    """
+    try:
+        if end_date is None:
+            end_date = datetime.now().strftime('%Y-%m-%d')
+            
+        start_dt = datetime.strptime(start_date, '%Y-%m-%d')
+        end_dt = datetime.strptime(end_date, '%Y-%m-%d')
         
-        start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
-        end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
-        
-        service = get_attribution_service()
-        contributions = await service.calculate_contribution(
+        contributions = await service.calculate_holding_contributions(
             portfolio_id=portfolio_id,
-            start_date=start_date,
-            end_date=end_date
+            start_date=start_dt,
+            end_date=end_dt
         )
         
-        return jsonify({
+        return {
             'success': True,
-            'data': [c.dict() for c in contributions]
-        })
-        
+            'data': [c.model_dump() for c in contributions]
+        }
     except Exception as e:
         logger.error(f"Error calculating contribution: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-
-@analytics_bp.route('/risk/factor/<portfolio_id>', methods=['GET'])
-async def get_factor_risk(portfolio_id: str):
-    """
-    Get factor risk decomposition for a portfolio.
-    
-    Query params:
-        factor_model: Factor model (fama_french, barra, custom)
-        lookback_days: Lookback period in days (default: 252)
-    """
+@router.get('/risk/factor/{portfolio_id}')
+async def get_factor_risk(
+    portfolio_id: str,
+    factor_model: str = 'fama_french',
+    lookback_days: int = 252,
+    service = Depends(get_risk_decomposition_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Get factor risk decomposition for a portfolio."""
     try:
-        factor_model = request.args.get('factor_model', 'fama_french')
-        lookback_days = int(request.args.get('lookback_days', 252))
-        
-        service = get_risk_decomposition_service()
         risk_analysis = await service.decompose_factor_risk(
             portfolio_id=portfolio_id,
             factor_model=factor_model,
             lookback_days=lookback_days
         )
         
-        return jsonify({
+        return {
             'success': True,
-            'data': risk_analysis.dict()
-        })
-        
+            'data': risk_analysis.model_dump()
+        }
     except Exception as e:
         logger.error(f"Error calculating factor risk: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-
-@analytics_bp.route('/risk/concentration/<portfolio_id>', methods=['GET'])
-async def get_concentration_risk(portfolio_id: str):
-    """
-    Get concentration risk analysis for a portfolio.
-    
-    Query params:
-        dimensions: Comma-separated list of dimensions (holding, sector, geography, asset_class)
-    """
+@router.get('/risk/concentration/{portfolio_id}')
+async def get_concentration_risk(
+    portfolio_id: str,
+    dimensions: str = 'holding,sector,geography',
+    service = Depends(get_risk_decomposition_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Get concentration risk analysis for a portfolio."""
     try:
-        dimensions_str = request.args.get('dimensions', 'holding,sector,geography')
-        dimensions = [d.strip() for d in dimensions_str.split(',')]
-        
-        service = get_risk_decomposition_service()
+        dim_list = [d.strip() for d in dimensions.split(',')]
         concentration = await service.calculate_concentration_risk(
             portfolio_id=portfolio_id,
-            dimensions=dimensions
+            dimensions=dim_list
         )
         
-        return jsonify({
+        return {
             'success': True,
-            'data': concentration.dict()
-        })
-        
+            'data': concentration.model_dump()
+        }
     except Exception as e:
         logger.error(f"Error calculating concentration risk: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-
-@analytics_bp.route('/risk/correlation/<portfolio_id>', methods=['GET'])
-async def get_correlation(portfolio_id: str):
-    """
-    Get correlation analysis for a portfolio.
-    
-    Query params:
-        lookback_days: Lookback period in days (default: 252)
-    """
+@router.get('/risk/correlation/{portfolio_id}')
+async def get_correlation(
+    portfolio_id: str,
+    lookback_days: int = 252,
+    service = Depends(get_risk_decomposition_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Get correlation analysis for a portfolio."""
     try:
-        lookback_days = int(request.args.get('lookback_days', 252))
-        
-        service = get_risk_decomposition_service()
         correlation = await service.analyze_correlation(
             portfolio_id=portfolio_id,
             lookback_days=lookback_days
         )
         
-        return jsonify({
+        return {
             'success': True,
-            'data': correlation.dict()
-        })
-        
+            'data': correlation.model_dump()
+        }
     except Exception as e:
         logger.error(f"Error calculating correlation: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-
-@analytics_bp.route('/risk/tail/<portfolio_id>', methods=['GET'])
-async def get_tail_risk(portfolio_id: str):
-    """
-    Get tail risk contributions for a portfolio.
-    
-    Query params:
-        confidence_level: Confidence level (default: 0.95)
-        method: Calculation method (historical, monte_carlo, parametric)
-    """
+@router.get('/risk/tail/{portfolio_id}')
+async def get_tail_risk(
+    portfolio_id: str,
+    confidence_level: float = 0.95,
+    method: str = 'historical',
+    service = Depends(get_risk_decomposition_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Get tail risk contributions for a portfolio."""
     try:
-        confidence_level = float(request.args.get('confidence_level', 0.95))
-        method = request.args.get('method', 'historical')
-        
-        service = get_risk_decomposition_service()
         tail_risk = await service.calculate_tail_risk_contributions(
             portfolio_id=portfolio_id,
             confidence_level=confidence_level,
             method=method
         )
         
-        return jsonify({
+        return {
             'success': True,
-            'data': tail_risk.dict()
-        })
-        
+            'data': tail_risk.model_dump()
+        }
     except Exception as e:
         logger.error(f"Error calculating tail risk: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

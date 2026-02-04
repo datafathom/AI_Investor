@@ -26,7 +26,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
-from models.marketplace import ExtensionReview
+from schemas.marketplace import ExtensionReview
 from services.marketplace.extension_framework import get_extension_framework
 from services.system.cache_service import get_cache_service
 
@@ -65,7 +65,7 @@ class MarketplaceService:
         logger.info(f"Adding review for extension {extension_id}")
         
         review = ExtensionReview(
-            review_id=f"review_{extension_id}_{user_id}_{datetime.utcnow().timestamp()}",
+            review_id=f"review_{extension_id}_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             extension_id=extension_id,
             user_id=user_id,
             rating=rating,
@@ -134,7 +134,7 @@ class MarketplaceService:
     async def _save_review(self, review: ExtensionReview):
         """Save review to cache."""
         cache_key = f"review:{review.review_id}"
-        self.cache_service.set(cache_key, review.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, review.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

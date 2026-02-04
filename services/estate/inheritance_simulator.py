@@ -24,9 +24,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from typing import Dict, List, Optional
-from models.estate import (
+from schemas.estate import (
     EstatePlan, InheritanceProjection, EstateScenario
 )
 from services.estate.estate_planning_service import get_estate_planning_service
@@ -86,12 +86,12 @@ class InheritanceSimulator:
             after_tax_inheritance = projected_inheritance - tax_liability
             
             projection = InheritanceProjection(
-                projection_id=f"proj_{beneficiary.beneficiary_id}_{datetime.utcnow().timestamp()}",
+                projection_id=f"proj_{beneficiary.beneficiary_id}_{datetime.now(timezone.utc).timestamp()}",
                 beneficiary_id=beneficiary.beneficiary_id,
                 projected_inheritance=projected_inheritance,
                 projected_tax_liability=tax_liability,
                 after_tax_inheritance=after_tax_inheritance,
-                projected_date=datetime.utcnow() + timedelta(days=projection_years * 365),
+                projected_date=datetime.now(timezone.utc) + timedelta(days=projection_years * 365),
                 assumptions={
                     'estate_growth_rate': 0.06,
                     'projection_years': projection_years,

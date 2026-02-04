@@ -3,8 +3,8 @@ import time
 import random
 import json
 from typing import List, Dict, Any
-from datetime import datetime
-from models.fx_price import FXPrice
+from datetime import timezone, datetime
+from schemas.fx_price import FXPrice
 from services.validators.kafka_validators import KafkaValidatorService
 
 logger = logging.getLogger(__name__)
@@ -42,7 +42,7 @@ class FXStreamProducerService:
             bid=round(bid, 5),
             ask=round(ask, 5),
             mid=round(mid, 5),
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
 
     def produce_batch(self, count: int = 5) -> List[Dict[str, Any]]:

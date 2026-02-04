@@ -14,7 +14,7 @@ import logging
 import asyncio
 import json
 from typing import Dict, Any, List, Optional
-from datetime import datetime
+from datetime import timezone, datetime
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +35,7 @@ class DiscordWebhook:
                 "color": color,
                 "fields": fields,
                 "footer": {"text": "AI Investor Terminal"},
-                "timestamp": datetime.utcnow().isoformat()
+                "timestamp": datetime.now(timezone.utc).isoformat()
             }]
         }
         

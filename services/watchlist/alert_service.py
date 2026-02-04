@@ -25,9 +25,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional
-from models.watchlist import (
+from schemas.watchlist import (
     PriceAlert, AlertType, AlertStatus, AlertHistory
 )
 from services.system.cache_service import get_cache_service
@@ -69,14 +69,14 @@ class AlertService:
         logger.info(f"Creating {alert_type} alert for {symbol}")
         
         alert = PriceAlert(
-            alert_id=f"alert_{user_id}_{datetime.utcnow().timestamp()}",
+            alert_id=f"alert_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             symbol=symbol,
             alert_type=AlertType(alert_type),
             threshold=threshold,
             status=AlertStatus.ACTIVE,
             notification_methods=notification_methods or ['email'],
-            created_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc)
         )
         
         # Save alert
@@ -125,14 +125,14 @@ class AlertService:
             
             if should_trigger:
                 alert.status = AlertStatus.TRIGGERED
-                alert.triggered_date = datetime.utcnow()
+                alert.triggered_date = datetime.now(timezone.utc)
                 alert.current_price = current_price
                 
                 # Create history record
                 history = AlertHistory(
-                    history_id=f"history_{alert.alert_id}_{datetime.utcnow().timestamp()}",
+                    history_id=f"history_{alert.alert_id}_{datetime.now(timezone.utc).timestamp()}",
                     alert_id=alert.alert_id,
-                    triggered_date=datetime.utcnow(),
+                    triggered_date=datetime.now(timezone.utc),
                     trigger_value=current_price,
                     notification_sent=False
                 )
@@ -164,12 +164,12 @@ class AlertService:
     async def _save_alert(self, alert: PriceAlert):
         """Save alert to cache."""
         cache_key = f"alert:{alert.alert_id}"
-        self.cache_service.set(cache_key, alert.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, alert.model_dump(), ttl=86400 * 365)
     
     async def _save_history(self, history: AlertHistory):
         """Save alert history to cache."""
         cache_key = f"alert_history:{history.history_id}"
-        self.cache_service.set(cache_key, history.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, history.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

@@ -1,58 +1,90 @@
+"""
+==============================================================================
+FILE: web/api/payment_transfer_api.py
+ROLE: Payment Transfer Endpoints (FastAPI)
+PURPOSE: Linked vendor and fund transfer endpoints.
+==============================================================================
+"""
 
-from flask import Blueprint, jsonify, request, g
-from web.auth_utils import login_required
+from fastapi import APIRouter, HTTPException, Depends
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from typing import Optional
+import logging
+
+from web.auth_utils import get_current_user
 from services.system.social_auth_service import get_social_auth_service
 
-payment_transfer_bp = Blueprint('payment_transfer', __name__, url_prefix='/api/v1/payment_transfer')
 
-@payment_transfer_bp.route('/linked-vendors', methods=['GET'])
-@login_required
-def get_linked_vendors():
+def get_social_auth_provider():
+    return get_social_auth_service()
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter(prefix="/api/v1/payment_transfer", tags=["Payment Transfer"])
+
+
+class TransferRequest(BaseModel):
+    vendor: str
+    amount: float
+    direction: str = "deposit"  # deposit or withdraw
+
+
+@router.get("/linked-vendors")
+async def get_linked_vendors(
+    current_user: dict = Depends(get_current_user),
+    service=Depends(get_social_auth_provider)
+):
     """Returns a list of financial vendors linked to the user's account."""
-    social_service = get_social_auth_service()
+    user_id = current_user.get("id") or current_user.get("user_id")
     user_email = None
     
     # Extract email from user_id (mock storage lookup)
-    for email, udata in social_service.users.items():
-        if str(udata["id"]) == str(g.user_id):
+    for email, udata in service.users.items():
+        if str(udata["id"]) == str(user_id):
             user_email = email
             break
             
     if not user_email:
-        return jsonify({"error": "User profile not found"}), 404
+        return JSONResponse(status_code=404, content={"success": False, "detail": "User profile not found"})
         
-    vendors = social_service.get_linked_finance_vendors(user_email)
-    return jsonify({
-        "user_id": g.user_id,
-        "email": user_email,
-        "linked_vendors": vendors
-    })
+    vendors = service.get_linked_finance_vendors(user_email)
+    return {
+        "success": True,
+        "data": {
+            "user_id": user_id,
+            "email": user_email,
+            "linked_vendors": vendors
+        }
+    }
 
-@payment_transfer_bp.route('/transfer', methods=['POST'])
-@login_required
-def transfer_funds():
+
+@router.post("/transfer")
+async def transfer_funds(
+    request: TransferRequest,
+    current_user: dict = Depends(get_current_user),
+    service=Depends(get_social_auth_provider)
+):
     """Initiates a fund transfer from a linked vendor."""
-    data = request.get_json()
-    vendor = data.get('vendor')
-    amount = data.get('amount')
-    direction = data.get('direction', 'deposit') # deposit or withdraw
-    
-    if not vendor or not amount:
-        return jsonify({"error": "Vendor and amount are required"}), 400
+    if not request.vendor or not request.amount:
+        return JSONResponse(status_code=400, content={"success": False, "detail": "Vendor and amount are required"})
         
-    social_service = get_social_auth_service()
+    user_id = current_user.get("id") or current_user.get("user_id")
     user_email = None
-    for email, udata in social_service.users.items():
-        if str(udata["id"]) == str(g.user_id):
+    
+    for email, udata in service.users.items():
+        if str(udata["id"]) == str(user_id):
             user_email = email
             break
             
     if not user_email:
-        return jsonify({"error": "User session invalid"}), 404
+        return JSONResponse(status_code=404, content={"success": False, "detail": "User session invalid"})
         
-    result = social_service.transfer_funds(user_email, vendor, float(amount), direction)
+    result = service.transfer_funds(
+        user_email, request.vendor, float(request.amount), request.direction
+    )
     
     if result.get("success"):
-        return jsonify(result), 200
+        return {"success": True, "data": result}
     else:
-        return jsonify(result), 400
+        return JSONResponse(status_code=400, content={"success": False, "detail": result.get("error", "Transfer failed")})

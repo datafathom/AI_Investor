@@ -1,144 +1,129 @@
 """
 ==============================================================================
 FILE: web/api/square_api.py
-ROLE: API Endpoint Layer (Flask)
+ROLE: API Endpoint Layer (FastAPI)
 PURPOSE: Exposes Square merchant capabilities to the frontend.
 ==============================================================================
 """
 
-import asyncio
-import logging
+from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi.responses import JSONResponse
 from datetime import datetime
-from flask import Blueprint, jsonify, request
+from typing import Optional
+import logging
 
 from services.payments.square_service import get_square_client
 
+
+def get_square_provider(mock: bool = Query(True)):
+    return get_square_client(mock=mock)
+
 logger = logging.getLogger(__name__)
 
-square_bp = Blueprint('square_bp', __name__, url_prefix='/api/v1/square')
+router = APIRouter(prefix="/api/v1/square", tags=["Square"])
 
-def _run_async(coro):
-    try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            return asyncio.run_coroutine_threadsafe(coro, loop).result()
-    except RuntimeError:
-        pass
-    return asyncio.run(coro)
 
-@square_bp.route('/merchant/square/stats', methods=['GET'])
-def get_stats():
-    """
-    Get merchant stats.
-    Query: ?mock=true
-    """
-    use_mock = request.args.get('mock', 'true').lower() == 'true'
-    client = get_square_client(mock=use_mock)
-    
+@router.get("/merchant/square/stats")
+async def get_stats(client=Depends(get_square_provider)):
+    """Get merchant stats."""
     try:
-        result = _run_async(client.get_merchant_stats())
-        return jsonify(result)
+        data = await client.get_merchant_stats()
+        return {"success": True, "data": data}
     except (ValueError, KeyError, RuntimeError) as e:
         logger.error("Failed to fetch Square stats: %s", e)
-        return jsonify({"error": str(e)}), 500
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-@square_bp.route('/merchant/square/catalog', methods=['GET'])
-def get_catalog():
-    """
-    Get merchant catalog.
-    Query: ?mock=true
-    """
-    use_mock = request.args.get('mock', 'true').lower() == 'true'
-    client = get_square_client(mock=use_mock)
-    
+
+@router.get("/merchant/square/catalog")
+async def get_catalog(client=Depends(get_square_provider)):
+    """Get merchant catalog."""
     try:
-        result = _run_async(client.get_catalog())
-        return jsonify(result)
+        data = await client.get_catalog()
+        return {"success": True, "data": data}
     except (ValueError, KeyError, RuntimeError) as e:
         logger.error("Failed to fetch Square catalog: %s", e)
-        return jsonify({"error": str(e)}), 500
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@square_bp.route('/api/v1/square/stats', methods=['GET'])
-def get_stats_v1():
-    """
-    Get merchant stats (v1 API).
-    Query: ?range=daily|weekly|monthly
-    """
-    use_mock = request.args.get('mock', 'true').lower() == 'true'
-    client = get_square_client(mock=use_mock)
-    
+@router.get("/stats")
+async def get_stats_v1(
+    range_type: str = Query("daily", alias="range", description="daily|weekly|monthly"),
+    client=Depends(get_square_provider)
+):
+    """Get merchant stats (v1 API)."""
     try:
-        result = _run_async(client.get_merchant_stats())
-        return jsonify(result)
+        data = await client.get_merchant_stats()
+        return {"success": True, "data": data}
     except Exception as e:
-        logger.error(f"Failed to fetch Square stats: {e}")
-        return jsonify({"error": str(e)}), 500
+        logger.exception("Failed to fetch Square stats")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@square_bp.route('/api/v1/square/transactions', methods=['GET'])
-def get_transactions():
+@router.get("/transactions")
+async def get_transactions(
+    start_date: Optional[str] = Query(None, description="Start date YYYY-MM-DD"),
+    end_date: Optional[str] = Query(None, description="End date YYYY-MM-DD"),
+    location_id: Optional[str] = Query(None),
+    client=Depends(get_square_provider)
+):
     """Get transaction history."""
-    use_mock = request.args.get('mock', 'true').lower() == 'true'
-    client = get_square_client(mock=use_mock)
 
     try:
+        start = None
+        end = None
         
-        start_date_str = request.args.get('start_date')
-        end_date_str = request.args.get('end_date')
-        location_id = request.args.get('location_id')
+        if start_date:
+            start = datetime.strptime(start_date, '%Y-%m-%d').date()
+        if end_date:
+            end = datetime.strptime(end_date, '%Y-%m-%d').date()
         
-        start_date = None
-        end_date = None
-        
-        if start_date_str:
-            start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
-        if end_date_str:
-            end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
-        
-        transactions = _run_async(client.get_transactions(
-            start_date=start_date,
-            end_date=end_date,
+        transactions = await client.get_transactions(
+            start_date=start,
+            end_date=end,
             location_id=location_id
-        ))
+        )
         
-        return jsonify({
-            "transactions": transactions,
-            "count": len(transactions)
-        })
+        return {
+            "success": True,
+            "data": {
+                "transactions": transactions,
+                "count": len(transactions)
+            }
+        }
     except (ValueError, KeyError, RuntimeError) as e:
-        logger.error("Failed to get transactions: %s", e, exc_info=True)
-        return jsonify({"error": str(e)}), 500
+        logger.exception("Failed to get transactions")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@square_bp.route('/api/v1/square/refunds', methods=['GET'])
-def get_refunds():
+@router.get("/refunds")
+async def get_refunds(
+    start_date: Optional[str] = Query(None, description="Start date YYYY-MM-DD"),
+    end_date: Optional[str] = Query(None, description="End date YYYY-MM-DD"),
+    client=Depends(get_square_provider)
+):
     """Get refund history."""
-    use_mock = request.args.get('mock', 'true').lower() == 'true'
-    client = get_square_client(mock=use_mock)
 
     try:
+        start = None
+        end = None
         
-        start_date_str = request.args.get('start_date')
-        end_date_str = request.args.get('end_date')
+        if start_date:
+            start = datetime.strptime(start_date, '%Y-%m-%d').date()
+        if end_date:
+            end = datetime.strptime(end_date, '%Y-%m-%d').date()
         
-        start_date = None
-        end_date = None
+        refunds = await client.get_refunds(
+            start_date=start,
+            end_date=end
+        )
         
-        if start_date_str:
-            start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
-        if end_date_str:
-            end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
-        
-        refunds = _run_async(client.get_refunds(
-            start_date=start_date,
-            end_date=end_date
-        ))
-        
-        return jsonify({
-            "refunds": refunds,
-            "count": len(refunds)
-        })
+        return {
+            "success": True,
+            "data": {
+                "refunds": refunds,
+                "count": len(refunds)
+            }
+        }
     except (ValueError, KeyError, RuntimeError) as e:
-        logger.error("Failed to get refunds: %s", e, exc_info=True)
-        return jsonify({"error": str(e)}), 500
+        logger.exception("Failed to get refunds")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

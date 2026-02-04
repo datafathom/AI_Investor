@@ -81,7 +81,7 @@ class DebateChamber:
         
         return {
             "ticker": ticker,
-            "responses": [r.dict() for r in responses],
+            "responses": [r.model_dump() for r in responses],
             "consensus": {
                 "decision": "BUY" if consensus_reached else "NO_CONSENSUS",
                 "buy_ratio": buy_votes / len(responses),

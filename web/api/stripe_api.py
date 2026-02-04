@@ -1,68 +1,64 @@
 """
 ==============================================================================
 FILE: web/api/stripe_api.py
-ROLE: API Endpoint Layer (Flask)
+ROLE: API Endpoint Layer (FastAPI)
 PURPOSE: Exposes Billing/Stripe capabilities to the frontend.
 ==============================================================================
 """
 
-import asyncio
+from fastapi import APIRouter, HTTPException, Query
+from pydantic import BaseModel
 import logging
-from flask import Blueprint, jsonify, request
 
 from services.payments.stripe_service import get_stripe_client
 
 logger = logging.getLogger(__name__)
 
-stripe_bp = Blueprint('stripe_bp', __name__, url_prefix='/api/v1/stripe')
+router = APIRouter(prefix="/api/v1/stripe", tags=["Stripe"])
 
-def _run_async(coro):
-    try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            return asyncio.run_coroutine_threadsafe(coro, loop).result()
-    except RuntimeError:
-        pass
-    return asyncio.run(coro)
 
-@stripe_bp.route('/billing/subscription', methods=['GET'])
-def get_subscription():
+class CheckoutRequest(BaseModel):
+    plan_id: str
+
+
+@router.get("/billing/subscription")
+async def get_subscription(mock: bool = Query(True, description="Use mock mode")):
     """
     Get current user subscription.
     Query: ?mock=true
     """
     # In a real app, we'd get user_id from session/token
-    user_id = "user_mock_123" 
-    use_mock = request.args.get('mock', 'true').lower() == 'true'
+    user_id = "user_mock_123"
     
-    client = get_stripe_client(mock=use_mock)
+    client = get_stripe_client(mock=mock)
     
     try:
-        result = _run_async(client.get_subscription(user_id))
-        return jsonify(result)
+        result = await client.get_subscription(user_id)
+        return result
     except (ValueError, KeyError, RuntimeError) as e:
         logger.error("Failed to fetch subscription: %s", e)
-        return jsonify({"error": str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
-@stripe_bp.route('/billing/checkout', methods=['POST'])
-def create_checkout():
+
+@router.post("/billing/checkout")
+async def create_checkout(
+    request: CheckoutRequest,
+    mock: bool = Query(True, description="Use mock mode")
+):
     """
     Create a checkout session.
     Body: { "plan_id": "price_pro_monthly" }
     """
-    data = request.get_json()
-    plan_id = data.get('plan_id')
     user_id = "user_mock_123"
-    use_mock = request.args.get('mock', 'true').lower() == 'true'
 
-    if not plan_id:
-        return jsonify({"error": "Plan ID required"}), 400
+    if not request.plan_id:
+        raise HTTPException(status_code=400, detail="Plan ID required")
         
-    client = get_stripe_client(mock=use_mock)
+    client = get_stripe_client(mock=mock)
     
     try:
-        result = _run_async(client.create_checkout_session(user_id, plan_id))
-        return jsonify(result)
+        result = await client.create_checkout_session(user_id, request.plan_id)
+        return result
     except (ValueError, KeyError, RuntimeError) as e:
         logger.error("Failed to create checkout: %s", e)
-        return jsonify({"error": str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))

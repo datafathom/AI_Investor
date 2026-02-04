@@ -1,65 +1,76 @@
 """
 Tests for Square API Endpoints
-Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock
-from flask import Flask
-from web.api.square_api import square_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.square_api import router, get_square_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(square_bp)
+def api_app():
+    """Create FastAPI app merchant testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_square_client():
-    """Mock Square client."""
-    with patch('web.api.square_api.get_square_client') as mock:
-        client = MagicMock()
-        mock.return_value = client
-        yield client
+def mock_client(api_app):
+    """Mock Square Client."""
+    service = AsyncMock()
+    service.get_merchant_stats.return_value = {"total_sales": 1000.0}
+    service.get_catalog.return_value = [{"id": "item1", "name": "Coffee"}]
+    service.get_transactions.return_value = [{"id": "tx1", "amount": 5.0}]
+    service.get_refunds.return_value = [{"id": "ref1", "amount": 2.0}]
+    
+    api_app.dependency_overrides[get_square_provider] = lambda: service
+    return service
 
 
-def test_get_stats_success(client, mock_square_client):
-    """Test successful stats retrieval."""
-    mock_stats = {'revenue': 10000.0, 'transactions': 100}
-    
-    async def mock_get_stats():
-        return mock_stats
-    
-    mock_square_client.get_merchant_stats = mock_get_stats
-    
-    response = client.get('/merchant/square/stats?mock=true')
+def test_get_stats_success(client, mock_client):
+    """Test getting stats."""
+    response = client.get('/api/v1/square/merchant/square/stats')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'revenue' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['total_sales'] == 1000.0
 
 
-def test_get_catalog_success(client, mock_square_client):
-    """Test successful catalog retrieval."""
-    mock_catalog = {'items': [{'id': 'item_1', 'name': 'Test Item'}]}
-    
-    async def mock_get_catalog():
-        return mock_catalog
-    
-    mock_square_client.get_catalog = mock_get_catalog
-    
-    response = client.get('/merchant/square/catalog?mock=true')
+def test_get_catalog_success(client, mock_client):
+    """Test getting catalog."""
+    response = client.get('/api/v1/square/merchant/square/catalog')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'items' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data'][0]['name'] == "Coffee"
+
+
+def test_get_transactions_success(client, mock_client):
+    """Test getting transactions."""
+    response = client.get('/api/v1/square/transactions?start_date=2024-01-01')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert len(data['data']['transactions']) == 1
+
+
+def test_get_refunds_success(client, mock_client):
+    """Test getting refunds."""
+    response = client.get('/api/v1/square/refunds')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert len(data['data']['refunds']) == 1

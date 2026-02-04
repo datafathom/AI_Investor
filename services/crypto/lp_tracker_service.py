@@ -16,7 +16,7 @@ Usage:
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional, Any
 from enum import Enum
 import logging
@@ -244,13 +244,13 @@ class LPTrackerService:
         
         return round(apr, 2)
 
-    async def get_liquidity_depth(self, pool_address: str) -> Dict[str, Any]:
+    async def get_liquidity_depth(self, pool_address: str) -> dict:
         """
         Analyzes the depth of a specific liquidity pool to map slippage zones.
         Uses deterministic derivation based on pool address to simulate consistency.
         """
         import hashlib
-        from datetime import datetime
+        from datetime import timezone, datetime
         
         # Consistent "randomness" based on address
         hash_seed = int(hashlib.md5(pool_address.encode()).hexdigest(), 16)
@@ -277,5 +277,5 @@ class LPTrackerService:
             "total_liquidity_usd": sum(d['liquidity'] for d in depth_levels),
             "depth_map": depth_levels,
             "resonance_score": (hash_seed % 100) / 100.0,
-            "last_synced": datetime.utcnow().isoformat()
+            "last_synced": datetime.now(timezone.utc).isoformat()
         }

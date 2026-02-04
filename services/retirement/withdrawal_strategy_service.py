@@ -25,9 +25,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from typing import Dict, List, Optional
-from models.retirement import (
+from schemas.retirement import (
     WithdrawalPlan, WithdrawalStrategy, RMDCalculation
 )
 from services.tax.tax_optimization_service import get_tax_optimization_service
@@ -79,7 +79,7 @@ class WithdrawalStrategyService:
         rmd_calculations = await self._calculate_rmds(user_id, accounts)
         
         plan = WithdrawalPlan(
-            plan_id=f"withdrawal_{user_id}_{datetime.utcnow().timestamp()}",
+            plan_id=f"withdrawal_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             strategy=WithdrawalStrategy(strategy),
             initial_withdrawal_amount=initial_withdrawal_amount,
             withdrawal_rate=withdrawal_rate or (initial_withdrawal_amount / sum(a.get('balance', 0) for a in accounts.values())),
@@ -90,7 +90,7 @@ class WithdrawalStrategyService:
         
         # Cache plan
         cache_key = f"withdrawal_plan:{user_id}"
-        self.cache_service.set(cache_key, plan.dict(), ttl=86400)
+        self.cache_service.set(cache_key, plan.model_dump(), ttl=86400)
         
         return plan
     
@@ -207,7 +207,7 @@ class WithdrawalStrategyService:
                 
                 if age >= 72:  # RMD age
                     rmd = await self.calculate_rmd(account_type, balance, age)
-                    rmds[account_type] = rmd.dict()
+                    rmds[account_type] = rmd.model_dump()
         
         return rmds if rmds else None
     

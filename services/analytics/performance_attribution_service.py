@@ -46,7 +46,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Tuple
 import pandas as pd
 import numpy as np
-from models.analytics import (
+from schemas.analytics import (
     AttributionResult,
     AttributionBreakdown,
     HoldingAttribution,
@@ -156,7 +156,7 @@ class PerformanceAttributionService:
         
         # Cache result (1 hour for daily, 24 hours for historical)
         ttl = 3600 if (end_date - start_date).days <= 1 else 86400
-        self.cache_service.set(cache_key, result.dict(), ttl=ttl)
+        self.cache_service.set(cache_key, result.model_dump(), ttl=ttl)
         
         return result
         

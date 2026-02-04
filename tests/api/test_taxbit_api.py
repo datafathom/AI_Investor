@@ -1,63 +1,64 @@
 """
 Tests for TaxBit API Endpoints
-Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
-from flask import Flask
-from web.api.taxbit_api import taxbit_bp
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.taxbit_api import router
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(taxbit_bp)
+def api_app():
+    """Create FastAPI app merchant testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 def test_ingest_transactions_success(client):
-    """Test successful transaction ingestion."""
-    response = client.post('/api/v1/taxbit/ingest-transactions',
-                          json={'source': 'alpaca'})
+    """Test ingesting transactions."""
+    payload = {"source": "Coinbase"}
+    response = client.post('/api/v1/taxbit/ingest-transactions', json=payload)
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
-    assert 'source' in data
+    assert data['data']['source'] == "Coinbase"
 
 
 def test_generate_document_success(client):
-    """Test successful document generation."""
-    response = client.post('/api/v1/taxbit/generate-document',
-                          json={'year': 2024, 'document_type': '8949'})
+    """Test generating document."""
+    payload = {"tax_year": 2025}
+    response = client.post('/api/v1/taxbit/generate-document', json=payload)
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'success' in data or 'document_id' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['tax_year'] == 2025
 
 
 def test_list_documents_success(client):
-    """Test successful documents listing."""
+    """Test listing documents."""
     response = client.get('/api/v1/taxbit/documents')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert isinstance(data, list) or 'documents' in data
+    data = response.json()
+    assert data['success'] is True
+    assert len(data['data']['documents']) == 2
 
 
-def test_get_document_by_year_success(client):
-    """Test successful document retrieval by year."""
-    response = client.get('/api/v1/taxbit/documents/2024')
+def test_get_document_success(client):
+    """Test getting a specific document."""
+    response = client.get('/api/v1/taxbit/documents/2025')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'year' in data or 'document' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['tax_year'] == 2025

@@ -5,47 +5,48 @@ Phase 11: Bill Payment Automation
 
 import pytest
 from unittest.mock import AsyncMock, patch
-from flask import Flask
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
 from datetime import datetime, timezone
-from web.api.billing_api import billing_bp
+from web.api.billing_api import router, get_bill_payment_service, get_payment_reminder_service
+from web.auth_utils import get_current_user
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(billing_bp)
+def api_app(mock_bill_payment_service, mock_payment_reminder_service):
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
+    app.dependency_overrides[get_bill_payment_service] = lambda: mock_bill_payment_service
+    app.dependency_overrides[get_payment_reminder_service] = lambda: mock_payment_reminder_service
+    app.dependency_overrides[get_current_user] = lambda: {"id": "user_1", "role": "user"}
     return app
 
 
+
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
 def mock_bill_payment_service():
     """Mock BillPaymentService."""
-    with patch('web.api.billing_api.get_bill_payment_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+    service = AsyncMock()
+    return service
 
 
 @pytest.fixture
 def mock_payment_reminder_service():
     """Mock PaymentReminderService."""
-    with patch('web.api.billing_api.get_payment_reminder_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+    service = AsyncMock()
+    return service
 
 
 def test_create_bill_success(client, mock_bill_payment_service):
     """Test successful bill creation."""
-    from models.billing import Bill
+    from schemas.billing import Bill, RecurrenceType
     
     mock_bill = Bill(
         bill_id='bill_1',
@@ -54,41 +55,40 @@ def test_create_bill_success(client, mock_bill_payment_service):
         merchant='Utility Company',
         amount=150.0,
         due_date=datetime(2024, 12, 31),
-        recurrence='monthly',
+        recurrence=RecurrenceType.MONTHLY,
         created_date=datetime.now(timezone.utc),
         updated_date=datetime.now(timezone.utc)
     )
     mock_bill_payment_service.create_bill.return_value = mock_bill
     
-    response = client.post('/api/billing/bill/create',
+    response = client.post('/api/v1/billing/bill/create',
                           json={
-                              'user_id': 'user_1',
-                              'bill_name': 'Electric Bill',
-                              'merchant': 'Utility Company',
-                              'amount': 150.0,
-                              'due_date': '2024-12-31',
-                              'recurrence': 'monthly'
-                          })
+                               'user_id': 'user_1',
+                               'bill_name': 'Electric Bill',
+                               'merchant': 'Utility Company',
+                               'amount': 150.0,
+                               'due_date': '2024-12-31',
+                               'recurrence': 'monthly'
+                           })
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
     assert data['data']['bill_name'] == 'Electric Bill'
 
 
 def test_create_bill_missing_params(client):
     """Test bill creation with missing parameters."""
-    response = client.post('/api/billing/bill/create',
+    response = client.post('/api/v1/billing/bill/create',
                           json={'user_id': 'user_1', 'bill_name': 'Test'})
     
-    assert response.status_code == 400
-    data = response.get_json()
-    assert data['success'] is False
+    # FastAPI returns 422 Unprocessable Entity for Pydantic validation errors
+    assert response.status_code in [400, 422]
 
 
 def test_get_upcoming_bills_success(client, mock_bill_payment_service):
     """Test successful upcoming bills retrieval."""
-    from models.billing import Bill
+    from schemas.billing import Bill, RecurrenceType
     
     mock_bills = [
         Bill(
@@ -98,24 +98,24 @@ def test_get_upcoming_bills_success(client, mock_bill_payment_service):
             merchant='Utility Company',
             amount=150.0,
             due_date=datetime(2024, 12, 31),
-            recurrence='monthly',
+            recurrence=RecurrenceType.MONTHLY,
             created_date=datetime.now(timezone.utc),
             updated_date=datetime.now(timezone.utc)
         )
     ]
     mock_bill_payment_service.get_upcoming_bills.return_value = mock_bills
     
-    response = client.get('/api/billing/bill/upcoming/user_1')
+    response = client.get('/api/v1/billing/upcoming?user_id=user_1')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
     assert len(data['data']) == 1
 
 
 def test_create_reminder_success(client, mock_payment_reminder_service):
     """Test successful reminder creation."""
-    from models.billing import PaymentReminder
+    from schemas.billing import PaymentReminder
     
     mock_reminder = PaymentReminder(
         reminder_id='reminder_1',
@@ -125,13 +125,12 @@ def test_create_reminder_success(client, mock_payment_reminder_service):
     )
     mock_payment_reminder_service.create_reminder.return_value = mock_reminder
     
-    response = client.post('/api/billing/reminder/create',
+    response = client.post('/api/v1/billing/reminder/create',
                           json={
-                              'user_id': 'user_1',
-                              'bill_id': 'bill_1',
-                              'reminder_days_before': 3
-                          })
+                               'bill_id': 'bill_1',
+                               'reminder_days_before': 3
+                           })
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True

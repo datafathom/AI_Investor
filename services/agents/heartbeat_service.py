@@ -1,6 +1,6 @@
 """Agent heartbeat monitoring service."""
 from typing import List, Dict, Optional
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from enum import Enum
 import asyncio
 import logging
@@ -28,7 +28,7 @@ class HeartbeatService:
         except ValueError:
             status = AgentStatus.ALIVE
             
-        self._heartbeats[agent_id] = datetime.utcnow()
+        self._heartbeats[agent_id] = datetime.now(timezone.utc)
         self._statuses[agent_id] = status
         # self.logger.debug(f"Heartbeat: {agent_id} -> {status}")
 
@@ -42,12 +42,12 @@ class HeartbeatService:
         if self._statuses.get(agent_id) in [AgentStatus.DEAD, AgentStatus.STOPPING]:
             return False
             
-        return datetime.utcnow() - last < timedelta(seconds=self.HEARTBEAT_TIMEOUT_SECONDS)
+        return datetime.now(timezone.utc) - last < timedelta(seconds=self.HEARTBEAT_TIMEOUT_SECONDS)
 
     async def get_all_agents(self) -> List[Dict]:
         """Get status of all registered agents."""
         agents = []
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         
         # Snapshot keys to avoid runtime modification issues
         for agent_id, last_beat in list(self._heartbeats.items()):

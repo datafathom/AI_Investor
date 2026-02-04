@@ -4,10 +4,10 @@ Comprehensive test coverage for price forecasting and trend prediction
 """
 
 import pytest
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from unittest.mock import Mock, AsyncMock, patch
 from services.ai_predictions.prediction_engine import PredictionEngine
-from models.ai_predictions import PricePrediction, TrendPrediction
+from schemas.ai_predictions import PricePrediction, TrendPrediction
 
 
 @pytest.fixture
@@ -79,7 +79,7 @@ async def test_predict_price_cached(service):
         'symbol': 'AAPL',
         'predicted_price': 157.5,
         'confidence': 0.75,
-        'prediction_date': datetime.utcnow(),
+        'prediction_date': datetime.now(timezone.utc),
         'time_horizon': '1m',
         'model_version': 'v1.0'
     }

@@ -1,53 +1,46 @@
 """
 Tests for Tax API Endpoints
-Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock
-from flask import Flask
-from web.api.tax_api import tax_api_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.tax_api import router, get_taxbit_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(tax_api_bp)
+def api_app():
+    """Create FastAPI app merchant testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_taxbit_client():
-    """Mock TaxBit client."""
-    with patch('web.api.tax_api.get_taxbit_client') as mock:
-        client = MagicMock()
-        mock.return_value = client
-        yield client
+def mock_client(api_app):
+    """Mock TaxBit Client."""
+    service = AsyncMock()
+    service.get_harvesting_opportunities.return_value = [{"symbol": "BTC", "loss": 500.0}]
+    
+    api_app.dependency_overrides[get_taxbit_provider] = lambda: service
+    return service
 
 
-def test_get_harvesting_opportunities_success(client, mock_taxbit_client):
-    """Test successful tax harvesting opportunities retrieval."""
-    mock_opportunities = {
-        'opportunities': [
-            {'symbol': 'AAPL', 'loss_amount': 1000.0, 'recommendation': 'sell'}
-        ]
-    }
+def test_get_opportunities_success(client, mock_client):
+    """Test getting tax loss harvesting opportunities."""
+    from web.auth_utils import get_current_user
+    client.app.dependency_overrides[get_current_user] = lambda: {"user_id": "test_user"}
     
-    async def mock_get_opportunities(portfolio_id):
-        return mock_opportunities
-    
-    mock_taxbit_client.get_harvesting_opportunities = mock_get_opportunities
-    
-    response = client.get('/tax/harvesting/opportunities?mock=true')
+    response = client.get('/api/v1/tax_api/tax/harvesting/opportunities')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'opportunities' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data'][0]['symbol'] == "BTC"

@@ -1,6 +1,6 @@
 import logging
 from typing import Dict, Optional, List, Any
-from datetime import datetime
+from datetime import timezone, datetime
 
 # Placeholder imports - these would normally import actual services
 # from services.banking.plaid_service import PlaidService
@@ -64,7 +64,7 @@ class IdentityService:
             "email": plaid_data["emails"][0],     # Primary communication channel
             "address": plaid_data["addresses"][0],
             "kyc_status": "verified" if plaid_data.get("confidence", 0) > 0.8 else "pending",
-            "last_updated": datetime.utcnow().isoformat()
+            "last_updated": datetime.now(timezone.utc).isoformat()
         }
 
         # 3. Calculate Trust Score

@@ -24,9 +24,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from typing import Dict, List, Optional
-from models.news import (
+from schemas.news import (
     NewsArticle, NewsSentiment, SentimentScore, MarketImpact, SectorSentiment
 )
 from services.news.news_aggregation_service import get_news_aggregation_service
@@ -115,7 +115,7 @@ class SentimentAnalysisService:
         articles = await self.news_service.get_news_for_symbol(symbol, limit=100)
         
         # Filter by time
-        cutoff_time = datetime.utcnow() - timedelta(hours=hours_back)
+        cutoff_time = datetime.now(timezone.utc) - timedelta(hours=hours_back)
         recent_articles = [a for a in articles if a.published_date >= cutoff_time]
         
         # Analyze sentiment for each article
@@ -165,7 +165,7 @@ class SentimentAnalysisService:
             bearish_count=bearish_count,
             neutral_count=neutral_count,
             confidence=confidence,
-            last_updated=datetime.utcnow()
+            last_updated=datetime.now(timezone.utc)
         )
     
     async def assess_market_impact(
@@ -266,7 +266,7 @@ class SentimentAnalysisService:
                 neutral_count=neutral,
                 confidence=confidence,
                 velocity=velocity,
-                last_updated=datetime.utcnow()
+                last_updated=datetime.now(timezone.utc)
             ))
             
         return results

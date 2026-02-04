@@ -6,7 +6,7 @@ Phase 7: Model Validation Tests
 import pytest
 from datetime import datetime
 from pydantic import ValidationError
-from models.marketplace import (
+from schemas.marketplace import (
     ExtensionStatus,
     Extension,
     ExtensionReview

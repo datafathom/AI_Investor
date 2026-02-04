@@ -1,120 +1,182 @@
 """
 Tests for System API Endpoints
-Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
-from dataclasses import asdict
-from fastapi.testclient import TestClient
+from unittest.mock import MagicMock, AsyncMock
 from fastapi import FastAPI
+from fastapi.testclient import TestClient
 from web.api.system_api import (
-    router, 
-    get_system_health_service, 
-    get_secret_manager,
-    get_totp_service
+    router,
+    get_secret_manager_provider,
+    get_totp_provider,
+    get_system_health_service,
+    get_audit_integrity_provider,
+    get_governor_provider
 )
 
 
 @pytest.fixture
-def app(mock_system_health_service, mock_secret_manager, mock_totp_service):
-    """Create FastAPI app for testing."""
+def api_app():
+    """Create FastAPI app merchant testing."""
     app = FastAPI()
     app.include_router(router)
-    app.dependency_overrides[get_system_health_service] = lambda: mock_system_health_service
-    app.dependency_overrides[get_secret_manager] = lambda: mock_secret_manager
-    app.dependency_overrides[get_totp_service] = lambda: mock_totp_service
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return TestClient(app)
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_secret_manager():
-    """Mock SecretManager."""
-    with patch('web.api.system_api.get_secret_manager') as mock:
-        manager = MagicMock()
-        manager.get_status.return_value = {
-            'status': 'Active',
-            'engine': 'env'
-        }
-        mock.return_value = manager
-        yield manager
-
-
-@pytest.fixture
-def mock_system_health_service():
+def mock_health(api_app):
     """Mock SystemHealthService."""
-    with patch('web.api.system_api.get_system_health_service') as mock:
-        service = AsyncMock()
-        from services.security.system_health_service import ComponentHealth
-        mock_health = {
-            'overall': asdict(ComponentHealth(
-                name='overall',
-                status='healthy',
-                latency_ms=10.0,
-                details={}
-            )),
-            'kafka': asdict(ComponentHealth(
-                name='kafka',
-                status='healthy',
-                latency_ms=5.0,
-                details={'lag': 0}
-            ))
-        }
-        service.get_health_status.return_value = mock_health
-        service.restart_service.return_value = True
-        mock.return_value = service
-        yield service
+    service = AsyncMock()
+    service.get_health_status.return_value = {
+        "kafka": {"details": {"lag": 0}}
+    }
+    service.restart_service.return_value = True
+    
+    api_app.dependency_overrides[get_system_health_service] = lambda: service
+    return service
 
 
 @pytest.fixture
-def mock_totp_service():
-    """Mock TOTPService."""
-    with patch('web.api.system_api.get_totp_service') as mock:
-        service = MagicMock()
-        service.verify_code.return_value = True
-        mock.return_value = service
-        yield service
+def mock_secrets(api_app):
+    """Mock SecretManager."""
+    sm = MagicMock()
+    sm.get_status.return_value = {"status": "Active", "engine": "Env"}
+    
+    api_app.dependency_overrides[get_secret_manager_provider] = lambda: sm
+    return sm
 
 
-def test_get_secrets_status_success(client, mock_secret_manager, mock_totp_service):
-    """Test successful secrets status retrieval."""
-    response = client.post('/api/v1/system/secrets', json={'mfa_code': '123456'})
+@pytest.fixture
+def mock_totp(api_app):
+    """Mock TotpService."""
+    totp = MagicMock()
+    totp.verify_code.return_value = True
+    
+    api_app.dependency_overrides[get_totp_provider] = lambda: totp
+    return totp
+
+
+@pytest.fixture
+def mock_audit(api_app):
+    """Mock AuditIntegrityService."""
+    service = AsyncMock()
+    service.get_audit_stream.return_value = [{"event": "login"}]
+    
+    api_app.dependency_overrides[get_audit_integrity_provider] = lambda: service
+    return service
+
+
+@pytest.fixture
+def mock_governor(api_app):
+    """Mock ApiGovernor."""
+    governor = MagicMock()
+    governor.get_all_stats.return_value = {"user1": 10}
+    
+    api_app.dependency_overrides[get_governor_provider] = lambda: governor
+    return governor
+
+
+def test_get_secrets_status_minimal_success(client, mock_secrets):
+    """Test getting minimal secrets status."""
+    response = client.get('/api/v1/system/secrets')
     
     assert response.status_code == 200
     data = response.json()
-    assert 'status' in data
-    assert 'engine' in data
+    assert data['success'] is True
+    assert data['data']['status'] == "Healthy"
 
 
-def test_get_system_health_success(client, mock_system_health_service):
-    """Test successful system health retrieval."""
+def test_get_secrets_status_full_success(client, mock_secrets, mock_totp):
+    """Test getting full secrets status with MFA."""
+    payload = {"mfa_code": "123456"}
+    response = client.post('/api/v1/system/secrets', json=payload)
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['mfa_verified'] is True
+
+
+def test_get_secrets_status_full_invalid_mfa(client, mock_secrets, mock_totp):
+    """Test full secrets status with invalid MFA."""
+    mock_totp.verify_code.return_value = False
+    payload = {"mfa_code": "wrong"}
+    response = client.post('/api/v1/system/secrets', json=payload)
+    
+    assert response.status_code == 401
+    data = response.json()
+    assert data['success'] is False
+
+
+def test_get_system_health_success(client, mock_health):
+    """Test system health."""
     response = client.get('/api/v1/system/health')
     
     assert response.status_code == 200
     data = response.json()
-    assert 'overall' in data or 'status' in data
+    assert data['success'] is True
 
 
-def test_restart_service_success(client, mock_system_health_service):
-    """Test successful service restart."""
-    response = client.post('/api/v1/system/restart/test_service')
+def test_restart_service_success(client, mock_health):
+    """Test restarting service."""
+    response = client.post('/api/v1/system/restart/kafka')
     
     assert response.status_code == 200
     data = response.json()
-    assert data['status'] == 'success'
-    assert 'message' in data
+    assert data['success'] is True
 
 
-def test_get_kafka_lag_success(client, mock_system_health_service):
-    """Test successful Kafka lag retrieval."""
+def test_get_kafka_lag_success(client, mock_health):
+    """Test getting Kafka lag."""
     response = client.get('/api/v1/system/kafka/lag')
     
     assert response.status_code == 200
     data = response.json()
-    assert 'lag' in data or 'details' in data
+    assert data['success'] is True
+    assert data['data']['lag'] == 0
+
+
+def test_log_frontend_error_success(client):
+    """Test logging frontend error."""
+    payload = {"error": "UI Hang", "stack": "trace", "context": {"browser": "chrome"}}
+    response = client.post('/api/v1/system/error', json=payload)
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+
+
+def test_get_audit_stream_success(client, mock_audit):
+    """Test getting audit stream."""
+    response = client.get('/api/v1/system/audit/stream')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert len(data['data']) == 1
+
+
+def test_get_api_quotas_success(client, mock_governor):
+    """Test getting API quotas."""
+    response = client.get('/api/v1/system/quotas')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+
+
+def test_get_supply_chain_health_success(client):
+    """Test supply chain health."""
+    response = client.get('/api/v1/system/supply-chain')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['status'] == "Healthy"

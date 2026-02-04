@@ -1,64 +1,64 @@
 """
 ==============================================================================
 FILE: web/api/crypto_api.py
-ROLE: API Endpoint Layer (Flask)
+ROLE: API Endpoint Layer (FastAPI)
 PURPOSE: Exposes real-time crypto prices and volume data.
 ==============================================================================
 """
 
-import asyncio
+from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi.responses import JSONResponse
+from typing import List
 import logging
-from flask import Blueprint, jsonify, request
 
-from services.data.crypto_compare_service import get_crypto_client
+from services.data.crypto_compare_service import get_crypto_client as _get_crypto_client
+
+def get_crypto_provider():
+    return _get_crypto_client()
 
 logger = logging.getLogger(__name__)
 
-crypto_api_bp = Blueprint('crypto_api_bp', __name__, url_prefix='/api/v1/crypto')
+router = APIRouter(prefix="/api/v1/market/crypto", tags=["Crypto"])
 
-def _run_async(coro):
-    return asyncio.run(coro)
 
-@crypto_api_bp.route('/api/v1/market/crypto/price', methods=['GET'])
-def get_crypto_price():
+@router.get("/price")
+async def get_crypto_price(
+    symbols: str = Query("BTC,ETH", description="Comma-separated symbols"),
+    currencies: str = Query("USD", description="Comma-separated currencies"),
+    mock: bool = Query(False, description="Use mock mode"),
+    service = Depends(get_crypto_provider)
+):
     """
     Get real-time prices for multiple symbols.
     Query: ?symbols=BTC,ETH&currencies=USD,EUR&mock=false
     """
-    symbols = request.args.get('symbols', 'BTC,ETH').split(',')
-    currencies = request.args.get('currencies', 'USD').split(',')
-    use_mock = request.args.get('mock', 'false').lower() == 'true'
+    symbol_list = symbols.split(',')
+    currency_list = currencies.split(',')
     
-    client = get_crypto_client()
-    if use_mock:
-        client.mock = True
+    if mock:
+        service.mock = True
         
     try:
-        results = _run_async(client.get_price(symbols, currencies))
-        return jsonify(results)
-    except (RuntimeError, ValueError) as e:
-        logger.error("Failed to fetch crypto prices: %s", e)
-        return jsonify({"error": str(e)}), 500
+        results = await service.get_price(symbol_list, currency_list)
+        return {"success": True, "data": results}
     except Exception as e:
-        logger.exception("Unexpected error fetching crypto prices: %s", e)
-        return jsonify({"error": "An unexpected error occurred"}), 500
+        logger.exception("Error fetching crypto prices")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-@crypto_api_bp.route('/api/v1/market/crypto/volume/<symbol>', methods=['GET'])
-def get_crypto_volume(symbol: str):
-    """
-    Get exchange volume data for a symbol.
-    """
-    use_mock = request.args.get('mock', 'false').lower() == 'true'
-    client = get_crypto_client()
-    if use_mock:
-        client.mock = True
+
+@router.get("/volume/{symbol}")
+async def get_crypto_volume(
+    symbol: str,
+    mock: bool = Query(False, description="Use mock mode"),
+    service = Depends(get_crypto_provider)
+):
+    """Get exchange volume data for a symbol."""
+    if mock:
+        service.mock = True
         
     try:
-        results = _run_async(client.get_top_exchanges_volume(symbol))
-        return jsonify([r.model_dump() for r in results])
-    except (RuntimeError, ValueError) as e:
-        logger.error("Failed to fetch volume for %s: %s", symbol, e)
-        return jsonify({"error": str(e)}), 500
+        results = await service.get_top_exchanges_volume(symbol)
+        return {"success": True, "data": [r.model_dump() for r in results]}
     except Exception as e:
-        logger.exception("Unexpected error fetching volume for %s: %s", symbol, e)
-        return jsonify({"error": "An unexpected error occurred"}), 500
+        logger.exception("Error fetching crypto volume for %s", symbol)
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

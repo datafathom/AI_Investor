@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import timezone, datetime
 import logging
 from typing import Dict, Any
 
@@ -36,7 +36,7 @@ class KillSwitchService:
         self.is_frozen = True
         
         # timestamp
-        timestamp = datetime.utcnow().isoformat()
+        timestamp = datetime.now(timezone.utc).isoformat()
         
         # Broadcast High Priority Emergency Message
         message = {

@@ -4,10 +4,10 @@ Comprehensive test coverage for training jobs and model versioning
 """
 
 import pytest
-from datetime import datetime
+from datetime import timezone, datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.ml.training_pipeline import TrainingPipeline
-from models.ml_training import TrainingJob, TrainingStatus, ModelVersion
+from schemas.ml_training import TrainingJob, TrainingStatus, ModelVersion
 
 
 @pytest.fixture
@@ -64,7 +64,7 @@ async def test_get_model_versions(service):
             model_name="price_predictor",
             training_job_id="job_123",
             performance_metrics={'accuracy': 0.85},
-            created_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc)
         )
     ])
     

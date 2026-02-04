@@ -4,10 +4,10 @@ Comprehensive test coverage for bill tracking, payment scheduling, and history
 """
 
 import pytest
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from unittest.mock import Mock, AsyncMock, patch
 from services.billing.bill_payment_service import BillPaymentService
-from models.billing import Bill, BillStatus, RecurrenceType
+from schemas.billing import Bill, BillStatus, RecurrenceType
 
 
 @pytest.fixture
@@ -50,7 +50,7 @@ async def test_schedule_payment(service):
         due_date=datetime(2024, 2, 1),
         status=BillStatus.PENDING,
         recurrence=RecurrenceType.ONE_TIME,
-        created_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc)
     )
     
     service._get_bill = AsyncMock(return_value=bill)
@@ -76,10 +76,10 @@ async def test_get_upcoming_bills(service):
             bill_name="Bill 1",
             merchant="Merchant 1",
             amount=100.0,
-            due_date=datetime.utcnow() + timedelta(days=5),
+            due_date=datetime.now(timezone.utc) + timedelta(days=5),
             status=BillStatus.PENDING,
             recurrence=RecurrenceType.ONE_TIME,
-            created_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc)
         )
     ])
     
@@ -103,5 +103,5 @@ async def test_create_bill_error_handling(service):
             bill_name="Error Bill",
             merchant="Error Merchant",
             amount=100.0,
-            due_date=datetime.utcnow()
+            due_date=datetime.now(timezone.utc)
         )

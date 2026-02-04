@@ -1,5 +1,5 @@
 import unittest
-from models.fx_price import FXPrice
+from schemas.fx_price import FXPrice
 from services.fx_stream_producer import FXStreamProducerService
 from services.fx_stream_consumer import FXStreamConsumerService
 

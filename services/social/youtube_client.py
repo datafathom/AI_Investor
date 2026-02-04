@@ -14,7 +14,7 @@ import logging
 import asyncio
 import random
 from typing import Dict, Any, List, Optional
-from datetime import datetime
+from datetime import timezone, datetime
 from services.system.secret_manager import get_secret_manager
 
 logger = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ class YouTubeClient:
                     "video_id": f"vid_{random.randint(1000, 9999)}",
                     "title": f"Institutional View: {query} for 2026",
                     "channel": random.choice(channels),
-                    "published_at": datetime.utcnow().isoformat(),
+                    "published_at": datetime.now(timezone.utc).isoformat(),
                     "thumbnail": "https://i.ytimg.com/vi/mock/hqdefault.jpg"
                 } for _ in range(limit)
             ]
@@ -57,6 +57,17 @@ class YouTubeClient:
                 "However, risks remain in the credit markets as rates stay higher for longer."
             )
         return ""
+
+    async def get_channel_statistics(self, channel_id: str) -> Dict[str, Any]:
+        """Fetch statistics for a channel."""
+        if self.mock:
+            return {
+                "viewCount": str(random.randint(1000000, 100000000)),
+                "subscriberCount": str(random.randint(10000, 5000000)),
+                "hiddenSubscriberCount": False,
+                "videoCount": str(random.randint(100, 5000))
+            }
+        return {}
 
 _instance = None
 

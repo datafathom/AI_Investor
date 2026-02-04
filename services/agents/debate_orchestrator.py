@@ -1,7 +1,7 @@
 import logging
 from typing import List, Dict, Any, Optional
 import random
-from datetime import datetime
+from datetime import timezone, datetime
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ class DebateOrchestrator:
         self.active_session = {
             "id": f"DBT-{random.randint(1000,9999)}",
             "ticker": ticker,
-            "start_time": datetime.utcnow().isoformat(),
+            "start_time": datetime.now(timezone.utc).isoformat(),
             "transcript": [],
             "consensus": {
                 "score": 5.0,
@@ -65,7 +65,7 @@ class DebateOrchestrator:
             "role": "Human Intervenor",
             "signal": "NEUTRAL",
             "reasoning": argument_text,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
         self.active_session["transcript"].append(user_entry)
         
@@ -101,7 +101,7 @@ class DebateOrchestrator:
             "role": "AI Agent",
             "signal": signal,
             "reasoning": response_text,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
         
         self.active_session["transcript"].append(entry)

@@ -4,10 +4,10 @@ Comprehensive test coverage for sentiment scoring and market impact
 """
 
 import pytest
-from datetime import datetime
+from datetime import timezone, datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.news.sentiment_analysis_service import SentimentAnalysisService
-from models.news import NewsArticle, SentimentScore, MarketImpact
+from schemas.news import NewsArticle, SentimentScore, MarketImpact
 
 
 @pytest.fixture
@@ -26,7 +26,7 @@ def mock_article():
         title="AAPL Stock Rises on Strong Earnings",
         content="Apple Inc. reported strong earnings that beat expectations, driving the stock price up.",
         source="Financial News",
-        published_date=datetime.utcnow(),
+        published_date=datetime.now(timezone.utc),
         symbols=['AAPL'],
         relevance_score=0.9
     )
@@ -38,7 +38,7 @@ async def test_analyze_article_sentiment_positive(service, mock_article):
     result = await service.analyze_article_sentiment(mock_article)
     
     assert result is not None
-    assert hasattr(result, 'sentiment') or 'sentiment' in result.dict()
+    assert hasattr(result, 'sentiment') or 'sentiment' in result.model_dump()
     # Should detect positive sentiment from "rises", "strong", "beat"
 
 
@@ -50,7 +50,7 @@ async def test_analyze_article_sentiment_negative(service):
         title="AAPL Stock Falls on Weak Guidance",
         content="Apple Inc. provided weak guidance, causing the stock to decline.",
         source="Financial News",
-        published_date=datetime.utcnow(),
+        published_date=datetime.now(timezone.utc),
         symbols=['AAPL'],
         relevance_score=0.9
     )
@@ -70,7 +70,7 @@ async def test_aggregate_sentiment_by_symbol(service):
             title="AAPL Positive News",
             content="Strong earnings",
             source="Source",
-            published_date=datetime.utcnow(),
+            published_date=datetime.now(timezone.utc),
             symbols=['AAPL'],
             relevance_score=0.9
         ),
@@ -79,7 +79,7 @@ async def test_aggregate_sentiment_by_symbol(service):
             title="AAPL More Positive News",
             content="Growth continues",
             source="Source",
-            published_date=datetime.utcnow(),
+            published_date=datetime.now(timezone.utc),
             symbols=['AAPL'],
             relevance_score=0.8
         ),
@@ -104,7 +104,7 @@ async def test_assess_market_impact(service):
         positive_count=10,
         negative_count=2,
         neutral_count=3,
-        calculated_date=datetime.utcnow()
+        calculated_date=datetime.now(timezone.utc)
     )
     
     result = await service.assess_market_impact(sentiment_score)

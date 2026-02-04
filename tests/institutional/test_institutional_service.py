@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.institutional.institutional_service import InstitutionalService
-from models.institutional import Client, WhiteLabelConfig, ClientAnalytics
+from schemas.institutional import Client, WhiteLabelConfig, ClientAnalytics
 
 
 @pytest.fixture

@@ -1,65 +1,61 @@
 """
 ==============================================================================
 FILE: web/api/slack_api.py
-ROLE: API Endpoint Layer (Flask)
+ROLE: API Endpoint Layer (FastAPI)
 PURPOSE: Exposes Slack messaging capabilities to the frontend.
 ==============================================================================
 """
 
-from flask import Blueprint, jsonify, request
-import asyncio
+from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 import logging
 
 from services.notifications.slack_service import get_slack_client
 
+
+def get_slack_provider(mock: bool = Query(True)):
+    return get_slack_client(mock=mock)
+
 logger = logging.getLogger(__name__)
 
-slack_api_bp = Blueprint('slack_api_bp', __name__)
+router = APIRouter(prefix="/api/v1/team/slack", tags=["Slack"])
 
-def _run_async(coro):
-    try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            return asyncio.run_coroutine_threadsafe(coro, loop).result()
-    except RuntimeError:
-        pass
-    return asyncio.run(coro)
 
-@slack_api_bp.route('/team/slack/message', methods=['POST'])
-def post_message():
+class SlackMessageRequest(BaseModel):
+    channel: str
+    text: str
+
+
+@router.post("/message")
+async def post_message(
+    request: SlackMessageRequest,
+    client=Depends(get_slack_provider)
+):
     """
     Post a message to a Slack channel.
     Body: { "channel": "#general", "text": "Hello World" }
     """
-    data = request.get_json() or {}
-    channel = data.get('channel')
-    text = data.get('text')
-    use_mock = request.args.get('mock', 'true').lower() == 'true'
-
-    if not channel or not text:
-        return jsonify({"error": "Missing 'channel' or 'text'"}), 400
-
-    client = get_slack_client(mock=use_mock)
+    if not request.channel or not request.text:
+        return JSONResponse(status_code=400, content={"success": False, "detail": "Missing 'channel' or 'text'"})
     
     try:
-        result = _run_async(client.post_message(channel, text))
-        return jsonify(result)
+        data = await client.post_message(request.channel, request.text)
+        return {"success": True, "data": data}
     except Exception as e:
-        logger.error(f"Failed to post Slack message: {e}")
-        return jsonify({"error": str(e)}), 500
+        logger.exception("Failed to post Slack message")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-@slack_api_bp.route('/team/slack/channels', methods=['GET'])
-def get_channels():
+
+@router.get("/channels")
+async def get_channels(client=Depends(get_slack_provider)):
     """
     Get list of Slack channels.
     Query: ?mock=true
     """
-    use_mock = request.args.get('mock', 'true').lower() == 'true'
-    client = get_slack_client(mock=use_mock)
-    
     try:
-        result = _run_async(client.get_channels())
-        return jsonify(result)
+        data = await client.get_channels()
+        return {"success": True, "data": data}
     except Exception as e:
-        logger.error(f"Failed to fetch Slack channels: {e}")
-        return jsonify({"error": str(e)}), 500
+        logger.exception("Failed to fetch Slack channels")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

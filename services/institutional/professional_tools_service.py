@@ -24,9 +24,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional
-from models.institutional import ProfessionalReport
+from schemas.institutional import ProfessionalReport
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -63,12 +63,12 @@ class ProfessionalToolsService:
         logger.info(f"Generating {report_type} report for client {client_id}")
         
         report = ProfessionalReport(
-            report_id=f"pro_report_{advisor_id}_{client_id}_{datetime.utcnow().timestamp()}",
+            report_id=f"pro_report_{advisor_id}_{client_id}_{datetime.now(timezone.utc).timestamp()}",
             advisor_id=advisor_id,
             client_id=client_id,
             report_type=report_type,
             content=content,
-            generated_date=datetime.utcnow()
+            generated_date=datetime.now(timezone.utc)
         )
         
         # Save report
@@ -79,7 +79,7 @@ class ProfessionalToolsService:
     async def _save_report(self, report: ProfessionalReport):
         """Save report to cache."""
         cache_key = f"pro_report:{report.report_id}"
-        self.cache_service.set(cache_key, report.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, report.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

@@ -6,7 +6,7 @@ Phase 7: Model Validation Tests
 import pytest
 from datetime import datetime
 from pydantic import ValidationError
-from models.optimization import (
+from schemas.optimization import (
     OptimizationObjective,
     OptimizationMethod,
     PositionConstraint,

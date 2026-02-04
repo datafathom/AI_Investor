@@ -139,8 +139,8 @@ def _register_handlers(sio: 'SocketIO') -> None:
 
 def _get_timestamp() -> str:
     """Get current ISO timestamp."""
-    from datetime import datetime
-    return datetime.utcnow().isoformat() + 'Z'
+    from datetime import timezone, datetime
+    return datetime.now(timezone.utc).isoformat() + 'Z'
 
 
 class WebSocketBroadcaster:

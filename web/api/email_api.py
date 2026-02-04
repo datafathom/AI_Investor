@@ -1,73 +1,75 @@
 """
 ==============================================================================
 FILE: web/api/email_api.py
-ROLE: API Endpoint Layer (Flask)
+ROLE: API Endpoint Layer (FastAPI)
 PURPOSE: Exposes Email capabilities to the frontend.
 ==============================================================================
 """
 
-from flask import Blueprint, jsonify, request
-import asyncio
+from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from typing import Dict, Any, Optional
 import logging
 
-from services.notifications.sendgrid_service import get_sendgrid_client
+from services.notifications.sendgrid_service import get_sendgrid_client as _get_sendgrid_client
+
+def get_sendgrid_provider(mock: bool = True):
+    return _get_sendgrid_client(mock=mock)
 
 logger = logging.getLogger(__name__)
 
-email_api_bp = Blueprint('email_api_bp', __name__, url_prefix='/api/v1/email')
+router = APIRouter(prefix="/api/v1/email", tags=["Email"])
 
-def _run_async(coro):
-    try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            return asyncio.run_coroutine_threadsafe(coro, loop).result()
-    except RuntimeError:
-        pass
-    return asyncio.run(coro)
 
-@email_api_bp.route('/notifications/email/send', methods=['POST'])
-def send_test_email():
+class SendEmailRequest(BaseModel):
+    to: str
+    subject: str = "Test Email"
+    content: str = "This is a test email."
+
+
+class SubscriptionRequest(BaseModel):
+    email: str
+    preferences: Dict[str, Any] = {}
+
+
+@router.post("/notifications/email/send")
+async def send_test_email(
+    request: SendEmailRequest,
+    mock: bool = Query(True, description="Use mock mode"),
+    client = Depends(get_sendgrid_provider)
+):
     """
     Send a test email.
     Body: { "to": "user@example.com", "subject": "Test", "content": "Hello" }
     """
-    data = request.get_json() or {}
-    to_email = data.get('to')
-    subject = data.get('subject', 'Test Email')
-    content = data.get('content', 'This is a test email.')
-    use_mock = request.args.get('mock', 'true').lower() == 'true'
-
-    if not to_email:
-        return jsonify({"error": "Missing 'to' email address"}), 400
-
-    client = get_sendgrid_client(mock=use_mock)
+    if not request.to:
+        raise HTTPException(status_code=400, detail="Missing 'to' email address")
     
     try:
-        result = _run_async(client.send_email(to_email, subject, content))
-        return jsonify(result)
+        result = await client.send_email(request.to, request.subject, request.content)
+        return {"success": True, "data": result}
     except Exception as e:
-        logger.error(f"Failed to send email: {e}")
-        return jsonify({"error": str(e)}), 500
+        logger.exception("Failed to send email")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-@email_api_bp.route('/notifications/email/subscribe', methods=['POST'])
-def update_subscriptions():
+
+@router.post("/notifications/email/subscribe")
+async def update_subscriptions(
+    request: SubscriptionRequest,
+    mock: bool = Query(True, description="Use mock mode"),
+    client = Depends(get_sendgrid_provider)
+):
     """
     Update email subscriptions.
     Body: { "email": "...", "preferences": { "daily": true, ... } }
     """
-    data = request.get_json() or {}
-    email = data.get('email')
-    preferences = data.get('preferences', {})
-    use_mock = request.args.get('mock', 'true').lower() == 'true'
-
-    if not email:
-        return jsonify({"error": "Missing 'email'"}), 400
-
-    client = get_sendgrid_client(mock=use_mock)
+    if not request.email:
+        raise HTTPException(status_code=400, detail="Missing 'email'")
     
     try:
-        result = _run_async(client.update_subscriptions(email, preferences))
-        return jsonify(result)
+        result = await client.update_subscriptions(request.email, request.preferences)
+        return {"success": True, "data": result}
     except Exception as e:
-        logger.error(f"Failed to update subscriptions: {e}")
-        return jsonify({"error": str(e)}), 500
+        logger.exception("Failed to update subscriptions")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

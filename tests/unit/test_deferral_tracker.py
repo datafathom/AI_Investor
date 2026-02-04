@@ -1,6 +1,6 @@
 import pytest
 from services.tax.deferral_tracker import DeferralTracker
-from models.private_banking_client import TaxDeferralStrategy
+from schemas.private_banking_client import TaxDeferralStrategy
 from uuid import uuid4
 from datetime import date, timedelta
 

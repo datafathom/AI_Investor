@@ -1,17 +1,32 @@
-from flask import Blueprint, jsonify, request
+"""
+==============================================================================
+FILE: web/api/search_api.py
+ROLE: Search Endpoints (FastAPI)
+PURPOSE: Provides search index and query endpoints.
+==============================================================================
+"""
+
+from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi.responses import JSONResponse
 import logging
+
 from services.neo4j.master_graph import MasterGraph
 
-logger = logging.getLogger(__name__)
-search_bp = Blueprint('search_api', __name__, url_prefix='/api/v1/search')
 
-@search_bp.route('/index', methods=['GET'])
-def get_search_index():
+def get_master_graph_provider():
+    return MasterGraph()
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter(prefix="/api/v1/search", tags=["Search"])
+
+
+@router.get("/index")
+async def get_search_index(master_graph=Depends(get_master_graph_provider)):
     """
     Returns a lightweight index of core entities for client-side search.
     """
     try:
-        master_graph = MasterGraph()
         entities = master_graph.get_search_entities()
         
         # Categorize results
@@ -26,26 +41,27 @@ def get_search_index():
                 {"id": "s-tsla", "label": "TSLA", "category": "Symbols", "type": "ticker"},
             ]
         
-        return jsonify({
+        return {
             "success": True,
             "data": {
                 "symbols": symbols,
                 "agents": agents,
                 "clients": clients
             }
-        })
+        }
     except Exception as e:
-        logger.error(f"Search API: Indexing failed: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
+        logger.exception("Search API: Indexing failed")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-@search_bp.route('/query', methods=['GET'])
-def search_query():
+
+@router.get("/query")
+async def search_query(q: str = Query("", description="Search query")):
     """
     Performs a deep database search for a given query.
     """
-    query = request.args.get('q', '').lower()
+    query = q.lower()
     if not query:
-        return jsonify({"success": True, "data": []})
+        return {"success": True, "data": []}
         
     # Simulated deep search results
     results = [
@@ -53,4 +69,4 @@ def search_query():
         {"id": "d-2", "label": f"Risk Exposure related to {query}", "category": "Risk", "type": "analysis"}
     ]
     
-    return jsonify({"success": True, "data": results})
+    return {"success": True, "data": results}

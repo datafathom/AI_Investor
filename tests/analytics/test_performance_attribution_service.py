@@ -6,7 +6,7 @@ import pytest
 from datetime import datetime, timedelta, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.analytics.performance_attribution_service import PerformanceAttributionService
-from models.analytics import AttributionResult, AttributionType, CalculationMetadata
+from schemas.analytics import AttributionResult, AttributionType, CalculationMetadata
 
 
 @pytest.fixture

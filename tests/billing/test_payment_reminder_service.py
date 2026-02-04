@@ -4,10 +4,10 @@ Comprehensive test coverage for payment reminders and alerts
 """
 
 import pytest
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from unittest.mock import Mock, AsyncMock, patch
 from services.billing.payment_reminder_service import PaymentReminderService
-from models.billing import PaymentReminder, Bill
+from schemas.billing import PaymentReminder, Bill
 
 
 @pytest.fixture
@@ -27,10 +27,10 @@ async def test_create_reminder(service):
         bill_name="Test Bill",
         merchant="Test Merchant",
         amount=100.0,
-        due_date=datetime.utcnow() + timedelta(days=7),
+        due_date=datetime.now(timezone.utc) + timedelta(days=7),
         status="pending",
         recurrence="one_time",
-        created_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc)
     )
     
     service.bill_service._get_bill = AsyncMock(return_value=bill)
@@ -53,7 +53,7 @@ async def test_get_upcoming_reminders(service):
         PaymentReminder(
             reminder_id="reminder_1",
             bill_id="bill_1",
-            reminder_date=datetime.utcnow() + timedelta(days=1),
+            reminder_date=datetime.now(timezone.utc) + timedelta(days=1),
             sent=False
         )
     ])

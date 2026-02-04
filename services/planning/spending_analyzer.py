@@ -1,6 +1,6 @@
 import logging
 from typing import List, Dict, Any
-from models.spending import SpendingCategory
+from schemas.spending import SpendingCategory
 
 logger = logging.getLogger(__name__)
 

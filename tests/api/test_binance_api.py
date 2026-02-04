@@ -1,69 +1,62 @@
-"""
-Tests for Binance API Endpoints
-Phase 6: API Endpoint Tests
-"""
 
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
-from flask import Flask
-from web.api.binance_api import binance_bp
-
+from unittest.mock import AsyncMock, patch, MagicMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.binance_api import router, get_binance_service
+from web.auth_utils import get_current_user
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(binance_bp)
+def api_app(mock_binance_service):
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
+    app.dependency_overrides[get_binance_service] = lambda: mock_binance_service
+    app.dependency_overrides[get_current_user] = lambda: {"id": "user_1", "role": "user"}
     return app
 
-
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
-
+    return TestClient(api_app)
 
 @pytest.fixture
-def mock_binance_client():
-    """Mock BinanceClient."""
-    with patch('web.api.binance_api.get_binance_client') as mock:
-        client = AsyncMock()
-        client.get_ticker.return_value = {
-            'symbol': 'BTCUSDT',
-            'price': '50000.00',
-            'priceChangePercent': '2.5'
-        }
-        client.get_order_book.return_value = {
-            'bids': [[50000, 1.0]],
-            'asks': [[50001, 1.0]]
-        }
-        client.place_order.return_value = {'orderId': 12345, 'status': 'NEW'}
-        mock.return_value = client
-        yield client
+def mock_binance_service():
+    """Mock Binance Service."""
+    service = AsyncMock()
+    service.get_ticker.return_value = {
+        'symbol': 'BTCUSDT',
+        'price': '50000.00',
+        'priceChangePercent': '2.5'
+    }
+    service.get_order_book.return_value = {
+        'bids': [[50000, 1.0]],
+        'asks': [[50001, 1.0]]
+    }
+    service.place_order.return_value = {'orderId': 12345, 'status': 'NEW'}
+    return service
 
-
-def test_get_ticker_success(client, mock_binance_client):
+def test_get_ticker_success(client, mock_binance_service):
     """Test successful ticker retrieval."""
-    response = client.get('/binance/ticker/BTCUSDT')
+    response = client.get('/api/v1/binance/ticker/BTCUSDT')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'symbol' in data or 'price' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['symbol'] == 'BTCUSDT'
 
-
-def test_get_order_book_success(client, mock_binance_client):
+def test_get_order_book_success(client, mock_binance_service):
     """Test successful order book retrieval."""
-    response = client.get('/binance/depth/BTCUSDT?limit=5')
+    response = client.get('/api/v1/binance/depth/BTCUSDT?limit=5')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'bids' in data or 'asks' in data
+    data = response.json()
+    assert data['success'] is True
+    assert 'bids' in data['data']
 
-
-def test_place_order_success(client, mock_binance_client):
+def test_place_order_success(client, mock_binance_service):
     """Test successful order placement."""
-    response = client.post('/binance/order',
+    response = client.post('/api/v1/binance/order',
                           json={
                               'symbol': 'BTCUSDT',
                               'side': 'BUY',
@@ -71,5 +64,6 @@ def test_place_order_success(client, mock_binance_client):
                           })
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'orderId' in data or 'status' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['orderId'] == 12345

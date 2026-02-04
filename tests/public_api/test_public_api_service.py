@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.public_api.public_api_service import PublicAPIService
-from models.public_api import APIKey, APITier, APIUsage
+from schemas.public_api import APIKey, APITier, APIUsage
 
 
 @pytest.fixture

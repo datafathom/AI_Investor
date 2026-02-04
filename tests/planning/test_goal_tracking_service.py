@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.planning.goal_tracking_service import GoalTrackingService
-from models.financial_planning import FinancialGoal, GoalStatus, GoalType
+from schemas.financial_planning import FinancialGoal, GoalStatus, GoalType
 
 
 @pytest.fixture

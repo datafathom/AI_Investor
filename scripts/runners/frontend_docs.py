@@ -6,7 +6,7 @@ from typing import List, Dict, Optional
 
 # Constants
 PROJECT_ROOT = Path(__file__).parent.parent.parent
-FRONTEND_SRC = PROJECT_ROOT / "frontend2" / "src"
+FRONTEND_SRC = PROJECT_ROOT / "frontend" / "src"
 APP_JSX = FRONTEND_SRC / "App.jsx"
 OUTPUT_PATH = PROJECT_ROOT / "notes" / "FrontendPages.json"
 

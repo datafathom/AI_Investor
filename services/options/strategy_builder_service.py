@@ -25,9 +25,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from typing import Dict, List, Optional
-from models.options import OptionsStrategy, OptionLeg, OptionType, OptionAction
+from schemas.options import OptionsStrategy, OptionLeg, OptionType, OptionAction
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -95,7 +95,7 @@ class OptionsStrategyBuilderService:
         max_profit, max_loss, breakeven = await self._calculate_risk_reward(option_legs)
         
         strategy = OptionsStrategy(
-            strategy_id=f"strat_{underlying_symbol}_{datetime.utcnow().timestamp()}",
+            strategy_id=f"strat_{underlying_symbol}_{datetime.now(timezone.utc).timestamp()}",
             strategy_name=strategy_name,
             underlying_symbol=underlying_symbol,
             legs=option_legs,
@@ -103,13 +103,13 @@ class OptionsStrategyBuilderService:
             max_profit=max_profit,
             max_loss=max_loss,
             breakeven_points=breakeven,
-            created_date=datetime.utcnow(),
+            created_date=datetime.now(timezone.utc),
             strategy_type=strategy_type
         )
         
         # Cache strategy
         cache_key = f"strategy:{strategy.strategy_id}"
-        self.cache_service.set(cache_key, strategy.dict(), ttl=86400)
+        self.cache_service.set(cache_key, strategy.model_dump(), ttl=86400)
         
         return strategy
     

@@ -1,69 +1,69 @@
 """
 ==============================================================================
 FILE: web/api/paypal_api.py
-ROLE: API Endpoint Layer (Flask)
+ROLE: API Endpoint Layer (FastAPI)
 PURPOSE: Exposes PayPal payment capabilities to the frontend.
 ==============================================================================
 """
 
-import asyncio
+from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 import logging
-from flask import Blueprint, jsonify, request
 
 from services.payments.paypal_service import get_paypal_client
 
+
+def get_paypal_provider(mock: bool = True):
+    return get_paypal_client(mock=mock)
+
 logger = logging.getLogger(__name__)
 
-paypal_bp = Blueprint('paypal_bp', __name__, url_prefix='/api/v1/paypal')
+router = APIRouter(prefix="/api/v1/paypal", tags=["PayPal"])
 
-def _run_async(coro):
-    try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            return asyncio.run_coroutine_threadsafe(coro, loop).result()
-    except RuntimeError:
-        pass
-    return asyncio.run(coro)
 
-@paypal_bp.route('/payment/paypal/create-order', methods=['POST'])
-def create_order():
+class CreateOrderRequest(BaseModel):
+    amount: float = 29.00
+    currency: str = "USD"
+
+
+class CaptureOrderRequest(BaseModel):
+    order_id: str
+
+
+@router.post("/payment/paypal/create-order")
+async def create_order(
+    request: CreateOrderRequest,
+    client=Depends(get_paypal_provider)
+):
     """
     Create a PayPal order.
     Body: { "amount": 29.00, "currency": "USD" }
-    Query: ?mock=true
     """
-    data = request.get_json() or {}
-    amount = data.get('amount', 29.00)
-    currency = data.get('currency', 'USD')
-    use_mock = request.args.get('mock', 'true').lower() == 'true'
-
-    client = get_paypal_client(mock=use_mock)
     
     try:
-        result = _run_async(client.create_order(amount, currency))
-        return jsonify(result)
+        result = await client.create_order(request.amount, request.currency)
+        return {"success": True, "data": result}
     except (ValueError, KeyError, RuntimeError) as e:
         logger.error("Failed to create PayPal order: %s", e)
-        return jsonify({"error": str(e)}), 500
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-@paypal_bp.route('/payment/paypal/capture-order', methods=['POST'])
-def capture_order():
+
+@router.post("/payment/paypal/capture-order")
+async def capture_order(
+    request: CaptureOrderRequest,
+    client=Depends(get_paypal_provider)
+):
     """
     Capture a PayPal order.
     Body: { "order_id": "PAYPAL_..." }
     """
-    data = request.get_json() or {}
-    order_id = data.get('order_id')
-    use_mock = request.args.get('mock', 'true').lower() == 'true'
-
-    if not order_id:
-        return jsonify({"error": "Order ID required"}), 400
-        
-    client = get_paypal_client(mock=use_mock)
+    if not request.order_id:
+        return JSONResponse(status_code=400, content={"success": False, "detail": "Order ID required"})
     
     try:
-        result = _run_async(client.capture_order(order_id))
-        return jsonify(result)
+        result = await client.capture_order(request.order_id)
+        return {"success": True, "data": result}
     except (ValueError, KeyError, RuntimeError) as e:
         logger.error("Failed to capture PayPal order: %s", e)
-        return jsonify({"error": str(e)}), 500
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

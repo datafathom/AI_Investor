@@ -1,5 +1,6 @@
 import os
 import datetime
+from datetime import timezone
 from cryptography import x509
 from cryptography.x509.oid import NameOID
 from cryptography.hazmat.primitives import hashes

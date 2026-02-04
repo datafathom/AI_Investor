@@ -14,47 +14,52 @@ class ConnectRequest(BaseModel):
     base_url: Optional[str] = None
 
 @router.get('/status')
-async def get_brokerage_status():
+async def get_brokerage_status(service = Depends(get_brokerage_service)):
     """Returns the current connection status and account summary."""
     try:
-        service = get_brokerage_service()
-        return service.get_status()
+        data = service.get_status()
+        return {"success": True, "data": data}
     except Exception as e:
         logger.error(f"Error getting brokerage status: {e}")
-        raise HTTPException(status_code=500, detail="Failed to fetch status")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 @router.get('/providers')
-async def get_supported_providers():
+async def get_supported_providers(service = Depends(get_brokerage_service)):
     """Returns the list of supported brokerage/vendor integrations."""
     try:
-        service = get_brokerage_service()
-        return service.get_supported_providers()
+        data = service.get_supported_providers()
+        return {"success": True, "data": data}
     except Exception as e:
         logger.error(f"Error getting providers: {e}")
-        raise HTTPException(status_code=500, detail="Failed to fetch providers")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 @router.get('/positions')
-async def get_brokerage_positions():
+async def get_brokerage_positions(service = Depends(get_brokerage_service)):
     """Fetches all open positions from the connected broker."""
     try:
-        service = get_brokerage_service()
-        return service.get_positions()
+        data = service.get_positions()
+        return {"success": True, "data": data}
     except Exception as e:
         logger.error(f"Error getting brokerage positions: {e}")
-        raise HTTPException(status_code=500, detail="Failed to fetch positions")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 @router.post('/connect')
-async def connect_brokerage(data: ConnectRequest):
+async def connect_brokerage(
+    data: ConnectRequest,
+    service = Depends(get_brokerage_service)
+):
     """Updates/Validates brokerage API credentials."""
     try:
-        service = get_brokerage_service()
         success = service.connect_with_keys(data.api_key, data.secret_key, data.base_url)
         if success:
-            return {"status": "success", "message": "Brokerage connected successfully"}
+            return {"success": True, "data": {"message": "Brokerage connected successfully"}}
         else:
-            raise HTTPException(status_code=401, detail="Invalid credentials or connection failure")
-    except HTTPException:
-        raise
+            from fastapi.responses import JSONResponse
+            return JSONResponse(status_code=401, content={"success": False, "detail": "Invalid credentials or connection failure"})
     except Exception as e:
         logger.error(f"Error connecting to brokerage: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

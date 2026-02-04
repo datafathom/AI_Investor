@@ -4,39 +4,40 @@ Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
-from flask import Flask
-from web.api.ethereum_api import ethereum_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.ethereum_api import router, get_eth_client_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(ethereum_bp)
+def api_app():
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_eth_client():
+def mock_eth_client(api_app):
     """Mock EthereumClient."""
-    with patch('web.api.ethereum_api.get_eth_client') as mock:
-        client = AsyncMock()
-        client.get_eth_balance.return_value = 1.5
-        client.get_token_balances.return_value = [
-            {'token': 'USDC', 'balance': 1000.0, 'decimals': 6}
-        ]
-        client.get_gas_price.return_value = {'fast': 50, 'standard': 30, 'slow': 20}
-        client.validate_address.return_value = True
-        mock.return_value = client
-        yield client
+    client = AsyncMock()
+    client.get_eth_balance.return_value = 1.5
+    client.get_all_token_balances.return_value = [
+        {'token': 'USDC', 'balance': 1000.0, 'decimals': 6}
+    ]
+    client.get_gas_price.return_value = 50.0
+    # validate_address is synchronous, use regular return value
+    client.validate_address = MagicMock(return_value=True)
+    api_app.dependency_overrides[get_eth_client_provider] = lambda: client
+    return client
+
 
 
 def test_get_balance_success(client, mock_eth_client):
@@ -44,9 +45,10 @@ def test_get_balance_success(client, mock_eth_client):
     response = client.get('/api/v1/ethereum/balance/0x1234567890abcdef')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'address' in data
-    assert 'balance' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['address'] == '0x1234567890abcdef'
+    assert data['data']['balance_eth'] == 1.5
 
 
 def test_get_tokens_success(client, mock_eth_client):
@@ -54,8 +56,9 @@ def test_get_tokens_success(client, mock_eth_client):
     response = client.get('/api/v1/ethereum/tokens/0x1234567890abcdef')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert isinstance(data, list) or 'tokens' in data
+    data = response.json()
+    assert data['success'] is True
+    assert 'tokens' in data['data']
 
 
 def test_get_gas_price_success(client, mock_eth_client):
@@ -63,8 +66,9 @@ def test_get_gas_price_success(client, mock_eth_client):
     response = client.get('/api/v1/ethereum/gas-price')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'fast' in data or 'gas_price' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['gas_price_gwei'] == 50.0
 
 
 def test_validate_address_success(client, mock_eth_client):
@@ -73,5 +77,6 @@ def test_validate_address_success(client, mock_eth_client):
                           json={'address': '0x1234567890abcdef'})
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'valid' in data or 'is_valid' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['valid'] is True

@@ -48,7 +48,7 @@ from typing import Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
-from models.optimization import (
+from schemas.optimization import (
     OptimizationResult,
     OptimizationObjective,
     OptimizationMethod,
@@ -164,7 +164,7 @@ class PortfolioOptimizerService:
         )
         
         # Cache result (1 hour)
-        self.cache_service.set(cache_key, result.dict(), ttl=3600)
+        self.cache_service.set(cache_key, result.model_dump(), ttl=3600)
         
         return result
     

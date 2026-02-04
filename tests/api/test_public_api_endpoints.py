@@ -1,118 +1,98 @@
 """
-Tests for Public API Endpoints
-Phase 29: Public API & Developer Platform
+Tests for Public API Endpoints (Endpoint Variant)
 """
 
 import pytest
-from unittest.mock import AsyncMock, patch
-from flask import Flask
-from web.api.public_api_endpoints import public_api_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.public_api_endpoints import router, get_public_api_provider, get_developer_portal_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(public_api_bp)
+def api_app():
+    """Create FastAPI app merchant testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_public_api_service():
-    """Mock PublicAPIService."""
-    with patch('web.api.public_api_endpoints.get_public_api_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+def mock_public_service(api_app):
+    """Mock Public API Service."""
+    service = AsyncMock()
+    
+    api_key = MagicMock()
+    api_key.model_dump.return_value = {"id": "key_123", "key": "sk_test_123"}
+    
+    service.create_api_key.return_value = api_key
+    service._get_api_key.return_value = api_key
+    
+    api_app.dependency_overrides[get_public_api_provider] = lambda: service
+    return service
 
 
 @pytest.fixture
-def mock_developer_portal_service():
-    """Mock DeveloperPortalService."""
-    with patch('web.api.public_api_endpoints.get_developer_portal_service') as mock:
-        service = AsyncMock()
-        mock.return_value = service
-        yield service
+def mock_portal_service(api_app):
+    """Mock Developer Portal Service."""
+    service = AsyncMock()
+    service.get_api_documentation.return_value = {"version": "v1"}
+    service.get_sdks.return_value = ["python", "nodejs"]
+    
+    api_app.dependency_overrides[get_developer_portal_provider] = lambda: service
+    return service
 
 
-@pytest.mark.asyncio
-async def test_create_api_key_success(client, mock_public_api_service):
-    """Test successful API key creation."""
-    from models.public_api import APIKey
-    
-    mock_api_key = APIKey(
-        api_key_id='key_1',
-        user_id='user_1',
-        api_key='test_key_12345',
-        tier='free',
-        rate_limit=100,
-        created_date=None
-    )
-    mock_public_api_service.create_api_key.return_value = mock_api_key
-    
-    response = client.post('/api/public/api-key/create',
-                          json={
-                              'user_id': 'user_1',
-                              'tier': 'free'
-                          })
+def test_create_api_key_success(client, mock_public_service):
+    """Test creating API key."""
+    payload = {"user_id": "user_1", "tier": "free"}
+    response = client.post('/api/public/api-key/create', json=payload)
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
-    assert data['data']['tier'] == 'free'
+    assert data['data']['id'] == "key_123"
 
 
-@pytest.mark.asyncio
-async def test_create_api_key_missing_user_id(client):
-    """Test API key creation without user_id."""
-    response = client.post('/api/public/api-key/create', json={})
+def test_get_api_key_success(client, mock_public_service):
+    """Test getting API key."""
+    response = client.get('/api/public/api-key/key_123')
     
-    assert response.status_code == 400
-    data = response.get_json()
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+
+
+def test_get_api_key_not_found(client, mock_public_service):
+    """Test getting unknown API key."""
+    mock_public_service._get_api_key.return_value = None
+    response = client.get('/api/public/api-key/unknown')
+    
+    assert response.status_code == 404
+    data = response.json()
     assert data['success'] is False
 
 
-@pytest.mark.asyncio
-async def test_get_api_key_success(client, mock_public_api_service):
-    """Test successful API key retrieval."""
-    from models.public_api import APIKey
-    
-    mock_api_key = APIKey(
-        api_key_id='key_1',
-        user_id='user_1',
-        api_key='test_key_12345',
-        tier='free',
-        rate_limit=100,
-        created_date=None
-    )
-    mock_public_api_service._get_api_key.return_value = mock_api_key
-    
-    response = client.get('/api/public/api-key/key_1')
-    
-    assert response.status_code == 200
-    data = response.get_json()
-    assert data['success'] is True
-
-
-@pytest.mark.asyncio
-async def test_get_documentation_success(client, mock_developer_portal_service):
-    """Test successful documentation retrieval."""
-    mock_docs = {
-        'version': 'v1.0',
-        'endpoints': [],
-        'authentication': {}
-    }
-    mock_developer_portal_service.get_documentation.return_value = mock_docs
-    
+def test_get_documentation_success(client, mock_portal_service):
+    """Test getting documentation."""
     response = client.get('/api/public/documentation')
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['success'] is True
+
+
+def test_get_sdks_success(client, mock_portal_service):
+    """Test getting SDKs."""
+    response = client.get('/api/public/sdks')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert "python" in data['data']

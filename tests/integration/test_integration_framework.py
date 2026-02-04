@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.integration.integration_framework import IntegrationFramework
-from models.integration import Integration, IntegrationStatus
+from schemas.integration import Integration, IntegrationStatus
 
 
 @pytest.fixture

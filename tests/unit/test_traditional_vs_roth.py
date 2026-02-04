@@ -1,6 +1,6 @@
 import pytest
 from services.tax.traditional_vs_roth import TraditionalVsRothAnalyzer
-from models.ira_optimization import IRAOptimizationProfile
+from schemas.ira_optimization import IRAOptimizationProfile
 from uuid import uuid4
 
 def test_roth_better_at_low_age():

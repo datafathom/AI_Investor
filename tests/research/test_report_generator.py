@@ -4,10 +4,10 @@ Comprehensive test coverage for PDF, HTML, and Excel report generation
 """
 
 import pytest
-from datetime import datetime
+from datetime import timezone, datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.research.report_generator import ReportGenerator
-from models.research import ResearchReport, ReportType, ReportStatus
+from schemas.research import ResearchReport, ReportType, ReportStatus
 
 
 @pytest.fixture
@@ -28,8 +28,8 @@ def mock_report():
         title="Test Report",
         content="Report content here...",
         status=ReportStatus.COMPLETED,
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
 
 

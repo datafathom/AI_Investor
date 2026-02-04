@@ -25,10 +25,10 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from typing import Dict, List, Optional
 import numpy as np
-from models.financial_planning import (
+from schemas.financial_planning import (
     FinancialGoal, GoalProjection, AssetAllocationRecommendation,
     FinancialPlan, GoalType, GoalStatus
 )
@@ -72,10 +72,10 @@ class FinancialPlanningService:
         financial_goals = []
         for goal_data in goals:
             goal = FinancialGoal(
-                goal_id=f"goal_{user_id}_{datetime.utcnow().timestamp()}",
+                goal_id=f"goal_{user_id}_{datetime.now(timezone.utc).timestamp()}",
                 user_id=user_id,
-                created_date=datetime.utcnow(),
-                updated_date=datetime.utcnow(),
+                created_date=datetime.now(timezone.utc),
+                updated_date=datetime.now(timezone.utc),
                 **goal_data
             )
             financial_goals.append(goal)
@@ -91,22 +91,36 @@ class FinancialPlanningService:
             recommended_allocations[goal.goal_id] = allocation
         
         plan = FinancialPlan(
-            plan_id=f"plan_{user_id}_{datetime.utcnow().timestamp()}",
+            plan_id=f"plan_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             goals=financial_goals,
             total_target_amount=total_target,
             total_current_amount=total_current,
             monthly_contribution_capacity=monthly_contribution_capacity,
             recommended_allocations=recommended_allocations,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Cache plan
         cache_key = f"financial_plan:{user_id}"
-        self.cache_service.set(cache_key, plan.dict(), ttl=86400)
+        self.cache_service.set(cache_key, plan.model_dump(), ttl=86400)
         
         return plan
+    
+    async def get_financial_plan(self, user_id: str) -> Optional[FinancialPlan]:
+        """
+        Get financial plan for user.
+        """
+        try:
+            cache_key = f"financial_plan:{user_id}"
+            plan_data = self.cache_service.get(cache_key)
+            if plan_data:
+                return FinancialPlan(**plan_data)
+            return None
+        except Exception as e:
+            logger.error(f"Error getting financial plan: {e}")
+            return None
     
     async def project_goal_timeline(
         self,
@@ -139,7 +153,7 @@ class FinancialPlanningService:
             )
         
         # Project future value
-        months_to_target = (goal.target_date - datetime.utcnow()).days / 30.0
+        months_to_target = (goal.target_date - datetime.now(timezone.utc)).days / 30.0
         monthly_return = expected_return / 12.0
         
         # Future value of current amount
@@ -166,7 +180,7 @@ class FinancialPlanningService:
             required_months = await self._calculate_months_to_completion(
                 goal, monthly_contribution, expected_return
             )
-            projected_date = datetime.utcnow() + timedelta(days=required_months * 30)
+            projected_date = datetime.now(timezone.utc) + timedelta(days=required_months * 30)
             months_to_completion = required_months
             on_track = False
         
@@ -221,7 +235,7 @@ class FinancialPlanningService:
                 goals,
                 key=lambda g: (
                     g.priority,
-                    (g.target_date - datetime.utcnow()).days
+                    (g.target_date - datetime.now(timezone.utc)).days
                 ),
                 reverse=True
             )
@@ -249,7 +263,7 @@ class FinancialPlanningService:
     ) -> AssetAllocationRecommendation:
         """Recommend asset allocation based on goal characteristics."""
         # Determine risk level based on goal type and timeline
-        months_to_goal = (goal.target_date - datetime.utcnow()).days / 30.0
+        months_to_goal = (goal.target_date - datetime.now(timezone.utc)).days / 30.0
         years_to_goal = months_to_goal / 12.0
         
         if years_to_goal < 2:
@@ -285,7 +299,7 @@ class FinancialPlanningService:
         expected_return: float
     ) -> float:
         """Calculate required monthly contribution to reach goal."""
-        months_to_goal = (goal.target_date - datetime.utcnow()).days / 30.0
+        months_to_goal = (goal.target_date - datetime.now(timezone.utc)).days / 30.0
         monthly_return = expected_return / 12.0
         
         remaining = goal.target_amount - goal.current_amount

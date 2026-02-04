@@ -1,5 +1,5 @@
 import pytest
-from models.emergency_fund import EmergencyFund
+from schemas.emergency_fund import EmergencyFund
 from uuid import uuid4
 
 def test_emergency_fund_model():

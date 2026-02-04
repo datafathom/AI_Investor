@@ -28,7 +28,7 @@ import logging
 import secrets
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
-from models.public_api import APIKey, APITier, APIUsage
+from schemas.public_api import APIKey, APITier, APIUsage
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -172,12 +172,12 @@ class PublicAPIService:
     async def _save_api_key(self, api_key: APIKey):
         """Save API key to cache."""
         cache_key = f"api_key:{api_key.api_key_id}"
-        self.cache_service.set(cache_key, api_key.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, api_key.model_dump(), ttl=86400 * 365)
     
     async def _save_usage(self, usage: APIUsage):
         """Save usage to cache."""
         cache_key = f"api_usage:{usage.usage_id}"
-        self.cache_service.set(cache_key, usage.dict(), ttl=86400 * 7)  # 7 days
+        self.cache_service.set(cache_key, usage.model_dump(), ttl=86400 * 7)  # 7 days
 
 
 # Singleton instance

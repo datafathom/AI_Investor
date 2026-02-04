@@ -26,7 +26,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
-from models.compliance import ComplianceReport
+from schemas.compliance import ComplianceReport
 from services.compliance.compliance_engine import get_compliance_engine
 from services.system.cache_service import get_cache_service
 
@@ -99,7 +99,7 @@ class ReportingService:
     async def _save_report(self, report: ComplianceReport):
         """Save report to cache."""
         cache_key = f"compliance_report:{report.report_id}"
-        self.cache_service.set(cache_key, report.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, report.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

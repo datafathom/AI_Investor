@@ -24,7 +24,7 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional
 from services.system.cache_service import get_cache_service
 
@@ -60,11 +60,11 @@ class ContentManagementService:
         logger.info(f"Creating {content_type} content: {title}")
         
         content = {
-            "content_id": f"content_{content_type}_{datetime.utcnow().timestamp()}",
+            "content_id": f"content_{content_type}_{datetime.now(timezone.utc).timestamp()}",
             "content_type": content_type,
             "title": title,
             "data": content_data,
-            "created_date": datetime.utcnow().isoformat()
+            "created_date": datetime.now(timezone.utc).isoformat()
         }
         
         # Save content

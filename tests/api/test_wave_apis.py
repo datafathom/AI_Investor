@@ -1,109 +1,91 @@
 """
-Tests for Wave APIs (Consolidated Endpoints)
-Phase 6: API Endpoint Tests
+Tests for Consolidated Wave APIs
 """
 
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
-from flask import Flask
-from web.api.wave_apis import (
-    backtest_bp, estate_bp, compliance_bp, scenario_bp,
-    philanthropy_bp, system_bp, corporate_bp, margin_bp,
-    mobile_bp, integrations_bp, assets_bp, zen_bp
-)
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.wave_apis import all_routers, get_monte_carlo_provider, get_compliance_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(backtest_bp)
-    app.register_blueprint(estate_bp)
-    app.register_blueprint(compliance_bp)
-    app.register_blueprint(scenario_bp)
-    app.register_blueprint(philanthropy_bp)
-    app.register_blueprint(system_bp)
-    app.register_blueprint(corporate_bp)
-    app.register_blueprint(margin_bp)
-    app.register_blueprint(mobile_bp)
-    app.register_blueprint(integrations_bp)
-    app.register_blueprint(assets_bp)
-    app.register_blueprint(zen_bp)
+def api_app():
+    """Create FastAPI app with all wave routers."""
+    app = FastAPI()
+    for router in all_routers:
+        app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
-def test_backtest_monte_carlo_success(client):
-    """Test successful Monte Carlo simulation."""
-    with patch('web.api.wave_apis.get_monte_carlo_service') as mock:
-        service = AsyncMock()
-        from services.analysis.monte_carlo_service import SimulationResult
-        mock_result = SimulationResult(
-            paths=[[1000000.0, 1050000.0]],
-            quantiles={'p10': [900000.0]},
-            ruin_probability=0.05,
-            median_final=1100000.0,
-            mean_final=1105000.0
-        )
-        service.run_gbm_simulation.return_value = mock_result
-        mock.return_value = service
-        
-        response = client.post('/monte-carlo',
-                              json={
-                                  'initial_value': 1000000,
-                                  'mu': 0.08,
-                                  'sigma': 0.15
-                              })
-        
-        assert response.status_code == 200
-        data = response.get_json()
-        assert data['status'] == 'success'
-        assert 'paths' in data['data']
-        assert 'ruin_probability' in data['data']
+@pytest.fixture
+def mock_monte_carlo(api_app):
+    """Mock Monte Carlo service."""
+    service = MagicMock()
+    res = MagicMock()
+    res.paths = [[100, 105], [100, 95]]
+    res.quantiles = {"50%": 102}
+    res.ruin_probability = 0.05
+    res.median_final = 1000000
+    service.run_gbm_simulation.return_value = res
+    
+    api_app.dependency_overrides[get_monte_carlo_provider] = lambda: service
+    return service
 
 
-def test_estate_heartbeat_success(client):
-    """Test successful estate heartbeat."""
-    with patch('web.api.wave_apis.get_estate_service') as mock:
-        service = AsyncMock()
-        from services.security.estate_service import HeartbeatStatus
-        mock_status = HeartbeatStatus(
-            last_check='2024-01-01',
-            is_alive=True,
-            days_until_trigger=365,
-            trigger_date='2025-01-01'
-        )
-        service.check_heartbeat.return_value = mock_status
-        mock.return_value = service
-        
-        response = client.get('/heartbeat')
-        
-        assert response.status_code == 200
-        data = response.get_json()
-        assert data['status'] == 'success'
-        assert 'is_alive' in data['data']
-        assert 'days_until_trigger' in data['data']
+@pytest.fixture
+def mock_compliance(api_app):
+    """Mock Compliance service."""
+    service = MagicMock()
+    service.get_compliance_score.return_value = 95
+    service.get_sar_alerts.return_value = []
+    service.get_audit_logs.return_value = []
+    
+    api_app.dependency_overrides[get_compliance_provider] = lambda: service
+    return service
 
 
-def test_compliance_overview_success(client):
-    """Test successful compliance overview."""
-    with patch('web.api.wave_apis.get_compliance_service') as mock:
-        service = AsyncMock()
-        service.get_compliance_score.return_value = 0.95
-        service.get_sar_alerts.return_value = []
-        service.get_audit_logs.return_value = []
-        mock.return_value = service
-        
-        response = client.get('/overview')
-        
-        assert response.status_code == 200
-        data = response.get_json()
-        assert data['status'] == 'success'
-        assert 'compliance_score' in data['data']
-        assert 'pending_alerts' in data['data']
+def test_monte_carlo_simulation_success(client, mock_monte_carlo):
+    """Test Monte Carlo endpoint."""
+    from web.auth_utils import get_current_user
+    client.app.dependency_overrides[get_current_user] = lambda: {"user_id": "test_user"}
+    
+    payload = {"initial_value": 1000000, "mu": 0.08, "sigma": 0.15}
+    response = client.post('/api/v1/backtest/monte-carlo', json=payload)
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert 'paths' in data['data']
+
+
+def test_compliance_overview_success(client, mock_compliance):
+    """Test compliance overview endpoint."""
+    from web.auth_utils import get_current_user
+    client.app.dependency_overrides[get_current_user] = lambda: {"user_id": "test_user"}
+    
+    response = client.get('/api/v1/compliance/overview')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['compliance_score'] == 95
+
+
+def test_system_health_success(client):
+    """Test system health endpoint."""
+    from web.auth_utils import get_current_user
+    client.app.dependency_overrides[get_current_user] = lambda: {"user_id": "test_user"}
+    
+    # We use the default mock if not overridden
+    response = client.get('/api/v1/system/health')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True

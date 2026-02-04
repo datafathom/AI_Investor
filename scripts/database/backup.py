@@ -9,7 +9,7 @@ import sys
 import subprocess
 import logging
 from pathlib import Path
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Optional, Dict, List
 import json
 import gzip
@@ -42,7 +42,7 @@ class DatabaseBackup:
         Returns:
             Path to backup file or None if failed
         """
-        timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         backup_file = self.backup_dir / f"postgres_{db_name}_{timestamp}.sql"
         compressed_file = self.backup_dir / f"postgres_{db_name}_{timestamp}.sql.gz"
         
@@ -104,7 +104,7 @@ class DatabaseBackup:
         Returns:
             Path to backup file or None if failed
         """
-        timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         backup_file = self.backup_dir / f"neo4j_{timestamp}.dump"
         compressed_file = self.backup_dir / f"neo4j_{timestamp}.dump.gz"
         
@@ -165,7 +165,7 @@ class DatabaseBackup:
     
     def _backup_neo4j_cypher(self, uri: str, user: str, password: Optional[str]) -> Optional[str]:
         """Backup Neo4j using Cypher export (for Community Edition)."""
-        timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         backup_file = self.backup_dir / f"neo4j_cypher_{timestamp}.cypher"
         compressed_file = self.backup_dir / f"neo4j_cypher_{timestamp}.cypher.gz"
         
@@ -269,7 +269,7 @@ class DatabaseBackup:
     
     def cleanup_old_backups(self, retention_days: int = BACKUP_RETENTION_DAYS):
         """Remove backups older than retention period."""
-        cutoff_date = datetime.utcnow().timestamp() - (retention_days * 24 * 60 * 60)
+        cutoff_date = datetime.now(timezone.utc).timestamp() - (retention_days * 24 * 60 * 60)
         
         removed_count = 0
         for backup_file in self.backup_dir.glob("*.gz"):

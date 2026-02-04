@@ -4,10 +4,10 @@ Comprehensive test coverage for watchlist management and symbol tracking
 """
 
 import pytest
-from datetime import datetime
+from datetime import timezone, datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.watchlist.watchlist_service import WatchlistService
-from models.watchlist import Watchlist
+from schemas.watchlist import Watchlist
 
 
 @pytest.fixture
@@ -57,8 +57,8 @@ async def test_add_symbol(service):
         user_id="user_123",
         watchlist_name="Test Watchlist",
         symbols=['AAPL'],
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_watchlist = AsyncMock(return_value=watchlist)
@@ -82,8 +82,8 @@ async def test_remove_symbol(service):
         user_id="user_123",
         watchlist_name="Test Watchlist",
         symbols=['AAPL', 'MSFT'],
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_watchlist = AsyncMock(return_value=watchlist)
@@ -108,16 +108,16 @@ async def test_get_watchlists(service):
             user_id="user_123",
             watchlist_name="Watchlist 1",
             symbols=['AAPL'],
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         ),
         Watchlist(
             watchlist_id="watchlist_2",
             user_id="user_123",
             watchlist_name="Watchlist 2",
             symbols=['MSFT'],
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         ),
     ])
     
@@ -135,8 +135,8 @@ async def test_add_symbol_duplicate(service):
         user_id="user_123",
         watchlist_name="Test Watchlist",
         symbols=['AAPL'],
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_watchlist = AsyncMock(return_value=watchlist)

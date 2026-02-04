@@ -26,7 +26,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime, timezone, timedelta
 from typing import Dict, List, Optional
-from models.budgeting import Budget, BudgetAnalysis, ExpenseCategory
+from schemas.budgeting import Budget, BudgetAnalysis, ExpenseCategory
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -77,7 +77,7 @@ class BudgetingService:
         
         # Cache budget
         cache_key = f"budget:{user_id}:{budget.budget_id}"
-        self.cache_service.set(cache_key, budget.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, budget.model_dump(), ttl=86400 * 365)
         
         return budget
     

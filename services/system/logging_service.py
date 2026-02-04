@@ -1,7 +1,7 @@
 
 import logging
 import json
-from datetime import datetime
+from datetime import timezone, datetime
 from services.system.tracing_service import trace # Ensure trace is imported if used, strictly speaking trace is used in line 25
 try:
     from pythonjsonlogger import jsonlogger
@@ -20,7 +20,7 @@ class TraceCorrelationFormatter(BaseFormatter):
         
         # Add timestamp if not present
         if not log_record.get('timestamp'):
-            now = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+            now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
             log_record['timestamp'] = now
 
         # Add trace context

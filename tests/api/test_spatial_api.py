@@ -1,46 +1,43 @@
 """
 Tests for Spatial API Endpoints
-Phase 6: API Endpoint Tests
 """
 
 import pytest
-from flask import Flask
-from web.api.spatial_api import spatial_bp
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.spatial_api import router
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(spatial_bp)
+def api_app():
+    """Create FastAPI app merchant testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 def test_get_spatial_portfolio_success(client):
-    """Test successful spatial portfolio retrieval."""
+    """Test getting spatial portfolio."""
     response = client.get('/api/v1/spatial/portfolio')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'nodes' in data
-    assert 'links' in data
-    assert isinstance(data['nodes'], list)
-    assert isinstance(data['links'], list)
+    data = response.json()
+    assert data['success'] is True
+    assert len(data['data']['nodes']) == 8
+    assert len(data['data']['links']) == 7
 
 
 def test_get_xr_status_success(client):
-    """Test successful XR status retrieval."""
+    """Test getting XR status."""
     response = client.get('/api/v1/spatial/status')
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert 'status' in data
-    assert 'mode' in data
-    assert 'engine' in data
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['status'] == "ready"

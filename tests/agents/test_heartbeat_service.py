@@ -1,7 +1,7 @@
 
 import pytest
 import asyncio
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from services.agents.heartbeat_service import HeartbeatService, AgentStatus
 
 @pytest.fixture
@@ -21,7 +21,7 @@ async def test_record_heartbeat(heartbeat_service):
 @pytest.mark.asyncio
 async def test_heartbeat_timeout(heartbeat_service):
     # Manually set a stale heartbeat
-    heartbeat_service._heartbeats["agent-1"] = datetime.utcnow() - timedelta(seconds=10)
+    heartbeat_service._heartbeats["agent-1"] = datetime.now(timezone.utc) - timedelta(seconds=10)
     heartbeat_service._statuses["agent-1"] = AgentStatus.ALIVE
     
     # Should be dead now

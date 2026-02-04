@@ -27,7 +27,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
-from models.billing import Bill, PaymentReminder, BillStatus
+from schemas.billing import Bill, PaymentReminder, BillStatus
 from services.billing.bill_payment_service import get_bill_payment_service
 from services.system.cache_service import get_cache_service
 

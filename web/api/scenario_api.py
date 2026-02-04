@@ -4,6 +4,7 @@ Phase 60: Endpoints for simulating portfolio impact under extreme macro conditio
 """
 
 from fastapi import APIRouter, HTTPException, Depends
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List, Dict, Optional
 import logging
@@ -30,7 +31,7 @@ class SimulationResponse(BaseModel):
     hedge_sufficiency: float
     recovery: Dict
 
-@router.post("/simulate", response_model=SimulationResponse)
+@router.post("/simulate")
 async def simulate_scenario(
     request: SimulateRequest,
     portfolio_id: str = "default",
@@ -49,23 +50,26 @@ async def simulate_scenario(
         
         recovery = await service.project_recovery_timeline(result)
         
-        return SimulationResponse(
-            impact={
-                "portfolio_impact_pct": result.portfolio_impact,
-                "new_value": result.new_portfolio_value,
-                "net_impact_usd": result.net_impact,
-                "hedge_offset": result.hedge_offset
-            },
-            hedge_sufficiency=sufficiency,
-            recovery={
-                "days": recovery.recovery_days,
-                "path": recovery.recovery_path,
-                "worst_case": recovery.worst_case_days
+        return {
+            "success": True,
+            "data": {
+                "impact": {
+                    "portfolio_impact_pct": result.portfolio_impact,
+                    "new_value": result.new_portfolio_value,
+                    "net_impact_usd": result.net_impact,
+                    "hedge_offset": result.hedge_offset
+                },
+                "hedge_sufficiency": sufficiency,
+                "recovery": {
+                    "days": recovery.recovery_days,
+                    "path": recovery.recovery_path,
+                    "worst_case": recovery.worst_case_days
+                }
             }
-        )
+        }
     except Exception as e:
         logger.exception("Error in scenario simulation")
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 @router.get("/monte-carlo-refined")
 async def run_refined_mc(
@@ -73,9 +77,14 @@ async def run_refined_mc(
     initial_value: float,
     service: ScenarioService = Depends(get_scenario_service)
 ):
-    # Dummy shock for context
-    shock = MacroShock(id=scenario_id, name=scenario_id, equity_drop=0, bond_drop=0, gold_change=0)
-    return await service.run_refined_monte_carlo(initial_value, shock)
+    try:
+        # Dummy shock for context
+        shock = MacroShock(id=scenario_id, name=scenario_id, equity_drop=0, bond_drop=0, gold_change=0)
+        data = await service.run_refined_monte_carlo(initial_value, shock)
+        return {"success": True, "data": data}
+    except Exception as e:
+        logger.exception("Error in refined MC")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 @router.get("/bank-run")
 async def simulate_bank_run(
@@ -83,4 +92,9 @@ async def simulate_bank_run(
     portfolio_id: str = "default",
     service: ScenarioService = Depends(get_scenario_service)
 ):
-    return await service.calculate_liquidity_drain(stress_level)
+    try:
+        data = await service.calculate_liquidity_drain(stress_level)
+        return {"success": True, "data": data}
+    except Exception as e:
+        logger.exception("Error in bank run simulation")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

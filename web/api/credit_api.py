@@ -1,189 +1,147 @@
 """
 ==============================================================================
 FILE: web/api/credit_api.py
-ROLE: Credit Monitoring API Endpoints
+ROLE: Credit Monitoring API Endpoints (FastAPI)
 PURPOSE: REST endpoints for credit score monitoring and improvement.
-
-INTEGRATION POINTS:
-    - CreditMonitoringService: Credit score tracking
-    - CreditImprovementService: Improvement recommendations
-    - FrontendCredit: Credit dashboard widgets
-
-ENDPOINTS:
-    - POST /api/credit/score/track
-    - GET /api/credit/score/history/:user_id
-    - GET /api/credit/factors/:user_id
-    - GET /api/credit/recommendations/:user_id
-    - POST /api/credit/simulate/:user_id
-
-AUTHOR: AI Investor Team
-CREATED: 2026-01-21
-LAST_MODIFIED: 2026-01-21
 ==============================================================================
 """
 
-from flask import Blueprint, jsonify, request
+from fastapi import APIRouter, HTTPException, Query, Path, Body, Depends
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 import logging
-from services.credit.credit_monitoring_service import get_credit_monitoring_service
-from services.credit.credit_improvement_service import get_credit_improvement_service
+from typing import Optional, List, Dict, Any
+
+from services.credit.credit_monitoring_service import get_credit_monitoring_service as _get_credit_monitoring_service
+from services.credit.credit_improvement_service import get_credit_improvement_service as _get_credit_improvement_service
+
+def get_credit_monitoring_provider():
+    return _get_credit_monitoring_service()
+
+def get_credit_improvement_provider():
+    return _get_credit_improvement_service()
 
 logger = logging.getLogger(__name__)
 
-credit_bp = Blueprint('credit', __name__, url_prefix='/api/v1/credit')
+router = APIRouter(prefix="/api/v1/credit", tags=["Credit"])
 
 
-@credit_bp.route('/score/track', methods=['POST'])
-async def track_credit_score():
-    """
-    Track credit score update.
-    
-    Request body:
-        user_id: User identifier
-        score: Credit score (300-850)
-        score_type: Score type (default: fico)
-        factors: Optional factor impact scores
-    """
+class TrackCreditScoreRequest(BaseModel):
+    user_id: str
+    score: int
+    score_type: str = "fico"
+    factors: Optional[Dict[str, float]] = None
+
+
+class SimulateImprovementRequest(BaseModel):
+    recommendations: List[str] = []
+
+
+@router.post("/score/track")
+async def track_credit_score(
+    request: TrackCreditScoreRequest,
+    service = Depends(get_credit_monitoring_provider)
+):
+    """Track credit score update."""
     try:
-        data = request.get_json() or {}
-        user_id = data.get('user_id')
-        score = int(data.get('score', 0))
-        score_type = data.get('score_type', 'fico')
-        factors = data.get('factors')
+        if not request.user_id or not request.score:
+            raise HTTPException(status_code=400, detail="user_id and score are required")
         
-        if not user_id or not score:
-            return jsonify({
-                'success': False,
-                'error': 'user_id and score are required'
-            }), 400
-        
-        service = get_credit_monitoring_service()
         credit_score = await service.track_credit_score(
-            user_id=user_id,
-            score=score,
-            score_type=score_type,
-            factors=factors
+            user_id=request.user_id,
+            score=request.score,
+            score_type=request.score_type,
+            factors=request.factors
         )
         
-        return jsonify({
+        return {
             'success': True,
             'data': credit_score.model_dump()
-        })
-        
+        }
     except Exception as e:
-        logger.error(f"Error tracking credit score: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        logger.exception("Error tracking credit score")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@credit_bp.route('/score/history/<user_id>', methods=['GET'])
-async def get_credit_history(user_id: str):
-    """
-    Get credit score history.
-    
-    Query params:
-        months: Number of months of history (default: 12)
-    """
+@router.get("/score/history/{user_id}")
+async def get_credit_history(
+    user_id: str = Path(...),
+    months: int = Query(12, ge=1, le=120),
+    service = Depends(get_credit_monitoring_provider)
+):
+    """Get credit score history."""
     try:
-        months = int(request.args.get('months', 12))
-        
-        service = get_credit_monitoring_service()
         history = await service.get_credit_history(user_id, months)
         
-        return jsonify({
+        return {
             'success': True,
             'data': [h.model_dump() for h in history]
-        })
-        
+        }
     except Exception as e:
-        logger.error(f"Error getting credit history: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        logger.exception("Error getting credit history")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@credit_bp.route('/factors/<user_id>', methods=['GET'])
-async def get_credit_factors(user_id: str):
-    """
-    Analyze credit score factors.
-    """
+@router.get("/factors/{user_id}")
+async def get_credit_factors(
+    user_id: str = Path(...),
+    service = Depends(get_credit_monitoring_provider)
+):
+    """Analyze credit score factors."""
     try:
-        service = get_credit_monitoring_service()
         factors = await service.analyze_credit_factors(user_id)
         
-        return jsonify({
+        return {
             'success': True,
             'data': factors
-        })
-        
+        }
     except Exception as e:
-        logger.error(f"Error analyzing credit factors: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        logger.exception("Error analyzing credit factors")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@credit_bp.route('/recommendations/<user_id>', methods=['GET'])
-async def get_recommendations(user_id: str):
-    """
-    Get credit improvement recommendations.
-    """
+@router.get("/recommendations/{user_id}")
+async def get_recommendations(
+    user_id: str = Path(...),
+    service = Depends(get_credit_improvement_provider)
+):
+    """Get credit improvement recommendations."""
     try:
-        service = get_credit_improvement_service()
         recommendations = await service.generate_recommendations(user_id)
         
-        return jsonify({
+        return {
             'success': True,
             'data': [r.model_dump() for r in recommendations]
-        })
-        
+        }
     except Exception as e:
-        logger.error(f"Error getting recommendations: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        logger.exception("Error getting recommendations")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
 
-@credit_bp.route('/simulate/<user_id>', methods=['POST'])
-async def simulate_improvement(user_id: str):
-    """
-    Simulate credit score improvement.
-    
-    Request body:
-        recommendations: Optional list of recommendation IDs to apply
-    """
+@router.post("/simulate/{user_id}")
+async def simulate_improvement(
+    user_id: str = Path(...),
+    request: SimulateImprovementRequest = Body(...),
+    improvement_service = Depends(get_credit_improvement_provider)
+):
+    """Simulate credit score improvement."""
     try:
-        data = request.get_json() or {}
-        recommendation_ids = data.get('recommendations', [])
-        
-        # Get all recommendations
-        improvement_service = get_credit_improvement_service()
         all_recommendations = await improvement_service.generate_recommendations(user_id)
         
-        # Filter if specific recommendations provided
-        if recommendation_ids:
-            recommendations = [r for r in all_recommendations if r.recommendation_id in recommendation_ids]
+        if request.recommendations:
+            recommendations = [r for r in all_recommendations if r.recommendation_id in request.recommendations]
         else:
             recommendations = all_recommendations
         
-        # Simulate improvement
         projection = await improvement_service.simulate_score_improvement(
             user_id=user_id,
             recommendations=recommendations
         )
         
-        return jsonify({
+        return {
             'success': True,
             'data': projection.model_dump()
-        })
-        
+        }
     except Exception as e:
-        logger.error(f"Error simulating improvement: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+        logger.exception("Error simulating improvement")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

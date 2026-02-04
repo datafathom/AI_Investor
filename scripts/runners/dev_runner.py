@@ -114,12 +114,12 @@ def start_dev_mode(check_infra=True):
     backend_env["PYTHONIOENCODING"] = "utf-8"
     backend_env["PYTHONPATH"] = str(PROJECT_ROOT)
     
-    # Use uvicorn module to run the FastAPI app
     backend_cmd = [
         python_exe, "-m", "uvicorn", "web.fastapi_gateway:app",
         "--host", "127.0.0.1",
         "--port", str(BACKEND_PORT),
-        "--reload"
+        "--reload",
+        "--reload-dir", "web"
     ]
     
     backend_proc = subprocess.Popen(

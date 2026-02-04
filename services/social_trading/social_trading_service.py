@@ -26,7 +26,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
-from models.social_trading import TraderProfile, TraderRanking
+from schemas.social_trading import TraderProfile, TraderRanking
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ class SocialTradingService:
         logger.info(f"Creating trader profile for user {user_id}")
         
         profile = TraderProfile(
-            trader_id=f"trader_{user_id}_{datetime.utcnow().timestamp()}",
+            trader_id=f"trader_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             display_name=display_name,
             bio=bio,
@@ -182,7 +182,7 @@ class SocialTradingService:
     async def _save_profile(self, profile: TraderProfile):
         """Save trader profile to cache."""
         cache_key = f"trader_profile:{profile.trader_id}"
-        self.cache_service.set(cache_key, profile.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, profile.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

@@ -21,7 +21,7 @@ import logging
 import asyncio
 import random
 from typing import Dict, Any, List, Optional
-from datetime import datetime
+from datetime import timezone, datetime
 from services.system.secret_manager import get_secret_manager
 
 logger = logging.getLogger(__name__)
@@ -59,7 +59,7 @@ class StockTwitsClient:
                 stream.append({
                     "id": 1000 + i,
                     "body": msg,
-                    "created_at": datetime.utcnow().isoformat(),
+                    "created_at": datetime.now(timezone.utc).isoformat(),
                     "user": {
                         "username": f"trader_{random.randint(1,99)}",
                         "identity": "Retail"
@@ -117,7 +117,7 @@ class StockTwitsClient:
                 {
                     "id": 2000,
                     "body": f"Latest analysis from @{username}",
-                    "created_at": datetime.utcnow().isoformat(),
+                    "created_at": datetime.now(timezone.utc).isoformat(),
                     "user": {"username": username, "identity": "Retail"},
                     "entities": {"sentiment": {"basic": "Bullish"}}
                 }

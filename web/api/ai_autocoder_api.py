@@ -1,46 +1,32 @@
 """
 ==============================================================================
 FILE: web/api/ai_autocoder_api.py
-ROLE: AI Autocoder REST API
+ROLE: AI Autocoder REST API (FastAPI)
 PURPOSE: RESTful endpoints for OpenAI-powered code generation and execution.
-         Integrates with AutocoderAgent for natural language to Python code.
-
-INTEGRATION POINTS:
-    - AutocoderAgent: Code generation and execution
-    - OpenAIClient: GPT-4 completions
-    - CommandChat.jsx: Frontend chat interface
-
-ENDPOINTS:
-    POST /api/v1/ai/autocoder/generate - Generate code from prompt
-    POST /api/v1/ai/autocoder/execute - Execute generated code
-    GET /api/v1/ai/autocoder/status - Agent health status
-
-AUTHENTICATION: JWT Bearer token recommended
-RATE LIMITING: Inherits from APIGovernor (OPENAI limits)
-
-AUTHOR: AI Investor Team
-CREATED: 2026-01-21
 ==============================================================================
 """
 
-from flask import Blueprint, request, jsonify
+from fastapi import APIRouter, HTTPException, Body, Query, Depends
+from pydantic import BaseModel
 import logging
 import asyncio
-from typing import Optional, Dict, Any
+from datetime import datetime
+from typing import Optional, Dict, Any, List
 
 logger = logging.getLogger(__name__)
 
-ai_autocoder_bp = Blueprint('ai_autocoder', __name__, url_prefix='/api/v1/ai/autocoder')
+router = APIRouter(prefix="/api/v1/ai/autocoder", tags=["AI Autocoder"])
 
 
-def _run_async(coro):
-    """Helper to run async functions in sync context."""
-    try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-    return loop.run_until_complete(coro)
+class GenerateCodeRequest(BaseModel):
+    prompt: str
+    context: Dict[str, Any] = {}
+    execute: bool = False
+
+
+class ExecuteCodeRequest(BaseModel):
+    code: str
+    context: Dict[str, Any] = {}
 
 
 def _get_autocoder_agent():
@@ -54,7 +40,7 @@ def _build_response(data: Any, meta: Optional[Dict] = None) -> Dict[str, Any]:
     return {
         "data": data,
         "meta": meta or {
-            "timestamp": asyncio.get_event_loop().time() if asyncio.get_event_loop().is_running() else 0,
+            "timestamp": datetime.now().isoformat(),
             "source": "autocoder_agent"
         },
         "errors": []
@@ -74,128 +60,92 @@ def _build_error_response(error_code: str, message: str) -> Dict[str, Any]:
     }
 
 
-# =============================================================================
-# Generate Code Endpoint
-# =============================================================================
-
-@ai_autocoder_bp.route('/generate', methods=['POST'])
-def generate_code():
+@router.post('/generate')
+async def generate_code(
+    request_data: GenerateCodeRequest,
+    agent: Any = Depends(_get_autocoder_agent)
+):
     """
     Generate Python code from natural language prompt.
-    
-    Request Body:
-        {
-            "prompt": "Calculate moving average of AAPL prices",
-            "context": {"symbol": "AAPL"},  # Optional
-            "execute": false  # Whether to execute immediately
-        }
-    
-    Returns:
-        JSON with generated code and optional execution result
     """
     try:
-        data = request.json or {}
-        prompt = data.get('prompt', '').strip()
-        context = data.get('context', {})
-        execute = data.get('execute', False)
+        if not request_data.prompt.strip():
+            raise HTTPException(
+                status_code=400,
+                detail=_build_error_response("MISSING_PROMPT", "Prompt is required")
+            )
         
-        if not prompt:
-            return jsonify(_build_error_response(
-                "MISSING_PROMPT",
-                "Prompt is required"
-            )), 400
-        
-        agent = _get_autocoder_agent()
-        result = _run_async(agent.generate_code(prompt, context, execute))
+        result = await agent.generate_code(request_data.prompt, request_data.context, request_data.execute)
         
         if result.get('error'):
-            return jsonify(_build_error_response(
-                "GENERATION_FAILED",
-                result['error']
-            )), 500
+            raise HTTPException(
+                status_code=500,
+                detail=_build_error_response("GENERATION_FAILED", result['error'])
+            )
         
-        return jsonify(_build_response({
+        return _build_response({
             "code": result.get('code'),
             "model": result.get('model'),
             "tokens_used": result.get('tokens_used'),
             "execution_result": result.get('execution_result')
-        }))
+        })
         
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Code generation failed: {e}", exc_info=True)
-        return jsonify(_build_error_response(
-            "INTERNAL_ERROR",
-            f"Failed to generate code: {str(e)}"
-        )), 500
+        logger.exception("Code generation failed")
+        raise HTTPException(
+            status_code=500,
+            detail=_build_error_response("INTERNAL_ERROR", f"Failed to generate code: {str(e)}")
+        )
 
 
-# =============================================================================
-# Execute Code Endpoint
-# =============================================================================
-
-@ai_autocoder_bp.route('/execute', methods=['POST'])
-def execute_code():
+@router.post('/execute')
+async def execute_code(
+    request_data: ExecuteCodeRequest,
+    agent: Any = Depends(_get_autocoder_agent)
+):
     """
     Execute Python code in sandboxed environment.
-    
-    Request Body:
-        {
-            "code": "print('Hello, World!')",
-            "context": {}  # Optional context variables
-        }
-    
-    Returns:
-        JSON with execution result (output, error, execution_time)
     """
     try:
-        data = request.json or {}
-        code = data.get('code', '').strip()
-        context = data.get('context', {})
+        if not request_data.code.strip():
+            raise HTTPException(
+                status_code=400,
+                detail=_build_error_response("MISSING_CODE", "Code is required")
+            )
         
-        if not code:
-            return jsonify(_build_error_response(
-                "MISSING_CODE",
-                "Code is required"
-            )), 400
+        exec_result = await agent.sandbox.execute(request_data.code, request_data.context)
         
-        agent = _get_autocoder_agent()
-        exec_result = _run_async(agent.sandbox.execute(code, context))
+        return _build_response({
+            "success": getattr(exec_result, 'success', False),
+            "output": getattr(exec_result, 'output', ""),
+            "error": getattr(exec_result, 'error', None),
+            "execution_time_ms": getattr(exec_result, 'execution_time_ms', 0)
+        })
         
-        return jsonify(_build_response({
-            "success": exec_result.success,
-            "output": exec_result.output,
-            "error": exec_result.error,
-            "execution_time_ms": exec_result.execution_time_ms
-        }))
-        
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Code execution failed: {e}", exc_info=True)
-        return jsonify(_build_error_response(
-            "EXECUTION_ERROR",
-            f"Failed to execute code: {str(e)}"
-        )), 500
+        logger.exception("Code execution failed")
+        raise HTTPException(
+            status_code=500,
+            detail=_build_error_response("EXECUTION_ERROR", f"Failed to execute code: {str(e)}")
+        )
 
 
-# =============================================================================
-# Status Endpoint
-# =============================================================================
-
-@ai_autocoder_bp.route('/status', methods=['GET'])
-def get_status():
+@router.get('/status')
+async def get_status(agent: Any = Depends(_get_autocoder_agent)):
     """
     Get Autocoder agent health status.
-    
-    Returns:
-        JSON with agent status and capabilities
     """
     try:
-        agent = _get_autocoder_agent()
         health = agent.health_check()
         
-        return jsonify(_build_response({
-            "agent": health['agent'],
-            "active": health['active'],
-            "provider": agent.model_config.provider.value,
+        return _build_response({
+            "agent": health.get('agent', 'unknown'),
+            "active": health.get('active', False),
+            "provider": getattr(agent.model_config.provider, 'value', str(agent.model_config.provider)),
             "model": agent.model_config.model_id,
             "sandbox_timeout": agent.sandbox.timeout,
             "capabilities": [
@@ -204,11 +154,11 @@ def get_status():
                 "ast_validation",
                 "sandboxed_execution"
             ]
-        }))
+        })
         
     except Exception as e:
-        logger.error(f"Status check failed: {e}", exc_info=True)
-        return jsonify(_build_error_response(
-            "STATUS_ERROR",
-            f"Failed to get status: {str(e)}"
-        )), 500
+        logger.exception("Status check failed")
+        raise HTTPException(
+            status_code=500,
+            detail=_build_error_response("STATUS_ERROR", f"Failed to get status: {str(e)}")
+        )

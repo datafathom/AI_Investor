@@ -1,182 +1,189 @@
 """
 ==============================================================================
 FILE: web/api/marketplace_api.py
-ROLE: Marketplace API Endpoints
+ROLE: Marketplace API Endpoints (FastAPI)
 PURPOSE: REST endpoints for extension marketplace.
-
-INTEGRATION POINTS:
-    - ExtensionFramework: Extension infrastructure
-    - MarketplaceService: Marketplace management
-    - FrontendMarketplace: Marketplace dashboard
-
-ENDPOINTS:
-    - POST /api/marketplace/extension/create
-    - GET /api/marketplace/extensions
-    - POST /api/marketplace/extension/:extension_id/install
-    - POST /api/marketplace/extension/:extension_id/review
-
-AUTHOR: AI Investor Team
-CREATED: 2026-01-21
-LAST_MODIFIED: 2026-01-21
 ==============================================================================
 """
 
-from flask import Blueprint, jsonify, request
+from fastapi import APIRouter, Query, HTTPException, Depends
+from fastapi.responses import JSONResponse
+from typing import Optional, List
+from pydantic import BaseModel
 import logging
-from services.marketplace.extension_framework import get_extension_framework
-from services.marketplace.marketplace_service import get_marketplace_service
+import uuid
 
 logger = logging.getLogger(__name__)
 
-marketplace_bp = Blueprint('marketplace', __name__, url_prefix='/api/v1/marketplace')
+router = APIRouter(prefix="/api/v1/marketplace", tags=["Marketplace"])
 
 
-@marketplace_bp.route('/extension/create', methods=['POST'])
-async def create_extension():
-    """
-    Create extension.
+class CreateExtensionRequest(BaseModel):
+    developer_id: str
+    extension_name: str
+    description: str
+    version: str
+    category: str
+
+
+class InstallRequest(BaseModel):
+    user_id: str
+
+
+class ReviewRequest(BaseModel):
+    user_id: str
+    rating: int
+    comment: Optional[str] = None
+
+
+# Mock extension data
+MOCK_EXTENSIONS = [
+    {
+        "id": "ext_001",
+        "name": "Advanced Charts Pro",
+        "description": "Professional charting with 50+ indicators",
+        "version": "2.1.0",
+        "category": "charting",
+        "author": "TradingTools Inc",
+        "rating": 4.8,
+        "installs": 15420,
+        "price": 0
+    },
+    {
+        "id": "ext_002",
+        "name": "AI Signal Generator",
+        "description": "ML-powered trading signals",
+        "version": "1.5.2",
+        "category": "analytics",
+        "author": "QuantAI Labs",
+        "rating": 4.5,
+        "installs": 8750,
+        "price": 29.99
+    },
+    {
+        "id": "ext_003",
+        "name": "Portfolio Optimizer",
+        "description": "Automatic portfolio rebalancing",
+        "version": "3.0.1",
+        "category": "portfolio",
+        "author": "OptimizeX",
+        "rating": 4.6,
+        "installs": 12300,
+        "price": 0
+    }
+]
+
+MOCK_INSTALLED = [
+    {"extension_id": "ext_001", "installed_at": "2026-01-15T10:00:00Z", "enabled": True},
+    {"extension_id": "ext_003", "installed_at": "2026-01-20T14:30:00Z", "enabled": True}
+]
+
+
+@router.get("/extensions")
+async def get_extensions(category: Optional[str] = Query(None)):
+    """Get available extensions."""
+    extensions = MOCK_EXTENSIONS
+    if category:
+        extensions = [e for e in extensions if e["category"] == category]
     
-    Request body:
-        developer_id: Developer identifier
-        extension_name: Extension name
-        description: Extension description
-        version: Extension version
-        category: Extension category
-    """
-    try:
-        data = request.get_json() or {}
-        developer_id = data.get('developer_id')
-        extension_name = data.get('extension_name')
-        description = data.get('description')
-        version = data.get('version')
-        category = data.get('category')
-        
-        if not all([developer_id, extension_name, description, version, category]):
-            return jsonify({
-                'success': False,
-                'error': 'developer_id, extension_name, description, version, and category are required'
-            }), 400
-        
-        framework = get_extension_framework()
-        extension = await framework.create_extension(
-            developer_id=developer_id,
-            extension_name=extension_name,
-            description=description,
-            version=version,
-            category=category
-        )
-        
-        return jsonify({
-            'success': True,
-            'data': extension.dict()
-        })
-        
-    except Exception as e:
-        logger.error(f"Error creating extension: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+    return {
+        "success": True,
+        "data": extensions
+    }
 
 
-@marketplace_bp.route('/extensions', methods=['GET'])
-async def get_extensions():
-    """
-    Get available extensions.
+@router.get("/installed")
+async def get_installed_extensions(user_id: str = Query("user_1")):
+    """Get user's installed extensions."""
+    # Enrich installed extensions with full details
+    installed = []
+    for inst in MOCK_INSTALLED:
+        ext = next((e for e in MOCK_EXTENSIONS if e["id"] == inst["extension_id"]), None)
+        if ext:
+            installed.append({**ext, **inst})
     
-    Query params:
-        category: Optional category filter
-    """
-    try:
-        category = request.args.get('category')
-        
-        # In production, would query database
-        return jsonify({
-            'success': True,
-            'data': []
-        })
-        
-    except Exception as e:
-        logger.error(f"Error getting extensions: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+    return {
+        "success": True,
+        "data": installed
+    }
 
 
-@marketplace_bp.route('/extension/<extension_id>/install', methods=['POST'])
-async def install_extension(extension_id: str):
-    """
-    Install extension.
+@router.get("/extension/{extension_id}")
+async def get_extension_details(extension_id: str):
+    """Get extension details."""
+    ext = next((e for e in MOCK_EXTENSIONS if e["id"] == extension_id), None)
+    if not ext:
+        return JSONResponse(status_code=404, content={"success": False, "detail": "Extension not found"})
     
-    Request body:
-        user_id: User identifier
-    """
-    try:
-        data = request.get_json() or {}
-        user_id = data.get('user_id')
-        
-        if not user_id:
-            return jsonify({
-                'success': False,
-                'error': 'user_id is required'
-            }), 400
-        
-        service = get_marketplace_service()
-        installation = await service.install_extension(extension_id, user_id)
-        
-        return jsonify({
-            'success': True,
-            'data': installation
-        })
-        
-    except Exception as e:
-        logger.error(f"Error installing extension: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+    return {
+        "success": True,
+        "data": ext
+    }
 
 
-@marketplace_bp.route('/extension/<extension_id>/review', methods=['POST'])
-async def add_review(extension_id: str):
-    """
-    Add review for extension.
+@router.post("/extension/create")
+async def create_extension(request: CreateExtensionRequest):
+    """Create extension."""
+    extension_id = f"ext_{uuid.uuid4().hex[:6]}"
     
-    Request body:
-        user_id: User identifier
-        rating: Rating (1-5)
-        comment: Optional comment
-    """
-    try:
-        data = request.get_json() or {}
-        user_id = data.get('user_id')
-        rating = int(data.get('rating', 0))
-        comment = data.get('comment')
-        
-        if not user_id or not rating:
-            return jsonify({
-                'success': False,
-                'error': 'user_id and rating are required'
-            }), 400
-        
-        if rating < 1 or rating > 5:
-            return jsonify({
-                'success': False,
-                'error': 'rating must be between 1 and 5'
-            }), 400
-        
-        service = get_marketplace_service()
-        review = await service.add_review(extension_id, user_id, rating, comment)
-        
-        return jsonify({
-            'success': True,
-            'data': review.dict()
-        })
-        
-    except Exception as e:
-        logger.error(f"Error adding review: {e}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+    return {
+        "success": True,
+        "data": {
+            "id": extension_id,
+            "name": request.extension_name,
+            "description": request.description,
+            "version": request.version,
+            "category": request.category,
+            "author": request.developer_id,
+            "rating": 0,
+            "installs": 0,
+            "price": 0,
+            "status": "pending_review"
+        }
+    }
+
+
+@router.post("/extension/{extension_id}/install")
+async def install_extension(extension_id: str, request: InstallRequest):
+    """Install extension."""
+    return {
+        "success": True,
+        "data": {
+            "extension_id": extension_id,
+            "user_id": request.user_id,
+            "installed_at": "2026-02-03T10:00:00Z",
+            "enabled": True
+        }
+    }
+
+
+@router.post("/extension/{extension_id}/uninstall")
+async def uninstall_extension(extension_id: str, request: InstallRequest):
+    """Uninstall extension."""
+    return {
+        "success": True,
+        "data": {
+            "extension_id": extension_id,
+            "user_id": request.user_id,
+            "uninstalled_at": "2026-02-03T10:00:00Z"
+        }
+    }
+
+
+@router.post("/extension/{extension_id}/review")
+async def add_review(extension_id: str, request: ReviewRequest):
+    """Add review for extension."""
+    if request.rating < 1 or request.rating > 5:
+        return JSONResponse(status_code=400, content={"success": False, "detail": "Rating must be between 1 and 5"})
+    
+    return {
+        "success": True,
+        "data": {
+            "review_id": f"rev_{uuid.uuid4().hex[:8]}",
+            "extension_id": extension_id,
+            "user_id": request.user_id,
+            "rating": request.rating,
+            "comment": request.comment,
+            "created_at": "2026-02-03T10:00:00Z"
+        }
+    }

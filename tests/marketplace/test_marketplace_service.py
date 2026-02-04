@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.marketplace.marketplace_service import MarketplaceService
-from models.marketplace import ExtensionReview
+from schemas.marketplace import ExtensionReview
 
 
 @pytest.fixture

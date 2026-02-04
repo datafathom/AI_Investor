@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.ai_predictions.ai_analytics_service import AIAnalyticsService
-from models.ai_predictions import SentimentAnalysisResult, MarketRegime
+from schemas.ai_predictions import SentimentAnalysisResult, MarketRegime
 
 
 @pytest.fixture

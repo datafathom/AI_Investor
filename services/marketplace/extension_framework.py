@@ -26,7 +26,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
-from models.marketplace import Extension, ExtensionStatus
+from schemas.marketplace import Extension, ExtensionStatus
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -65,7 +65,7 @@ class ExtensionFramework:
         logger.info(f"Creating extension {extension_name} by developer {developer_id}")
         
         extension = Extension(
-            extension_id=f"ext_{developer_id}_{datetime.utcnow().timestamp()}",
+            extension_id=f"ext_{developer_id}_{datetime.now(timezone.utc).timestamp()}",
             developer_id=developer_id,
             extension_name=extension_name,
             description=description,
@@ -119,7 +119,7 @@ class ExtensionFramework:
     async def _save_extension(self, extension: Extension):
         """Save extension to cache."""
         cache_key = f"extension:{extension.extension_id}"
-        self.cache_service.set(cache_key, extension.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, extension.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

@@ -6,7 +6,7 @@ Phase 7: Model Validation Tests
 import pytest
 from datetime import datetime
 from pydantic import ValidationError
-from models.integration import (
+from schemas.integration import (
     IntegrationStatus,
     Integration,
     SyncJob

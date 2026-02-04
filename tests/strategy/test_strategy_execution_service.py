@@ -4,10 +4,10 @@ Comprehensive test coverage for strategy execution, monitoring, and risk control
 """
 
 import pytest
-from datetime import datetime
+from datetime import timezone, datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.strategy.strategy_execution_service import StrategyExecutionService
-from models.strategy import TradingStrategy, StrategyStatus, StrategyPerformance
+from schemas.strategy import TradingStrategy, StrategyStatus, StrategyPerformance
 
 
 @pytest.fixture
@@ -27,8 +27,8 @@ def mock_strategy():
         strategy_name="Test Strategy",
         rules=[],
         status=StrategyStatus.DRAFT,
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
 
 

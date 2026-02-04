@@ -25,9 +25,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional
-from models.ai_assistant import Conversation, ConversationMessage, MessageRole
+from schemas.ai_assistant import Conversation, ConversationMessage, MessageRole
 from services.ai_assistant.learning_service import get_learning_service
 from services.system.cache_service import get_cache_service
 
@@ -62,11 +62,11 @@ class AssistantService:
         logger.info(f"Creating conversation for user {user_id}")
         
         conversation = Conversation(
-            conversation_id=f"conv_{user_id}_{datetime.utcnow().timestamp()}",
+            conversation_id=f"conv_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             title=title,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Save conversation
@@ -98,11 +98,11 @@ class AssistantService:
         
         # Add user message
         user_msg = ConversationMessage(
-            message_id=f"msg_{conversation_id}_{datetime.utcnow().timestamp()}",
+            message_id=f"msg_{conversation_id}_{datetime.now(timezone.utc).timestamp()}",
             conversation_id=conversation_id,
             role=MessageRole.USER,
             content=user_message,
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
         conversation.messages.append(user_msg)
         
@@ -118,16 +118,16 @@ class AssistantService:
         
         # Add assistant message
         assistant_msg = ConversationMessage(
-            message_id=f"msg_{conversation_id}_{datetime.utcnow().timestamp()}",
+            message_id=f"msg_{conversation_id}_{datetime.now(timezone.utc).timestamp()}",
             conversation_id=conversation_id,
             role=MessageRole.ASSISTANT,
             content=assistant_response,
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
         conversation.messages.append(assistant_msg)
         
         # Update conversation
-        conversation.updated_date = datetime.utcnow()
+        conversation.updated_date = datetime.now(timezone.utc)
         await self._save_conversation(conversation)
         
         # Learn from interaction
@@ -183,7 +183,7 @@ class AssistantService:
     async def _save_conversation(self, conversation: Conversation):
         """Save conversation to cache."""
         cache_key = f"conversation:{conversation.conversation_id}"
-        self.cache_service.set(cache_key, conversation.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, conversation.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

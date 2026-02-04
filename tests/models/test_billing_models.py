@@ -6,7 +6,7 @@ Phase 7: Model Validation Tests
 import pytest
 from datetime import datetime
 from pydantic import ValidationError
-from models.billing import (
+from schemas.billing import (
     BillStatus,
     RecurrenceType,
     Bill,

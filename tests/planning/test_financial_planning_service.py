@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime, timedelta
 from unittest.mock import Mock, AsyncMock, patch
 from services.planning.financial_planning_service import FinancialPlanningService
-from models.financial_planning import FinancialPlan, FinancialGoal, GoalType, AssetAllocationRecommendation
+from schemas.financial_planning import FinancialPlan, FinancialGoal, GoalType, AssetAllocationRecommendation
 
 
 @pytest.fixture

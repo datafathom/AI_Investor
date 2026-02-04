@@ -1,55 +1,133 @@
 """
-Attribution API - REST endpoints for portfolio performance attribution.
-
-This blueprint provides endpoints for accessing Brinson-Fachler attribution
-analysis, enabling frontend widgets to display sector-level performance
-decomposition and regime shift detection.
-
-Endpoints:
-    GET  /api/v1/attribution/<portfolio_id>     - Full attribution analysis
-    GET  /api/v1/attribution/benchmarks         - Available benchmarks
-    POST /api/v1/attribution/compare            - Multi-benchmark comparison
+Attribution API - FastAPI Router
+REST endpoints for portfolio performance attribution.
 """
 
-from flask import Blueprint, jsonify, request
+import logging
+from datetime import datetime
+from typing import Optional, Dict, Any, List
+
+from fastapi import APIRouter, HTTPException, Depends, Request
+from pydantic import BaseModel
+
+from web.auth_utils import get_current_user
 from services.analysis.attribution_service import (
     AttributionService,
     DateRange
 )
-import logging
 
 logger = logging.getLogger(__name__)
 
-attribution_bp = Blueprint('attribution', __name__)
+router = APIRouter(prefix="/api/v1/attribution", tags=["Attribution"])
+
+# Singleton service instance
 _service = AttributionService()
 
+def get_attribution_service():
+    """Dependency for getting the attribution service."""
+    return _service
 
-@attribution_bp.route('/<portfolio_id>', methods=['GET'])
-async def get_attribution(portfolio_id: str):
-    """
-    Get full Brinson-Fachler attribution for a portfolio.
-    
-    Query Params:
-        benchmark: Benchmark ID (default: sp500)
-        start: Start date for analysis period
-        end: End date for analysis period
-        
-    Returns:
-        JSON with complete attribution breakdown
-    """
+class AttributionPeriod(BaseModel):
+    start: str
+    end: str
+
+class BenchmarkComparisonRequest(BaseModel):
+    portfolio_id: str
+    benchmarks: List[str] = ['sp500', 'nasdaq']
+    period: AttributionPeriod = AttributionPeriod(start='2025-01-01', end='2025-12-31')
+
+# CRITICAL: Static routes MUST come before dynamic routes
+@router.get('/benchmarks')
+async def get_benchmarks(
+    service = Depends(get_attribution_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Get list of available benchmarks for attribution comparison."""
+    benchmarks = service.get_available_benchmarks()
+    return {
+        "success": True,
+        "data": benchmarks
+    }
+
+@router.post('/compare')
+async def compare_benchmarks(
+    request_data: BenchmarkComparisonRequest,
+    service = Depends(get_attribution_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Compare portfolio attribution against multiple benchmarks."""
     try:
-        benchmark_id = request.args.get('benchmark', 'sp500')
-        start_date = request.args.get('start', '2025-01-01')
-        end_date = request.args.get('end', '2025-12-31')
+        portfolio_id = request_data.portfolio_id
+        benchmark_ids = request_data.benchmarks
+        period = DateRange(start=request_data.period.start, end=request_data.period.end)
         
-        result = await _service.calculate_brinson_attribution(
+        results = []
+        for benchmark_id in benchmark_ids:
+            result = await service.calculate_brinson_attribution(
+                portfolio_id=portfolio_id,
+                benchmark_id=benchmark_id,
+                period=period
+            )
+            results.append({
+                "benchmark_id": benchmark_id,
+                "total_active_return": result.total_active_return,
+                "total_allocation_effect": result.total_allocation_effect,
+                "total_selection_effect": result.total_selection_effect,
+                "total_interaction_effect": result.total_interaction_effect
+            })
+        
+        return {
+            "success": True,
+            "data": results
+        }
+    except Exception as e:
+        logger.error(f"Benchmark comparison failed: {e}")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
+
+@router.get('/sector/{portfolio_id}/{sector}')
+async def get_sector_attribution(
+    portfolio_id: str,
+    sector: str,
+    service = Depends(get_attribution_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Get attribution for a specific sector."""
+    try:
+        allocation = await service.get_sector_allocation_effect(portfolio_id, sector)
+        selection = await service.get_selection_effect(portfolio_id, sector)
+        
+        return {
+            "success": True,
+            "data": {
+                "sector": sector,
+                "allocation_effect": allocation,
+                "selection_effect": selection
+            }
+        }
+    except Exception as e:
+        logger.error(f"Sector attribution failed: {e}")
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
+
+@router.get('/{portfolio_id}')
+async def get_attribution(
+    portfolio_id: str,
+    benchmark: str = 'sp500',
+    start: str = '2025-01-01',
+    end: str = '2025-12-31',
+    service = Depends(get_attribution_service),
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Get full Brinson-Fachler attribution for a portfolio."""
+    try:
+        result = await service.calculate_brinson_attribution(
             portfolio_id=portfolio_id,
-            benchmark_id=benchmark_id,
-            period=DateRange(start=start_date, end=end_date)
+            benchmark_id=benchmark,
+            period=DateRange(start=start, end=end)
         )
         
-        # Convert dataclass to dict for JSON serialization
-        return jsonify({
+        return {
             "success": True,
             "data": {
                 "portfolio_id": result.portfolio_id,
@@ -88,99 +166,8 @@ async def get_attribution(portfolio_id: str):
                 ],
                 "calculated_at": result.calculated_at
             }
-        })
-        
+        }
     except Exception as e:
         logger.error(f"Attribution calculation failed: {e}")
-        return jsonify({
-            "success": False,
-            "error": str(e)
-        }), 500
-
-
-@attribution_bp.route('/benchmarks', methods=['GET'])
-def get_benchmarks():
-    """Get list of available benchmarks for attribution comparison."""
-    benchmarks = _service.get_available_benchmarks()
-    return jsonify({
-        "success": True,
-        "data": benchmarks
-    })
-
-
-@attribution_bp.route('/compare', methods=['POST'])
-async def compare_benchmarks():
-    """
-    Compare portfolio attribution against multiple benchmarks.
-    
-    Request Body:
-        portfolio_id: Portfolio to analyze
-        benchmarks: List of benchmark IDs to compare
-        period: { start, end } date range
-        
-    Returns:
-        Attribution results for each benchmark
-    """
-    try:
-        data = request.get_json()
-        portfolio_id = data.get('portfolio_id')
-        benchmark_ids = data.get('benchmarks', ['sp500', 'nasdaq'])
-        period_data = data.get('period', {'start': '2025-01-01', 'end': '2025-12-31'})
-        
-        period = DateRange(start=period_data['start'], end=period_data['end'])
-        
-        results = []
-        for benchmark_id in benchmark_ids:
-            result = await _service.calculate_brinson_attribution(
-                portfolio_id=portfolio_id,
-                benchmark_id=benchmark_id,
-                period=period
-            )
-            results.append({
-                "benchmark_id": benchmark_id,
-                "total_active_return": result.total_active_return,
-                "total_allocation_effect": result.total_allocation_effect,
-                "total_selection_effect": result.total_selection_effect,
-                "total_interaction_effect": result.total_interaction_effect
-            })
-        
-        return jsonify({
-            "success": True,
-            "data": results
-        })
-        
-    except Exception as e:
-        logger.error(f"Benchmark comparison failed: {e}")
-        return jsonify({
-            "success": False,
-            "error": str(e)
-        }), 500
-
-
-@attribution_bp.route('/sector/<portfolio_id>/<sector>', methods=['GET'])
-async def get_sector_attribution(portfolio_id: str, sector: str):
-    """
-    Get attribution for a specific sector.
-    
-    Returns:
-        Allocation, selection, and interaction effects for the sector
-    """
-    try:
-        allocation = await _service.get_sector_allocation_effect(portfolio_id, sector)
-        selection = await _service.get_selection_effect(portfolio_id, sector)
-        
-        return jsonify({
-            "success": True,
-            "data": {
-                "sector": sector,
-                "allocation_effect": allocation,
-                "selection_effect": selection
-            }
-        })
-        
-    except Exception as e:
-        logger.error(f"Sector attribution failed: {e}")
-        return jsonify({
-            "success": False,
-            "error": str(e)
-        }), 500
+        from fastapi.responses import JSONResponse
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

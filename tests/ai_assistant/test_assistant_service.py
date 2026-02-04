@@ -4,10 +4,10 @@ Comprehensive test coverage for conversational AI and personalized responses
 """
 
 import pytest
-from datetime import datetime
+from datetime import timezone, datetime
 from unittest.mock import Mock, AsyncMock, patch, MagicMock
 from services.ai_assistant.assistant_service import AssistantService
-from models.ai_assistant import Conversation, ConversationMessage, MessageRole
+from schemas.ai_assistant import Conversation, ConversationMessage, MessageRole
 
 
 @pytest.fixture
@@ -44,8 +44,8 @@ async def test_send_message(service):
         conversation_id="conv_123",
         user_id="user_123",
         messages=[],
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_conversation = AsyncMock(return_value=conversation)
@@ -74,18 +74,18 @@ async def test_get_conversation_history(service):
                 conversation_id="conv_123",
                 role=MessageRole.USER,
                 content="What should I invest in?",
-                timestamp=datetime.utcnow()
+                timestamp=datetime.now(timezone.utc)
             ),
             ConversationMessage(
                 message_id="msg_2",
                 conversation_id="conv_123",
                 role=MessageRole.ASSISTANT,
                 content="Here's some advice...",
-                timestamp=datetime.utcnow()
+                timestamp=datetime.now(timezone.utc)
             )
         ],
-        created_date=datetime.utcnow(),
-        updated_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc),
+        updated_date=datetime.now(timezone.utc)
     )
     
     service._get_conversation = AsyncMock(return_value=conversation)

@@ -1,5 +1,5 @@
 import logging
-from models.ira_optimization import IRAOptimizationProfile
+from schemas.ira_optimization import IRAOptimizationProfile
 
 logger = logging.getLogger(__name__)
 

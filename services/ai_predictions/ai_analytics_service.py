@@ -24,9 +24,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional
-from models.ai_predictions import MarketRegime, SentimentAnalysisResult
+from schemas.ai_predictions import MarketRegime, SentimentAnalysisResult
 from services.ai_predictions.prediction_engine import get_prediction_engine
 from services.system.cache_service import get_cache_service
 
@@ -111,10 +111,10 @@ class AIAnalyticsService:
         confidence = conditions.get('confidence', 0.80)
         
         regime = MarketRegime(
-            regime_id=f"regime_{market_index}_{datetime.utcnow().timestamp()}",
+            regime_id=f"regime_{market_index}_{datetime.now(timezone.utc).timestamp()}",
             regime_type=regime_type,
             confidence=confidence,
-            detected_date=datetime.utcnow(),
+            detected_date=datetime.now(timezone.utc),
             expected_duration="3-6 months"
         )
         
@@ -156,7 +156,7 @@ class AIAnalyticsService:
     async def _save_regime(self, regime: MarketRegime):
         """Save market regime to cache."""
         cache_key = f"regime:{regime.regime_id}"
-        self.cache_service.set(cache_key, regime.dict(), ttl=86400 * 7)
+        self.cache_service.set(cache_key, regime.model_dump(), ttl=86400 * 7)
 
 
 # Singleton instance

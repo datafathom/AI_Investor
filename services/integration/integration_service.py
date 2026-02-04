@@ -23,9 +23,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional
-from models.integration import SyncJob
+from schemas.integration import SyncJob
 from services.integration.integration_framework import get_integration_framework
 from services.system.cache_service import get_cache_service
 
@@ -60,16 +60,16 @@ class IntegrationService:
         logger.info(f"Syncing data for integration {integration_id}")
         
         job = SyncJob(
-            sync_job_id=f"sync_{integration_id}_{datetime.utcnow().timestamp()}",
+            sync_job_id=f"sync_{integration_id}_{datetime.now(timezone.utc).timestamp()}",
             integration_id=integration_id,
             sync_type=sync_type,
             status="running",
-            started_date=datetime.utcnow()
+            started_date=datetime.now(timezone.utc)
         )
         
         # In production, would perform actual sync
         job.status = "completed"
-        job.completed_date = datetime.utcnow()
+        job.completed_date = datetime.now(timezone.utc)
         job.records_synced = 100  # Mock
         
         # Save job
@@ -92,7 +92,7 @@ class IntegrationService:
     async def _save_sync_job(self, job: SyncJob):
         """Save sync job to cache."""
         cache_key = f"sync_job:{job.sync_job_id}"
-        self.cache_service.set(cache_key, job.dict(), ttl=86400 * 7)
+        self.cache_service.set(cache_key, job.model_dump(), ttl=86400 * 7)
 
 
 # Singleton instance

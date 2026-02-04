@@ -1,85 +1,73 @@
 """
-==============================================================================
-FILE: web/api/debate_api.py
-ROLE: API Endpoint Layer (Flask)
-PURPOSE: Exposes Debate Chamber capabilities to the frontend.
-==============================================================================
+Debate API - FastAPI Router
+Migrated from Flask (web/api/debate_api.py)
 """
 
-import asyncio
+from fastapi import APIRouter, HTTPException, Depends, Query
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from typing import List, Dict, Optional, Any
 import logging
-from flask import Blueprint, jsonify, request
+import asyncio
 
-from agents.debate_chamber_agent import get_debate_agent
+from agents.debate_chamber_agent import get_debate_agent as _get_debate_agent
+
+def get_debate_provider(mock: bool = True):
+    return _get_debate_agent(mock=mock)
 
 logger = logging.getLogger(__name__)
 
-debate_bp = Blueprint('debate_bp', __name__, url_prefix='/api/v1/ai/debate')
+router = APIRouter(prefix="/api/v1/ai/debate", tags=["AI Debate"])
 
-def _run_async(coro):
-    try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            return asyncio.run_coroutine_threadsafe(coro, loop).result()
-    except RuntimeError:
-        pass
-    return asyncio.run(coro)
+class DebateStartRequest(BaseModel):
+    ticker: str = "SPY"
 
-@debate_bp.route('/start', methods=['POST'])
-def start_debate():
-    """
-    Start a new debate session.
-    """
-    data = request.json or {}
-    ticker = data.get('ticker', 'SPY').upper()
-    use_mock = request.args.get('mock', 'true').lower() == 'true'
-    agent = get_debate_agent(mock=use_mock)
+class ArgumentRequest(BaseModel):
+    argument: str
+
+@router.post("/start")
+async def start_debate(
+    request: DebateStartRequest,
+    agent = Depends(get_debate_provider)
+):
+    """Start a new debate session."""
+    ticker = request.ticker.upper()
     
     try:
-        result = _run_async(agent.conduct_debate(ticker))
-        return jsonify(result)
-    except (ValueError, KeyError, RuntimeError) as e:
-        logger.error("Failed to run debate for %s: %s", ticker, e)
-        return jsonify({"error": str(e)}), 500
+        result = await agent.conduct_debate(ticker)
+        return {"success": True, "data": result}
+    except Exception as e:
+        logger.exception(f"Failed to run debate for {ticker}")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
 
-@debate_bp.route('/stream', methods=['GET'])
-def stream_debate():
-    """
-    Get the current state of the debate.
-    """
-    use_mock = request.args.get('mock', 'true').lower() == 'true'
-    agent = get_debate_agent(mock=use_mock)
+@router.get("/stream")
+async def stream_debate(agent = Depends(get_debate_provider)):
+    """Get the current state of the debate."""
     
-    # Return current state from agent
-    return jsonify({
-        "status": "active",
-        "transcript": agent.transcript,
-        "consensus": agent.consensus
-    })
+    return {
+        "success": True,
+        "data": {
+            "status": "active",
+            "transcript": agent.transcript,
+            "consensus": agent.consensus
+        }
+    }
 
-@debate_bp.route('/inject', methods=['POST'])
-def inject_argument():
-    """
-    Inject a user argument into the debate.
-    """
-    data = request.json or {}
-    argument = data.get('argument', '')
-    
+@router.post("/inject")
+async def inject_argument(request: ArgumentRequest):
+    """Inject a user argument into the debate."""
     # Mocking successful injection for now
-    return jsonify({"status": "success", "message": "Argument received"})
+    return {"success": True, "data": {"status": "success", "message": "Argument received"}}
 
-@debate_bp.route('/run/<ticker>', methods=['POST'])
-def run_debate(ticker: str):
-    """
-    Trigger a new debate for a ticker.
-    Query: ?mock=true
-    """
-    use_mock = request.args.get('mock', 'true').lower() == 'true'
-    agent = get_debate_agent(mock=use_mock)
-    
+@router.post("/run/{ticker}")
+async def run_debate(
+    ticker: str,
+    agent = Depends(get_debate_provider)
+):
+    """Trigger a new debate for a ticker."""
     try:
-        result = _run_async(agent.conduct_debate(ticker))
-        return jsonify(result)
-    except (ValueError, KeyError, RuntimeError) as e:
-        logger.error("Failed to run debate for %s: %s", ticker, e)
-        return jsonify({"error": str(e)}), 500
+        result = await agent.conduct_debate(ticker)
+        return {"success": True, "data": result}
+    except Exception as e:
+        logger.exception(f"Failed to run debate for {ticker}")
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})

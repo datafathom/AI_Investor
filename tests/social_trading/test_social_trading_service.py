@@ -4,10 +4,10 @@ Comprehensive test coverage for trader profiles, rankings, and follow system
 """
 
 import pytest
-from datetime import datetime
+from datetime import timezone, datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.social_trading.social_trading_service import SocialTradingService
-from models.social_trading import TraderProfile, TraderRanking
+from schemas.social_trading import TraderProfile, TraderRanking
 
 
 @pytest.fixture
@@ -48,7 +48,7 @@ async def test_get_top_traders(service):
             total_return=0.25,
             sharpe_ratio=2.0,
             is_public=True,
-            created_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc)
         )
     ])
     
@@ -90,8 +90,8 @@ async def test_unfollow_trader(service):
 async def test_get_followed_traders(service):
     """Test getting followed traders."""
     service._get_follows = AsyncMock(return_value=[
-        {'trader_id': 'trader_1', 'followed_date': datetime.utcnow()},
-        {'trader_id': 'trader_2', 'followed_date': datetime.utcnow()},
+        {'trader_id': 'trader_1', 'followed_date': datetime.now(timezone.utc)},
+        {'trader_id': 'trader_2', 'followed_date': datetime.now(timezone.utc)},
     ])
     
     result = await service.get_followed_traders("user_123")

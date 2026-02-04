@@ -23,7 +23,7 @@ ROADMAP: Phase 12 - The "Fear & Greed" Composite Index
 import logging
 import numpy as np
 from typing import Dict, Any, List, Optional
-from datetime import datetime
+from datetime import timezone, datetime
 
 from services.data.google_trends import GoogleTrendsService
 from services.data.options_service import OptionsFlowService
@@ -150,7 +150,7 @@ class FearGreedIndexService:
         result = {
             "score": composite_score,
             "label": label,
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(timezone.utc).isoformat() + "Z",
             "components": components,
             "signal": signal,
             "recommendation": recommendation,

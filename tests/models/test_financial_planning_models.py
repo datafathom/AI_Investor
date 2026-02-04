@@ -6,7 +6,7 @@ Phase 7: Model Validation Tests
 import pytest
 from datetime import datetime
 from pydantic import ValidationError
-from models.financial_planning import (
+from schemas.financial_planning import (
     GoalType,
     GoalStatus,
     FinancialGoal,

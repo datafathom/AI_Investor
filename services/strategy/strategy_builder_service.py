@@ -26,9 +26,9 @@ LAST_MODIFIED: 2026-01-21
 import logging
 import json
 import uuid
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional, Any
-from models.strategy import (
+from schemas.strategy import (
     TradingStrategy, StrategyRule, ConditionType, StrategyStatus
 )
 from services.system.cache_service import get_cache_service
@@ -72,20 +72,20 @@ class StrategyBuilderService:
         if rules:
             for rule_data in rules:
                 rule = StrategyRule(
-                    rule_id=f"rule_{user_id}_{datetime.utcnow().timestamp()}",
+                    rule_id=f"rule_{user_id}_{datetime.now(timezone.utc).timestamp()}",
                     **rule_data
                 )
                 strategy_rules.append(rule)
         
         strategy = TradingStrategy(
-            strategy_id=f"strategy_{user_id}_{datetime.utcnow().timestamp()}",
+            strategy_id=f"strategy_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             strategy_name=strategy_name,
             description=description,
             rules=strategy_rules,
             status=StrategyStatus.DRAFT,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Save strategy
@@ -123,7 +123,7 @@ class StrategyBuilderService:
         
         # Create rule
         rule = StrategyRule(
-            rule_id=f"rule_{strategy_id}_{datetime.utcnow().timestamp()}",
+            rule_id=f"rule_{strategy_id}_{datetime.now(timezone.utc).timestamp()}",
             condition_type=ConditionType(condition_type),
             condition=condition,
             action=action,
@@ -132,7 +132,7 @@ class StrategyBuilderService:
         
         # Add rule to strategy
         strategy.rules.append(rule)
-        strategy.updated_date = datetime.utcnow()
+        strategy.updated_date = datetime.now(timezone.utc)
         
         # Save updated strategy
         await self._save_strategy(strategy)
@@ -288,7 +288,7 @@ class StrategyBuilderService:
                         "last_executed": row[10]
                     }
                     strategy = TradingStrategy(**data)
-                    self.cache_service.set(cache_key, strategy.dict(), ttl=3600)
+                    self.cache_service.set(cache_key, strategy.model_dump(), ttl=3600)
                     return strategy
         except Exception as e:
             logger.error(f"Error fetching strategy from DB: {e}")
@@ -323,7 +323,7 @@ class StrategyBuilderService:
                         updated_date = NOW()
                 """, (
                     strategy.strategy_id, user_id_uuid, strategy.strategy_name,
-                    strategy.description, json.dumps([r.dict() for r in strategy.rules]),
+                    strategy.description, json.dumps([r.model_dump() for r in strategy.rules]),
                     strategy.status.value, strategy.portfolio_id,
                     json.dumps(strategy.risk_limits), strategy.last_executed,
                     strategy.created_date, strategy.updated_date
@@ -331,7 +331,7 @@ class StrategyBuilderService:
             
             # Update cache
             cache_key = f"strategy:{strategy.strategy_id}"
-            self.cache_service.set(cache_key, strategy.dict(), ttl=3600)
+            self.cache_service.set(cache_key, strategy.model_dump(), ttl=3600)
             
         except Exception as e:
             logger.error(f"Error saving strategy to DB: {e}")

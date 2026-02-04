@@ -2,7 +2,7 @@
 Social Inertia Cache - Singleton for tracking sentiment momentum.
 """
 from typing import Dict, Optional, List
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 import threading
 import logging
 
@@ -32,7 +32,7 @@ class SocialInertiaCache:
         Update the inertia for a ticker.
         Inertia is a weighted move towards the current sentiment sentiment.
         """
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(timezone.utc).isoformat()
         current = self.inertia_data.get(ticker, {
             "inertia": 0.0,
             "velocity": 0.0,

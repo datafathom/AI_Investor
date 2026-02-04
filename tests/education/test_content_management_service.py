@@ -4,7 +4,7 @@ Comprehensive test coverage for educational content management
 """
 
 import pytest
-from datetime import datetime
+from datetime import timezone, datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.education.content_management_service import ContentManagementService
 
@@ -51,7 +51,7 @@ async def test_get_content(service):
         'content_type': 'video',
         'title': 'Test Video',
         'data': {},
-        'created_date': datetime.utcnow().isoformat()
+        'created_date': datetime.now(timezone.utc).isoformat()
     }
     
     service.cache_service.get = AsyncMock(return_value=content)

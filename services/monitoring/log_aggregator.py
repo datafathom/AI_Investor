@@ -7,7 +7,7 @@ import os
 import logging
 import json
 from typing import Optional, Dict, Any
-from datetime import datetime
+from datetime import timezone, datetime
 from enum import Enum
 
 logger = logging.getLogger(__name__)
@@ -71,7 +71,7 @@ class LogAggregator:
     def log(self, level: LogLevel, message: str, context: Optional[Dict[str, Any]] = None):
         """Log message to all backends."""
         log_entry = {
-            'timestamp': datetime.utcnow().isoformat(),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             'level': level.value,
             'message': message,
             'service': 'ai-investor-backend',

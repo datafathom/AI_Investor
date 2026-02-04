@@ -17,6 +17,7 @@ import asyncio
 import uuid
 import random
 import datetime
+from datetime import timezone
 from typing import Dict, Any, List, Optional
 
 logger = logging.getLogger(__name__)
@@ -43,7 +44,7 @@ class CoinbaseClient:
                 "status": "connected",
                 "wallet_id": f"cb_wallet_{uuid.uuid4().hex[:16]}",
                 "user_id": user_id,
-                "connected_at": datetime.datetime.utcnow().isoformat()
+                "connected_at": datetime.datetime.now(timezone.utc).isoformat()
             }
         return {}
 
@@ -101,7 +102,7 @@ class CoinbaseClient:
                     "amount": {"amount": "0.05", "currency": "BTC"},
                     "native_amount": {"amount": "3250.00", "currency": "USD"},
                     "status": "completed",
-                    "created_at": (datetime.datetime.utcnow() - datetime.timedelta(days=1)).isoformat()
+                    "created_at": (datetime.datetime.now(timezone.utc) - datetime.timedelta(days=1)).isoformat()
                 },
                 {
                     "id": f"tx_{uuid.uuid4().hex[:8]}",
@@ -109,7 +110,7 @@ class CoinbaseClient:
                     "amount": {"amount": "2.00", "currency": "SOL"},
                     "native_amount": {"amount": "280.00", "currency": "USD"},
                     "status": "completed",
-                    "created_at": (datetime.datetime.utcnow() - datetime.timedelta(days=3)).isoformat()
+                    "created_at": (datetime.datetime.now(timezone.utc) - datetime.timedelta(days=3)).isoformat()
                 }
             ]
         return []

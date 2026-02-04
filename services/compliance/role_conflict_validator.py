@@ -1,7 +1,7 @@
 import logging
 from typing import List, Optional
 from uuid import UUID
-from models.professional_role import ProfessionalRole, RoleAssignment
+from schemas.professional_role import ProfessionalRole, RoleAssignment
 
 logger = logging.getLogger(__name__)
 

@@ -15,7 +15,7 @@ DEPENDENCIES:
 """
 import random
 from typing import List, Dict
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from services.social.reddit_service import get_reddit_client
 from services.social.discord_bot import get_discord_bot
 from services.social.inertia_cache import get_inertia_cache
@@ -52,7 +52,7 @@ class HypeMeterService:
         }
         
         feed = []
-        base_time = datetime.utcnow()
+        base_time = datetime.now(timezone.utc)
         
         for i in range(limit):
             symbol = random.choice(symbols)

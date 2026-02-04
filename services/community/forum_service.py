@@ -26,9 +26,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional
-from models.community import ForumThread, ThreadReply, ThreadCategory
+from schemas.community import ForumThread, ThreadReply, ThreadCategory
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -65,13 +65,13 @@ class ForumService:
         logger.info(f"Creating thread in category {category} by user {user_id}")
         
         thread = ForumThread(
-            thread_id=f"thread_{user_id}_{datetime.utcnow().timestamp()}",
+            thread_id=f"thread_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             category=ThreadCategory(category),
             title=title,
             content=content,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Save thread
@@ -101,21 +101,21 @@ class ForumService:
         logger.info(f"Adding reply to thread {thread_id}")
         
         reply = ThreadReply(
-            reply_id=f"reply_{thread_id}_{datetime.utcnow().timestamp()}",
+            reply_id=f"reply_{thread_id}_{datetime.now(timezone.utc).timestamp()}",
             thread_id=thread_id,
             user_id=user_id,
             content=content,
             parent_reply_id=parent_reply_id,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Update thread
         thread = await self._get_thread(thread_id)
         if thread:
             thread.reply_count += 1
-            thread.last_reply_date = datetime.utcnow()
-            thread.updated_date = datetime.utcnow()
+            thread.last_reply_date = datetime.now(timezone.utc)
+            thread.updated_date = datetime.now(timezone.utc)
             await self._save_thread(thread)
         
         # Save reply
@@ -141,7 +141,7 @@ class ForumService:
             raise ValueError(f"Thread {thread_id} not found")
         
         thread.upvotes += 1
-        thread.updated_date = datetime.utcnow()
+        thread.updated_date = datetime.now(timezone.utc)
         await self._save_thread(thread)
         
         return thread
@@ -177,12 +177,12 @@ class ForumService:
     async def _save_thread(self, thread: ForumThread):
         """Save thread to cache."""
         cache_key = f"thread:{thread.thread_id}"
-        self.cache_service.set(cache_key, thread.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, thread.model_dump(), ttl=86400 * 365)
     
     async def _save_reply(self, reply: ThreadReply):
         """Save reply to cache."""
         cache_key = f"reply:{reply.reply_id}"
-        self.cache_service.set(cache_key, reply.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, reply.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

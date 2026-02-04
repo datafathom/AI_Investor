@@ -24,10 +24,10 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from typing import Dict, List, Optional
 import numpy as np
-from models.ai_predictions import PricePrediction, TrendPrediction, PredictionType
+from schemas.ai_predictions import PricePrediction, TrendPrediction, PredictionType
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -87,11 +87,11 @@ class PredictionEngine:
         }
         
         prediction = PricePrediction(
-            prediction_id=f"pred_{symbol}_{datetime.utcnow().timestamp()}",
+            prediction_id=f"pred_{symbol}_{datetime.now(timezone.utc).timestamp()}",
             symbol=symbol,
             predicted_price=predicted_price,
             confidence=confidence,
-            prediction_date=datetime.utcnow(),
+            prediction_date=datetime.now(timezone.utc),
             time_horizon=time_horizon,
             confidence_interval=confidence_interval,
             model_version=model_version
@@ -127,7 +127,7 @@ class PredictionEngine:
         confidence = 0.72
         
         prediction = TrendPrediction(
-            prediction_id=f"trend_{symbol}_{datetime.utcnow().timestamp()}",
+            prediction_id=f"trend_{symbol}_{datetime.now(timezone.utc).timestamp()}",
             symbol=symbol,
             trend_direction=trend_direction,
             trend_strength=trend_strength,
@@ -146,11 +146,11 @@ class PredictionEngine:
         """Save prediction to cache."""
         # Use a more consistent cache key that includes symbol and horizon
         cache_key = f"prediction:{prediction.symbol}:{prediction.time_horizon}"
-        self.cache_service.set(cache_key, prediction.dict(), ttl=86400 * 7)  # 7 days
+        self.cache_service.set(cache_key, prediction.model_dump(), ttl=86400 * 7)  # 7 days
         
         # Also save by prediction_id
         id_key = f"prediction:{prediction.prediction_id}"
-        self.cache_service.set(id_key, prediction.dict(), ttl=86400 * 7)
+        self.cache_service.set(id_key, prediction.model_dump(), ttl=86400 * 7)
 
 
 # Singleton instance

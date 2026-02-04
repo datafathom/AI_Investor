@@ -1,76 +1,77 @@
 """
 Tests for PayPal API Endpoints
-Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock
-from flask import Flask
-from web.api.paypal_api import paypal_bp
+from unittest.mock import MagicMock, AsyncMock
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.paypal_api import router, get_paypal_provider
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(paypal_bp)
+def api_app():
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_paypal_client():
-    """Mock PayPal client."""
-    with patch('web.api.paypal_api.get_paypal_client') as mock:
-        client = MagicMock()
-        mock.return_value = client
-        yield client
+def mock_paypal_client(api_app):
+    """Mock PayPal Client."""
+    service = AsyncMock()
+    service.create_order.return_value = {"id": "PAYPAL_123", "status": "CREATED"}
+    service.capture_order.return_value = {"id": "PAYPAL_123", "status": "COMPLETED"}
+    
+    api_app.dependency_overrides[get_paypal_provider] = lambda: service
+    return service
 
 
 def test_create_order_success(client, mock_paypal_client):
-    """Test successful order creation."""
-    mock_order = {'order_id': 'PAYPAL_123', 'status': 'created'}
-    
-    async def mock_create_order(amount, currency):
-        return mock_order
-    
-    mock_paypal_client.create_order = mock_create_order
-    
-    response = client.post('/payment/paypal/create-order?mock=true',
-                          json={'amount': 29.00, 'currency': 'USD'})
+    """Test creating PayPal order."""
+    payload = {"amount": 29.0, "currency": "USD"}
+    response = client.post('/api/v1/paypal/payment/paypal/create-order', json=payload)
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert data['order_id'] == 'PAYPAL_123'
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['id'] == "PAYPAL_123"
+
+
+def test_create_order_failure(client, mock_paypal_client):
+    """Test creating PayPal order failure."""
+    mock_paypal_client.create_order.side_effect = RuntimeError("API down")
+    payload = {"amount": 29.0, "currency": "USD"}
+    response = client.post('/api/v1/paypal/payment/paypal/create-order', json=payload)
+    
+    assert response.status_code == 500
+    data = response.json()
+    assert data['success'] is False
 
 
 def test_capture_order_success(client, mock_paypal_client):
-    """Test successful order capture."""
-    mock_capture = {'status': 'completed', 'transaction_id': 'tx_123'}
-    
-    async def mock_capture_order(order_id):
-        return mock_capture
-    
-    mock_paypal_client.capture_order = mock_capture_order
-    
-    response = client.post('/payment/paypal/capture-order?mock=true',
-                          json={'order_id': 'PAYPAL_123'})
+    """Test capturing PayPal order."""
+    payload = {"order_id": "PAYPAL_123"}
+    response = client.post('/api/v1/paypal/payment/paypal/capture-order', json=payload)
     
     assert response.status_code == 200
-    data = response.get_json()
-    assert data['status'] == 'completed'
+    data = response.json()
+    assert data['success'] is True
+    assert data['data']['status'] == "COMPLETED"
 
 
-def test_capture_order_missing_order_id(client):
-    """Test order capture without order_id."""
-    response = client.post('/payment/paypal/capture-order?mock=true', json={})
+def test_capture_order_no_id(client, mock_paypal_client):
+    """Test capturing without order ID."""
+    payload = {"order_id": ""}
+    response = client.post('/api/v1/paypal/payment/paypal/capture-order', json=payload)
     
     assert response.status_code == 400
-    data = response.get_json()
-    assert 'error' in data
+    data = response.json()
+    assert data['success'] is False

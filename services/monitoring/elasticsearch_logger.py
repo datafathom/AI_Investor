@@ -5,7 +5,7 @@ Elasticsearch Logging Integration
 import os
 import logging
 from typing import Dict, Any
-from datetime import datetime
+from datetime import timezone, datetime
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ class ElasticsearchLogger:
     
     def _ensure_index(self):
         """Ensure index exists."""
-        index_name = f"{self.index_prefix}-{datetime.utcnow().strftime('%Y.%m')}"
+        index_name = f"{self.index_prefix}-{datetime.now(timezone.utc).strftime('%Y.%m')}"
         try:
             if not self.client.indices.exists(index=index_name):
                 self.client.indices.create(
@@ -58,7 +58,7 @@ class ElasticsearchLogger:
     def send_log(self, log_entry: Dict[str, Any]):
         """Send log entry to Elasticsearch."""
         try:
-            index_name = f"{self.index_prefix}-{datetime.utcnow().strftime('%Y.%m')}"
+            index_name = f"{self.index_prefix}-{datetime.now(timezone.utc).strftime('%Y.%m')}"
             self.client.index(index=index_name, body=log_entry)
         except Exception as e:
             logger.error(f"Failed to send log to Elasticsearch: {e}")

@@ -14,7 +14,7 @@ import logging
 import asyncio
 import random
 from typing import Dict, Any, List, Optional
-from datetime import datetime
+from datetime import timezone, datetime
 from services.system.secret_manager import get_secret_manager
 from services.social.inertia_cache import get_inertia_cache
 
@@ -61,7 +61,7 @@ class DiscordBot:
                     "channel": random.choice(self.connected_channels),
                     "author": f"trader_alpha_{random.randint(1,10)}",
                     "content": random.choice(messages),
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                     "sentiment": random.choice(["Bullish", "Bearish", "Neutral"])
                 })
             return mentions
@@ -82,7 +82,7 @@ class DiscordBot:
                 "velocity": velocity, # Mentions per hour
                 "growth_pct": round(random.uniform(5, 50), 2),
                 "hot_channels": ["#trading-floor", "#alpha-sigs"],
-                "last_updated": datetime.utcnow().isoformat()
+                "last_updated": datetime.now(timezone.utc).isoformat()
             }
         return {}
 

@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.retirement.retirement_projection_service import RetirementProjectionService
-from models.retirement import RetirementScenario, RetirementProjection
+from schemas.retirement import RetirementScenario, RetirementProjection
 
 
 @pytest.fixture
@@ -53,7 +53,7 @@ async def test_project_retirement(service, mock_scenario):
 async def test_project_retirement_cached(service, mock_scenario):
     """Test cached retirement projection."""
     cached_data = {
-        'scenario': mock_scenario.dict(),
+        'scenario': mock_scenario.model_dump(),
         'median_retirement_savings': 2000000.0,
         'success_probability': 0.85
     }

@@ -24,9 +24,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional
-from models.strategy import (
+from schemas.strategy import (
     TradingStrategy, StrategyExecution, StrategyStatus, StrategyPerformance, StrategyDrift
 )
 from services.strategy.strategy_builder_service import get_strategy_builder_service
@@ -76,7 +76,7 @@ class StrategyExecutionService:
         # Update strategy
         strategy.status = StrategyStatus.ACTIVE
         strategy.portfolio_id = portfolio_id
-        strategy.updated_date = datetime.utcnow()
+        strategy.updated_date = datetime.now(timezone.utc)
         
         # Save strategy
         await self.strategy_builder._save_strategy(strategy)
@@ -106,7 +106,7 @@ class StrategyExecutionService:
             raise ValueError(f"Strategy {strategy_id} not found")
         
         strategy.status = StrategyStatus.STOPPED
-        strategy.updated_date = datetime.utcnow()
+        strategy.updated_date = datetime.now(timezone.utc)
         
         await self.strategy_builder._save_strategy(strategy)
         
@@ -134,7 +134,7 @@ class StrategyExecutionService:
             raise ValueError(f"Strategy {strategy_id} not found")
         
         strategy.status = StrategyStatus.PAUSED
-        strategy.updated_date = datetime.utcnow()
+        strategy.updated_date = datetime.now(timezone.utc)
         
         await self.strategy_builder._save_strategy(strategy)
         
@@ -172,28 +172,28 @@ class StrategyExecutionService:
                     action_result = await self._execute_action(rule.action, strategy.portfolio_id)
                     
                     execution = StrategyExecution(
-                        execution_id=f"exec_{strategy_id}_{datetime.utcnow().timestamp()}",
+                        execution_id=f"exec_{strategy_id}_{datetime.now(timezone.utc).timestamp()}",
                         strategy_id=strategy_id,
                         rule_id=rule.rule_id,
                         action_taken=rule.action.get('type', 'unknown'),
                         order_id=action_result.get('order_id'),
-                        execution_time=datetime.utcnow(),
+                        execution_time=datetime.now(timezone.utc),
                         result="success" if action_result.get('success') else "failed"
                     )
                     
                     executions.append(execution)
                     
                     # Update last executed
-                    strategy.last_executed = datetime.utcnow()
+                    strategy.last_executed = datetime.now(timezone.utc)
                     await self.strategy_builder._save_strategy(strategy)
             except Exception as e:
                 logger.error(f"Error executing rule {rule.rule_id}: {e}")
                 execution = StrategyExecution(
-                    execution_id=f"exec_{strategy_id}_{datetime.utcnow().timestamp()}",
+                    execution_id=f"exec_{strategy_id}_{datetime.now(timezone.utc).timestamp()}",
                     strategy_id=strategy_id,
                     rule_id=rule.rule_id,
                     action_taken=rule.action.get('type', 'unknown'),
-                    execution_time=datetime.utcnow(),
+                    execution_time=datetime.now(timezone.utc),
                     result="failed"
                 )
                 executions.append(execution)
@@ -235,7 +235,7 @@ class StrategyExecutionService:
         Calculates the statistical drift between backtested expectations 
         and live execution performance based on actual execution records.
         """
-        from datetime import datetime
+        from datetime import timezone, datetime
         import math
         
         # 1. Fetch strategy to get baseline benchmarks
@@ -251,7 +251,7 @@ class StrategyExecutionService:
         seed = sum(ord(c) for c in strategy_id)
         
         # Base drift derived from strategy age or last executed delta
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         if strategy.last_executed:
             time_since = (now - strategy.last_executed).total_seconds()
             # Drift increases slowly with time unless re-tuned
@@ -305,7 +305,7 @@ class StrategyExecutionService:
         # In production, would execute actual orders
         return {
             'success': True,
-            'order_id': f"order_{datetime.utcnow().timestamp()}"
+            'order_id': f"order_{datetime.now(timezone.utc).timestamp()}"
         }
 
 

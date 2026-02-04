@@ -24,9 +24,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional
-from models.integration import Integration, IntegrationStatus
+from schemas.integration import Integration, IntegrationStatus
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -69,13 +69,13 @@ class IntegrationFramework:
             raise ValueError(f"App {app_name} is not supported")
         
         integration = Integration(
-            integration_id=f"integration_{user_id}_{app_name}_{datetime.utcnow().timestamp()}",
+            integration_id=f"integration_{user_id}_{app_name}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             app_name=app_name,
             status=IntegrationStatus.CONNECTED if oauth_token else IntegrationStatus.DISCONNECTED,
             oauth_token=oauth_token,
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Save integration
@@ -86,7 +86,7 @@ class IntegrationFramework:
     async def _save_integration(self, integration: Integration):
         """Save integration to cache."""
         cache_key = f"integration:{integration.integration_id}"
-        self.cache_service.set(cache_key, integration.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, integration.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

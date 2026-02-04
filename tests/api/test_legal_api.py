@@ -1,77 +1,89 @@
 """
 Tests for Legal API Endpoints
-Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock
-from flask import Flask
-from web.api.legal_api import legal_bp
+from unittest.mock import MagicMock, patch, mock_open
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.legal_api import router
+from web.auth_utils import get_current_user
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(legal_bp)
+def api_app():
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
+    # Mock current user
+    app.dependency_overrides[get_current_user] = lambda: {'id': 'user_1', 'email': 'test@example.com'}
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
-@pytest.fixture
-def mock_legal_service():
-    """Mock LegalComplianceService."""
-    with patch('web.api.legal_api.get_legal_compliance_service') as mock:
-        service = MagicMock()
-        service.get_user_consent_status.return_value = {
-            'tos_accepted': True,
-            'tos_version': '1.0',
-            'privacy_accepted': True
-        }
-        service.accept_agreement.return_value = True
-        mock.return_value = service
-        yield service
+def test_list_documents_success(client):
+    """Test listing legal documents."""
+    response = client.get('/api/v1/legal/documents')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert len(data['data']) > 0
+    assert data['data'][0]['id'] == 'terms_of_service'
 
 
-def test_get_consent_status_success(client, mock_legal_service):
-    """Test successful consent status retrieval."""
-    with patch('web.api.legal_api.login_required', lambda f: f):
-        with patch('web.api.legal_api.g') as mock_g:
-            mock_g.user_id = 'user_1'
-            response = client.get('/api/v1/legal/status')
+def test_get_document_success(client):
+    """Test getting a specific document content."""
+    with patch("builtins.open", mock_open(read_data="# Terms of Service")):
+        with patch("web.api.legal_api.Path.exists", return_value=True):
+            response = client.get('/api/v1/legal/documents/terms_of_service')
             
             assert response.status_code == 200
-            data = response.get_json()
-            assert 'tos_accepted' in data or 'consent' in data
+            data = response.json()
+            assert data['success'] is True
+            assert "# Terms of Service" in data['data']['content']
 
 
-def test_accept_agreement_success(client, mock_legal_service):
-    """Test successful agreement acceptance."""
-    with patch('web.api.legal_api.login_required', lambda f: f):
-        with patch('web.api.legal_api.g') as mock_g:
-            mock_g.user_id = 'user_1'
-            response = client.post('/api/v1/legal/accept',
-                                  json={'type': 'TOS', 'version': '1.0'})
-            
-            assert response.status_code == 200
-            data = response.get_json()
-            assert 'message' in data
+def test_get_document_not_found(client):
+    """Test getting a non-existent document."""
+    response = client.get('/api/v1/legal/documents/invalid_doc')
+    
+    assert response.status_code == 404
+    data = response.json()
+    assert data['success'] is False
 
 
-def test_accept_agreement_missing_params(client):
-    """Test agreement acceptance with missing parameters."""
-    with patch('web.api.legal_api.login_required', lambda f: f):
-        with patch('web.api.legal_api.g') as mock_g:
-            mock_g.user_id = 'user_1'
-            response = client.post('/api/v1/legal/accept',
-                                  json={'type': 'TOS'})
-            
-            assert response.status_code == 400
-            data = response.get_json()
-            assert 'error' in data
+def test_accept_documents_success(client):
+    """Test accepting documents."""
+    response = client.post('/api/v1/legal/accept',
+                           json={'documents': ['terms_of_service', 'privacy_policy']})
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert len(data['data']['acceptances']) == 2
+
+
+def test_get_acceptance_status_success(client):
+    """Test getting acceptance status."""
+    response = client.get('/api/v1/legal/acceptance-status')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert 'required_documents' in data['data']
+
+
+def test_check_updates_success(client):
+    """Test checking for updates."""
+    response = client.get('/api/v1/legal/check-updates')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+    assert 'updates_available' in data['data']

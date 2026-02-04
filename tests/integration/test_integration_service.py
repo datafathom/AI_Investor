@@ -4,10 +4,10 @@ Comprehensive test coverage for data synchronization and connectors
 """
 
 import pytest
-from datetime import datetime
+from datetime import timezone, datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.integration.integration_service import IntegrationService
-from models.integration import SyncJob
+from schemas.integration import SyncJob
 
 
 @pytest.fixture
@@ -57,8 +57,8 @@ async def test_get_sync_status(service):
         integration_id="integration_123",
         sync_type="incremental",
         status="completed",
-        started_date=datetime.utcnow(),
-        completed_date=datetime.utcnow(),
+        started_date=datetime.now(timezone.utc),
+        completed_date=datetime.now(timezone.utc),
         records_synced=100
     ))
     

@@ -1,6 +1,6 @@
 import pytest
 from services.retirement.match_calculator import MatchCalculator
-from models.employer_match import EmployerMatchConfig
+from schemas.employer_match import EmployerMatchConfig
 from uuid import uuid4
 
 def test_match_dollar_for_dollar():

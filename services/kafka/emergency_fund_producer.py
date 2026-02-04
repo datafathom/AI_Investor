@@ -2,7 +2,7 @@ import logging
 import json
 from datetime import datetime
 from typing import Dict, Any
-from models.emergency_fund import EmergencyFundKafkaMessage
+from schemas.emergency_fund import EmergencyFundKafkaMessage
 
 logger = logging.getLogger(__name__)
 

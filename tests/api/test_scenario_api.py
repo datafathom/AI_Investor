@@ -1,67 +1,84 @@
 """
 Tests for Scenario API Endpoints
-Phase 6: API Endpoint Tests
 """
 
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
-from fastapi.testclient import TestClient
+from unittest.mock import MagicMock, AsyncMock
 from fastapi import FastAPI
+from fastapi.testclient import TestClient
 from web.api.scenario_api import router
+from services.analysis.scenario_service import get_scenario_service, ScenarioService
 
 
 @pytest.fixture
-def app():
-    """Create FastAPI app for testing."""
+def api_app():
+    """Create FastAPI app merchant testing."""
     app = FastAPI()
     app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return TestClient(app)
+    return TestClient(api_app)
 
 
 @pytest.fixture
-def mock_scenario_service():
-    """Mock ScenarioService."""
-    with patch('web.api.scenario_api.get_scenario_service') as mock:
-        service = AsyncMock()
-        from services.analysis.scenario_service import ScenarioResult, RecoveryProjection
-        mock_result = ScenarioResult(
-            scenario_id='recession',
-            portfolio_impact=0.15,
-            new_portfolio_value=850000.0,
-            positions_affected=[{'type': 'Equities', 'impact': -20.0}],
-            hedge_offset=50000.0,
-            net_impact=-150000.0
-        )
-        service.apply_shock.return_value = mock_result
-        service.calculate_hedge_sufficiency.return_value = 0.75
-        mock_recovery = RecoveryProjection(
-            recovery_days=120,
-            recovery_path=[850000.0, 1000000.0],
-            worst_case_days=200,
-            best_case_days=60
-        )
-        service.project_recovery_timeline.return_value = mock_recovery
-        mock.return_value = service
-        yield service
+def mock_service(api_app):
+    """Mock Scenario Service."""
+    service = AsyncMock(spec=ScenarioService)
+    
+    result = MagicMock()
+    result.portfolio_impact = -0.1
+    result.new_portfolio_value = 900000
+    result.net_impact = -100000
+    result.hedge_offset = 20000
+    
+    recovery = MagicMock()
+    recovery.recovery_days = 180
+    recovery.recovery_path = [1, 2, 3]
+    recovery.worst_case_days = 365
+    
+    service.apply_shock.return_value = result
+    service.calculate_hedge_sufficiency.return_value = 0.8
+    service.project_recovery_timeline.return_value = recovery
+    service.run_refined_monte_carlo.return_value = {"percentiles": [10, 50, 90]}
+    service.calculate_liquidity_drain.return_value = {"drain": 50000}
+    
+    api_app.dependency_overrides[get_scenario_service] = lambda: service
+    return service
 
 
-def test_simulate_scenario_success(client, mock_scenario_service):
-    """Test successful scenario simulation."""
-    response = client.post('/api/v1/scenario/simulate?portfolio_id=portfolio_1',
-                          json={
-                              'id': 'recession',
-                              'equity_drop': 0.2,
-                              'bond_drop': 0.1,
-                              'gold_change': 0.05
-                          })
+def test_simulate_scenario_success(client, mock_service):
+    """Test simulating scenario."""
+    payload = {
+        "id": "crash_2024",
+        "equity_drop": 0.2,
+        "bond_drop": 0.05,
+        "gold_change": 0.1
+    }
+    response = client.post('/api/v1/scenario/simulate', json=payload)
     
     assert response.status_code == 200
     data = response.json()
-    assert 'impact' in data
-    assert 'hedge_sufficiency' in data
+    assert data['success'] is True
+    assert data['data']['impact']['portfolio_impact_pct'] == -0.1
+
+
+def test_run_refined_mc_success(client, mock_service):
+    """Test refined MC."""
+    response = client.get('/api/v1/scenario/monte-carlo-refined?scenario_id=crash&initial_value=1000000')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True
+
+
+def test_simulate_bank_run_success(client, mock_service):
+    """Test bank run simulation."""
+    response = client.get('/api/v1/scenario/bank-run?stress_level=2.0')
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data['success'] is True

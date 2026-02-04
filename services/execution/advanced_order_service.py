@@ -28,7 +28,7 @@ LAST_MODIFIED: 2026-01-21
 import logging
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
-from models.orders import (
+from schemas.orders import (
     TrailingStopOrder, BracketOrder, ConditionalOrder,
     OrderType, OrderStatus
 )

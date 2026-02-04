@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.enterprise.enterprise_service import EnterpriseService
-from models.enterprise import Organization, Team, TeamRole
+from schemas.enterprise import Organization, Team, TeamRole
 
 
 @pytest.fixture

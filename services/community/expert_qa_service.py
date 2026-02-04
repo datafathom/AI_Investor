@@ -24,9 +24,9 @@ LAST_MODIFIED: 2026-01-21
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, List, Optional
-from models.community import ExpertQuestion, ThreadReply
+from schemas.community import ExpertQuestion, ThreadReply
 from services.system.cache_service import get_cache_service
 
 logger = logging.getLogger(__name__)
@@ -67,15 +67,15 @@ class ExpertQAService:
         expert_id = await self._route_question(category)
         
         question = ExpertQuestion(
-            question_id=f"question_{user_id}_{datetime.utcnow().timestamp()}",
+            question_id=f"question_{user_id}_{datetime.now(timezone.utc).timestamp()}",
             user_id=user_id,
             title=title,
             content=content,
             category=category,
             expert_id=expert_id,
             status="open",
-            created_date=datetime.utcnow(),
-            updated_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc),
+            updated_date=datetime.now(timezone.utc)
         )
         
         # Save question
@@ -104,11 +104,18 @@ class ExpertQAService:
         
         question.best_answer_id = answer_id
         question.status = "answered"
-        question.updated_date = datetime.utcnow()
+        question.updated_date = datetime.now(timezone.utc)
         
         await self._save_question(question)
         
         return question
+
+    async def get_questions(self, user_id: Optional[str] = None) -> List[ExpertQuestion]:
+        """
+        Get expert questions.
+        """
+        # In production, would query database
+        return []
     
     async def _route_question(self, category: str) -> Optional[str]:
         """Route question to appropriate expert."""
@@ -126,7 +133,7 @@ class ExpertQAService:
     async def _save_question(self, question: ExpertQuestion):
         """Save question to cache."""
         cache_key = f"question:{question.question_id}"
-        self.cache_service.set(cache_key, question.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, question.model_dump(), ttl=86400 * 365)
 
 
 # Singleton instance

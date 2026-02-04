@@ -1,6 +1,6 @@
 import pytest
 from services.planning.spending_analyzer import SpendingAnalyzer
-from models.spending import SpendingCategory
+from schemas.spending import SpendingCategory
 from uuid import uuid4
 from datetime import date
 

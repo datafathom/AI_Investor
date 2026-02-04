@@ -12,7 +12,7 @@ import math
 import random
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Any
-from models.institutional import Client, WhiteLabelConfig, ClientAnalytics
+from schemas.institutional import Client, WhiteLabelConfig, ClientAnalytics
 from services.system.cache_service import get_cache_service
 from services.neo4j.neo4j_service import neo4j_service
 from services.neo4j.advisor_graph import AdvisorGraphService
@@ -43,7 +43,7 @@ class InstitutionalService:
         logger.info(f"Creating client {client_name} for advisor {advisor_id}")
         
         client = Client(
-            client_id=f"client_{advisor_id}_{int(datetime.utcnow().timestamp())}",
+            client_id=f"client_{advisor_id}_{int(datetime.now(timezone.utc).timestamp())}",
             advisor_id=advisor_id,
             client_name=client_name,
             jurisdiction=jurisdiction,
@@ -87,7 +87,7 @@ class InstitutionalService:
         logger.info(f"Configuring white-label for organization {organization_id}")
         
         config = WhiteLabelConfig(
-            config_id=f"whitelabel_{organization_id}_{int(datetime.utcnow().timestamp())}",
+            config_id=f"whitelabel_{organization_id}_{int(datetime.now(timezone.utc).timestamp())}",
             organization_id=organization_id,
             logo_url=logo_url,
             primary_color=primary_color,
@@ -201,9 +201,9 @@ class InstitutionalService:
         
         docs = [
             {"id": "DOC_ENG_001", "name": "Institutional Engagement Letter", "status": "Signed", "date": (datetime.now(timezone.utc) - timedelta(days=10)).strftime("%Y-%m-%d")},
-            {"id": "DOC_KYC_001", "name": "KYC Phase 1 Verification", "status": "Signed", "date": (datetime.utcnow() - timedelta(days=8)).strftime("%Y-%m-%d")},
-            {"id": "DOC_AML_001", "name": "AML Risk Disclosure", "status": "Pending", "date": (datetime.utcnow() - timedelta(days=2)).strftime("%Y-%m-%d")},
-            {"id": "DOC_TAX_001", "name": "W-9/Tax Certification", "status": "Signed", "date": (datetime.utcnow() - timedelta(days=5)).strftime("%Y-%m-%d")}
+            {"id": "DOC_KYC_001", "name": "KYC Phase 1 Verification", "status": "Signed", "date": (datetime.now(timezone.utc) - timedelta(days=8)).strftime("%Y-%m-%d")},
+            {"id": "DOC_AML_001", "name": "AML Risk Disclosure", "status": "Pending", "date": (datetime.now(timezone.utc) - timedelta(days=2)).strftime("%Y-%m-%d")},
+            {"id": "DOC_TAX_001", "name": "W-9/Tax Certification", "status": "Signed", "date": (datetime.now(timezone.utc) - timedelta(days=5)).strftime("%Y-%m-%d")}
         ]
         
         return {
@@ -239,12 +239,12 @@ class InstitutionalService:
     async def _save_client(self, client: Client):
         """Save client to cache."""
         cache_key = f"client:{client.client_id}"
-        self.cache_service.set(cache_key, client.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, client.model_dump(), ttl=86400 * 365)
     
     async def _save_white_label_config(self, config: WhiteLabelConfig):
         """Save white-label config to cache."""
         cache_key = f"whitelabel:{config.config_id}"
-        self.cache_service.set(cache_key, config.dict(), ttl=86400 * 365)
+        self.cache_service.set(cache_key, config.model_dump(), ttl=86400 * 365)
 
 
 _institutional_service: Optional[InstitutionalService] = None

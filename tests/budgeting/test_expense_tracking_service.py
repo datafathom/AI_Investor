@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime, timezone
 from unittest.mock import Mock, AsyncMock, patch
 from services.budgeting.expense_tracking_service import ExpenseTrackingService
-from models.budgeting import Expense, ExpenseCategory
+from schemas.budgeting import Expense, ExpenseCategory
 
 
 @pytest.fixture

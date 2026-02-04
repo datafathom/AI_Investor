@@ -4,10 +4,10 @@ Comprehensive test coverage for price alerts, volume alerts, and notifications
 """
 
 import pytest
-from datetime import datetime
+from datetime import timezone, datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.watchlist.alert_service import AlertService
-from models.watchlist import PriceAlert, AlertType, AlertStatus
+from schemas.watchlist import PriceAlert, AlertType, AlertStatus
 
 
 @pytest.fixture
@@ -66,7 +66,7 @@ async def test_check_alerts(service):
         threshold=150.0,
         status=AlertStatus.ACTIVE,
         notification_methods=['email'],
-        created_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc)
     )
     
     service.active_alerts["alert_123"] = alert
@@ -92,7 +92,7 @@ async def test_get_user_alerts(service):
             threshold=150.0,
             status=AlertStatus.ACTIVE,
             notification_methods=['email'],
-            created_date=datetime.utcnow()
+            created_date=datetime.now(timezone.utc)
         )
     ])
     
@@ -113,7 +113,7 @@ async def test_deactivate_alert(service):
         threshold=150.0,
         status=AlertStatus.ACTIVE,
         notification_methods=['email'],
-        created_date=datetime.utcnow()
+        created_date=datetime.now(timezone.utc)
     )
     
     service._get_alert = AsyncMock(return_value=alert)

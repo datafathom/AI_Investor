@@ -18,7 +18,7 @@ DEPENDENCIES:
 """
 import math
 import random
-from datetime import datetime
+from datetime import timezone, datetime
 from typing import Dict, Any, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -50,7 +50,7 @@ class FearGreedService:
             }
         """
         # Base on time of day to create pattern equivalent to market hours
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         minute_factor = (now.minute % 60) / 60.0
         
         # Simulate volatility (VIX contribution)

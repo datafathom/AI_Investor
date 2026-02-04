@@ -172,8 +172,6 @@ def start_backend(**kwargs):
     # Setup environment
     env = os.environ.copy()
     env["PYTHONPATH"] = project_root
-    env["FLASK_APP"] = "web/app.py"
-    env["FLASK_ENV"] = "development"
     
     # Path to venv python
     python_exe = os.path.join(project_root, "venv", "Scripts", "python.exe")
@@ -185,7 +183,7 @@ def start_backend(**kwargs):
         logger.error(f"ERROR Virtual environment not found at {python_exe}")
         return False
 
-    cmd = [python_exe, "web/app.py"]
+    cmd = [python_exe, "-m", "uvicorn", "web.fastapi_gateway:app", "--host", "127.0.0.1", "--port", "5050"]
     
     try:
         # Run in a way that output is shown but potentially doesn't block if handled as background
@@ -211,7 +209,7 @@ def start_frontend(**kwargs):
     logger.info(" Starting Frontend on Host...")
     
     project_root = str(Path(__file__).parent.parent.parent.absolute())
-    frontend_path = os.path.join(project_root, "frontend2")
+    frontend_path = os.path.join(project_root, "frontend")
     
     if not os.path.exists(frontend_path):
         logger.error(f"ERROR Frontend directory not found at {frontend_path}")
@@ -324,13 +322,10 @@ def run_demo_mode(**kwargs):
         
         backend_env = os.environ.copy()
         backend_env["PYTHONPATH"] = project_root
-        backend_env["FLASK_APP"] = "web/app.py"
-        backend_env["FLASK_ENV"] = "development"
 
         try:
-            # CREATE_NEW_CONSOLE is Windows only (0x10)
             subprocess.Popen(
-                [python_exe, backend_script],
+                [python_exe, "-m", "uvicorn", "web.fastapi_gateway:app", "--host", "127.0.0.1", "--port", "5050"],
                 cwd=project_root,
                 env=backend_env,
                 creationflags=subprocess.CREATE_NEW_CONSOLE
@@ -340,7 +335,7 @@ def run_demo_mode(**kwargs):
 
         # 4. Start Frontend in New Window
         print(" Launching Frontend (New Window)...", flush=True)
-        frontend_path = os.path.join(project_root, "frontend2")
+        frontend_path = os.path.join(project_root, "frontend")
         
         try:
             # Use npm.cmd directly for better Windows process handling

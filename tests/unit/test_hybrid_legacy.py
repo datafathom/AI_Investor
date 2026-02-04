@@ -1,5 +1,5 @@
 import unittest
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from services.real_estate.reit_data import REITDataService
 from services.compliance.wash_sale import WashSaleGuardService
 from services.ingestion.fred_stream import FREDStreamService
@@ -17,13 +17,13 @@ class TestPhases31_50Services(unittest.TestCase):
     def test_wash_sale_safe_after_30_days(self):
         """Test wash sale guard detects safe window."""
         svc = WashSaleGuardService()
-        old_date = datetime.utcnow() - timedelta(days=35)
+        old_date = datetime.now(timezone.utc) - timedelta(days=35)
         self.assertTrue(svc.is_safe_to_harvest("AAPL", old_date))
 
     def test_wash_sale_blocks_recent(self):
         """Test wash sale guard blocks recent purchases."""
         svc = WashSaleGuardService()
-        recent_date = datetime.utcnow() - timedelta(days=15)
+        recent_date = datetime.now(timezone.utc) - timedelta(days=15)
         self.assertFalse(svc.is_safe_to_harvest("AAPL", recent_date))
 
     def test_fred_curve_inversion(self):

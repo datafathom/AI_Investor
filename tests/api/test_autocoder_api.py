@@ -5,28 +5,29 @@ Phase 6: API Endpoint Tests
 
 import pytest
 from unittest.mock import patch, MagicMock
-from flask import Flask
-from web.api.autocoder_api import autocoder_bp
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from web.api.autocoder_api import router
 
 
 @pytest.fixture
-def app():
-    """Create Flask app for testing."""
-    app = Flask(__name__)
-    app.config['TESTING'] = True
-    app.register_blueprint(autocoder_bp)
+def api_app():
+    """Create FastAPI app for testing."""
+    app = FastAPI()
+    app.include_router(router)
     return app
 
 
 @pytest.fixture
-def client(app):
+def client(api_app):
     """Create test client."""
-    return app.test_client()
+    return TestClient(api_app)
 
 
 @pytest.fixture
 def mock_autocoder():
     """Mock Autocoder."""
+    # patch the import in web.api.autocoder_api
     with patch('web.api.autocoder_api.get_autocoder') as mock:
         coder = MagicMock()
         coder.generate_code.return_value = 'def test_function(): pass'
@@ -42,7 +43,7 @@ def test_generate_code_success(client, mock_autocoder):
                           json={'task': 'Create a test adapter'})
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['status'] == 'success'
     assert 'code' in data
 
@@ -53,7 +54,7 @@ def test_validate_code_success(client, mock_autocoder):
                           json={'code': 'def test(): pass'})
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert 'is_valid' in data
 
 
@@ -66,6 +67,6 @@ def test_deploy_module_success(client, mock_autocoder):
                           })
     
     assert response.status_code == 200
-    data = response.get_json()
+    data = response.json()
     assert data['status'] == 'success'
     assert 'module_name' in data

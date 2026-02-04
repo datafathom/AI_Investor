@@ -7,7 +7,7 @@ import pytest
 from datetime import datetime
 from unittest.mock import Mock, AsyncMock, patch
 from services.ai_assistant.learning_service import LearningService
-from models.ai_assistant import UserPreference, Recommendation
+from schemas.ai_assistant import UserPreference, Recommendation
 
 
 @pytest.fixture

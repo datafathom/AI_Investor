@@ -18,6 +18,7 @@ import asyncio
 import uuid
 import random
 import datetime
+from datetime import timezone
 from typing import Dict, Any, Optional, List
 
 logger = logging.getLogger(__name__)
@@ -49,7 +50,7 @@ class PagerDutyClient:
                 "urgency": urgency,
                 "status": "triggered",
                 "service": {"summary": "AI Investor Backend"},
-                "created_at": datetime.datetime.utcnow().isoformat()
+                "created_at": datetime.datetime.now(timezone.utc).isoformat()
             }
         return {}
 
@@ -66,14 +67,14 @@ class PagerDutyClient:
                     "title": "Database Connection Latency High",
                     "urgency": "high",
                     "status": "acknowledged",
-                    "created_at": (datetime.datetime.utcnow() - datetime.timedelta(minutes=15)).isoformat()
+                    "created_at": (datetime.datetime.now(timezone.utc) - datetime.timedelta(minutes=15)).isoformat()
                 },
                 {
                     "id": "P55109",
                     "title": "API Rate Limit Warning (AlphaVantage)",
                     "urgency": "low",
                     "status": "triggered",
-                    "created_at": (datetime.datetime.utcnow() - datetime.timedelta(minutes=2)).isoformat()
+                    "created_at": (datetime.datetime.now(timezone.utc) - datetime.timedelta(minutes=2)).isoformat()
                 }
             ]
         return []
