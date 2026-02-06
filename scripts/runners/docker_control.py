@@ -51,7 +51,7 @@ def docker_up(profile: str = "full", build: bool = False):
     try:
         _load_env_to_environ()
         env_file = _get_env_file()
-        cmd = ['docker', 'compose', '--env-file', env_file, '-f', compose_file, '--profile', profile, 'up', '-d', '--remove-orphans']
+        cmd = ['sudo', 'docker', 'compose', '--env-file', env_file, '-f', compose_file, '--profile', profile, 'up', '-d', '--remove-orphans']
         if build:
             cmd.append('--build')
             
@@ -61,16 +61,7 @@ def docker_up(profile: str = "full", build: bool = False):
             check=True
         )
         
-        # Get bind IP for display
-        bind_ip = os.getenv("DOCKER_BIND_IP", "127.0.0.1")
-        
         print(f"OK Docker Infrastructure started successfully!")
-        print(f"\n Services listening on {bind_ip}:")
-        print(f"   - Kafka: {bind_ip}:9092")
-        print(f"   - PostgreSQL: {bind_ip}:5432")
-        print(f"   - Redis: {bind_ip}:6379")
-        print(f"   - Neo4j HTTP: {bind_ip}:7474")
-        print(f"   - Neo4j Bolt: {bind_ip}:7687")
         print("\n👉 Remember to start Backend and Frontend on host separately.")
     except subprocess.CalledProcessError:
         print(f"ERROR Error starting containers.")
@@ -82,7 +73,7 @@ def docker_down(volumes: bool = False):
     
     print("🛑 Stopping Docker containers...")
     env_file = _get_env_file()
-    cmd = ['docker', 'compose', '--env-file', env_file, '-f', compose_file, 'down']
+    cmd = ['sudo', 'docker', 'compose', '--env-file', env_file, '-f', compose_file, 'down']
     if volumes:
         print("🕯️  Pruning volumes for a clean slate...")
         cmd.append('-v')
@@ -106,7 +97,7 @@ def docker_ps():
     print(" Docker container status:")
     try:
         subprocess.run(
-            ['docker', 'ps', '--format', 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}'],
+            ['sudo', 'docker', 'ps', '--format', 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}'],
             check=True
         )
     except subprocess.CalledProcessError as e:
@@ -124,7 +115,7 @@ def docker_logs(service: str = "", follow: bool = True):
     compose_file = _get_compose_file()
     env_file = _get_env_file()
     
-    cmd = ['docker', 'compose', '--env-file', env_file, '-f', compose_file, 'logs']
+    cmd = ['sudo', 'docker', 'compose', '--env-file', env_file, '-f', compose_file, 'logs']
     if follow:
         cmd.append('-f')
     if service:

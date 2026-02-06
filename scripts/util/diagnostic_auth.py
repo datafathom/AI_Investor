@@ -34,7 +34,7 @@ def check_users():
             if not users:
                 print("No users found.")
             for u in users:
-                print(f"ID: {u[0]}, Email: {u[1]}, Username: {u[2]}, Hash: {u[3]}, Role: {u[4]}")
+                print(f"ID: {u[0]}, Email: {u[1]}, Username: {u[2]}, Role: {u[4]}")
     except Exception as e:
         print(f"Error checking users: {e}")
 
@@ -63,7 +63,7 @@ def test_google_init():
         print(f"Error initiating Google Auth: {e}")
 
 if __name__ == "__main__":
-    print(f"DATABASE_URL: {os.getenv('DATABASE_URL')}")
+    print("Running diagnostic auth checks...")
     check_users()
     check_linked_accounts()
     test_google_init()

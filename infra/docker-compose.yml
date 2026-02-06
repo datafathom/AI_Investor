@@ -23,7 +23,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://${DOCKER_BIND_IP:-127.0.0.1}:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -36,7 +36,7 @@ services:
       - investor-network
 
   postgres:
-    image: pgvector/pgvector:pg16
+    image: timescale/timescaledb-ha:pg16
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-investor_user}
@@ -49,7 +49,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 200MB
+          memory: 1G
     networks:
       - investor-network
 
@@ -59,9 +59,7 @@ services:
     ports:
       - "${DOCKER_BIND_IP:-127.0.0.1}:6379:6379"
     command: >
-      redis-server 
-      --requirepass ${REDIS_PASSWORD:-84zMsasS0WfXGGVFU6t7vLd9}
-      --user investor_user on >${REDIS_PASSWORD:-84zMsasS0WfXGGVFU6t7vLd9} ~* +@all
+      redis-server  --requirepass ${REDIS_PASSWORD:-84zMsasS0WfXGGVFU6t7vLd9} --user investor_user on >${REDIS_PASSWORD:-84zMsasS0WfXGGVFU6t7vLd9} ~* +@all
     deploy:
       resources:
         limits:
@@ -73,8 +71,8 @@ services:
     image: neo4j:2025.10.1
     restart: always
     ports:
-      - "${DOCKER_BIND_IP:-127.0.0.1}:7474:7474" # HTTP Browser
-      - "${DOCKER_BIND_IP:-127.0.0.1}:7687:7687" # Bolt
+      - "${DOCKER_BIND_IP:-127.0.0.1}:7474:7474"
+      - "${DOCKER_BIND_IP:-127.0.0.1}:7687:7687"
     environment:
       NEO4J_AUTH: ${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-investor_password}
       NEO4J_dbms_memory_heap_initial__size: 256m

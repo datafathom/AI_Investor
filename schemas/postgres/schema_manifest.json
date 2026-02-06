@@ -39,7 +39,6 @@
   "margin_history.sql",
   "education_ledger.sql",
   "risk_metrics.sql",
-  "risk_free_rates.sql",
   "trust_stipulations.sql",
   "trust_funding_status.sql",
   "tax_lots.sql",

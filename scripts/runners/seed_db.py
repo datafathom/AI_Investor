@@ -1,40 +1,54 @@
-
 import os
 import sys
 import time
 import psycopg2
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+from pathlib import Path
+from dotenv import load_dotenv
 from services.neo4j.neo4j_service import neo4j_service
 
-# Default to the local dev database URL if not set
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://investor_user:investor_password@localhost:5432/investor_db")
+def mask_url(url: str) -> str:
+    """Masks the password in a database connection URL."""
+    try:
+        from urllib.parse import urlparse, urlunparse
+        parsed = urlparse(url)
+        if parsed.password:
+            # Replace the password with stars
+            netloc = f"{parsed.username}:{'*' * 8}@{parsed.hostname}"
+            if parsed.port:
+                netloc += f":{parsed.port}"
+            parsed = parsed._replace(netloc=netloc)
+        return urlunparse(parsed)
+    except Exception:
+        return "DATABASE_URL_UNPARSABLE"
 
 def run_seed_db():
     """
     Seeds the database with initial required data (Admin User, etc).
     """
-    print(f"🌱 Seeding database at {DATABASE_URL}...")
+    # Load .env from project root
+    project_root = Path(__file__).resolve().parent.parent.parent
+    env_path = project_root / '.env'
+    load_dotenv(dotenv_path=env_path)
+    
+    # Use the DATABASE_URL exactly as specified in .env
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        database_url = "postgresql://investor_user:investor_password@127.0.0.1:5432/investor_db"
+    
+    print(f"🌱 Seeding Postgres database (Target: {mask_url(database_url)})")
     
     try:
-        conn = psycopg2.connect(DATABASE_URL)
+        # Connect with a longer timeout to allow for container warm-up
+        conn = psycopg2.connect(database_url, connect_timeout=30)
         conn.autocommit = True
         cur = conn.cursor()
         
         # 1. Create Admin User
-        # Using a raw query for simplicity and speed without loading full ORM models yet
-        # Password handling should ideally be hashed, but for dev seeding we use plain text 
-        # or a known hash if the auth system requires it. 
-        # Assuming the auth system might hash on login or expects a hash. 
-        # For now, inserting a placeholder.
-        
-        # Check if users table exists first
-        # Check if users table exists by trying to access it
         try:
             cur.execute("SELECT 1 FROM users LIMIT 1;")
         except psycopg2.errors.UndefinedTable:
-            conn.rollback() # Reset transaction state
+            conn.rollback() 
             print("WARN 'users' table not found. Has the backend migration run?")
-            print("   Please ensure the backend has started at least once to create tables.")
             return
 
         print("👤 Checking for Admin user...")
@@ -66,7 +80,6 @@ def run_seed_db():
         # 2. Neo4j Seeding
         print("🌱 Seeding Neo4j...")
         try:
-            # Create default advisor node
             query = """
             MERGE (a:ADVISOR {id: 'demo-advisor'})
             SET a.name = 'Demo Advisor', a.role = 'advisor', a.is_active = TRUE

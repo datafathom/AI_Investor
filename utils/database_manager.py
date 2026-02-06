@@ -39,7 +39,7 @@ class DatabaseManager:
                     minconn=1,
                     maxconn=20,
                     dsn=pg_url,
-                    connect_timeout=5
+                    connect_timeout=30
                 )
                 logger.info("PostgreSQL connection pool initialized.")
             except Exception as e:
