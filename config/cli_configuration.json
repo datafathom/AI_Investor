@@ -134,6 +134,15 @@
                 },
                 "down": {
                     "description": "Stop Docker containers",
+                    "flags": [
+                        {
+                            "name": "volumes",
+                            "short": "v",
+                            "type": "boolean",
+                            "default": false,
+                            "help": "Purge all mounted volumes"
+                        }
+                    ],
                     "handler": "scripts.runners.docker_control:docker_down"
                 },
                 "status": {
