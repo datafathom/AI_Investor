@@ -8,7 +8,7 @@ BEGIN;
 -- User onboarding status
 CREATE TABLE IF NOT EXISTS user_onboarding (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER UNIQUE NOT NULL,
+    user_id UUID UNIQUE NOT NULL,
     completed BOOLEAN DEFAULT FALSE,
     skipped BOOLEAN DEFAULT FALSE,
     current_step INTEGER DEFAULT 1,
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS user_onboarding (
 -- User preferences
 CREATE TABLE IF NOT EXISTS user_preferences (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER UNIQUE NOT NULL,
+    user_id UUID UNIQUE NOT NULL,
     experience_level VARCHAR(50),
     investment_goals TEXT[],
     risk_tolerance VARCHAR(50),

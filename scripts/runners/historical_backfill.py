@@ -23,9 +23,7 @@ def run_historical_backfill(symbol: str = "SPY", size: str = "compact", **kwargs
     
     loader = HistoricalLoader()
     
-    # Check if we have an API key or if we are in mock mode
-    if not loader.client.api_key:
-        print("Warning: ALPHA_VANTAGE_API_KEY not found. Loader will operate in mock mode or fail.")
+    loader = HistoricalLoader()
         
     success = loader.load_daily_history(symbol, outputsize=size)
     

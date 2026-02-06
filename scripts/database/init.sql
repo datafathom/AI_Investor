@@ -6,8 +6,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pg_trgm";
 CREATE EXTENSION IF NOT EXISTS "btree_gin";
 
--- TimescaleDB extension (if using TimescaleDB)
--- CREATE EXTENSION IF NOT EXISTS timescaledb;
+-- TimescaleDB extension
+CREATE EXTENSION IF NOT EXISTS timescaledb;
 
 -- Set timezone
 SET timezone = 'UTC';

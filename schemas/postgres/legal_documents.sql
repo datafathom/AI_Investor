@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS legal_documents (
 -- User legal document acceptances
 CREATE TABLE IF NOT EXISTS legal_document_acceptances (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
+    user_id UUID NOT NULL,
     document_id VARCHAR(255) NOT NULL,
     version VARCHAR(50) NOT NULL,
     accepted_at TIMESTAMPTZ DEFAULT NOW(),

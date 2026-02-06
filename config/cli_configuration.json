@@ -165,6 +165,81 @@
             },
             "category": "Development & Infrastructure"
         },
+        "db": {
+            "description": "Database maintenance and management.",
+            "subcommands": {
+                "migrate": {
+                    "description": "Run database migrations (up/down).",
+                    "arguments": [
+                        {
+                            "name": "direction",
+                            "type": "string",
+                            "default": "up",
+                            "help": "Migration direction: up or down"
+                        }
+                    ],
+                    "flags": [
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "help": "Migration ID (required for rollback)"
+                        }
+                    ],
+                    "handler": "scripts.runners.database_runner:run_db_command",
+                    "kwargs": {
+                        "command": "migrate"
+                    }
+                },
+                "backup": {
+                    "description": "Backup database.",
+                    "flags": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "default": "all",
+                            "help": "Backup type: postgres, neo4j, or all"
+                        }
+                    ],
+                    "handler": "scripts.runners.database_runner:run_db_command",
+                    "kwargs": {
+                        "command": "backup"
+                    }
+                },
+                "restore": {
+                    "description": "Restore database from backup.",
+                    "flags": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "required": true,
+                            "help": "Backup file path"
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "default": "postgres",
+                            "help": "Database type: postgres or neo4j"
+                        }
+                    ],
+                    "handler": "scripts.runners.database_runner:run_db_command",
+                    "kwargs": {
+                        "command": "restore"
+                    }
+                },
+                "status": {
+                    "description": "Check migration status.",
+                    "handler": "scripts.runners.database_runner:run_db_command",
+                    "kwargs": {
+                        "command": "status"
+                    }
+                },
+                "reinit": {
+                    "description": "DESTRUCTIVE: Full infrastructure reset (Nuke data, Start services, Migrate, Seed).",
+                    "handler": "scripts.runners.database_runner:db_reinit"
+                }
+            },
+            "category": "Development & Infrastructure"
+        },
         "api": {
             "description": "API Documentation and interaction tools",
             "subcommands": {
@@ -2233,91 +2308,6 @@
                             "name": "command",
                             "type": "string",
                             "default": "health"
-                        }
-                    ]
-                }
-            },
-            "category": "General"
-        },
-        "db": {
-            "description": "Database operations",
-            "subcommands": {
-                "migrate": {
-                    "description": "Run database migrations",
-                    "flags": [
-                        {
-                            "name": "direction",
-                            "type": "string",
-                            "default": "up",
-                            "help": "Migration direction: up or down"
-                        },
-                        {
-                            "name": "migration-id",
-                            "type": "string",
-                            "help": "Specific migration to run"
-                        }
-                    ],
-                    "handler": "scripts.runners.database_runner:run_db_command",
-                    "arguments": [
-                        {
-                            "name": "command",
-                            "type": "string",
-                            "default": "migrate"
-                        }
-                    ]
-                },
-                "backup": {
-                    "description": "Backup database",
-                    "flags": [
-                        {
-                            "name": "type",
-                            "type": "string",
-                            "default": "all",
-                            "help": "Backup type: postgres, neo4j, or all"
-                        }
-                    ],
-                    "handler": "scripts.runners.database_runner:run_db_command",
-                    "arguments": [
-                        {
-                            "name": "command",
-                            "type": "string",
-                            "default": "backup"
-                        }
-                    ]
-                },
-                "restore": {
-                    "description": "Restore database from backup",
-                    "flags": [
-                        {
-                            "name": "file",
-                            "type": "string",
-                            "required": true,
-                            "help": "Backup file path"
-                        },
-                        {
-                            "name": "type",
-                            "type": "string",
-                            "default": "postgres",
-                            "help": "Database type: postgres or neo4j"
-                        }
-                    ],
-                    "handler": "scripts.runners.database_runner:run_db_command",
-                    "arguments": [
-                        {
-                            "name": "command",
-                            "type": "string",
-                            "default": "restore"
-                        }
-                    ]
-                },
-                "status": {
-                    "description": "Check migration status",
-                    "handler": "scripts.runners.database_runner:run_db_command",
-                    "arguments": [
-                        {
-                            "name": "command",
-                            "type": "string",
-                            "default": "status"
                         }
                     ]
                 }

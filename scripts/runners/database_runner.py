@@ -102,27 +102,98 @@ class DatabaseRunner:
                 sys.exit(1)
 
 
-def run_db_command(command: str = "migrate", **kwargs):
-    """Run database command."""
-    runner = DatabaseRunner()
+def db_reinit(**kwargs):
+    """
+    DESTRUCTIVE: Full infrastructure reset.
+    1. Down with volumes (Prune)
+    2. Nuke host data folders (sudo rm -rf data/postgres data/neo4j)
+    3. Up with LAN IP binding
+    4. Wait for PG readiness
+    5. Migrate
+    6. Seed
+    """
+    project_root = Path(__file__).parent.parent.parent
     
-    if command == "migrate":
-        direction = kwargs.get("direction", "up")
-        migration_id = kwargs.get("migration_id")
-        runner.migrate(direction=direction, migration_id=migration_id)
-    elif command == "backup":
-        backup_type = kwargs.get("type", "all")
-        runner.backup(backup_type=backup_type)
-    elif command == "restore":
-        file_path = kwargs.get("file")
-        if not file_path:
-            print("Backup file path required (--file)")
-            sys.exit(1)
-        db_type = kwargs.get("type", "postgres")
-        runner.restore(file_path, db_type)
-    elif command == "status":
-        runner.status()
-    else:
-        print(f"Unknown database command: {command}")
-        print("Available commands: migrate, backup, restore, status")
+    print("\n" + "="*60)
+    print("🔥 DESTRUCTIVE RESET: Re-initializing Database Suite")
+    print("="*60)
+    
+    # 1. Docker Down with volumes
+    from .docker_control import docker_down, docker_up
+    print("\n[Stage 1/6] Stopping Docker containers and pruning volumes...")
+    docker_down(volumes=True)
+    
+    # 2. Nuke host data folders (requires sudo for root-owned files from Docker)
+    print("\n[Stage 2/6] Nuking host data folders (requires sudo)...")
+    data_folders = ["data/postgres", "data/neo4j"]
+    for folder in data_folders:
+        full_path = project_root / folder
+        if full_path.exists():
+            print(f"   Deleting {folder}...")
+            try:
+                subprocess.run(["sudo", "rm", "-rf", str(full_path)], check=True)
+            except subprocess.CalledProcessError as e:
+                print(f"❌ Failed to delete {folder}: {e}")
+                sys.exit(1)
+    
+    # 3. Docker Up with LAN IP
+    print("\n[Stage 3/6] Starting containers with LAN IP distribution...")
+    # Load .env to get DOCKER_BIND_IP for environment
+    from dotenv import load_dotenv
+    load_dotenv(project_root / ".env")
+    
+    # Ensure current process has DOCKER_BIND_IP for subprocess calls
+    os.environ["DOCKER_BIND_IP"] = os.getenv("DOCKER_BIND_IP", "127.0.0.1")
+    docker_up(profile="full")
+    
+    # 4. Wait for PG readiness
+    print("\n[Stage 4/6] Waiting for PostgreSQL readiness (Health Check)...")
+    import time
+    import socket
+    import psycopg2
+    
+    pg_host = os.getenv("POSTGRES_HOST", "127.0.0.1")
+    pg_port = int(os.getenv("POSTGRES_PORT", "5432"))
+    
+    max_retries = 30
+    retry_interval = 5
+    print(f"   Checking {pg_host}:{pg_port}...")
+    
+    engine_ready = False
+    for i in range(max_retries):
+        try:
+            with socket.create_connection((pg_host, pg_port), timeout=2):
+                print(f"   ✅ Port {pg_port} is open. Checking database engine...")
+                # Try simple connection check using psycopg2
+                db_url = os.getenv("DATABASE_URL")
+                conn = psycopg2.connect(db_url, connect_timeout=5)
+                conn.close()
+                print("   ✅ Database engine is ready!")
+                engine_ready = True
+                break
+        except (socket.timeout, ConnectionRefusedError, psycopg2.Error):
+            print(f"   [Retry {i+1}/{max_retries}] Still initializing... ({retry_interval}s)")
+            time.sleep(retry_interval)
+            
+    if not engine_ready:
+        print("❌ Database failed to stabilize in time.")
         sys.exit(1)
+        
+    # 5. Run Migrations
+    print("\n[Stage 5/6] Running schema migrations...")
+    runner = DatabaseRunner()
+    runner.migrate(direction="up")
+    
+    # 6. Seed Database
+    print("\n[Stage 6/6] Seeding data (Users, Advisors)...")
+    from .seed_db import run_seed_db
+    run_seed_db()
+    
+    print("\n" + "="*60)
+    print("✨ DATABASE RESTORED SUCCESSFULLY!")
+    print("="*60 + "\n")
+
+
+if __name__ == "__main__":
+    # If run directly, default to migrate up
+    run_db_command("migrate")

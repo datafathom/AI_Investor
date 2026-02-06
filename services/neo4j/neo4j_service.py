@@ -21,27 +21,30 @@ class Neo4jService:
     def __init__(self):
         if hasattr(self, '_initialized') and self._initialized:
             return
-        
-        self.uri = os.getenv('NEO4J_URI', 'bolt://localhost:7687')
-        self.user = os.getenv('NEO4J_USER', 'neo4j')
-        self.password = os.getenv('NEO4J_PASSWORD', 'investor_password')
-        
-        try:
-            self._driver = GraphDatabase.driver(self.uri, auth=(self.user, self.password))
-            logger.info(f"Neo4jService: Connected to {self.uri}")
-        except Exception as e:
-            logger.error(f"Neo4jService: Failed to connect to Neo4j: {str(e)}")
-            self._driver = None
-        
         self._initialized = True
 
     @property
     def driver(self):
+        """Lazy-load the Neo4j driver with dynamic config resolution."""
+        if self._driver is None:
+            uri = os.getenv('NEO4J_URI', 'bolt://localhost:7687')
+            user = os.getenv('NEO4J_USER', 'neo4j')
+            password = os.getenv('NEO4J_PASSWORD', 'investor_password')
+            
+            try:
+                self._driver = GraphDatabase.driver(
+                    uri, 
+                    auth=(user, password),
+                    connection_timeout=5.0  # Fail fast
+                )
+                logger.info(f"Neo4jService: Driver initialized for {uri}")
+            except Exception as e:
+                logger.error(f"Neo4jService: Failed to initialize driver for {uri}: {str(e)}")
         return self._driver
 
     def execute_query(self, query: str, parameters: Dict[str, Any] = None) -> List[Dict[str, Any]]:
         """Execute a Cypher query and return results as a list of dicts."""
-        if not self._driver:
+        if not self.driver:
             logger.warning("Neo4jService: No driver available for query execution.")
             return []
             

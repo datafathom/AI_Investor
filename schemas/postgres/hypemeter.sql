@@ -2,14 +2,15 @@
 -- Created: 2026-01-18
 
 CREATE TABLE IF NOT EXISTS social_sentiment (
-    id SERIAL PRIMARY KEY,
+    id SERIAL,
     timestamp TIMESTAMPTZ DEFAULT NOW(),
     source VARCHAR(50) NOT NULL, -- e.g., 'Reddit', 'Twitter', 'News'
     symbol VARCHAR(20) NOT NULL,
     sentiment_score FLOAT NOT NULL CHECK (sentiment_score >= -1.0 AND sentiment_score <= 1.0),
     magnitude FLOAT DEFAULT 0.0,
     raw_text TEXT,
-    entities JSONB DEFAULT '{}'
+    entities JSONB DEFAULT '{}',
+    PRIMARY KEY (id, timestamp)
 );
 
 CREATE INDEX IF NOT EXISTS idx_sentiment_symbol_time ON social_sentiment(symbol, timestamp DESC);
