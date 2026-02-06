@@ -1,7 +1,7 @@
 """
 Security Gateway Service
 Manages API security policies including rate limiting and basic WAF rules.
-Migrated from Flask-Limiter to FastAPI-compatible implementation.
+-Limiter to FastAPI-compatible implementation.
 """
 import logging
 from functools import wraps
@@ -110,3 +110,4 @@ def get_security_gateway() -> SecurityGatewayService:
 def get_rate_limiter() -> InMemoryRateLimiter:
     """Get the global rate limiter instance."""
     return _limiter
+

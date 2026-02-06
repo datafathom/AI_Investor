@@ -29,6 +29,11 @@ logger = logging.getLogger(__name__)
 watchlist_router = APIRouter(prefix="/api/v1/watchlist", tags=["Watchlist"])
 alert_router = APIRouter(prefix="/api/v1/alert", tags=["Alert"])
 
+# Unified router for gateway
+router = APIRouter()
+router.include_router(watchlist_router)
+router.include_router(alert_router)
+
 class AlertStatus(str, Enum):
     ACTIVE = "active"
     TRIGGERED = "triggered"

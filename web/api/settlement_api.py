@@ -1,6 +1,6 @@
 """
 Settlement API - FastAPI Router
-Migrated from Flask (web/api/settlement_api.py)
+ (web/api/settlement_api.py)
 """
 
 from fastapi import APIRouter, HTTPException, Depends, Body
@@ -76,3 +76,4 @@ async def convert_currency(
     except Exception as e:
         logger.exception("Currency conversion failed")
         return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
+

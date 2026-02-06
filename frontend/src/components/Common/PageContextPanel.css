@@ -1,0 +1,305 @@
+.page-context-panel {
+  position: sticky;
+  top: 30px; /* Offset for MenuBar */
+  z-index: 1500; /* Higher than widgets and content */
+  background: rgba(10, 15, 25, 0.85);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 2px solid var(--accent);
+  padding: 1rem 2.5rem;
+  margin-bottom: 1rem;
+  border-radius: 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  overflow: visible; /* CRITICAL: Allow dropdown to show */
+  flex-shrink: 0;
+}
+
+.context-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.title-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+  position: relative;
+}
+
+.title-section.clickable {
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.title-section.clickable:hover {
+  transform: translateX(4px);
+}
+
+.title-section.has-dropdown {
+  cursor: pointer;
+}
+
+.dropdown-indicator {
+  font-size: 0.7rem;
+  color: var(--accent);
+  opacity: 0;
+  margin-left: 1rem;
+  transition: transform 0.3s, opacity 0.2s;
+}
+
+.dropdown-indicator.visible {
+  opacity: 0.4;
+}
+
+.dropdown-indicator.open {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+.context-title-dropdown {
+  position: absolute;
+  top: calc(100% + 5px); /* Tighter gap */
+  left: 0;
+  min-width: 600px; /* Wider for 2-column visibility */
+  background: rgba(13, 17, 23, 0.98);
+  backdrop-filter: blur(30px);
+  border: 1px solid var(--accent);
+  border-left: 6px solid var(--accent);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.95);
+  padding: 8px 0;
+  z-index: 2000;
+  animation: dropdown-unroll 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: top left;
+  
+  /* Grid Layout Implementation */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  max-height: 75vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Scrollbar Styling */
+.context-title-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+.context-title-dropdown::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+.context-title-dropdown::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 3px;
+}
+
+@keyframes dropdown-unroll {
+  from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.dropdown-header {
+  grid-column: 1 / -1; /* Span full width */
+  padding: 10px 25px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0.3em;
+  opacity: 0.5;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.dropdown-divider {
+  grid-column: 1 / -1; /* Span full width */
+  height: 1px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.1), transparent);
+  margin: 8px 25px;
+}
+
+.dropdown-item {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 25px; /* Tighter vertical spacing */
+  background: transparent;
+  border: none;
+  color: #aaa;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem; /* Better density */
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: -0.01em;
+}
+
+.dropdown-item.dashboard-link {
+  grid-column: 1 / -1; /* Specific highlight link spans 2 columns */
+  color: #fff;
+  font-size: 1.1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.dropdown-item.active {
+  color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.05);
+}
+
+.dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  padding-left: 35px;
+}
+
+.item-arrow {
+  opacity: 0;
+  color: var(--accent);
+  transition: all 0.2s;
+  font-size: 1rem;
+}
+
+.dropdown-item:hover .item-arrow {
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+.context-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  margin: 0;
+  padding: 0;
+}
+
+.context-title {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #fff;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+  line-height: 1;
+}
+
+.context-brand {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  opacity: 0.7;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.context-brand::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent);
+  display: inline-block;
+  animation: context-pulse 2s infinite;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+  animation: context-pulse 2s infinite;
+}
+
+@keyframes context-pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 3rem;
+  padding-left: 2rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.telem-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.telem-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #666;
+  letter-spacing: 0.1em;
+}
+
+.telem-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #aaa;
+}
+
+.telem-value.success { color: #00ff88; }
+.telem-value.highlight { color: var(--accent); }
+.telem-value.mono { font-family: 'Space Mono', monospace; font-size: 0.8rem; }
+
+.telem-mini-bar {
+  width: 60px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.05);
+  margin-top: 4px;
+  border-radius: 1px;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+.panel-edge-accents {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.edge-L, .edge-R {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  opacity: 0.2;
+}
+
+.edge-R { right: 0; }
+
+@media (max-width: 1200px) {
+  .telemetry-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    border-left: none;
+    padding-left: 0;
+    margin-top: 1.5rem;
+    width: 100%;
+  }
+}

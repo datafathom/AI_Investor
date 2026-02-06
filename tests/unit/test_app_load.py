@@ -8,7 +8,7 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 # Mock environment
-os.environ['FLASK_ENV'] = 'development'
+os.environ['
 os.environ['POSTGRES_HOST'] = 'localhost'
 os.environ['NEO4J_HOST'] = 'localhost'
 os.environ['KAFKA_BOOTSTRAP_SERVERS'] = 'localhost:9092'

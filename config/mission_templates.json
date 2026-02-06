@@ -1,0 +1,122 @@
+[
+    {
+        "id": "mission_001",
+        "name": "M&A Scout",
+        "description": "Identify potential acquisition targets in the biotech sector.",
+        "sector": "Wealth",
+        "risk_level": "Medium",
+        "required_depts": [1, 2],
+        "goal": "Generate a list of 5 biotech companies with market cap < $2B and strong IP portfolios.",
+        "logic_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "default_budget": 500,
+        "default_ttl": 3600
+    },
+    {
+        "id": "mission_002",
+        "name": "Crash Protocol",
+        "description": "Emergency liquidation of volatile assets during market downturn.",
+        "sector": "Security",
+        "risk_level": "High",
+        "required_depts": [5, 6],
+        "goal": "Liquidate 80% of crypto holdings and move to stablecoins within 10 minutes.",
+        "logic_hash": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+        "default_budget": 1000,
+        "default_ttl": 600
+    },
+    {
+        "id": "mission_003",
+        "name": "Sentiment Analysis",
+        "description": "Gauge public sentiment on renewable energy stocks.",
+        "sector": "Intelligence",
+        "risk_level": "Low",
+        "required_depts": [1, 7],
+        "goal": "Scrape Twitter/X and Reddit for positive/negative sentiment ratio on $TSLA and $ENPH.",
+        "logic_hash": "containshashoflogic",
+        "default_budget": 200,
+        "default_ttl": 1800
+    },
+    {
+        "id": "mission_004",
+        "name": "Competitor Sabotage (Legal)",
+        "description": "Identify legal vulnerabilities in competitor products.",
+        "sector": "Shadow",
+        "risk_level": "High",
+        "required_depts": [6, 8],
+        "goal": "Find patent infringement or compliance violations in Competitor X's latest release.",
+        "logic_hash": "AnotherHashValue",
+        "default_budget": 1500,
+        "default_ttl": 7200
+    },
+    {
+        "id": "mission_005",
+        "name": "Portfolio rebalancing",
+        "description": "Quarterly portfolio rebalancing.",
+        "sector": "Wealth",
+        "risk_level": "Low",
+        "required_depts": [5, 9],
+        "goal": "Adjust asset allocation to match target percentages: 60% Equity, 30% Bond, 10% Crypto.",
+        "logic_hash": "RebalancingHash",
+        "default_budget": 300,
+        "default_ttl": 1200
+    },
+    {
+        "id": "mission_006",
+        "name": "The Sovereign Auditor",
+        "description": "Scans for unencrypted secret strings (API keys, passwords) across DBs and graphs.",
+        "sector": "Security",
+        "risk_level": "Medium",
+        "required_depts": [12],
+        "goal": "Identify and redact API keys in agent_memories and notify for vault migration.",
+        "logic_hash": "AuditorHash",
+        "default_budget": 400,
+        "default_ttl": 3600
+    },
+    {
+        "id": "mission_007",
+        "name": "The Ghost Researcher",
+        "description": "Deep research into specialized technical topics with Neo4j synthesis.",
+        "sector": "Intelligence",
+        "risk_level": "Low",
+        "required_depts": [7, 15],
+        "goal": "Research Post-Quantum Cryptography implementations and map relationships in Neo4j.",
+        "logic_hash": "GhostResHash",
+        "default_budget": 600,
+        "default_ttl": 7200
+    },
+    {
+        "id": "mission_008",
+        "name": "The Arbitrage Sentinel",
+        "description": "Monitor prices across multiple DEXs and simulate trades.",
+        "sector": "Finance",
+        "risk_level": "Medium",
+        "required_depts": [5, 8],
+        "goal": "Monitor 3 DEXs and prepare profitable trades for HITL approval.",
+        "logic_hash": "ArbSentryHash",
+        "default_budget": 500,
+        "default_ttl": 600
+    },
+    {
+        "id": "mission_009",
+        "name": "The Personal Archivist",
+        "description": "Ingest chaotic files (PDF, CSV) into a Semantic Index.",
+        "sector": "Data",
+        "risk_level": "Low",
+        "required_depts": [15, 1],
+        "goal": "Index 5 years of logs and financial exports for local retrieval.",
+        "logic_hash": "ArchivistHash",
+        "default_budget": 100,
+        "default_ttl": 86400
+    },
+    {
+        "id": "mission_010",
+        "name": "Shadow Mirror",
+        "description": "Red-team internal host for vulnerabilities and open ports.",
+        "sector": "Security",
+        "risk_level": "High",
+        "required_depts": [12, 8],
+        "goal": "Map host attack surface in Neo4j and identify leaky Docker configurations.",
+        "logic_hash": "ShadowMirrorHash",
+        "default_budget": 800,
+        "default_ttl": 3600
+    }
+]

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, Suspense, lazy } from 'react';
+import React, { useEffect, useState, useRef, Suspense, lazy, useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useColorPalette } from './hooks/useColorPalette';
 import { useWidgetLayout } from './hooks/useWidgetLayout';
@@ -12,7 +12,13 @@ import MenuBar from './components/Navigation/MenuBar';
 import AuthGuard from './components/AuthGuard';
 import GlobalErrorBoundary from './components/GlobalErrorBoundary';
 import LoginModal from './components/LoginModal';
+import SubPageBoilerplate from './components/Common/SubPageBoilerplate';
 import './App.css';
+
+import PageContextPanel from './components/Common/PageContextPanel';
+import { DEPT_REGISTRY } from './config/departmentRegistry';
+import { getIcon } from './config/iconRegistry';
+import useDepartmentStore from './stores/departmentStore';
 
 import WindowWrapper from './components/WindowManager/WindowWrapper';
 import useWindowStore from './stores/windowStore';
@@ -26,7 +32,7 @@ import FrozenOverlay from './components/KillSwitch/FrozenOverlay';
 import PreTradeRiskModal from './components/Modals/PreTradeRiskModal';
 import EducationOverlay from './components/Education/EducationOverlay';
 
-import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useLocation, useParams } from 'react-router-dom';
 import Breadcrumbs from './components/Navigation/Breadcrumbs';
 import SubHeaderNav from './components/Navigation/SubHeaderNav';
 import { useSymbolLinking } from './hooks/useSymbolLinking';
@@ -75,7 +81,6 @@ const MobileDashboard = lazy(() => import('./pages/MobileDashboard')); //
 const APIDashboard = lazy(() => import('./pages/APIDashboard')); // 
 const AssetsDashboard = lazy(() => import('./pages/AssetsDashboard')); // 
 const CashFlowDashboard = lazy(() => import('./pages/CashFlowDashboard')); // 
-const RoleOverview = lazy(() => import('./pages/RoleOverview'));
 const TenantDashboard = lazy(() => import('./pages/TenantDashboard'));
 // App Hardening & Improvements - New Phases
 const AdvancedPortfolioAnalytics = lazy(() => import('./pages/AdvancedPortfolioAnalytics')); // 
@@ -109,7 +114,89 @@ const ZenMode = lazy(() => import('./pages/ZenMode')); //
 const MLTrainingDashboard = lazy(() => import('./pages/MLTrainingDashboard')); // 
 const IntegrationsDashboard = lazy(() => import('./pages/IntegrationsDashboard')); // 
 const SentinelStrategyDashboard = lazy(() => import('./pages/SentinelStrategyDashboard'));
+const MissionsOverview = lazy(() => import('./pages/MissionsOverview'));
+const FleetDashboard = lazy(() => import('./pages/FleetDashboard'));
+
+// --- Dynamic Workstation Loader ---
+// This loader dynamically imports components from the workstations directory based on the URL path.
+const workstationModules = import.meta.glob('./pages/workstations/**/*.jsx');
+
+const DynamicWorkstation = () => {
+    const { deptSlug, subSlug } = useParams();
+    const [Component, setComponent] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadComponent = async () => {
+            setLoading(true);
+            try {
+                // Construct the component name based on path
+                // e.g. strategist/builder -> StrategistBuilder
+                const compName = (deptSlug.charAt(0).toUpperCase() + deptSlug.slice(1) + 
+                                 subSlug.charAt(0).toUpperCase() + subSlug.slice(1))
+                                .replace(/-/g, '');
+                                
+                // Find matching module in the glob
+                const match = Object.keys(workstationModules).find(key => 
+                    key.includes(`/${deptSlug}/`) && key.includes(`${compName}.jsx`)
+                );
+
+                if (match) {
+                    const module = await workstationModules[match]();
+                    setComponent(() => module.default);
+                } else {
+                    console.warn(`Workstation not found: ${compName}`);
+                }
+            } catch (err) {
+                console.error("Failed to load dynamic workstation:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (deptSlug && subSlug) {
+            loadComponent();
+        }
+    }, [deptSlug, subSlug]);
+
+    if (loading) return (
+        <div className="flex items-center justify-center min-h-screen bg-black font-mono text-cyan-500">
+            <div className="pulse">INITIALIZING_WORKSTATION_STREAM...</div>
+        </div>
+    );
+    
+    if (!Component) return (
+        <div className="flex items-center justify-center min-h-screen bg-black font-mono text-red-500">
+            <div>ERROR: WORKSTATION_NOT_FOUND // PATH: /{deptSlug}/{subSlug}</div>
+        </div>
+    );
+
+    return <Component />;
+};
 const GoogleAuthCallback = lazy(() => import('./pages/GoogleAuthCallback'));
+
+// --- Agent Departments ---
+const ScrumMaster = lazy(() => import('./pages/Departments/ScrumMaster'));
+const VennIntersectionView = lazy(() => import('./pages/Departments/VennIntersectionView'));
+const OrchestratorPage = lazy(() => import('./pages/Departments/OrchestratorPage'));
+
+const ArchitectPage = lazy(() => import('./pages/Departments/ArchitectPage'));
+const DataScientistPage = lazy(() => import('./pages/Departments/DataScientistPage'));
+const StrategistPage = lazy(() => import('./pages/Departments/StrategistPage'));
+const TraderPage = lazy(() => import('./pages/Departments/TraderPage'));
+const PhysicistPage = lazy(() => import('./pages/Departments/PhysicistPage'));
+const HunterPage = lazy(() => import('./pages/Departments/HunterPage'));
+const SentryPage = lazy(() => import('./pages/Departments/SentryPage'));
+const StewardPage = lazy(() => import('./pages/Departments/StewardPage'));
+const GuardianPage = lazy(() => import('./pages/Departments/GuardianPage'));
+const LawyerPage = lazy(() => import('./pages/Departments/LawyerPage'));
+const AuditorPage = lazy(() => import('./pages/Departments/AuditorPage'));
+const EnvoyPage = lazy(() => import('./pages/Departments/EnvoyPage'));
+const FrontOfficePage = lazy(() => import('./pages/Departments/FrontOfficePage'));
+const HistorianPage = lazy(() => import('./pages/Departments/HistorianPage'));
+const StressTesterPage = lazy(() => import('./pages/Departments/StressTesterPage'));
+const RefinerPage = lazy(() => import('./pages/Departments/RefinerPage'));
+const BankerPage = lazy(() => import('./pages/Departments/BankerPage'));
 const AccountOverview = lazy(() => import('./pages/Accounts/AccountOverview'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const Settings = lazy(() => import('./pages/Settings'));
@@ -130,22 +217,99 @@ const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT || '5050';
 function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
-  const isOSStylePage = location.pathname.startsWith('/orchestrator/') || 
-                         location.pathname.startsWith('/analyst/') || 
-                         location.pathname.startsWith('/trader/') || 
-                         location.pathname.startsWith('/strategist/') || 
-                         location.pathname.startsWith('/data-scientist/') ||
-                         location.pathname.startsWith('/architect/') ||
-                         location.pathname.startsWith('/guardian/') ||
-                         location.pathname.startsWith('/marketing/') ||
-                         location.pathname.startsWith('/legal/');
+  const isOSStylePage = useMemo(() => {
+    if (location.pathname.startsWith('/special/')) return true;
+    if (location.pathname.startsWith('/dept/')) return true;
+    if (location.pathname.startsWith('/scrum')) return true;
+    if (location.pathname.startsWith('/account')) return false; // Account is standard
+    
+    // Check if the first segment is a known department slug
+    const parts = location.pathname.split('/').filter(Boolean);
+    if (parts.length === 0) return false;
+    
+    const slug = parts[0];
+    const aliases = {
+      'analyst': 'data-scientist',
+      'legal': 'lawyer',
+      'pioneer': 'data-scientist',
+      'orchestrator': 'orchestrator'
+    };
+    const targetSlug = aliases[slug] || slug;
+    return !!Object.values(DEPT_REGISTRY).find(d => d.slug === targetSlug);
+  }, [location.pathname]);
+
+  // Persistent Department Detection
+  const currentDept = useMemo(() => {
+    const parts = location.pathname.split('/').filter(Boolean);
+    if (parts.length === 0) return null;
+    
+    // 1. Unified Special/Dept/Scrum check
+    if (parts[0] === 'dept' || parts[0] === 'scrum' || parts[0] === 'special') {
+      const target = parts[1];
+      if (!target || parts[0] === 'scrum') {
+        return { id: 'scrum', name: 'SCRUM OF SCORUMS', color: '#ffd700', agents: [], route: '/special/scrum' };
+      }
+      
+      // If it's something like /special/terminal, we look for Orchestrator (ID 1) as the base context
+      if (parts[0] === 'special') {
+        return DEPT_REGISTRY[1]; 
+      }
+
+      if (/^\d+$/.test(target)) return DEPT_REGISTRY[target];
+      return Object.values(DEPT_REGISTRY).find(d => d.slug === target);
+    }
+
+    // 2. Direct Slug Check (e.g., /physicist/...)
+    const slug = parts[0];
+    const aliases = {
+      'analyst': 'data-scientist',
+      'legal': 'lawyer',
+      'pioneer': 'data-scientist'
+    };
+    const targetSlug = aliases[slug] || slug;
+    return Object.values(DEPT_REGISTRY).find(d => d.slug === targetSlug);
+  }, [location.pathname]);
+
+  const departmentData = useDepartmentStore(state => currentDept ? state.departments[currentDept.id] : null);
+
+  const telemetryData = useMemo(() => {
+    if (!currentDept) return [];
+    return [
+      { 
+        label: "KAFKA CHANNEL", 
+        value: `DEPT.${currentDept.id}.LIVE`, 
+        variant: "success",
+        className: "kafka"
+      },
+      { 
+        label: currentDept.primaryMetricLabel || "SYS PERFORMANCE", 
+        value: `${departmentData?.metrics?.[currentDept.primaryMetric] || 0}${currentDept.primaryMetricUnit || ""}`, 
+        variant: "highlight",
+        className: "metric"
+      },
+      { 
+        label: "NEURAL LOAD", 
+        value: `${(Math.random() * 15 + 10).toFixed(1)}%`, 
+        variant: "highlight",
+        className: "load",
+        showBar: true,
+        barValue: Math.random() * 40 + 20
+      },
+      { 
+        label: "AGENT FLEET", 
+        value: `${currentDept.agents.length} ACTIVE`, 
+        variant: "mono",
+        className: "agents"
+      }
+    ];
+  }, [currentDept, departmentData]);
   const {
-    resetLayout,
-    activeWorkspace,
-    workspaces,
-    saveWorkspace,
-    loadWorkspace,
-  } = useWidgetLayout();
+    resetLayout = () => {},
+    activeWorkspace = 'default',
+    workspaces = [],
+    saveWorkspace = () => {},
+    loadWorkspace = () => {},
+  } = useWidgetLayout() || {};
 
   const { 
     isKillMFAOpen, 
@@ -233,10 +397,17 @@ function AppContent() {
     const socket = presenceService.socket;
     
     if (socket) {
-      socket.on('connect', () => setSocketConnected(true));
+      socket.on('connect', () => {
+        setSocketConnected(true);
+        // Initialize department store socket listeners
+        useDepartmentStore.getState().initSocketListeners();
+      });
       socket.on('disconnect', () => setSocketConnected(false));
       // Update state if already connected
-      if (socket.connected) setSocketConnected(true);
+      if (socket.connected) {
+        setSocketConnected(true);
+        useDepartmentStore.getState().initSocketListeners();
+      }
     }
 
     presenceService.on('risk:alert', (data) => {
@@ -486,107 +657,47 @@ function AppContent() {
       return;
     }
 
+    if (action?.startsWith('nav-path:')) {
+      const path = action.replace('nav-path:', '');
+      navigate(path);
+      return;
+    }
+
     switch (action) {
-      // --- Orchestrator ---
-      case 'nav-overview-orchestrator': navigate('/orchestrator'); break;
-      case 'show-dashboard': navigate('/orchestrator/terminal'); break;
-      case 'show-mission-control': navigate('/orchestrator/mission-control'); break;
-      case 'role-orchestrator': navigate('/orchestrator/graph'); break;
-      case 'show-chat': navigate('/orchestrator/chat'); break;
-      case 'show-zen': navigate('/orchestrator/zen'); break;
+      // --- Special Pages Actions (Consolidated) ---
+      case 'nav-special-scrum': navigate('/special/scrum'); break;
+      case 'nav-special-mobile': navigate('/special/mobile'); break;
+      case 'nav-special-vr': navigate('/special/vr'); break;
+      case 'nav-special-mission-control': navigate('/special/mission-control'); break;
+      case 'nav-special-terminal': navigate('/special/terminal'); break;
+      case 'nav-special-political': navigate('/special/political'); break;
+      case 'nav-special-strategy': navigate('/special/strategy'); break;
+      case 'nav-special-debate': navigate('/special/debate'); break;
+      case 'nav-special-missions': navigate('/special/missions'); break;
+      case 'nav-special-paper': navigate('/special/paper'); break;
+      case 'nav-special-zen': navigate('/special/zen'); break;
+      case 'nav-brokerage': navigate('/strategist/brokerage'); break;
 
-      // --- Architect ---
-      case 'nav-overview-architect': navigate('/architect'); break;
-      case 'nav-admin': navigate('/architect/admin'); break;
-      case 'role-architect': navigate('/architect/health'); break;
-      case 'role-api': navigate('/architect/api'); break;
-      case 'nav-integrations': navigate('/architect/integrations'); break;
-      case 'nav-developer-platform': navigate('/architect/dev-platform'); break;
-
-      // --- Account ---
-      case 'nav-account': navigate('/account'); break;
-      case 'nav-account-settings': navigate('/account/settings'); break;
-
-       // --- Data Scientist & Analyst ---
-       case 'nav-overview-analyst': navigate('/analyst'); break;
-       case 'show-political-alpha': navigate('/analyst/political'); break;
-       case 'show-strategy-distillery': navigate('/analyst/strategy'); break;
-       case 'role-observer': navigate('/analyst/macro'); break;
-
-       case 'nav-overview-data-scientist': navigate('/data-scientist'); break;
-       case 'nav-ai-predictions': navigate('/data-scientist/predictions'); break;
-       case 'nav-ml-training': navigate('/data-scientist/training'); break;
-       case 'nav-ai-assistant': navigate('/data-scientist/assistant'); break;
-       case 'nav-autocoder': navigate('/data-scientist/autocoder'); break;
-       case 'show-debate': navigate('/data-scientist/debate'); break;
-       case 'show-vr': navigate('/data-scientist/vr'); break;
-
-      // --- Day-Trader (Trader) ---
-      case 'nav-overview-trader': navigate('/trader'); break;
-      case 'show-scanner': navigate('/trader/scanner'); break;
-      case 'nav-options-strategy': navigate('/trader/options'); break;
-      case 'nav-advanced-orders': navigate('/trader/advanced-orders'); break;
-      case 'nav-algorithmic-trading': navigate('/trader/algorithmic'); break;
-      case 'nav-paper-trading': navigate('/trader/paper'); break;
-      case 'nav-advanced-charting': navigate('/trader/charting'); break;
-      case 'show-options': navigate('/trader/options-analytics'); break;
-
-      // --- Strategist ---
-      case 'nav-overview-strategist': navigate('/strategist'); break;
-      case 'nav-portfolio-management': navigate('/strategist/net-worth'); break;
-      case 'nav-advanced-analytics': navigate('/strategist/analytics'); break;
-      case 'nav-portfolio-optimization': navigate('/strategist/optimization'); break;
-      case 'show-attribution': navigate('/strategist/attribution'); break;
-      case 'show-backtest': navigate('/strategist/backtest'); break;
-      case 'show-brokerage': navigate('/strategist/brokerage'); break;
-      case 'show-crypto': navigate('/strategist/crypto'); break;
-      case 'show-fixed-income': navigate('/strategist/fixed-income'); break;
-      case 'show-assets': navigate('/strategist/assets'); break;
-      case 'role-corporate': navigate('/strategist/corporate'); break;
-      case 'role-impact': navigate('/strategist/impact'); break;
-      case 'role-scm': navigate('/strategist/scm'); break;
-      case 'nav-estate-planning': navigate('/strategist/estate'); break;
-      case 'nav-retirement-planning': navigate('/strategist/retirement'); break;
-      case 'nav-budgeting': navigate('/strategist/budgeting'); break;
-      case 'nav-financial-planning': navigate('/strategist/financial'); break;
-
-      // --- Marketing ---
-      case 'nav-overview-marketing': navigate('/marketing'); break;
-      case 'nav-news-sentiment': navigate('/marketing/news'); break;
-      case 'nav-social-trading': navigate('/marketing/social'); break;
-      case 'nav-community-forums': navigate('/marketing/forums'); break;
-      case 'nav-education': navigate('/marketing/education'); break;
-      case 'nav-marketplace': navigate('/marketing/marketplace'); break;
-      case 'nav-research-reports': navigate('/marketing/reports'); break;
-      case 'nav-watchlists-alerts': navigate('/marketing/alerts'); break;
-
-      // --- Lawyer & Legal ---
-      case 'nav-overview-legal': navigate('/legal'); break;
-      case 'role-guardian': navigate('/legal/compliance'); break;
-      case 'role-audit': navigate('/legal/audit'); break;
-      case 'role-scenarios': navigate('/legal/scenarios'); break;
-      case 'role-margin': navigate('/legal/margin'); break;
-      case 'show-tax': navigate('/legal/tax'); break;
-      case 'nav-legal-terms': navigate('/legal/terms'); break;
-      case 'nav-legal-privacy': navigate('/legal/privacy'); break;
-
-      // --- Guardian ---
-      case 'nav-overview-guardian': navigate('/guardian'); break;
-      case 'nav-advanced-risk': navigate('/guardian/risk'); break;
-      case 'nav-credit-monitoring': navigate('/guardian/credit'); break;
-      case 'nav-institutional': navigate('/guardian/institutional'); break;
-      case 'nav-enterprise': navigate('/guardian/enterprise'); break;
-      case 'nav-bill-payment': navigate('/guardian/payments'); break;
-      case 'show-cash-flow': navigate('/guardian/cash-flow'); break;
-      case 'show-tenant': navigate('/guardian/tenants'); break;
-      case 'role-warden': navigate('/guardian/mobile'); break;
-
-      // --- Legacy Data Scientist Redirects ---
-      case 'nav-overview-pioneer': navigate('/data-scientist'); break;
-      case 'show-auto-coder': navigate('/data-scientist/autocoder'); break;
-      case 'show-sandbox': navigate('/data-scientist/sandbox'); break;
-      case 'show-vr-cockpit': navigate('/data-scientist/vr'); break;
-      case 'show-debate-chamber': navigate('/data-scientist/debate'); break;
+      // --- Agent Departments (Phase 2/3) ---
+      case 'nav-scrum-master': navigate('/special/scrum'); break;
+      case 'nav-dept-1': navigate('/dept/orchestrator'); break;
+      case 'nav-dept-2': navigate('/dept/architect'); break;
+      case 'nav-dept-3': navigate('/dept/data-scientist'); break;
+      case 'nav-dept-4': navigate('/dept/strategist'); break;
+      case 'nav-dept-5': navigate('/dept/trader'); break;
+      case 'nav-dept-6': navigate('/dept/physicist'); break;
+      case 'nav-dept-7': navigate('/dept/hunter'); break;
+      case 'nav-dept-8': navigate('/dept/sentry'); break;
+      case 'nav-dept-9': navigate('/dept/steward'); break;
+      case 'nav-dept-10': navigate('/dept/guardian'); break;
+      case 'nav-dept-11': navigate('/dept/lawyer'); break;
+      case 'nav-dept-12': navigate('/dept/auditor'); break;
+      case 'nav-dept-13': navigate('/dept/envoy'); break;
+      case 'nav-dept-14': navigate('/dept/front-office'); break;
+      case 'nav-dept-15': navigate('/dept/historian'); break;
+      case 'nav-dept-16': navigate('/dept/stress-tester'); break;
+      case 'nav-dept-17': navigate('/dept/refiner'); break;
+      case 'nav-dept-18': navigate('/dept/banker'); break;
 
       // Widgets / Specifics
       case 'toggle-theme': toggleTheme(); break;
@@ -639,31 +750,56 @@ function AppContent() {
             debugStates={debugStates}
             globalLock={globalLock}
           />
-          <SubHeaderNav />
+          {/* <SubHeaderNav /> */}
           
           <main className={`institutional-os-container ${isOSStylePage ? 'os-bleed' : ''}`}>
-            {/* Breadcrumbs moved to Taskbar */}
-            {/* Route Content Wrapper - Takes remaining flex space */}
+            {/* Persistent Department Header */}
+            {isOSStylePage && currentDept && (
+              <PageContextPanel 
+                title={currentDept.name}
+                color={currentDept.color}
+                status="DEPARTMENT_ACTIVE"
+                telemetry={telemetryData}
+                isDashboard={location.pathname === currentDept.route}
+                subPages={currentDept.subModules || []}
+                onNavigate={(path) => {
+                  if (path === 'dashboard') navigate(currentDept.route);
+                  else navigate(path);
+                }}
+                icon={getIcon(currentDept.icon)}
+              />
+            )}
+            
             <div className={isOSStylePage ? 'route-content-os' : 'route-content'}>
             <Suspense fallback={<DashboardSkeleton />}>
               <GlobalTooltip />
               <Routes>
                 {/* Role Landing Pages */}
-                <Route path="/orchestrator" element={<RoleOverview />} />
-                <Route path="/orchestrator/terminal" element={<TerminalWorkspace handleViewSource={() => { }} globalLock={globalLock} isDarkMode={isDark} widgetStates={widgetStates} setWidgetStates={setWidgetStates} widgetVisibility={widgetVisibility} setWidgetVisibility={setWidgetVisibility} />} />
-                <Route path="/orchestrator/mission-control" element={<MissionControl />} />
-                <Route path="/orchestrator/graph" element={<MasterOrchestrator />} />
-                <Route path="/orchestrator/chat" element={<div className="p-8 text-white"><h1>Global Chat</h1><p>Neural communication interface active.</p></div>} />
-                <Route path="/orchestrator/zen" element={<ZenMode />} />
+                {/* --- Legacy Category Redirects --- */}
+                <Route path="/orchestrator/terminal" element={<Navigate to="/special/terminal" replace />} />
+                <Route path="/orchestrator/mission-control" element={<Navigate to="/special/mission-control" replace />} />
+                <Route path="/orchestrator/zen" element={<Navigate to="/special/zen" replace />} />
+                <Route path="/orchestrator" element={<Navigate to="/dept/orchestrator" replace />} />
+                <Route path="/architect" element={<Navigate to="/dept/architect" replace />} />
+                <Route path="/analyst" element={<Navigate to="/dept/data-scientist" replace />} />
+                <Route path="/trader" element={<Navigate to="/dept/trader" replace />} />
+                <Route path="/strategist" element={<Navigate to="/dept/strategist" replace />} />
+                 <Route path="/guardian" element={<Navigate to="/dept/guardian" replace />} />
+                 <Route path="/marketing" element={<Navigate to="/dept/hunter" replace />} />
+                 <Route path="/hunter" element={<Navigate to="/dept/hunter" replace />} />
+                 <Route path="/legal" element={<Navigate to="/dept/lawyer" replace />} />
+                 <Route path="/pioneer" element={<Navigate to="/dept/data-scientist" replace />} />
 
-                <Route path="/architect" element={<RoleOverview />} />
+                {/* --- Sub-Module Routes --- */}
+                <Route path="/orchestrator/graph" element={<MasterOrchestrator />} />
+
                 <Route path="/architect/health" element={<SystemHealthDashboard />} />
                 <Route path="/architect/api" element={<APIDashboard />} />
                 <Route path="/architect/admin" element={<AdminDashboard />} />
                 <Route path="/architect/integrations" element={<IntegrationsDashboard />} />
                 <Route path="/architect/dev-platform" element={<DeveloperPlatformDashboard />} />
+                <Route path="/special/fleet" element={<FleetDashboard />} />
 
-                <Route path="/analyst" element={<RoleOverview />} />
                 {/* Removed: <Route path="/analyst/predictions" element={<AIPredictionsDashboard />} /> */}
                 {/* Removed: <Route path="/analyst/training" element={<MLTrainingDashboard />} /> */}
                 <Route path="/analyst/political" element={<PoliticalAlpha />} />
@@ -672,7 +808,6 @@ function AppContent() {
                 {/* Removed: <Route path="/analyst/assistant" element={<AIAssistantDashboard />} /> */}
                 <Route path="/analyst/sentinel" element={<SentinelStrategyDashboard />} />
 
-                <Route path="/data-scientist" element={<RoleOverview />} />
                 <Route path="/data-scientist/predictions" element={<AIPredictionsDashboard />} />
                 <Route path="/data-scientist/training" element={<MLTrainingDashboard />} />
                 <Route path="/data-scientist/assistant" element={<AIAssistantDashboard />} />
@@ -681,7 +816,6 @@ function AppContent() {
                 <Route path="/data-scientist/vr" element={<VRCockpit />} />
                 <Route path="/data-scientist/debate" element={<DebateRoom />} />
 
-                <Route path="/trader" element={<RoleOverview />} />
                 <Route path="/trader/scanner" element={<GlobalScanner />} />
                 <Route path="/trader/options" element={<OptionsStrategyDashboard />} />
                 <Route path="/trader/advanced-orders" element={<AdvancedOrdersDashboard />} />
@@ -690,7 +824,6 @@ function AppContent() {
                 <Route path="/trader/charting" element={<AdvancedChartingDashboard />} />
                 <Route path="/trader/options-analytics" element={<OptionsAnalytics />} />
 
-                <Route path="/strategist" element={<RoleOverview />} />
                 <Route path="/strategist/net-worth" element={<PortfolioManagement />} />
                 <Route path="/strategist/analytics" element={<AdvancedPortfolioAnalytics />} />
                 <Route path="/strategist/optimization" element={<PortfolioOptimizationDashboard />} />
@@ -708,16 +841,14 @@ function AppContent() {
                 <Route path="/strategist/budgeting" element={<BudgetingDashboard />} />
                 <Route path="/strategist/financial" element={<FinancialPlanningDashboard />} />
 
-                <Route path="/marketing" element={<RoleOverview />} />
-                <Route path="/marketing/news" element={<NewsSentimentDashboard />} />
-                <Route path="/marketing/social" element={<SocialTradingDashboard />} />
-                <Route path="/marketing/forums" element={<CommunityForumsDashboard />} />
-                <Route path="/marketing/education" element={<EducationPlatformDashboard />} />
-                <Route path="/marketing/marketplace" element={<MarketplaceDashboard />} />
-                <Route path="/marketing/reports" element={<ResearchReportsDashboard />} />
-                <Route path="/marketing/alerts" element={<WatchlistsAlertsDashboard />} />
+                 <Route path="/hunter/news" element={<NewsSentimentDashboard />} />
+                 <Route path="/hunter/social" element={<SocialTradingDashboard />} />
+                 <Route path="/hunter/forums" element={<CommunityForumsDashboard />} />
+                 <Route path="/hunter/education" element={<EducationPlatformDashboard />} />
+                 <Route path="/hunter/marketplace" element={<MarketplaceDashboard />} />
+                 <Route path="/hunter/reports" element={<ResearchReportsDashboard />} />
+                 <Route path="/hunter/alerts" element={<WatchlistsAlertsDashboard />} />
 
-                <Route path="/legal" element={<RoleOverview />} />
                 <Route path="/legal/compliance" element={<ComplianceDashboard />} />
                 <Route path="/legal/audit" element={<AuditDashboard />} />
                 <Route path="/legal/scenarios" element={<ScenarioDashboard />} />
@@ -726,7 +857,6 @@ function AppContent() {
                 <Route path="/legal/terms" element={<TermsOfService />} />
                 <Route path="/legal/privacy" element={<PrivacyPolicy />} />
 
-                <Route path="/guardian" element={<RoleOverview />} />
                 <Route path="/guardian/risk" element={<AdvancedRiskDashboard />} />
                 <Route path="/guardian/credit" element={<CreditMonitoringDashboard />} />
                 <Route path="/guardian/institutional" element={<InstitutionalToolsDashboard />} />
@@ -736,13 +866,57 @@ function AppContent() {
                 <Route path="/guardian/tenants" element={<TenantDashboard />} />
                 <Route path="/guardian/mobile" element={<MobileDashboard />} />
 
-                <Route path="/pioneer" element={<RoleOverview />} />
                 <Route path="/data-scientist/autocoder" element={<AutoCoderDashboard />} />
                 <Route path="/data-scientist/sandbox" element={<AutoCoderSandbox />} />
                 <Route path="/data-scientist/vr" element={<VRCockpit />} />
                 <Route path="/data-scientist/debate" element={<DebateRoom />} />
                 <Route path="/data-scientist/evolution" element={<EvolutionDashboard />} />
                 <Route path="/data-scientist/sentinel" element={<SentinelStrategyDashboard />} />
+
+                {/* --- Special Routes --- */}
+                <Route path="/special/scrum" element={<ScrumMaster />} />
+                <Route path="/special/mobile" element={<MobileDashboard />} />
+                <Route path="/special/vr" element={<VRCockpit />} />
+                <Route path="/special/mission-control" element={<MissionControl />} />
+                <Route path="/special/terminal" element={<TerminalWorkspace handleViewSource={() => { }} globalLock={globalLock} isDarkMode={isDark} widgetStates={widgetStates} setWidgetStates={setWidgetStates} widgetVisibility={widgetVisibility} setWidgetVisibility={setWidgetVisibility} />} />
+                <Route path="/special/political" element={<PoliticalAlpha />} />
+                <Route path="/special/strategy" element={<StrategyDistillery />} />
+                <Route path="/special/debate" element={<DebateRoom />} />
+                <Route path="/special/paper" element={<PaperTradingDashboard />} />
+                <Route path="/special/zen" element={<ZenMode />} />
+                <Route path="/special/missions" element={<MissionsOverview />} />
+                <Route path="/missions" element={<Navigate to="/special/missions" replace />} />
+                
+                {/* --- Dynamic Workstation Routes --- */}
+                <Route path="/:deptSlug/:subSlug" element={<DynamicWorkstation />} />
+
+                {/* --- Agent Department Routes --- */}
+                <Route path="/dept" element={<Navigate to="/special/scrum" replace />} />
+                <Route path="/scrum" element={<Navigate to="/special/scrum" replace />} />
+                <Route path="/dept/scrum-master" element={<Navigate to="/special/scrum" replace />} />
+                <Route path="/dept/venn" element={<VennIntersectionView />} />
+                <Route path="/dept/orchestrator" element={<OrchestratorPage />} />
+
+                <Route path="/dept/architect" element={<ArchitectPage />} />
+                <Route path="/dept/data-scientist" element={<DataScientistPage />} />
+                <Route path="/dept/strategist" element={<StrategistPage />} />
+                <Route path="/dept/trader" element={<TraderPage />} />
+                <Route path="/dept/physicist" element={<PhysicistPage />} />
+                <Route path="/dept/hunter" element={<HunterPage />} />
+                <Route path="/dept/sentry" element={<SentryPage />} />
+                <Route path="/dept/steward" element={<StewardPage />} />
+                <Route path="/dept/guardian" element={<GuardianPage />} />
+                <Route path="/dept/lawyer" element={<LawyerPage />} />
+                <Route path="/dept/auditor" element={<AuditorPage />} />
+                <Route path="/dept/envoy" element={<EnvoyPage />} />
+                <Route path="/dept/front-office" element={<FrontOfficePage />} />
+                <Route path="/dept/historian" element={<HistorianPage />} />
+                <Route path="/dept/stress-tester" element={<StressTesterPage />} />
+                <Route path="/dept/refiner" element={<RefinerPage />} />
+                <Route path="/dept/banker" element={<BankerPage />} />
+
+                {/* --- Catch-All Sub-Module Route --- */}
+                <Route path="/:deptId/:subPage" element={<SubPageBoilerplate />} />
 
                 {/* Account & Settings */}
                 <Route path="/account" element={<AccountOverview />} />

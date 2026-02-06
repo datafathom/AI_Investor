@@ -1,5 +1,10 @@
 {
-  "applied_migrations": [],
-  "last_migration": null,
-  "schema_version": 0
+  "applied_migrations": [
+    "030_departments"
+  ],
+  "last_migration": "030_departments",
+  "schema_version": 1,
+  "migration_dates": {
+    "030_departments": "2026-02-04T23:06:07.898485+00:00"
+  }
 }

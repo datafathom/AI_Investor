@@ -33,9 +33,9 @@ class BackendRunner:
         
         env = os.environ.copy()
         if port:
-            env['FLASK_RUN_PORT'] = str(port)
+            env['
         if host:
-            env['FLASK_RUN_HOST'] = host
+            env['
         
         try:
             # Try Flask development server
@@ -71,7 +71,7 @@ class BackendRunner:
             sys.executable, "-m", "gunicorn",
             "web.wsgi:app",
             f"--workers={workers}",
-            f"--bind=0.0.0.0:{port}",
+            f"--bind=127.0.0.1:{port}",
             "--worker-class=gevent",
             "--worker-connections=1000",
             "--timeout=120",
@@ -163,3 +163,4 @@ def run_backend_command(command: str = "dev", **kwargs):
         print(f"Unknown backend command: {command}")
         print("Available commands: dev, prod, install, verify")
         sys.exit(1)
+

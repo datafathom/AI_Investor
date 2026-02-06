@@ -23,7 +23,7 @@
 - **Context**: This likely runs Nginx or a Node server.
 - **Change**: Ensure it connects to the backend via the *internal* Docker network (if on same host) or a specific bound IP. It should NOT expose internal status ports (like Nginx stub_status) to the world.
 
-## 2. Host Application Binding (FastAPI/Flask)
+## 2. Host Application Binding (FastAPI/FastAPI)
 **Context**: The app runs on the host. `cli.py` controls startup.
 
 ### 2.1 Update `cli.py` & `web/fastapi_gateway.py`

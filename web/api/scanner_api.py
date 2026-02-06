@@ -1,6 +1,6 @@
 """
 Scanner API - FastAPI Router
-Migrated from Flask (web/api/scanner_api.py)
+ (web/api/scanner_api.py)
 """
 
 from fastapi import APIRouter, HTTPException, Depends
@@ -61,3 +61,4 @@ async def get_market_pulse():
             "change": round(random.uniform(-3, 3), 2)
         })
     return {"success": True, "data": data}
+

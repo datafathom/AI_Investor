@@ -33,3 +33,4 @@ def test_initialize(mock_exporter, mock_provider, mock_set_provider, mock_instru
 def test_get_tracer(tracing_service):
     tracer = tracing_service.get_tracer("test-tracer")
     assert tracer is not None
+

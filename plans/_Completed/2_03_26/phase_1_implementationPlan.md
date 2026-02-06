@@ -242,7 +242,7 @@ Create an exhaustive JSON inventory of all backend API endpoints with complete m
 #### Implementation Steps
 
 1. **Enhance API Introspection**
-   - Iterate through all Flask blueprints registered in the app
+   - Iterate through all FastAPI blueprints registered in the app
    - For each endpoint, extract:
      - URL rule pattern
      - HTTP methods allowed
@@ -294,7 +294,7 @@ The script will introspect all registered blueprints. Key directories:
 
 | Directory | File Count | Purpose |
 |-----------|------------|---------|
-| [web/routes/](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/web/routes/) | ~50+ | Flask blueprint route files |
+| [web/routes/](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/web/routes/) | ~50+ | FastAPI blueprint route files |
 | [services/](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/services/) | 989 | Service layer (for docstrings) |
 | [models/](file:///c:/Users/astir/Desktop/AI_Company/AI_Investor/models/) | 46 | Pydantic/SQLAlchemy models |
 

@@ -4,9 +4,9 @@ groups:
       # 1. High HTTP Error Rate
       - alert: HighErrorRate
         expr: |
-          sum(rate(flask_http_request_total{status=~"5.."}[5m])) 
+          sum(rate(http_request_total{status=~"5.."}[5m])) 
           / 
-          sum(rate(flask_http_request_total[5m])) > 0.01
+          sum(rate(http_request_total[5m])) > 0.01
         for: 5m
         labels:
           severity: critical

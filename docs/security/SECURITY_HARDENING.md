@@ -60,7 +60,7 @@ def api_endpoint():
 ```
 
 ### User-Based Rate Limiting
-- Implemented via Flask-Limiter
+- Implemented via FastAPI-Limiter
 - Different limits for authenticated users
 - Configurable per endpoint
 

@@ -1,0 +1,22 @@
+﻿
+[1m[46m RUN [49m[22m [36mv4.0.16 [39m[90mC:/Users/astir/Desktop/AI_Company/AI_Investor/frontend[39m
+
+ [31mΓ¥»[39m src/stores/__tests__/departmentStore.test.js [2m([22m[2m12 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 41[2mms[22m[39m
+     [32mΓ£ô[39m should initialize with 18 departments[32m 3[2mms[22m[39m
+     [32mΓ£ô[39m should set active department[32m 1[2mms[22m[39m
+[31m     [31m├ù[31m should warn and not set invalid department ID[39m[32m 7[2mms[22m[39m
+     [32mΓ£ô[39m should add and cap log entries[32m 20[2mms[22m[39m
+[31m     [31m├ù[31m should clear logs[39m[32m 3[2mms[22m[39m
+     [32mΓ£ô[39m should trigger Venn mode with blend color[32m 1[2mms[22m[39m
+     [32mΓ£ô[39m should exit Venn mode[32m 0[2mms[22m[39m
+     [32mΓ£ô[39m should update department metrics[32m 0[2mms[22m[39m
+     [32mΓ£ô[39m should fetch departments successfully[32m 1[2mms[22m[39m
+     [32mΓ£ô[39m should handle fetch error[32m 2[2mms[22m[39m
+     [32mΓ£ô[39m should invoke agent and add logs[32m 0[2mms[22m[39m
+[31m     [31m├ù[31m should filter departments by quadrant[39m[32m 1[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m9 passed[39m[22m[90m (12)[39m
+[2m   Start at [22m 13:33:54
+[2m   Duration [22m 1.83s[2m (transform 115ms, setup 318ms, import 115ms, tests 41ms, environment 1.12s)[22m
+

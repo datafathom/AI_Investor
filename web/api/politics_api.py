@@ -1,6 +1,6 @@
 """
 Politics API - FastAPI Router
-Migrated from Flask (web/api/politics_api.py)
+ (web/api/politics_api.py)
 """
 
 from fastapi import APIRouter, HTTPException, Depends
@@ -53,3 +53,4 @@ async def get_alpha_score(ticker: str, service=Depends(get_congress_provider)):
     except Exception as e:
         logger.exception(f"Failed to fetch alpha score for {ticker}")
         return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
+

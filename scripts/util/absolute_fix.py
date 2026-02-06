@@ -151,3 +151,4 @@ with open('web/app.py', 'w', encoding='utf-8') as f:
     f.writelines(new_lines)
 
 print("SUCCESS: web/app.py overwritten with absolute fix.")
+

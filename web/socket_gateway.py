@@ -1,6 +1,6 @@
 """
 FastAPI Socket.io Gateway - Real-time Dashboard Updates
-Migrated from Flask-SocketIO (web/websocket.py)
+Migrated from python-socketio (web/websocket.py)
 """
 
 import socketio

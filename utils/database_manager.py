@@ -5,6 +5,10 @@ import psycopg2
 from psycopg2 import pool
 from neo4j import GraphDatabase
 from typing import Optional, Any
+from dotenv import load_dotenv
+
+# Load environment variables (e.g., DATABASE_URL)
+load_dotenv()
 
 
 logger = logging.getLogger(__name__)

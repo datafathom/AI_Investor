@@ -44,6 +44,28 @@ class PresenceService {
       timestamp: new Date().toISOString(),
     });
 
+    // Subscribe to specific channels
+    this.socket.emit('subscribe', { channel: 'agents' });
+    this.socket.emit('subscribe', { channel: 'portfolio' });
+
+    // Listen for agent status updates
+    this.socket.on('agent_status', (data) => {
+      console.log("[Socket] Agent status update received:", data);
+      this.emit('agent:status-update', data);
+    });
+
+    // Listen for metrics updates
+    this.socket.on('metrics', (data) => {
+      console.log("[Socket] Metrics update received:", data);
+      this.emit('metrics:update', data);
+    });
+
+    // Listen for generic department events
+    this.socket.on('dept_event', (data) => {
+      console.log("[Socket] Dept event received:", data);
+      this.emit('dept_event', data);
+    });
+
     // Listen for presence updates
     this.socket.on('presence:update', (data) => {
       this.users.set(data.userId, data);

@@ -12,7 +12,7 @@
     - **Neo4j**: Attempt connection as `neo4j` (default admin). MUST fail. Attempt as `app_user` w/o TLS. MUST fail.
     - **Redis**: Attempt `FLUSHALL`. MUST fail (ACL check).
     - **API Gateway**:
-        - Hit `/flask/health` (Mounted) -> Expect 200.
+        - Hit `/fastapi/health` (Mounted) -> Expect 200.
         - Hit `/api/health` (FastAPI) -> Expect 200.
         - Hit `/` with `Origin: http://evil.com` -> Expect 403/Error (CORS).
 
@@ -39,7 +39,7 @@
 - **Focus**: Hardcoded passwords, unsafe deserialization (`pickle`), shell injection.
 
 ## 4. Rollout Strategy (Zero Downtime Attempt)
-**Context**: Switching architectures (Flask -> FastAPI Mount) is risky.
+**Context**: Switching architectures (FastAPI -> FastAPI Mount) is risky.
 
 ### 4.1 Deployment Steps
 1.  **Preparation**:

@@ -134,3 +134,4 @@ for line in lines:
 
 with open('web/app.py.final', 'w', encoding='utf-8') as f:
     f.writelines(final_lines)
+

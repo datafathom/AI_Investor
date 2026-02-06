@@ -1,0 +1,103 @@
+.agent-monologue {
+  background-color: var(--solarized-base3, #fdf6e3);
+  color: var(--solarized-base00, #657b83);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--industrial-border, #93a1a1);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+.monologue-header {
+  padding: 8px 12px;
+  background-color: var(--solarized-base2, #eee8d5);
+  border-bottom: 2px solid var(--industrial-border, #93a1a1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.monologue-title {
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+}
+
+.monologue-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #859900;
+  box-shadow: 0 0 5px #859900;
+}
+
+.monologue-viewport {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+}
+
+.trace-entry {
+  border-left: 3px solid var(--solarized-blue, #268bd2);
+  padding-left: 12px;
+  margin-bottom: 4px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.trace-meta {
+  font-size: 0.7rem;
+  opacity: 0.6;
+  margin-bottom: 4px;
+  display: flex;
+  gap: 8px;
+}
+
+.trace-label {
+  font-weight: 700;
+  color: var(--solarized-blue, #268bd2);
+}
+
+.trace-content {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.trace-type-thought { border-left-color: var(--solarized-magenta, #d33682); }
+.trace-type-thought .trace-label { color: var(--solarized-magenta, #d33682); }
+
+.trace-type-tool_call { border-left-color: var(--solarized-orange, #cb4b16); }
+.trace-type-tool_call .trace-label { color: var(--solarized-orange, #cb4b16); }
+
+.trace-type-error { border-left-color: var(--solarized-red, #dc322f); background-color: rgba(220, 50, 47, 0.05); }
+.trace-type-error .trace-label { color: var(--solarized-red, #dc322f); }
+
+.trace-type-state_transition { border-left-color: var(--solarized-cyan, #2aa198); font-style: italic; }
+.trace-type-state_transition .trace-label { color: var(--solarized-cyan, #2aa198); }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.monologue-footer {
+  padding: 4px 12px;
+  font-size: 0.65rem;
+  background-color: var(--solarized-base2, #eee8d5);
+  border-top: 1px solid var(--industrial-border, #93a1a1);
+  display: flex;
+  justify-content: space-between;
+}

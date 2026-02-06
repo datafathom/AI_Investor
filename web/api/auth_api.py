@@ -1,6 +1,6 @@
 """
 FastAPI Authentication API - Identity & Session Management
-Migrated from Flask web/api/auth_api.py
+ web/api/auth_api.py
 """
 
 from fastapi import APIRouter, HTTPException, Depends, Request, Query
@@ -246,3 +246,4 @@ async def social_callback(provider: str, data: SocialCallbackRequest):
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+

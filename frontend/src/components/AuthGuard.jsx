@@ -14,10 +14,14 @@ export default function AuthGuard({ children, onShowLogin }) {
   });
 
   useEffect(() => {
+    let isMounted = true;
+
     // Check authentication status
     const checkAuth = () => {
       const authenticated = authService.isAuthenticated() || localStorage.getItem('widget_os_bypass') === 'true';
-      setIsAuthenticated(authenticated);
+      if (isMounted) {
+        setIsAuthenticated(authenticated);
+      }
       
       if (!authenticated && onShowLogin) {
         onShowLogin();
@@ -39,6 +43,7 @@ export default function AuthGuard({ children, onShowLogin }) {
     const interval = setInterval(checkAuth, 500);
     
     return () => {
+      isMounted = false;
       window.removeEventListener('storage', handleStorageChange);
       clearInterval(interval);
     };

@@ -54,7 +54,7 @@ import os
 from typing import List
 
 # Third-party
-from flask import Flask
+from fastapi import FastAPI
 import pandas as pd
 
 # Local

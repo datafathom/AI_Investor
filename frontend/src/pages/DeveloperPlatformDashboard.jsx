@@ -1,21 +1,9 @@
-/**
- * ==============================================================================
- * FILE: frontend2/src/pages/DeveloperPlatformDashboard.jsx
- * ROLE: Developer Platform Dashboard
- * PURPOSE:  - Public API & Developer Platform
- * 
- * INTEGRATION POINTS:
- *    - PublicApiStore: Uses apiClient for all API calls (User Rule 6)
- * 
- * AUTHOR: AI Investor Team
- * CREATED: 2026-01-21
- * LAST_MODIFIED: 2026-01-30
- * ==============================================================================
- */
-
 import React, { useState, useEffect } from 'react';
 import { StorageService } from '../utils/storageService';
 import usePublicApiStore from '../stores/publicApiStore';
+import AgentLogicEditor from '../components/Development/AgentLogicEditor';
+import HistoryReplay from '../components/Development/HistoryReplay';
+import { Grid, Box } from '@mui/material';
 import './DeveloperPlatformDashboard.css';
 
 const DeveloperPlatformDashboard = () => {
@@ -52,10 +40,21 @@ const DeveloperPlatformDashboard = () => {
 
   return (
     <div className="developer-platform-dashboard">
-      <div className="dashboard-header">
-        <h1>Developer Platform</h1>
-        <p className="subtitle">: Public API & Developer Platform</p>
+      <div className="dashboard-header" style={{ marginBottom: '24px' }}>
+        <h1 style={{ color: '#eee', margin: 0 }}>Sovereign Developer Forge</h1>
+        <p className="subtitle" style={{ color: '#586e75' }}>: Phase 7 Meta-Logic & Autonomous Hot-Swap</p>
       </div>
+
+      <Box sx={{ mb: 4 }}>
+        <Grid container spacing={3}>
+            <Grid item xs={12} md={8}>
+                <AgentLogicEditor />
+            </Grid>
+            <Grid item xs={12} md={4}>
+                <HistoryReplay />
+            </Grid>
+        </Grid>
+      </Box>
 
       <div className="dashboard-content">
         {/* Usage Statistics */}
@@ -83,89 +82,32 @@ const DeveloperPlatformDashboard = () => {
           </div>
         )}
 
-        {/* Create API Key */}
-        <div className="create-key-panel">
-          <h2>Create API Key</h2>
-          <div className="key-form">
-            <input
-              type="text"
-              placeholder="Key Name"
-              value={newKeyName}
-              onChange={(e) => setNewKeyName(e.target.value)}
-              className="form-input"
-            />
-            <button onClick={handleCreateKey} disabled={loading || !newKeyName} className="create-button">
-              Create Key
-            </button>
-          </div>
-        </div>
-
-        {/* API Keys */}
-        <div className="keys-panel">
-          <h2>Your API Keys</h2>
-          {apiKeys.length > 0 ? (
-            <div className="keys-list">
-              {apiKeys.map((key) => (
-                <div key={key.api_key_id} className="key-card">
-                  <div className="key-header">
-                    <h3>{key.key_name}</h3>
-                    <span className={`key-status ${key.status}`}>{key.status}</span>
-                  </div>
-                  <div className="key-details">
-                    <div className="key-value">
-                      <span className="label">API Key:</span>
-                      <code className="key-code">{key.api_key?.substring(0, 20)}...</code>
-                      <button className="copy-button">Copy</button>
-                    </div>
-                    <div className="key-meta">
-                      <span>Created: {new Date(key.created_date).toLocaleDateString()}</span>
-                      <span>Last Used: {key.last_used ? new Date(key.last_used).toLocaleDateString() : 'Never'}</span>
-                      <span>Requests: {key.request_count || 0}</span>
-                    </div>
-                  </div>
-                  {key.status === 'active' && (
-                    <button
-                      onClick={() => handleRevokeKey(key.api_key_id)}
-                      disabled={loading}
-                      className="revoke-button"
+        {/* Create API Key & Keys List (Simplified for space) */}
+        <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+                <div className="create-key-panel" style={{ height: '100%' }}>
+                  <h2>Generate Sovereign Access Key</h2>
+                  <div className="key-form" style={{ marginTop: '16px' }}>
+                    <input
+                      type="text"
+                      placeholder="Access Key Label..."
+                      value={newKeyName}
+                      onChange={(e) => setNewKeyName(e.target.value)}
+                      className="form-input"
+                      style={{ background: '#073642', border: '1px solid #586e75', color: '#eee' }}
+                    />
+                    <button 
+                        onClick={handleCreateKey} 
+                        disabled={loading || !newKeyName} 
+                        className="create-button"
+                        style={{ background: '#268bd2' }}
                     >
-                      Revoke Key
+                      Issue Key
                     </button>
-                  )}
+                  </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="no-data">No API keys created yet</div>
-          )}
-        </div>
-
-        {/* Developer Resources */}
-        <div className="resources-panel">
-          <h2>Developer Resources</h2>
-          <div className="resources-grid">
-            <div className="resource-card">
-              <h3>API Documentation</h3>
-              <p>Complete API reference with examples</p>
-              <button className="resource-button">View Docs</button>
-            </div>
-            <div className="resource-card">
-              <h3>SDKs & Libraries</h3>
-              <p>Official SDKs for popular languages</p>
-              <button className="resource-button">Download SDKs</button>
-            </div>
-            <div className="resource-card">
-              <h3>Sandbox Environment</h3>
-              <p>Test your integration safely</p>
-              <button className="resource-button">Access Sandbox</button>
-            </div>
-            <div className="resource-card">
-              <h3>Support & Community</h3>
-              <p>Get help from our developer community</p>
-              <button className="resource-button">Join Community</button>
-            </div>
-          </div>
-        </div>
+            </Grid>
+        </Grid>
       </div>
     </div>
   );

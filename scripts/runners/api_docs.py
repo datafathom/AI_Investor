@@ -177,8 +177,8 @@ def serve_docs(**kwargs):
     # But for a dedicated serve-docs, let's just use the existing backend infrastructure
     # but maybe with a clear message.
     
-    os.environ["FLASK_APP"] = "web/app.py"
-    os.environ["FLASK_ENV"] = "development"
+    os.environ["
+    os.environ["
     
     import subprocess
     cmd = [sys.executable, str(PROJECT_ROOT / "web" / "app.py")]
@@ -491,3 +491,4 @@ def _convert_to_postman(openapi_spec, name="AI Investor API"):
         postman["item"].append(category_folder)
         
     return postman
+

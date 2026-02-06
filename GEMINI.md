@@ -55,3 +55,8 @@ otes/ and _ExtraContext/.
 - **Prohibited**: **NEVER** use internal browser tools or recursive agent calls for browser interaction.
 - **Implementation**: Create scripts in `scripts/` (e.g., `scripts/verify_feature.py`), run them via terminal, and inspect the screenshots they generate.
 - **Drivers**: Use `webdriver_manager` for automatic driver management.
+
+## 11. Security & Network Protocols (CRITICAL)
+- **Binding**: **NEVER** use `0.0.0.0` for server binding or listener configuration. This opens the server to the entire network and is a CRITICAL security violation.
+- **Local Enforcement**: **ALWAYS** use `127.0.0.1` or `localhost` for local service development and testing.
+- **Network Privacy**: Ensure all servers are strictly isolated to the host machine unless explicitly authorized for LAN distribution.

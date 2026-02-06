@@ -122,8 +122,7 @@ ai-investor/
 ## Technology Stack
 
 ### Backend
-- Flask (REST API)
-- FastAPI (Async endpoints)
+- FastAPI (REST & Async API)
 - PostgreSQL (Primary database)
 - Neo4j (Graph database)
 - Redis (Caching)

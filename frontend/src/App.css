@@ -250,15 +250,15 @@ main {
   overflow-y: auto; /* Enable global scroll */
   overflow-x: hidden;
   background: var(--bg-app);
-  /* Content area below MenuBar (30px) + SubHeaderNav (52px) + Breadcrumbs (~30px) */
-  padding-top: 120px;
+  /* Content area below MenuBar (30px) */
+  padding-top: 30px;
   padding-bottom: 100px; /* Buffer at the bottom */
 }
 
 /* OS-STYLE PAGES: Hard viewport lock for Terminal/Zen/Political/Analytics */
 .institutional-os-container.os-bleed {
-  /* Exact height calculation: 100vh minus headers */
-  height: calc(100vh - 120px - 32px);
+  /* Exact height calculation: 100vh minus MenuBar (30px) and Taskbar (48px) */
+  height: calc(100vh - 30px - 48px);
   padding: 0 !important; 
   margin: 0 !important;
   /* overflow: hidden !important;  <-- REMOVED: Causing clipped content on small screens */
@@ -286,7 +286,7 @@ main {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Regular route content - allows scrolling */

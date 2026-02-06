@@ -8,15 +8,9 @@
  */
 import React, { useEffect, useRef, useCallback } from 'react';
 
-// Try to import react-window, but handle gracefully if not available
-let List, FixedSizeList;
-try {
-  const reactWindow = require('react-window');
-  List = reactWindow.List;
-  FixedSizeList = reactWindow.FixedSizeList;
-} catch (e) {
-  console.warn('[VirtualizedChatMessages] react-window not available, using fallback');
-}
+import * as ReactWindow from 'react-window';
+const FixedSizeList = ReactWindow.FixedSizeList || ReactWindow.default?.FixedSizeList;
+const List = ReactWindow.List || ReactWindow.default?.List || FixedSizeList;
 
 export default function VirtualizedChatMessages({ messages, socketId, messagesEndRef, height = 300 }) {
   const listRef = useRef(null);

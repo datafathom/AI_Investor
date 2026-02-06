@@ -13,6 +13,7 @@ from pydantic import BaseModel
 from services.analysis.morning_briefing import get_briefing_service as _get_briefing_service
 from services.communication.notification_manager import get_notification_manager as _get_notification_manager, AlertPriority
 
+from services.admin.inbox_service import get_inbox_service
 from fastapi import APIRouter, HTTPException, Query, Body, Depends
 
 def get_briefing_provider():
@@ -88,3 +89,17 @@ async def trigger_test_alert(
         logger.exception("Failed to send test alert")
         from fastapi.responses import JSONResponse
         return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
+@router.post("/inbox/triage")
+async def triage_email(
+    subject: str = Body(...),
+    sender: str = Body(...),
+    body: str = Body(...),
+    service = Depends(get_inbox_service)
+):
+    """Trigger real-time LLM triage for an incoming email."""
+    try:
+        triage = await service.classify_email(subject, sender, body)
+        return {"success": True, "data": triage}
+    except Exception as e:
+        logger.exception("Email triage failed")
+        return {"success": False, "detail": str(e)}

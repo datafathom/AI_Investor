@@ -1,6 +1,6 @@
 """
 Market Data API - FastAPI Router
-Migrated from Flask (web/api/market_data_api.py)
+ (web/api/market_data_api.py)
 """
 
 from fastapi import APIRouter, HTTPException, Depends, Query
@@ -67,7 +67,7 @@ async def get_quote(
         if mock:
             client.mock = True
         
-        quote = client.get_quote(symbol)
+        quote = await client.get_quote(symbol)
         if not quote:
             return _build_error_response(404, f"No quote data found for symbol: {symbol}")
 
@@ -127,7 +127,7 @@ async def get_history(
     """Retrieve historical OHLCV data for a symbol."""
     try:
         symbol = symbol.upper().strip()
-        bars = client.get_daily(symbol, outputsize=period, adjusted=adjusted)
+        bars = await client.get_daily(symbol, outputsize=period, adjusted=adjusted)
         
         if not bars:
             return _build_error_response(404, f"No historical data found for symbol: {symbol}")
@@ -177,7 +177,7 @@ async def get_intraday(
         int_val = interval_map.get(interval)
         if not int_val:
             return _build_error_response(400, f"Invalid interval: {interval}")
-        bars = client.get_intraday(symbol, interval=int_val, outputsize=outputsize)
+        bars = await client.get_intraday(symbol, interval=int_val, outputsize=outputsize)
         
         if not bars:
             return _build_error_response(404, f"No intraday data found for symbol: {symbol}")
@@ -213,7 +213,7 @@ async def get_earnings(
     try:
         if horizon not in ['3month', '6month', '12month']:
             return _build_error_response(400, f"Invalid horizon: {horizon}")
-        earnings = client.get_earnings_calendar(symbol=symbol, horizon=horizon)
+        earnings = await client.get_earnings_calendar(symbol=symbol, horizon=horizon)
         
         return _build_response({
             "status": "success",
@@ -261,3 +261,4 @@ async def get_market_health():
     except Exception as e:
         logger.exception("Market health check failed")
         return _build_error_response(500, str(e))
+

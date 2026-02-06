@@ -10,7 +10,7 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
+  z-index: 99999;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -78,8 +78,22 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   padding: 4px 0;
   margin-top: 1px;
-  z-index: 1001;
+  z-index: 100000;
+  max-height: 80vh; /* Scalable max height to guarantee visibility */
+  overflow-y: auto;
   animation: menuFadeIn 0.15s ease-out;
+}
+
+/* Custom scrollbar for dropdowns */
+.menu-dropdown::-webkit-scrollbar {
+  width: 4px;
+}
+.menu-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+.menu-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
 }
 
 
@@ -170,7 +184,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   padding: 4px 0;
   display: none;
-  z-index: 1002;
+  z-index: 100001;
 }
 
 

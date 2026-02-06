@@ -17,6 +17,7 @@ from services.security.system_health_service import (
 
 from services.system.secret_manager import get_secret_manager
 from services.system.totp_service import get_totp_service
+from services.security.geofence_service import get_geofence_service
 
 
 def get_secret_manager_provider():
@@ -244,3 +245,23 @@ async def get_supply_chain_health():
         ]
     }
     return {"success": True, "data": data}
+@router.post("/security/heartbeat")
+async def security_heartbeat(
+    lat: float, 
+    lon: float, 
+    device_id: str,
+    service = Depends(get_geofence_service)
+):
+    """Update device location for geofencing compliance."""
+    service.update_location(device_id, lat, lon)
+    return {"success": True, "status": "updated"}
+
+@router.get("/security/status")
+async def get_geofence_status(
+    primary_device: str, 
+    trusted_mobile: str,
+    service = Depends(get_geofence_service)
+):
+    """Check for geofence divergence violations."""
+    verdict = service.check_security_violation(primary_device, trusted_mobile)
+    return {"success": True, "data": verdict}

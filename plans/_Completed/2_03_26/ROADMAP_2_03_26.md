@@ -43,7 +43,7 @@ The goal of this phase is to produce a comprehensive technical audit of the curr
 **Target Artifact**: `plans/2_02_26/artifacts/api_routes.json`
 
 **Acceptance Criteria**:
-1. ✅ Every registered Flask/Blueprint endpoint is included
+1. ✅ Every registered FastAPI/Blueprint endpoint is included
 2. ✅ Each entry contains all required metadata:
    - `path`: The endpoint URL pattern
    - `method`: HTTP method(s) (GET, POST, PUT, DELETE, etc.)
@@ -62,7 +62,7 @@ The goal of this phase is to produce a comprehensive technical audit of the curr
 - [x] Enhance `scripts/runners/api_docs.py` to introspect all blueprints
 - [ ] Add docstring parsing for request/response schemas
 - [ ] Integrate with existing Postman collection generator
-- [ ] Create integration test validating endpoint count matches Flask app
+- [ ] Create integration test validating endpoint count matches FastAPI app
 - [ ] Update `tests/api/` with validation test
 
 ---

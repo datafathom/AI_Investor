@@ -5,10 +5,10 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 try:
-    from opentelemetry.instrumentation.flask import FlaskInstrumentor
-    HAS_FLASK_INSTRUMENTOR = True
+    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+    HAS_FASTAPI_INSTRUMENTOR = True
 except ImportError:
-    HAS_FLASK_INSTRUMENTOR = False
+    HAS_FASTAPI_INSTRUMENTOR = False
 from services.system.secret_manager import get_secret_manager
 
 logger = logging.getLogger(__name__)
@@ -52,11 +52,11 @@ class TracingService:
             trace.set_tracer_provider(provider)
             
             if app:
-                if HAS_FLASK_INSTRUMENTOR:
-                    FlaskInstrumentor().instrument_app(app)
-                    logger.info(f"Flask application instrumented for tracing (service: {service_name})")
+                if HAS_FASTAPI_INSTRUMENTOR:
+                    FastAPIInstrumentor.instrument_app(app)
+                    logger.info(f"FastAPI application instrumented for tracing (service: {service_name})")
                 else:
-                    logger.warning("FlaskInstrumentor not available, skipping instrumentation.")
+                    logger.warning("FastAPIInstrumentor not available, skipping instrumentation.")
             
             self._is_initialized = True
             logger.info(f"TracingService initialized with endpoint: {endpoint}")

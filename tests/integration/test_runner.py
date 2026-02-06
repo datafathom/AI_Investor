@@ -517,3 +517,4 @@ def run_test_category(
     except Exception as e:
         print(f"\nError running tests: {e}")
         return 1
+

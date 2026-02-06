@@ -18,7 +18,7 @@ Contains the core logic for all AI agents in the system.
 ==================================
 ### AI_Investor/apis/
 Houses the API route definitions and controllers.
-- **Framework**: Primarily uses FastAPI or Flask depending on the service.
+- **Framework**: Primarily uses FastAPI or FastAPI depending on the service.
 - **Organization**: Endpoints are grouped by domain (e.g., `trading`, `compliance`, `billing`).
 
 

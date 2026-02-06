@@ -69,7 +69,7 @@ python scripts/database/migrate.py up
 
 **Backend** (in one terminal):
 ```bash
-python -m web.app
+python -m web.fastapi_gateway
 ```
 
 **Frontend** (in another terminal):

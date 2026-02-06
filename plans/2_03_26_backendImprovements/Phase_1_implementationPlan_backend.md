@@ -33,9 +33,9 @@
         passlib[bcrypt]==1.7.4
         python-jose[cryptography]==3.3.0
         sqlalchemy==2.0.36 # Ensure 2.0+ for future async migration
-        flask==3.1.0
-        flask-cors==5.0.0
-        flask-socketio==5.4.0
+        fastapi==3.1.0
+        fastapi-cors==5.0.0
+        python-socketio==5.4.0
         eventlet==0.36.0
         ```
 

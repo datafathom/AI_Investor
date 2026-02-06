@@ -34,7 +34,7 @@ const TradeAuth = () => {
                         <span className="time-ago">Now</span>
                     </div>
                     <h3>Trade Authorization Required</h3>
-                    <p>High conviction trade >$10k detected.</p>
+                    <p>High conviction trade &gt;$10k detected.</p>
                 </div>
 
                 {status === 'pending' && (

@@ -81,41 +81,66 @@ class PromptLoader:
 
     def get_prompt(self, agent_name: str, prompt_name: str, variables: Optional[Dict[str, Any]] = None) -> str:
         """
-        Exclusively load a prompt from JSON and apply security sanitization.
-        
-        Args:
-            agent_name: Name of the agent (agentThatUses)
-            prompt_name: Name of the specific prompt
-            variables: Dict of variables to inject securely
+        Load a prompt from a text file and apply security sanitization.
+        File mapping: agents/prompts/{agent_map}_{prompt_name}.txt
         """
-        # Find the prompt in cache
-        prompt_data = next((p for p in self._cache if p.get("agentThatUses") == agent_name and p.get("promptName") == prompt_name), None)
+        # Map agent class names to file prefixes
+        agent_map = {
+            "AutocoderAgent": "autocoder",
+            "DebateChamberAgent": "debate",
+            "DepartmentAgent": "department_agent"
+        }
         
-        if not prompt_data:
-            logger.warning(f"Prompt not found: Agent={agent_name}, Name={prompt_name}")
-            return f"PROMPT_NOT_FOUND: {agent_name}.{prompt_name}"
+        prefix = agent_map.get(agent_name)
+        if not prefix:
+            logger.warning(f"No file prefix mapping for agent: {agent_name}")
+            return f"PROMPT_NOT_FOUND: {agent_name}"
             
-        template = prompt_data.get("promptTxt", "")
+        filename = f"{prefix}_{prompt_name}.txt"
+        path = os.path.join(self.prompts_dir, filename)
         
-        if variables:
-            sanitized_vars = {k: self._sanitize_variable(v) for k, v in variables.items()}
-            try:
-                # Use standard format but we must be careful. 
-                # Since we escaped { and } in sanitized_vars, we can now safely inject into the template
-                # which HAS standard {keys}.
-                return template.format(**sanitized_vars)
-            except KeyError as e:
-                logger.error(f"Missing variable for prompt '{prompt_name}': {e}")
-                return template
-            except Exception as e:
-                logger.error(f"Formatting error for prompt '{prompt_name}': {e}")
-                return template
+        if not os.path.exists(path):
+            logger.warning(f"Prompt file not found: {path} (Agent={agent_name}, Name={prompt_name})")
+            return f"PROMPT_NOT_FOUND: {filename}"
+            
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                template = f.read()
                 
-        return template
+            if variables:
+                sanitized_vars = {k: self._sanitize_variable(v) for k, v in variables.items()}
+                return template.format(**sanitized_vars)
+            
+            return template
+            
+        except Exception as e:
+            logger.error(f"Error reading prompt file {filename}: {e}")
+            return f"PROMPT_ERROR: {e}"
 
     def get_prompts_for_agent(self, agent_name: str) -> List[Dict[str, str]]:
-        """Return all prompts registered for a specific agent."""
-        return [p for p in self._cache if p.get("agentThatUses") == agent_name]
+        """List available prompts for an agent (based on file naming convention)."""
+        # This is strictly a helper for listing now
+        agent_map = {
+            "AutocoderAgent": "autocoder",
+            "DebateChamberAgent": "debate",
+            "DepartmentAgent": "department_agent"
+        }
+        prefix = agent_map.get(agent_name)
+        if not prefix:
+            return []
+            
+        results = []
+        try:
+            for f in os.listdir(self.prompts_dir):
+                if f.startswith(prefix + "_") and f.endswith(".txt"):
+                    key = f.replace(prefix + "_", "").replace(".txt", "")
+                    with open(os.path.join(self.prompts_dir, f), "r") as pf:
+                        content = pf.read()
+                    results.append({"promptName": key, "promptTxt": content})
+        except Exception:
+            return []
+            
+        return results
 
 # Singleton instance
 _prompt_loader: Optional[PromptLoader] = None

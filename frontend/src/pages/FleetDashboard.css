@@ -1,0 +1,128 @@
+.fleet-dashboard-root {
+    padding: 24px;
+    background-color: #002b36;
+    min-height: 100vh;
+    color: #93a1a1;
+    font-family: 'Fira Code', monospace;
+}
+
+.fleet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    border-bottom: 2px solid #073642;
+    padding-bottom: 16px;
+}
+
+.fleet-title {
+    color: #eee;
+    font-weight: 800;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+}
+
+.fleet-controls {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+.fleet-summary {
+    display: flex;
+    gap: 12px;
+}
+
+.agent-tiny-card {
+    background-color: #073642 !important;
+    border: 1px solid #586e75 !important;
+    padding: 12px;
+    transition: transform 0.2s, border-color 0.2s;
+    cursor: pointer;
+}
+
+.agent-tiny-card:hover {
+    transform: translateY(-2px);
+    border-color: #268bd2 !important;
+}
+
+.agent-tiny-card.error {
+    border-left: 4px solid #dc322f !important;
+}
+
+.agent-tiny-card.active {
+    border-left: 4px solid #859900 !important;
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.agent-id-text {
+    font-size: 0.75rem !important;
+    font-weight: bold !important;
+    color: #268bd2;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(0,0,0,0.5);
+}
+
+.card-stats {
+    margin-bottom: 12px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 0.65rem !important;
+    color: #586e75;
+}
+
+.stat-value {
+    font-size: 0.8rem !important;
+    font-weight: bold !important;
+}
+
+.stat-value.plus { color: #859900; }
+.stat-value.minus { color: #dc322f; }
+
+.load-bar-bg {
+    width: 60px;
+    height: 4px;
+    background: #002b36;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.load-bar-fill {
+    height: 100%;
+    background: #268bd2;
+}
+
+.card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+
+.agent-tiny-card:hover .card-actions {
+    opacity: 1;
+}
+
+.card-actions .MuiIconButton-root {
+    color: #93a1a1;
+}

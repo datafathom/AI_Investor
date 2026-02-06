@@ -461,7 +461,7 @@ All API keys, secrets, and configuration values must be stored in `.env` file. B
 
 #### Security
 - `JWT_SECRET` - JWT signing secret (⚠️ **Change in production**)
-- `SECRET_KEY` - Flask secret key (⚠️ **Change in production**)
+- `SECRET_KEY` - FastAPI secret key (⚠️ **Change in production**)
 - `ENCRYPTION_MASTER_KEY` - Master key for API key encryption (⚠️ **Change in production**)
 
 #### Application Configuration
@@ -472,7 +472,7 @@ All API keys, secrets, and configuration values must be stored in `.env` file. B
 - `LOGS_DIR` - Logs directory path
 - `FRONTEND_URL` - Frontend URL for redirects (default: `http://localhost:5173`)
 - `PORT` - Server port (default: `5050`)
-- `FLASK_ENV` - Flask environment
+- `FLASK_ENV` - FastAPI environment
 
 #### Observability
 - `OTLP_ENDPOINT` - OpenTelemetry endpoint (default: `http://localhost:4317`)

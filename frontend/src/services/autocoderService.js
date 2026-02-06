@@ -69,43 +69,27 @@ class AutoCoderService {
     }
 
     /**
-     * Streams code generation progress (Mock stream for Sandbox visualization).
+     * Streams code generation progress (Simulated stream over real API result).
      */
     async streamCode(taskId, onUpdate, onComplete) {
-        const fullCode = `
-import pandas as pd
-import numpy as np
+        const task = this.getTasks().find(t => t.id === taskId);
+        if (!task) return onComplete();
 
-def normalize_yield_data(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Optimized yield normalization using vector subtraction.
-    """
-    try:
-        # Step 1: Calculate basis points shift
-        df['bp_shift'] = df['yield'].diff() * 100
-        
-        # Step 2: Apply Gaussian smoothing
-        df['smooth'] = df['bp_shift'].rolling(window=5).mean()
-        
-        return df.dropna()
-    except Exception as e:
-        logger.error(f"Normalization failed: {e}")
-        raise
-
-if __name__ == "__main__":
-    # Integration test
-    data = pd.DataFrame({'yield': [4.2, 4.25, 4.18, 4.31]})
-    print(normalize_yield_data(data))
-        `;
-        
-        let current = "";
-        const lines = fullCode.split('\n');
-        for (let line of lines) {
-            current += line + '\n';
-            onUpdate(current);
-            await new Promise(r => setTimeout(r, 50));
+        try {
+            const code = await this.generateCode(task.description);
+            
+            let current = "";
+            const lines = code.split('\n');
+            for (let line of lines) {
+                current += line + '\n';
+                onUpdate(current);
+                await new Promise(r => setTimeout(r, 30)); // Typing effect
+            }
+            onComplete();
+        } catch (err) {
+            onUpdate(`# ERROR: Generation failed\n# ${err.message}`);
+            onComplete();
         }
-        onComplete();
     }
 }
 

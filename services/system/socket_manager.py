@@ -1,42 +1,55 @@
 
 import logging
-from flask_socketio import SocketIO
-from services.system.cache_service import get_cache_service
+import asyncio
+from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 
 class SocketManager:
     """
-    Centralized manager for Socket.IO operations, supporting horizontal scaling via Redis.
+    Centralized manager for Socket.IO operations (FastAPI/ASGI compatible).
     """
     _instance = None
-    _socketio = None
+    _sio = None
 
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(SocketManager, cls).__new__(cls)
         return cls._instance
 
-    def init_app(self, app, socketio_instance: SocketIO):
-        """Initializes the manager with the Socket.IO instance."""
-        self._socketio = socketio_instance
-        logger.info("SocketManager initialized.")
+    def _get_sio(self):
+        """Lazy load the Socket.IO server from the gateway."""
+        if self._sio is None:
+            try:
+                from web.socket_gateway import sio
+                self._sio = sio
+            except ImportError as e:
+                logger.error(f"Failed to import Socket.IO server: {e}")
+        return self._sio
 
-    def emit_event(self, event: str, data: any, room: str = None, namespace: str = '/'):
+    def emit_event(self, event: str, data: Any, room: Optional[str] = None, namespace: str = '/'):
         """
         Emits an event to connected clients. 
-        If scaled with Redis, this will broadcast to all server nodes.
+        Synchronous wrapper for internal service calls.
         """
-        if self._socketio:
-            self._socketio.emit(event, data, room=room, namespace=namespace)
-            logger.debug(f"Emitted event '{event}' to room '{room}'")
-        else:
-            logger.warning("SocketManager: SocketIO instance not initialized. Cannot emit.")
+        sio = self._get_sio()
+        if not sio:
+            logger.warning("SocketManager: Socket.IO instance not available.")
+            return
 
-    def join_room(self, sid, room, namespace='/'):
-        """Adds a client to a room."""
-        if self._socketio:
-            self._socketio.server.enter_room(sid, room, namespace=namespace)
+        # Handle async emit in sync context
+        try:
+            # If we are already in an event loop, create a task
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                loop.create_task(sio.emit(event, data, room=room, namespace=namespace))
+            else:
+                loop.run_until_complete(sio.emit(event, data, room=room, namespace=namespace))
+        except RuntimeError:
+            # No event loop, run new one
+            asyncio.run(sio.emit(event, data, room=room, namespace=namespace))
+        except Exception as e:
+            logger.error(f"Failed to emit Socket.IO event: {e}")
 
 def get_socket_manager() -> SocketManager:
     return SocketManager()

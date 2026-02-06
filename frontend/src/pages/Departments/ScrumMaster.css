@@ -1,0 +1,197 @@
+.scrum-master-container {
+  padding: 2rem;
+  background: rgba(10, 15, 25, 0.9);
+  min-height: calc(100vh - 60px);
+  color: #e0e0e0;
+  font-family: 'Inter', sans-serif;
+  overflow-y: auto;
+}
+
+.scrum-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid rgba(0, 242, 255, 0.3);
+  padding-bottom: 1rem;
+}
+
+.scrum-title h1 {
+  font-size: 2.5rem;
+  margin: 0;
+  letter-spacing: 2px;
+  color: #00f2ff;
+  text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+}
+
+.scrum-subtitle {
+  font-size: 0.9rem;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.scrum-stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.stat-item .label {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.stat-item .value {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.health-green {
+  color: #00ff88;
+  text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
+}
+
+.scrum-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.quadrant-panel {
+  background: rgba(20, 25, 35, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.quadrant-title {
+  margin-top: 0;
+  font-size: 1.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.attack .quadrant-title { color: #ff3e3e; }
+.defense .quadrant-title { color: #3e8eff; }
+.household .quadrant-title { color: #ffae3e; }
+.meta .quadrant-title { color: #00f2ff; }
+
+.dept-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dept-card {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.dept-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateX(5px);
+}
+
+.attack .dept-card:hover { border-left-color: #ff3e3e; }
+.defense .dept-card:hover { border-left-color: #3e8eff; }
+.household .dept-card:hover { border-left-color: #ffae3e; }
+.meta .dept-card:hover { border-left-color: #00f2ff; }
+
+.dept-icon {
+  width: 40px;
+  font-size: 1.2rem;
+  color: #888;
+}
+
+.dept-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dept-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.dept-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  color: #666;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status-dot.online {
+  background: #00ff88;
+  box-shadow: 0 0 5px #00ff88;
+}
+
+.dept-chevron {
+  color: #444;
+}
+
+@media (max-width: 1200px) {
+  .scrum-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Venn Mode Drag & Drop */
+.venn-hint {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 242, 255, 0.15);
+  border: 1px solid rgba(0, 242, 255, 0.5);
+  color: #00f2ff;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  z-index: 100;
+  animation: pulse-hint 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-hint {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+.dept-card.dragging {
+  opacity: 0.5;
+  transform: scale(0.95);
+  border: 1px dashed rgba(0, 242, 255, 0.5);
+}
+
+.dept-card.drop-target {
+  background: rgba(0, 242, 255, 0.15) !important;
+  border-left-color: #00f2ff !important;
+  transform: translateX(5px) scale(1.02);
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+}

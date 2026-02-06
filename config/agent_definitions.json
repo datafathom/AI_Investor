@@ -1,0 +1,1838 @@
+[
+  {
+    "id": "synthesizer",
+    "dept_id": 1,
+    "name": "Synthesizer",
+    "role": "Specialized agent for Synthesizer within Department 1",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "command_interpreter",
+    "dept_id": 1,
+    "name": "Command Interpreter",
+    "role": "Specialized agent for Command Interpreter within Department 1",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "traffic_controller",
+    "dept_id": 1,
+    "name": "Traffic Controller",
+    "role": "Specialized agent for Traffic Controller within Department 1",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "layout_morphologist",
+    "dept_id": 1,
+    "name": "Layout Morphologist",
+    "role": "Specialized agent for Layout Morphologist within Department 1",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "red_team_sentry",
+    "dept_id": 1,
+    "name": "Red Team Sentry",
+    "role": "Specialized agent for Red Team Sentry within Department 1",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "context_weaver",
+    "dept_id": 1,
+    "name": "Context Weaver",
+    "role": "Specialized agent for Context Weaver within Department 1",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "life_cycle_modeler",
+    "dept_id": 2,
+    "name": "Life Cycle Modeler",
+    "role": "Specialized agent for Life Cycle Modeler within Department 2",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "tax_location_optimizer",
+    "dept_id": 2,
+    "name": "Tax Location Optimizer",
+    "role": "Specialized agent for Tax Location Optimizer within Department 2",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "inheritance_logic_agent",
+    "dept_id": 2,
+    "name": "Inheritance Logic Agent",
+    "role": "Specialized agent for Inheritance Logic Agent within Department 2",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "inflation_architect",
+    "dept_id": 2,
+    "name": "Inflation Architect",
+    "role": "Specialized agent for Inflation Architect within Department 2",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "real_estate_amortizer",
+    "dept_id": 2,
+    "name": "Real Estate Amortizer",
+    "role": "Specialized agent for Real Estate Amortizer within Department 2",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "goal_priority_arbiter",
+    "dept_id": 2,
+    "name": "Goal Priority Arbiter",
+    "role": "Specialized agent for Goal Priority Arbiter within Department 2",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "scraper_general",
+    "dept_id": 3,
+    "name": "Scraper General",
+    "role": "Specialized agent for Scraper General within Department 3",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "backtest_autopilot",
+    "dept_id": 3,
+    "name": "Backtest Autopilot",
+    "role": "Specialized agent for Backtest Autopilot within Department 3",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "correlation_detective",
+    "dept_id": 3,
+    "name": "Correlation Detective",
+    "role": "Specialized agent for Correlation Detective within Department 3",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "anomaly_scout",
+    "dept_id": 3,
+    "name": "Anomaly Scout",
+    "role": "Specialized agent for Anomaly Scout within Department 3",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "yield_optimizer",
+    "dept_id": 3,
+    "name": "Yield Optimizer",
+    "role": "Specialized agent for Yield Optimizer within Department 3",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "macro_correlation_engine",
+    "dept_id": 3,
+    "name": "Macro Correlation Engine",
+    "role": "Specialized agent for Macro Correlation Engine within Department 3",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "logic_architect",
+    "dept_id": 4,
+    "name": "Logic Architect",
+    "role": "Specialized agent for Logic Architect within Department 4",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "stress_tester",
+    "dept_id": 4,
+    "name": "Stress Tester",
+    "role": "Specialized agent for Stress Tester within Department 4",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "rebalance_bot",
+    "dept_id": 4,
+    "name": "Rebalance Bot",
+    "role": "Specialized agent for Rebalance Bot within Department 4",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "opportunity_screener",
+    "dept_id": 4,
+    "name": "Opportunity Screener",
+    "role": "Specialized agent for Opportunity Screener within Department 4",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "edge_decay_monitor",
+    "dept_id": 4,
+    "name": "Edge Decay Monitor",
+    "role": "Specialized agent for Edge Decay Monitor within Department 4",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "playbook_evolutionist",
+    "dept_id": 4,
+    "name": "Playbook Evolutionist",
+    "role": "Specialized agent for Playbook Evolutionist within Department 4",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "sniper",
+    "dept_id": 5,
+    "name": "Sniper",
+    "role": "Specialized agent for Sniper within Department 5",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "exit_manager",
+    "dept_id": 5,
+    "name": "Exit Manager",
+    "role": "Specialized agent for Exit Manager within Department 5",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "arbitrageur",
+    "dept_id": 5,
+    "name": "Arbitrageur",
+    "role": "Specialized agent for Arbitrageur within Department 5",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "liquidity_scout",
+    "dept_id": 5,
+    "name": "Liquidity Scout",
+    "role": "Specialized agent for Liquidity Scout within Department 5",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "position_sizer",
+    "dept_id": 5,
+    "name": "Position Sizer",
+    "role": "Specialized agent for Position Sizer within Department 5",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "flash_crash_circuit_breaker",
+    "dept_id": 5,
+    "name": "Flash Crash Circuit Breaker",
+    "role": "Specialized agent for Flash Crash Circuit Breaker within Department 5",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "theta_collector",
+    "dept_id": 6,
+    "name": "Theta Collector",
+    "role": "Specialized agent for Theta Collector within Department 6",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "volatility_surface_mapper",
+    "dept_id": 6,
+    "name": "Volatility Surface Mapper",
+    "role": "Specialized agent for Volatility Surface Mapper within Department 6",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "gamma_warning_system",
+    "dept_id": 6,
+    "name": "Gamma Warning System",
+    "role": "Specialized agent for Gamma Warning System within Department 6",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "delta_hedger",
+    "dept_id": 6,
+    "name": "Delta Hedger",
+    "role": "Specialized agent for Delta Hedger within Department 6",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "probability_modeler",
+    "dept_id": 6,
+    "name": "Probability Modeler",
+    "role": "Specialized agent for Probability Modeler within Department 6",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "black_swan_insurance_agent",
+    "dept_id": 6,
+    "name": "Black Swan Insurance Agent",
+    "role": "Specialized agent for Black Swan Insurance Agent within Department 6",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "deal_flow_scraper",
+    "dept_id": 7,
+    "name": "Deal Flow Scraper",
+    "role": "Specialized agent for Deal Flow Scraper within Department 7",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "cap_table_modeler",
+    "dept_id": 7,
+    "name": "Cap Table Modeler",
+    "role": "Specialized agent for Cap Table Modeler within Department 7",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "exit_catalyst_monitor",
+    "dept_id": 7,
+    "name": "Exit Catalyst Monitor",
+    "role": "Specialized agent for Exit Catalyst Monitor within Department 7",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "lotto_risk_manager",
+    "dept_id": 7,
+    "name": "Lotto Risk Manager",
+    "role": "Specialized agent for Lotto Risk Manager within Department 7",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "whitepaper_summarizer",
+    "dept_id": 7,
+    "name": "Whitepaper Summarizer",
+    "role": "Specialized agent for Whitepaper Summarizer within Department 7",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "asset_hunter",
+    "dept_id": 7,
+    "name": "Asset Hunter",
+    "role": "Specialized agent for Asset Hunter within Department 7",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "breach_sentinel",
+    "dept_id": 8,
+    "name": "Breach Sentinel",
+    "role": "Specialized agent for Breach Sentinel within Department 8",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "api_key_rotator",
+    "dept_id": 8,
+    "name": "Api Key Rotator",
+    "role": "Specialized agent for Api Key Rotator within Department 8",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "travel_mode_guard",
+    "dept_id": 8,
+    "name": "Travel Mode Guard",
+    "role": "Specialized agent for Travel Mode Guard within Department 8",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "cold_storage_auditor",
+    "dept_id": 8,
+    "name": "Cold Storage Auditor",
+    "role": "Specialized agent for Cold Storage Auditor within Department 8",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "permission_auditor",
+    "dept_id": 8,
+    "name": "Permission Auditor",
+    "role": "Specialized agent for Permission Auditor within Department 8",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "recovery_path_builder",
+    "dept_id": 8,
+    "name": "Recovery Path Builder",
+    "role": "Specialized agent for Recovery Path Builder within Department 8",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "property_manager",
+    "dept_id": 9,
+    "name": "Property Manager",
+    "role": "Specialized agent for Property Manager within Department 9",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "vehicle_fleet_ledger",
+    "dept_id": 9,
+    "name": "Vehicle Fleet Ledger",
+    "role": "Specialized agent for Vehicle Fleet Ledger within Department 9",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "inventory_agent",
+    "dept_id": 9,
+    "name": "Inventory Agent",
+    "role": "Specialized agent for Inventory Agent within Department 9",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "procurement_bot",
+    "dept_id": 9,
+    "name": "Procurement Bot",
+    "role": "Specialized agent for Procurement Bot within Department 9",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "wellness_sync",
+    "dept_id": 9,
+    "name": "Wellness Sync",
+    "role": "Specialized agent for Wellness Sync within Department 9",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "maintenance_scheduler",
+    "dept_id": 9,
+    "name": "Maintenance Scheduler",
+    "role": "Specialized agent for Maintenance Scheduler within Department 9",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "bill_automator",
+    "dept_id": 10,
+    "name": "Bill Automator",
+    "role": "Specialized agent for Bill Automator within Department 10",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "flow_master",
+    "dept_id": 10,
+    "name": "Flow Master",
+    "role": "Specialized agent for Flow Master within Department 10",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "budget_enforcer",
+    "dept_id": 10,
+    "name": "Budget Enforcer",
+    "role": "Specialized agent for Budget Enforcer within Department 10",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "fraud_watchman",
+    "dept_id": 10,
+    "name": "Fraud Watchman",
+    "role": "Specialized agent for Fraud Watchman within Department 10",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "subscription_assassin",
+    "dept_id": 10,
+    "name": "Subscription Assassin",
+    "role": "Specialized agent for Subscription Assassin within Department 10",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "credit_score_sentinel",
+    "dept_id": 10,
+    "name": "Credit Score Sentinel",
+    "role": "Specialized agent for Credit Score Sentinel within Department 10",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "wash_sale_watchdog",
+    "dept_id": 11,
+    "name": "Wash Sale Watchdog",
+    "role": "Specialized agent for Wash Sale Watchdog within Department 11",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "document_notary",
+    "dept_id": 11,
+    "name": "Document Notary",
+    "role": "Specialized agent for Document Notary within Department 11",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "kyc_aml_compliance_agent",
+    "dept_id": 11,
+    "name": "Kyc Aml Compliance Agent",
+    "role": "Specialized agent for Kyc Aml Compliance Agent within Department 11",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "tax_loss_harvester",
+    "dept_id": 11,
+    "name": "Tax Loss Harvester",
+    "role": "Specialized agent for Tax Loss Harvester within Department 11",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "regulatory_news_ticker",
+    "dept_id": 11,
+    "name": "Regulatory News Ticker",
+    "role": "Specialized agent for Regulatory News Ticker within Department 11",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "audit_trail_reconstructor",
+    "dept_id": 11,
+    "name": "Audit Trail Reconstructor",
+    "role": "Specialized agent for Audit Trail Reconstructor within Department 11",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "slippage_sleuth",
+    "dept_id": 12,
+    "name": "Slippage Sleuth",
+    "role": "Specialized agent for Slippage Sleuth within Department 12",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "behavioral_analyst",
+    "dept_id": 12,
+    "name": "Behavioral Analyst",
+    "role": "Specialized agent for Behavioral Analyst within Department 12",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "benchmarker",
+    "dept_id": 12,
+    "name": "Benchmarker",
+    "role": "Specialized agent for Benchmarker within Department 12",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "fee_forensic_agent",
+    "dept_id": 12,
+    "name": "Fee Forensic Agent",
+    "role": "Specialized agent for Fee Forensic Agent within Department 12",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "reconciliation_bot",
+    "dept_id": 12,
+    "name": "Reconciliation Bot",
+    "role": "Specialized agent for Reconciliation Bot within Department 12",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "mistake_classifier",
+    "dept_id": 12,
+    "name": "Mistake Classifier",
+    "role": "Specialized agent for Mistake Classifier within Department 12",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "advisor_liaison",
+    "dept_id": 13,
+    "name": "Advisor Liaison",
+    "role": "Specialized agent for Advisor Liaison within Department 13",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "subscription_negotiator",
+    "dept_id": 13,
+    "name": "Subscription Negotiator",
+    "role": "Specialized agent for Subscription Negotiator within Department 13",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "family_office_coordinator",
+    "dept_id": 13,
+    "name": "Family Office Coordinator",
+    "role": "Specialized agent for Family Office Coordinator within Department 13",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "philanthropy_scout",
+    "dept_id": 13,
+    "name": "Philanthropy Scout",
+    "role": "Specialized agent for Philanthropy Scout within Department 13",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "professional_crm",
+    "dept_id": 13,
+    "name": "Professional Crm",
+    "role": "Specialized agent for Professional Crm within Department 13",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "pitch_deck_generator",
+    "dept_id": 13,
+    "name": "Pitch Deck Generator",
+    "role": "Specialized agent for Pitch Deck Generator within Department 13",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "inbox_gatekeeper",
+    "dept_id": 14,
+    "name": "Inbox Gatekeeper",
+    "role": "Specialized agent for Inbox Gatekeeper within Department 14",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "calendar_concierge",
+    "dept_id": 14,
+    "name": "Calendar Concierge",
+    "role": "Specialized agent for Calendar Concierge within Department 14",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "voice_advocate",
+    "dept_id": 14,
+    "name": "Voice Advocate",
+    "role": "Specialized agent for Voice Advocate within Department 14",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "logistics_researcher",
+    "dept_id": 14,
+    "name": "Logistics Researcher",
+    "role": "Specialized agent for Logistics Researcher within Department 14",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "document_courier",
+    "dept_id": 14,
+    "name": "Document Courier",
+    "role": "Specialized agent for Document Courier within Department 14",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "executive_buffer",
+    "dept_id": 14,
+    "name": "Executive Buffer",
+    "role": "Specialized agent for Executive Buffer within Department 14",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "journal_entry_agent",
+    "dept_id": 15,
+    "name": "Journal Entry Agent",
+    "role": "Specialized agent for Journal Entry Agent within Department 15",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "regime_classifier",
+    "dept_id": 15,
+    "name": "Regime Classifier",
+    "role": "Specialized agent for Regime Classifier within Department 15",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "ghost_decision_overlay",
+    "dept_id": 15,
+    "name": "Ghost Decision Overlay",
+    "role": "Specialized agent for Ghost Decision Overlay within Department 15",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "pattern_recognition_bot",
+    "dept_id": 15,
+    "name": "Pattern Recognition Bot",
+    "role": "Specialized agent for Pattern Recognition Bot within Department 15",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "decision_replay_engine",
+    "dept_id": 15,
+    "name": "Decision Replay Engine",
+    "role": "Specialized agent for Decision Replay Engine within Department 15",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "timeline_curator",
+    "dept_id": 15,
+    "name": "Timeline Curator",
+    "role": "Specialized agent for Timeline Curator within Department 15",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "war_game_simulator",
+    "dept_id": 16,
+    "name": "War Game Simulator",
+    "role": "Specialized agent for War Game Simulator within Department 16",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "black_swan_randomizer",
+    "dept_id": 16,
+    "name": "Black Swan Randomizer",
+    "role": "Specialized agent for Black Swan Randomizer within Department 16",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "liquidation_optimizer",
+    "dept_id": 16,
+    "name": "Liquidation Optimizer",
+    "role": "Specialized agent for Liquidation Optimizer within Department 16",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "cascade_failure_detector",
+    "dept_id": 16,
+    "name": "Cascade Failure Detector",
+    "role": "Specialized agent for Cascade Failure Detector within Department 16",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "recovery_path_planner",
+    "dept_id": 16,
+    "name": "Recovery Path Planner",
+    "role": "Specialized agent for Recovery Path Planner within Department 16",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "robustness_scorer",
+    "dept_id": 16,
+    "name": "Robustness Scorer",
+    "role": "Specialized agent for Robustness Scorer within Department 16",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "hallucination_sentinel",
+    "dept_id": 17,
+    "name": "Hallucination Sentinel",
+    "role": "Specialized agent for Hallucination Sentinel within Department 17",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "token_efficiency_reaper",
+    "dept_id": 17,
+    "name": "Token Efficiency Reaper",
+    "role": "Specialized agent for Token Efficiency Reaper within Department 17",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "agent_performance_reviewer",
+    "dept_id": 17,
+    "name": "Agent Performance Reviewer",
+    "role": "Specialized agent for Agent Performance Reviewer within Department 17",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "prompt_optimizer",
+    "dept_id": 17,
+    "name": "Prompt Optimizer",
+    "role": "Specialized agent for Prompt Optimizer within Department 17",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "model_router",
+    "dept_id": 17,
+    "name": "Model Router",
+    "role": "Specialized agent for Model Router within Department 17",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "context_window_manager",
+    "dept_id": 17,
+    "name": "Context Window Manager",
+    "role": "Specialized agent for Context Window Manager within Department 17",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "transaction_categorizer",
+    "dept_id": 18,
+    "name": "Transaction Categorizer",
+    "role": "Specialized agent for Transaction Categorizer within Department 18",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "ach_wire_tracker",
+    "dept_id": 18,
+    "name": "Ach Wire Tracker",
+    "role": "Specialized agent for Ach Wire Tracker within Department 18",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "envelope_budget_manager",
+    "dept_id": 18,
+    "name": "Envelope Budget Manager",
+    "role": "Specialized agent for Envelope Budget Manager within Department 18",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "recurring_payment_agent",
+    "dept_id": 18,
+    "name": "Recurring Payment Agent",
+    "role": "Specialized agent for Recurring Payment Agent within Department 18",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "tax_reserve_calculator",
+    "dept_id": 18,
+    "name": "Tax Reserve Calculator",
+    "role": "Specialized agent for Tax Reserve Calculator within Department 18",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  },
+  {
+    "id": "interest_arbitrage_scout",
+    "dept_id": 18,
+    "name": "Interest Arbitrage Scout",
+    "role": "Specialized agent for Interest Arbitrage Scout within Department 18",
+    "inputs": [
+      "kafka_stream",
+      "postgres_context"
+    ],
+    "processing": "LLM-enhanced logic with domain-specific tools",
+    "outputs": [
+      "telemetry_event",
+      "state_update"
+    ],
+    "llm_model": "claude-3-5-sonnet",
+    "timeout_seconds": 30
+  }
+]

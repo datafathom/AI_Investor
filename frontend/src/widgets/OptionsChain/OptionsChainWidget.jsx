@@ -2,9 +2,8 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import './OptionsChain.css';
 import useSymbolLink from '../../hooks/useSymbolLink';
 import apiClient from '../../services/apiClient';
-// React-Window Import Strategy (Fix for Vite/CJS interop)
 import * as ReactWindow from 'react-window';
-const List = ReactWindow.FixedSizeList || ReactWindow.default?.FixedSizeList || ReactWindow.default;
+const List = ReactWindow.FixedSizeList || ReactWindow.default?.FixedSizeList;
 
 const Row = ({ index, style, data }) => {
   const item = data[index];

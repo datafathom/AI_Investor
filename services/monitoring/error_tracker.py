@@ -147,3 +147,4 @@ class ErrorTracker:
 def get_error_tracker() -> ErrorTracker:
     """Get the error tracker instance."""
     return ErrorTracker()
+

@@ -29,3 +29,4 @@ for dep in dependencies:
 
 print("\nPython executable:", sys.executable)
 print("Python path:", sys.path)
+

@@ -17,7 +17,7 @@ AI Investor is a full-stack investment platform built with modern technologies a
        │ HTTP/WebSocket
        │
 ┌──────▼──────┐
-│   Backend   │ (Flask + FastAPI)
+│   Backend   │ (FastAPI + FastAPI)
 │  (Port 5050)│
 └──────┬──────┘
        │
@@ -39,7 +39,7 @@ AI Investor is a full-stack investment platform built with modern technologies a
 - **Testing**: Playwright (E2E), Jest (Unit)
 
 #### Backend
-- **Framework**: Flask (REST API)
+- **Framework**: FastAPI (REST API)
 - **Async Framework**: FastAPI (for async endpoints)
 - **WSGI Server**: Gunicorn (production)
 - **Database**: PostgreSQL with TimescaleDB
@@ -236,7 +236,7 @@ AI Investor is a full-stack investment platform built with modern technologies a
 2. **Install Dependencies**: `pip install -r requirements.txt`
 3. **Start Services**: `docker-compose up`
 4. **Run Migrations**: `python scripts/database/migrate.py up`
-5. **Start Backend**: `python -m web.app`
+5. **Start Backend**: `python -m web.fastapi_gateway`
 6. **Start Frontend**: `cd frontend2 && npm run dev`
 
 ### Testing

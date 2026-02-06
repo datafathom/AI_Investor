@@ -1,73 +1,72 @@
-"""
-Debate API - FastAPI Router
-Migrated from Flask (web/api/debate_api.py)
-"""
-
-from fastapi import APIRouter, HTTPException, Depends, Query
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel
-from typing import List, Dict, Optional, Any
-import logging
+from typing import Optional, Dict, Any, List
+from agents.debate_chamber_agent import DebateChamberAgentSingleton
 import asyncio
-
-from agents.debate_chamber_agent import get_debate_agent as _get_debate_agent
-
-def get_debate_provider(mock: bool = True):
-    return _get_debate_agent(mock=mock)
-
-logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/v1/ai/debate", tags=["AI Debate"])
 
+# Request Models
 class DebateStartRequest(BaseModel):
-    ticker: str = "SPY"
+    ticker: str
+    model: Optional[str] = "claude-3-opus"
 
-class ArgumentRequest(BaseModel):
+class ArgumentInjectRequest(BaseModel):
     argument: str
 
-@router.post("/start")
-async def start_debate(
-    request: DebateStartRequest,
-    agent = Depends(get_debate_provider)
-):
-    """Start a new debate session."""
-    ticker = request.ticker.upper()
-    
-    try:
-        result = await agent.conduct_debate(ticker)
-        return {"success": True, "data": result}
-    except Exception as e:
-        logger.exception(f"Failed to run debate for {ticker}")
-        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
+# Singleton access
+def get_agent():
+    return DebateChamberAgentSingleton.get_instance(mock=True)
 
-@router.get("/stream")
-async def stream_debate(agent = Depends(get_debate_provider)):
-    """Get the current state of the debate."""
+async def run_debate_background(ticker: str):
+    """Background task to run the debate steps."""
+    agent = get_agent()
+    # This runs the full cycle which updates agent.transcript internally
+    # We can rely on the agent's internal state updates
+    await agent.conduct_debate(ticker)
+
+@router.post("/start")
+async def start_debate(request: DebateStartRequest, background_tasks: BackgroundTasks):
+    """Initialize a new debate session."""
+    agent = get_agent()
+    
+    # Clear previous state
+    agent.transcript = []
+    agent.consensus = {}
+    
+    # Start background execution
+    background_tasks.add_task(run_debate_background, request.ticker)
     
     return {
-        "success": True,
-        "data": {
-            "status": "active",
-            "transcript": agent.transcript,
-            "consensus": agent.consensus
-        }
+        "status": "started",
+        "ticker": request.ticker,
+        "message": "Debate chamber initialized. Agents entering podium."
+    }
+
+@router.get("/stream")
+async def stream_debate_state():
+    """Poll for the latest transcript and consensus."""
+    agent = get_agent()
+    return {
+        "transcript": agent.transcript,
+        "consensus": agent.consensus,
+        "active": len(agent.consensus) == 0 # Active if consensus not yet reached
     }
 
 @router.post("/inject")
-async def inject_argument(request: ArgumentRequest):
-    """Inject a user argument into the debate."""
-    # Mocking successful injection for now
-    return {"success": True, "data": {"status": "success", "message": "Argument received"}}
-
-@router.post("/run/{ticker}")
-async def run_debate(
-    ticker: str,
-    agent = Depends(get_debate_provider)
-):
-    """Trigger a new debate for a ticker."""
-    try:
-        result = await agent.conduct_debate(ticker)
-        return {"success": True, "data": result}
-    except Exception as e:
-        logger.exception(f"Failed to run debate for {ticker}")
-        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
+async def inject_argument(request: ArgumentInjectRequest):
+    """Inject a user argument into the active debate."""
+    agent = get_agent()
+    
+    # Create a user entry
+    entry = {
+        "persona": "User", 
+        "reasoning": request.argument,
+        "role": "Human Intervener"
+    }
+    agent.transcript.append(entry)
+    
+    # Optionally trigger a specific response here? 
+    # For now, just appending to log is sufficient for the UI.
+    
+    return {"status": "injected", "entry": entry}

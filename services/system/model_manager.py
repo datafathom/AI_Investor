@@ -17,6 +17,7 @@ class ModelProvider(Enum):
     ANTHROPIC = "anthropic"
     GEMINI = "gemini"
     PERPLEXITY = "perplexity"
+    OLLAMA = "ollama"
     MOCK = "mock"
 
 @dataclass
@@ -59,6 +60,8 @@ class ModelManager:
                 return await self._call_gemini(prompt, config, system_message)
             elif config.provider == ModelProvider.PERPLEXITY:
                 return await self._call_perplexity(prompt, config, system_message)
+            elif config.provider == ModelProvider.OLLAMA:
+                return await self._call_ollama(prompt, config, system_message)
             else:
                 return f"[MOCK COMPLETION for {config.model_id}]: {prompt[:50]}..."
         except Exception as e:
@@ -119,6 +122,27 @@ class ModelManager:
         # Implementation uses OpenAI-compatible client
         logger.info(f"Routing to Perplexity: {config.model_id}")
         return f"Perplexity Response for: {prompt[:30]}"
+
+    async def _call_ollama(self, prompt, config, system):
+        """Call Local LLM via Ollama API."""
+        import httpx
+        logger.info(f"Routing to Local Ollama: {config.model_id}")
+        
+        url = "http://localhost:11434/api/generate"
+        payload = {
+            "model": config.model_id,
+            "prompt": f"{system}\n\nUser: {prompt}",
+            "stream": False
+        }
+        
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            try:
+                response = await client.post(url, json=payload)
+                response.raise_for_status()
+                return response.json().get("response", "[OLLAMA ERROR: No response]")
+            except Exception as e:
+                logger.error(f"Ollama call failed: {e}")
+                return f"[OLLAMA OFFLINE]: {str(e)}"
 
 # Singleton instance
 _model_manager = None

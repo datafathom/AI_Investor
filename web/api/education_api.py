@@ -168,3 +168,4 @@ async def get_user_certifications(
         # Return empty list as fallback
         return {'success': True, 'data': []}
 
+

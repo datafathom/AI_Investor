@@ -1,0 +1,633 @@
+To harden a Sovereign OS web app—especially one acting as a command center for high-value server-side agents—we must move beyond standard "web security" and into the realm of Operational Security (OpSec) Engineering.
+
+Since the agents live on the server, the web app is your weakest link. If a local attacker (the "unknown box" on your LAN) gains access to the frontend, they could potentially send authorized commands to the server.
+
+Here are the specific, high-level hardening strategies for the React OS:
+
+1. Cryptographic "Command Signing" (The Non-Repudiation Layer)
+Even if an attacker gains access to your active Socket.io session, they should not be able to execute trades or move funds.
+
+The Strategy: The server refuses any command from the UI unless it is signed by a Hardware Security Module (HSM) or a Passkey (WebAuthn).
+
+Implementation: * When you click "Commit" in the Agent Inspector, the browser triggers a biometric/hardware prompt.
+
+The browser signs the command_id + timestamp + payload_hash.
+
+The server verifies this signature using your public key before the Orchestrator (1) allows the Trader (5) to move.
+
+Result: A LAN-sniffing attacker can see your data, but they cannot act because they lack your physical biometric/key.
+
+2. Environment Fingerprinting & "Drift" Detection
+Dept 8 (Sentry) should treat the React app as a "Sensor."
+
+The Strategy: On boot, the app generates a unique fingerprint based on GPU canvas rendering, audio context, and peripheral counts.
+
+Hardening: * If the app is opened on a new device, or if a "Remote Desktop" software (like TeamViewer or AnyDesk) is detected running in the background, the server-side agents enter Read-Only Mode.
+
+DOM Integrity Check: A background Web Worker periodically hashes the index.html and the script tags. If an "Unknown Box" on the LAN performs a Man-in-the-Middle (MITM) injection to add a malicious script, the hash changes, and the app self-destructs (clears memory and redirects to 127.0.0.1).
+
+3. The "Ephemeral Memory" Architecture
+Standard React apps keep data in memory indefinitely. We need to make the data Volatile.
+
+The Strategy: Use a "Short-Term Memory" pattern for the Zustand store.
+
+Hardening: * Sensitive data (balances, private keys, agent logic) is stored as Encrypted Blobs in the store.
+
+It is decrypted only at the component level for display, then immediately garbage collected.
+
+Memory Scrubbing: Every 60 seconds, a Web Worker "sweeps" the store, forcing a refresh from the server and ensuring no stale, unencrypted sensitive data remains in the browser's heap.
+
+4. Advanced Network Layer Hardening
+If the attacker is on your LAN, we assume the network is "Hot."
+
+The Strategy: Certificate Pinning and Double-Encryption.
+
+Hardening: * WSS (Secure WebSockets): Force TLS 1.3 with specific ciphers.
+
+Application-Layer Encryption: Don't rely on HTTPS alone. Encrypt the payload inside the socket message using a session key exchanged via Diffie-Hellman during the boot sequence.
+
+LAN Isolation: Configure the server to only accept connections from a specific Tailscale/Wireguard IP, ignoring the local LAN IP entirely. This makes the "Unknown Box" on the LAN invisible to the server even if it's in the same room.
+
+5. UI "Dead Man's Switch" (Biometric Tethering)
+The Strategy: The OS requires a constant "Heartbeat" from the user.
+
+Hardening: * If you are using a mobile device for the OS, use the Accelerometer. If the phone is set down for more than 30 seconds, the UI redacts all data.
+
+On desktop, use Webcam Eyetracking (via a local-only WASM model). If the user's eyes leave the screen, the "Privacy Shield" activates. No data is stored; the model just emits a binary USER_PRESENT signal.
+
+🛠️ Hardening Comparison Table
+Feature	Standard Web App	Sovereign OS Hardened
+Auth	Password / Cookie	Biometric Command Signing (WebAuthn)
+Data Storage	Plain JSON in State	Encrypted Blobs in Volatile Memory
+LAN Security	Trusted	Zero-Trust (Assumed Compromised)
+Scripting	Standard Bundling	Content Security Policy (CSP) + Subresource Integrity
+Session	Idle Timeout	Biometric Tethering / Heartbeat
+🚀 The "Kill-Switch" Command
+We need a dedicated, hardened route for the Kill-Switch.
+
+If you suspect a breach, you should be able to trigger a "Server-Side Purge" from any authorized device.
+
+This command bypasses the standard socket and hits a hard-coded API endpoint on the server that immediately kills all active agent processes and revokes all API keys.
+
+Would you like to write the "Content Security Policy" (CSP) and "Subresource Integrity" (SRI) build scripts to ensure no rogue scripts can ever be injected into y
+
+
+🛠️ Layer 1: The Vite SRI Plugin
+We will use a plugin to generate hashes for every JS and CSS file in your build. If an attacker on your LAN tries to inject code into your index.html or modify a .js file on the wire, the browser will see the hash mismatch and refuse to execute the file.
+
+Add this to your vite.config.js:
+
+JavaScript
+import { defineConfig } from 'vite';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
+import { integrity } from 'vite-plugin-subresource-integrity'; // Needs installation
+
+export default defineConfig({
+  plugins: [
+    integrity({ algorithms: ['sha384'] }), // Generates SRI hashes automatically
+  ],
+  build: {
+    outDir: 'dist',
+    sourcemap: false, // Disable sourcemaps in prod to hide logic from LAN sniffers
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Isolate sensitive logic into its own chunk for easier monitoring
+          security_core: ['./src/depts/dept08_sentry', './src/hooks/useSovereignSocket'],
+        },
+      },
+    },
+  },
+});
+🛡️ Layer 2: The "Ironclad" CSP Header
+The Content Security Policy is your most powerful tool. It tells the browser: "Only talk to my server, and don't trust anything that isn't hashed."
+
+If an "unknown box" on the LAN tries to redirect your data to a tracker or inject a script, this CSP will block it at the browser engine level.
+
+Server-side Header (set via Nginx or your Node/Python server):
+
+HTTP
+Content-Security-Policy: 
+  default-src 'none'; 
+  script-src 'self'; 
+  connect-src 'self' wss://your-secure-server.com https://your-secure-server.com; 
+  style-src 'self' 'unsafe-inline'; 
+  img-src 'self' data:; 
+  font-src 'self'; 
+  object-src 'none'; 
+  frame-ancestors 'none'; 
+  base-uri 'self'; 
+  form-action 'self';
+  upgrade-insecure-requests;
+Breakdown of the Defense:
+default-src 'none': The "Nuclear Option." Blocks everything by default. You must explicitly whitelist every data flow.
+
+connect-src: Strictly limits your WebSocket (wss://) and API calls. Even if an attacker injects a fetch() call to their own server, the browser will kill it.
+
+frame-ancestors 'none': Prevents "Clickjacking" (someone embedding your OS inside a hidden iframe to steal clicks).
+
+object-src 'none': Disables plugins like Flash or PDF viewers which are common exploit vectors.
+
+🧩 Layer 3: The "Anti-Tamper" Bootstrapper
+Inside your index.html, we add a small, inline, high-priority script that monitors the DOM for unauthorized changes before the React app even mounts.
+
+HTML
+<script type="text/javascript">
+  (function() {
+    // 1. Detect if being proxied or if 'unknown box' is injecting scripts
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.tagName === 'SCRIPT' && !node.hasAttribute('integrity')) {
+            console.error('ALARM: UNTRUSTED SCRIPT DETECTED. PURGING STATE.');
+            window.localStorage.clear();
+            document.body.innerHTML = "<h1>SECURITY BREACH: SYSTEM HALTED</h1>";
+            window.location.href = "about:blank";
+          }
+        });
+      });
+    });
+
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+
+    // 2. Prevent right-click / DevTools inspection in 'Breach Mode'
+    window.addEventListener('contextmenu', e => {
+      if (window.SovereignSecurityLevel === 'breach') e.preventDefault();
+    });
+  })();
+</script>
+⛓️ Layer 4: Hardened Communication (Double-Envelope Encryption)
+Even with WSS (TLS 1.3), an attacker on the LAN with a compromised Root CA could theoretically see your traffic. We mitigate this with Application-Level Encryption.
+
+In your useSovereignSocket hook:
+
+Handshake: On connect, the server sends a temporary public key.
+
+Encryption: Your UI uses Web Crypto API (AES-GCM) to encrypt your commands before sending them via the socket.
+
+Result: To the network, your commands look like: {"payload": "a8f2bc...44e"}. Only the server holds the private key to read it.
+
+🚀 The Next Hardening Step: "Hardware Key Signing"
+The final piece of the puzzle is ensuring that no command is valid without a physical touch.
+
+Would you like me to show you how to implement a signCommand() function using the WebAuthn API (TouchID/FaceID/Yubikey) to wrap your server-side requests?
+
+To implement a hardware-level "Command Signing" layer, we use the WebAuthn API to turn your biometric (TouchID/FaceID) or Yubikey into a cryptographic pen.
+
+In this architecture, the server will not execute any high-stakes command (like a trade or a fund transfer) unless it is accompanied by a fresh signature that proves the human is physically present and authorized the specific payload.
+
+🛠️ The signCommand Implementation
+This function takes your command payload, hashes it, and asks your hardware to sign that hash.
+
+JavaScript
+/**
+ * Sign a command payload using a Hardware Key / Biometric
+ * @param {Object} commandPayload - The JSON command (e.g., { action: 'TRADE', amount: 1.5 })
+ * @param {string} credentialId - The ID of your registered Passkey/Hardware Key
+ */
+export const signCommand = async (commandPayload, credentialId) => {
+  // 1. Create a deterministic hash of the command
+  const encoder = new TextEncoder();
+  const data = encoder.encode(JSON.stringify(commandPayload));
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+
+  // 2. Format the WebAuthn 'get' request
+  // The 'challenge' is actually our hashed command
+  const publicKeyRequestOptions = {
+    challenge: hashBuffer, // The hardware signs this hash
+    allowCredentials: [{
+      id: Uint8Array.from(atob(credentialId), c => c.charCodeAt(0)),
+      type: 'public-key',
+    }],
+    userVerification: 'required', // Forces Biometric/PIN check
+    timeout: 60000,
+  };
+
+  try {
+    // 3. Trigger Hardware UI (TouchID/FaceID popup)
+    const assertion = await navigator.credentials.get({
+      publicKey: publicKeyRequestOptions
+    });
+
+    // 4. Return the signature and authenticator data for server verification
+    return {
+      signature: btoa(String.fromCharCode(...new Uint8Array(assertion.response.signature))),
+      authenticatorData: btoa(String.fromCharCode(...new Uint8Array(assertion.response.authenticatorData))),
+      clientDataJSON: btoa(String.fromCharCode(...new Uint8Array(assertion.response.clientDataJSON))),
+      originalPayload: commandPayload
+    };
+  } catch (err) {
+    console.error("Hardware Signing Failed or Cancelled", err);
+    throw new Error("COMMAND_NOT_SIGNED");
+  }
+};
+🛡️ How it Hardens the Sovereign OS
+Anti-Replay: The clientDataJSON includes a server-generated challenge. Even if an attacker sniffs the signed command on your LAN, they can't "replay" it later because the server will reject the expired challenge.
+
+Zero-Trust LAN: Even if the "unknown box" on your LAN manages to hijack your websocket, they cannot generate a signature. When the server receives a MOVE_FUNDS command without a valid WebAuthn signature, Dept 10 (Guardian) ignores it and flags a security alert.
+
+Non-Repudiation: Every major action in your Historian (15) logs is now cryptographically tied to a physical biometric gesture. You have a mathematical audit trail that only you could have authorized those trades.
+
+🏛️ UI/UX: The "Physical Confirmation" HUD
+In your React OS, when you trigger a high-risk action, the UI should reflect this "Signing" state:
+
+The "Arming" Animation: The "Commit" button turns from Green to a Pulsing Gold.
+
+The Hardware Prompt: A "Waiting for Biometric..." overlay appears.
+
+The Signature Pulse: Once signed, a small "Signed & Encrypted" badge appears on the CoT Terminal before the message is emitted over the socket.
+
+🚀 The Full Sovereign Boot Sequence (Hardened)
+To finalize the hardening of the OS, we combine all our layers into one boot sequence:
+
+Identity: User provides Biometric to unlock the session.
+
+Environment: Dept 8 scans LAN for integrity; if failed, Redaction Mode is forced.
+
+Handshake: Establish WSS with Double-Envelope Encryption.
+
+Policy: Load CSP and SRI to prevent any JS injection.
+
+Operation: Every command sent from the UI is passed through the signCommand() function.
+
+Would you like to build the "Emergency De-auth" button—a UI element that instantly revokes the WebAuthn public key on the server, effectively "bricking" the OS for everyone until a physical recovery key is used?
+
+
+To truly harden a "Sovereign" stack (React + FastAPI + Socket.io), you need to look past basic web security and integrate the OWASP API Security Top 10 and the ASVS (Application Security Verification Standard).Since your agents handle high-value logic, a compromise isn't just a data leak—it’s a loss of sovereign control. Here is how to integrate specific OWASP-aligned defenses:1. Broken Object Level Authorization (BOLA / API1:2023)In an OS with 18 departments, an attacker might try to access Dept 10 (Guardian) data using a token meant for Dept 14 (Front Office).The Defense: Never trust the deptId passed in a socket message alone.Implementation: Every FastAPI endpoint and Socket.io event must perform an Ownership Check.Bad: get_dept_data(id=10)Good: get_dept_data(id=10, user_context=current_user) where the database query includes WHERE owner_id = user_id.2. Broken Object Property Level Authorization (BOPLA / API3:2023)This prevents "Excessive Data Exposure." Your Dept 5 (Trader) might have internal fields (like exchange API secret hints) that the UI doesn't need.The Defense: Use Pydantic Schemas in FastAPI as "Data Silos."Implementation: Define a DeptPublic schema that explicitly excludes sensitive fields.Python# FastAPI snippet
+@app.get("/dept/{id}", response_model=DeptPublic) # Filters out sensitive fields automatically
+async def get_dept(id: int):
+    return await db.fetch_dept(id)
+3. Unrestricted Resource Consumption (API4:2023)An "Unknown Box" on the LAN could spam your Socket.io server with dummy messages, causing the Python process to spike and drop real agent telemetry.The Defense: Rate Limiting at the Socket Layer.Implementation: Use slowapi for FastAPI and a custom middleware for Socket.io to limit messages per second per sid.Sovereign Twist: If a user exceeds the rate limit, trigger a Dept 8 (Sentry) alert to "throttle" that specific LAN IP at the firewall level.4. Continuous Session Validation (ASVS V3)Standard JWTs are "stateless," meaning they are valid until they expire, even if you’ve been hacked.The Defense: Token Revocation List (Blacklisting).Implementation: Store an active_session_id in Redis. When the Kill-Switch is hit, delete the ID from Redis. Every Socket.io heartbeat must check if its session ID still exists in Redis. This turns a "stateless" token into a "killable" one instantly.🏛️ The "Ironclad" OWASP Header Stack (FastAPI)Add this middleware to your FastAPI app to enforce browser-side security that aligns with the OWASP Secure Headers Project.Pythonfrom fastapi.middleware.trustedhost import TrustedHostMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "0" # Disable legacy, use CSP
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        response.headers["Content-Security-Policy"] = "default-src 'none'; script-src 'self'..."
+        return response
+
+app.add_middleware(SecurityHeadersMiddleware)
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=["your-sovereign-domain.com"])
+🛡️ Cross-Site WebSocket Hijacking (CSWSH) ProtectionSince Socket.io starts with an HTTP handshake, it's vulnerable to CSRF-style attacks.The Defense: Strict Origin Check.Implementation: In your AsyncServer configuration, never use cors_allowed_origins="*". Hardcode your specific OS URL.Pythonsio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins=['https://os.internal'])
+📋 Summary: The "Sovereign" OWASP ChecklistOWASP RiskIntegration ActionInjectionUse Pydantic/FastAPI for strict type-casting; use DOMPurify in React.SSRFEnsure the Envoy (13) cannot be tricked into hitting internal IPs (e.g., 169.254.169.254).Security MisconfigDisable FastAPI's /docs and /redoc in production environments.Vulnerable CompsRun npm audit and safety check (Python) in your CI/CD pipeline.Would you like me to generate the docker-compose.yml that isolates the Python backend and React frontend into their own private subnets to prevent LAN-based lateral movement?
+
+
+To evolve your Sovereign OS from "hardened" to "fortified," we need to integrate the newly finalized OWASP Agentic AI Top 10 (2026) and specific Memory-Safe patterns. Since your agents operate with autonomy, the risk shifts from "data theft" to "unauthorized agency."Here are the critical integrations for your React + FastAPI + Socket.io stack:1. The "Least Privilege Tooling" Pattern (OWASP Agentic AI 1.1)An autonomous agent shouldn't have a "master key" to your server.The Best Practice: Scoping Tools, not Agents. Instead of the Trader having access to all exchange functions, the server should dynamically inject a "Session-Scoped Toolset."Implementation: When the Orchestrator (1) activates a blueprint, it passes a temporary scoped_key to the Trader (5) that is only valid for specific pairs and capped at a certain $ value.Sovereign Twist: If the agent tries to call an out-of-scope function (e.g., withdraw_all()), the server-side middleware kills the process and triggers a Dept 8 (Sentry) alert.2. Output Guardrails & Schema Enforcement (OWASP Agentic AI 1.5)An agent might "hallucinate" a command that looks valid but contains a malicious payload (e.g., a prompt injection that tells the Trader to send funds to a different address).The Best Practice: Structured Output Validation. Agents must never emit raw strings to other agents.Implementation: Use Pydantic on the FastAPI backend to validate every inter-agent message. If the Hunter (7) sends a signal to the Trader (5), the SignalSchema must be strictly validated before the Trader even reads it.3. State-in-Memory "Scrubbing" (OWASP ASVS & MASTG)In a React app, variables can persist in browser memory (heap) long after they're hidden from the UI, making them vulnerable to memory dumps from a compromised LAN box.The Best Practice: Primitive Array Overwriting. * Implementation: Don't use immutable strings for sensitive data (like API keys or session secrets) in React. Use Uint8Array.Action: Once a secret is used (e.g., to sign a command), use window.crypto.getRandomValues() to fill that specific byte array with noise before the variable goes out of scope. This ensures that even if a "Memory Dump" occurs, the secret is gone.4. "Human-in-the-Loop" (HITL) Complexity ScoringNot every action needs your Biometric signature, but "Low-Risk" actions can cascade into "High-Risk" disasters.The Best Practice: Risk-Based Autonomy Boundaries.Implementation: Create a "Complexity Scorer" on the server.Low Score: Buying $10 of BTC (Auto-approve).High Score: Buying $10 of BTC while your Solvency Floor is <1.5x (Trigger Biometric Sign).UX: In your Blueprint Architect, you can see a "Heat Map" of which nodes require your physical touch based on current market volatility.🛡️ The "Sovereign" Security Middleware (FastAPI + Socket.io)Add this specific "Agent Integrity" middleware to your Python backend to catch Chained Command Patterns (a common exploit where an agent is tricked into running trade && withdraw).Pythonimport re
+from fastapi import HTTPException
+
+# Prevent command injection in agent tools
+DANGEROUS_PATTERNS = re.compile(r"(&&|;|\||`|\$|{)")
+
+def validate_agent_command(command_str: str):
+    if DANGEROUS_PATTERNS.search(command_str):
+        # Dept 8 (Sentry) Alert Trigger
+        raise HTTPException(status_code=403, detail="MALICIOUS_COMMAND_PATTERN")
+    return True
+📋 The Fortified Checklist for 2026+1Best PracticeSovereign OS IntegrationAgent Identity (1.2)Every agent has its own unique cryptographic ID. One agent cannot "impersonate" another in the socket stream.Toxic Combinations (1.1)The Orchestrator blocks agents from having "Read Database" + "External Network Access" tools simultaneously.Data ClassificationYour Historian (15) automatically tags logs as PUBLIC, INTERNAL, or SOVEREIGN. Only PUBLIC ever hits the React UI without encryption.Zero-Trust LANAssume the browser's localStorage is public. Use SessionStorage or a Private Web Worker State for all session data.Would you like to build the "Agent Audit Log" component—a UI that shows a time-stamped, signed record of every single tool-call and decision-path your agents took on the server?
+
+To implement the Agent Audit Log, we need to move beyond simple text logs. In a Sovereign OS, this is the "Black Box Flight Recorder" for your AI. It provides a cryptographically verifiable trail of every thought, tool-call, and server-side action.
+
+This component integrates directly with Dept 15 (Historian) and Dept 12 (Auditor).
+
+1. The Audit Log Architecture
+Each log entry is not just a string; it is a Signed Event Object from the server.
+
+TraceID: Links multiple agent thoughts to a single outcome.
+
+Tool Context: Shows exactly what API or function the agent called.
+
+Integrity Hash: A SHA-256 hash of the previous log entry, creating a "Log-Chain" that makes it impossible for an attacker (or a rogue agent) to delete their tracks without breaking the chain.
+
+2. React Component: AgentAuditLog.jsx
+This UI uses a "Steppers" layout to show the linear progression of agent logic.
+
+JavaScript
+import React, { useState, useEffect } from 'react';
+import { useSovereignStore } from '../../store/useSovereignStore';
+import { ShieldCheck, Terminal, AlertTriangle, Fingerprint, Cpu } from 'lucide-react';
+
+export const AgentAuditLog = ({ filterDept = null }) => {
+  const [logs, setLogs] = useState([]);
+  const { socket } = useSovereignStore();
+
+  useEffect(() => {
+    // Listen for live audit events from Dept 12 (Auditor)
+    socket.on('AUDIT_EVENT_STREAM', (newEvent) => {
+      if (!filterDept || newEvent.deptId === filterDept) {
+        setLogs(prev => [newEvent, ...prev].slice(0, 100)); // Keep last 100
+      }
+    });
+    return () => socket.off('AUDIT_EVENT_STREAM');
+  }, [filterDept, socket]);
+
+  return (
+    <div className="flex flex-col h-full bg-[#050505] font-mono border-l border-slate-800">
+      <div className="p-3 border-b border-slate-800 flex justify-between items-center bg-black">
+        <div className="flex items-center gap-2">
+          <Terminal size={14} className="text-emerald-500" />
+          <span className="text-xs font-bold tracking-tighter text-slate-300">SYSTEM_AUDIT_LOG</span>
+        </div>
+        <div className="flex gap-2 text-[9px]">
+          <span className="text-emerald-500/50">VERIFIED_CHAIN: OK</span>
+        </div>
+      </div>
+
+      <div className="flex-grow overflow-y-auto p-2 space-y-2 scrollbar-hide">
+        {logs.map((log) => (
+          <div key={log.id} className="group border-b border-white/5 pb-2 animate-in fade-in slide-in-from-right-2">
+            <div className="flex justify-between items-start mb-1">
+              <span className={`text-[10px] px-1 rounded ${getSeverityClass(log.severity)}`}>
+                {log.actionType}
+              </span>
+              <span className="text-[9px] text-slate-600">{new Date(log.timestamp).toLocaleTimeString()}</span>
+            </div>
+            
+            <p className="text-[11px] text-slate-300 leading-tight mb-1">
+              <span className="text-purple-500 font-bold">[{log.agentName}]</span> {log.summary}
+            </p>
+
+            {log.toolCall && (
+              <div className="bg-white/5 p-1.5 rounded text-[10px] text-emerald-400/80 border-l border-emerald-500/30">
+                <code className="block">tool_call: {log.toolCall.method}({JSON.stringify(log.toolCall.params)})</code>
+              </div>
+            )}
+
+            <div className="mt-1 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex items-center gap-1 text-[9px] text-slate-500">
+                <Fingerprint size={10} />
+                <span>Sig: {log.signature.slice(0, 8)}...</span>
+              </div>
+              <button className="text-[9px] text-purple-400 hover:underline">VIEW_TRACE</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const getSeverityClass = (sev) => {
+  if (sev === 'CRITICAL') return 'bg-red-500/20 text-red-500 border border-red-500/50';
+  if (sev === 'WARN') return 'bg-amber-500/20 text-amber-500 border border-amber-500/50';
+  return 'bg-emerald-500/10 text-emerald-500/70 border border-emerald-500/20';
+};
+3. Advanced Audit Features (The "Fortress" UX)
+A. The "Truth Verification" Hover
+When you hover over a log entry, the UI performs a local SHA-256 verification.
+
+Interaction: If the hash of the data doesn't match the signature provided by the server, the log entry turns bright red and a "TAMPER_DETECTED" alert is sent to all authorized devices.
+
+B. Trace Reconstruction
+A single "User Intent" (e.g., "I want to hedge my ETH") might spawn 50 agent actions.
+
+Interaction: Clicking "VIEW_TRACE" filters the audit log to show only events sharing that TraceID. It visualizes the flow across departments, showing exactly how the Hunter (7) passed the data to the Physicist (6) before the Trader (5) executed.
+
+C. The "Signed Input" Proof
+For any action involving funds, the audit log displays a Shield Icon.
+
+Interaction: Clicking the shield displays the WebAuthn proof—showing that you physically signed the command that led to this log entry. This is your protection against "Agent Rogue-ness."
+
+4. Serverside: The "Immutable" Log Loop (FastAPI)
+On your backend, the Auditor (12) ensures that even if an agent is compromised, it cannot erase its logs.
+
+Event Capture: Every tool call is intercepted by a FastAPI dependency.
+
+Sign & Hash: The server signs the event with its own private key and calculates the prev_hash.
+
+Broadcasting: The event is emitted to the Socket.io AUDIT_EVENT_STREAM.
+
+Persistent Storage: The event is written to a Read-Only database table (or a local Append-Only file) that the agent processes do not have "Write" access to.
+
+🚀 The Sovereign "Safety Net"
+By combining the Audit Log with the Command Signing we built earlier, you achieve a "Zero-Trust Agent Environment." You can watch your agents work in real-time, knowing that any deviation from their training—or any unauthorized attempt to act—is cryptographically recorded.
+
+Would you like to move on to the "Infrastructure Isolation" (Docker/Subnetting) to ensure that if an attacker gets onto your LAN, they literally cannot reach the Python server or the Agent processes?
+
+To isolate your Sovereign OS from LAN-based lateral movement, we move beyond simple port mapping. We want an architecture where your FastAPI backend and AI Agents are physically unable to "see" the LAN, and only the Vite/Frontend (via a secure proxy) can communicate with the outside world.
+
+We will achieve this using a Dual-Subnet Docker Strategy.
+
+🏗️ The "Sovereign Fortress" Network Topology
+We will create two distinct virtual networks:
+
+dmz_net (Public-Facing): Contains only the Reverse Proxy (Nginx/Traefik). This is the only container that "touches" your LAN.
+
+internal_net (Isolated): Contains your FastAPI backend, Database, and Agent processes. This network has the internal: true flag, meaning Docker will disable the default gateway—preventing these containers from even pinging the internet or your LAN.
+
+1. The docker-compose.yml Configuration
+YAML
+version: '3.8'
+
+services:
+  # --- THE GATEKEEPER (Only entry point from LAN) ---
+  proxy:
+    image: nginx:alpine
+    ports:
+      - "127.0.0.1:443:443" # Binds ONLY to localhost, or your specific LAN IP
+    networks:
+      - dmz_net
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+
+  # --- THE BRAIN (FastAPI + Socket.io) ---
+  backend:
+    build: ./backend
+    networks:
+      - dmz_net      # To talk to Proxy
+      - internal_net # To talk to Agents/DB
+    expose:
+      - "8000"       # Exposed to internal networks, NOT the LAN
+    environment:
+      - DATABASE_URL=postgres://db:5432/sovereign
+
+  # --- THE AGENTS (Total Isolation) ---
+  agents:
+    build: ./agents
+    networks:
+      - internal_net # CANNOT reach the LAN or Internet
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+
+  # --- THE VAULT ---
+  db:
+    image: postgres:15-alpine
+    networks:
+      - internal_net
+    # No 'ports' section = No access from host or LAN
+
+networks:
+  dmz_net:
+    driver: bridge
+  internal_net:
+    driver: bridge
+    internal: true # 🛡️ CRITICAL: Disables external networking for this subnet
+🛡️ Hardening Layer 2: The "Internal" Flag
+By setting internal: true on the internal_net, you are creating a "Faraday Cage" for your agents.
+
+If an attacker hacks your LAN: They cannot scan the agents or db containers because there is no routing path to them.
+
+If an Agent goes rogue: It cannot exfiltrate your data to an external server because it has no outbound internet access.
+
+Communication: The backend acts as a bridge. It receives requests from the proxy (DMZ) and forwards logic to the agents (Internal).
+
+🔒 Hardening Layer 3: Host-Level Lockdown
+Even with Docker isolation, the host machine's IP tables can sometimes allow "leaks." We close these with two specific commands:
+
+1. Bind to Localhost Only
+In the proxy service above, notice 127.0.0.1:443:443. This ensures that your OS is invisible to other devices on the LAN unless you explicitly use a VPN (like Tailscale) to tunnel into that specific machine.
+
+2. DOCKER-USER IPTable Rules
+Add a rule to prevent the Docker bridge from communicating with other local subnets (to stop lateral movement if the container is escaped):
+
+Bash
+# Drop all traffic from Docker containers to your private LAN (192.168.x.x)
+sudo iptables -I DOCKER-USER -d 192.168.1.0/24 -j DROP
+📋 Best Practices Integrated
+Strategy	Benefit
+No-Port Exposure	Only the Proxy has a ports mapping. Agents and DB are "stealth."
+Pydantic Validation	The backend strictly validates all data moving from dmz_net to internal_net.
+Resource Quotas	cpus and memory limits prevent a "Resource Exhaustion" attack from crashing the host.
+Alpine Base Images	Minimizes the attack surface by removing unused binaries (like curl or ssh) from the containers.
+🚀 The Next Move: "Secret Management"
+Your agents and backend need API keys to work, but putting them in .env files is a risk.
+
+Would you like me to show you how to use Docker Secrets to inject your exchange keys and LLM API keys directly into the container's RAM, so they never touch the disk?
+
+Docker Desktop on Windows typically runs inside a WSL 2 (Windows Subsystem for Linux) VM. Because it is a virtualized Linux environment, most of the networking and security features we've discussed work perfectly, but you have to handle Localhost and File Permissions differently than you would on native Linux.
+
+Here is how to make this architecture work on Windows:
+
+1. The "Localhost" Trap (Windows Networking)
+On Linux, 127.0.0.1 in Docker refers strictly to the container. On Windows, Docker Desktop uses a proxy to bridge your Windows localhost to the WSL 2 VM.
+
+The Hardening Fix: In your docker-compose.yml, keep the 127.0.0.1:443:443 binding. This ensures that only your Windows machine can see the OS. If you want a tablet on your LAN to see it, you would have to explicitly change this to your Windows LAN IP (e.g., 192.168.1.5:443:443), which we already established is riskier.
+
+The "Unknown Box" Protection: Even on Windows, the internal: true flag for your subnets works perfectly. WSL 2 handles the network isolation, so your agents stay in their "Faraday Cage" even if Windows is connected to a public Wi-Fi.
+
+2. Docker Secrets on Windows Desktop
+Docker Desktop supports the secrets syntax in Compose files, but there is a catch with File Permissions.
+
+The Issue: Windows doesn't use standard Linux chmod 600 permissions. When Docker mounts a Windows file as a secret, it often gives it 444 (read-only for all) or 777 (everyone) permissions inside the container.
+
+The Fix: Store your source secret files inside the WSL 2 filesystem (e.g., \\wsl$\Ubuntu\home\user\sovereign\secrets\) rather than on your C:\ drive. This allows Docker to respect the Linux-style permissions that the backend container expects.
+
+3. Resource Limits (WSL 2 Config)
+Windows is notorious for being a resource hog. If your agents (Dept 3 or 17) start doing heavy LLM local inference or data crunching, they could starve your Windows UI.
+
+The Fix: Create a .wslconfig file in your Windows user profile (%UserProfile%) to cap how much RAM/CPU Docker can take from your PC:
+
+Ini, TOML
+[wsl2]
+memory=8GB   # Limit WSL2 to 8GB
+processors=4 # Limit to 4 cores
+4. Hardware Key (WebAuthn) on Windows
+The signCommand() logic using WebAuthn (TouchID/FaceID) works extremely well on Windows.
+
+If your PC has Windows Hello (Fingerprint or IR Camera), the browser will automatically pop up a native Windows Hello prompt.
+
+If you have a Yubikey, it will blink and wait for a touch.
+
+Note: This works in Chrome, Edge, and Firefox on Windows without any extra configuration.
+
+🏛️ Windows Development Checklist
+Feature	Works on Windows?	Special Note
+Internal Networks	✅ Yes	Handled by WSL 2 backend.
+Docker Secrets	✅ Yes	Better to store files inside \\wsl$ than C:\.
+FastAPI / Socket.io	✅ Yes	Standard performance.
+Hardware Signing	✅ Yes	Integrates with Windows Hello.
+IPTable Rules	⚠️ Partial	You must run these inside the WSL 2 terminal, not PowerShell.
+🚀 Recommendation for your Windows Setup
+Since you are on Windows, I highly recommend using VS Code with the "Remote - WSL" extension.
+
+Open your project inside the WSL 2 environment.
+
+Run docker-compose up from the WSL 2 terminal.
+
+This ensures that all the "Hardening" we wrote (like SRI, CSP, and file-based secrets) behaves exactly as it would on a production Linux server.
+
+Would you like to see how to set up the Nginx configuration specifically for Docker Desktop to handle the SSL certificates for your https://localhost OS?
+
+uilding a high-performance, secure stack with FastAPI, Socket.io, Kafka, Neo4j, and Postgres is like engineering a high-frequency trading desk. You have a "Relational Truth" (Postgres), a "Relational Context" (Neo4j), and a "High-Speed Message Bus" (Kafka).
+
+Here is the 2026 DevSecOps and Performance blueprint for this specific architecture.
+
+🏎️ 1. Performance Best Practices: The "Zero-Blocking" Rule
+In a stack this complex, the #1 performance killer is Event Loop Contention. If your Python code waits for Neo4j, your Socket.io connections will drop.
+
+A. Database Optimization
+Postgres (The Source of Truth): Use asyncpg with SQLAlchemy 2.0+ or SQLModel. Always use a Connection Pool (NullPool for serverless, QueuePool for long-running).
+
+Neo4j (The Context): Use the official Neo4j Python Driver in AsyncSession mode. For deep graph traversals, move logic into Cypher queries rather than fetching data and processing it in Python.
+
+Hybrid Querying: If you need a user's profile (Postgres) and their social connections (Neo4j), use asyncio.gather() to fire both queries in parallel.
+
+B. Kafka as the "Asynchronous Lung"
+Don't let FastAPI write directly to Postgres for heavy tasks.
+
+The Producer: Your API should only validate the input and push a message to Kafka (aiokafka).
+
+The Consumer: Use dedicated worker processes (not the API process) to consume Kafka and update Neo4j/Postgres. This prevents your API from slowing down during high-load ingestion.
+
+C. Socket.io Scaling
+Socket.io stores session data in RAM by default. If you run multiple FastAPI workers (which you should), use the socketio.AsyncRedisManager. This allows a message sent to a worker on CPU-1 to reach a client connected to CPU-4.
+
+🛡️ 2. DevSecOps: Hardening the Pipeline
+Security in a multi-db agentic app must be Layered.
+
+A. The "API Gateway" Pattern
+Never expose Kafka, Neo4j, or Postgres to the LAN.
+
+Service Mesh: Use Docker subnets (as we built) to ensure only the FastAPI container can talk to the databases.
+
+Neo4j Bolt Security: Disable the HTTP port (7474) in production; only use the BOLT protocol (7687) with SSL enabled.
+
+B. OWASP Agentic AI: Guardrails (2026)
+Since your agents are interacting with Kafka and Neo4j:
+
+Prompt Injection in Cypher: Just like SQL Injection, Cypher Injection is real. Never string-format your Cypher queries. Use Parameterization:
+
+Bad: session.run(f"MATCH (n:User {{name: '{user_input}'}})...")
+
+Good: session.run("MATCH (n:User {name: $name})...", name=user_input)
+
+Kafka "Message Poisoning": Validate the schema of every Kafka message using Pydantic before it hits your DB consumers. An attacker who breaches one microservice shouldn't be able to "poison" your Graph DB by sending malformed events.
+
+C. Dependency Auditing (The Python "Chain")
+pip-audit: Integrate this into your CI/CD. It checks for known vulnerabilities in your specific versions of fastapi, aiokafka, etc.
+
+Bandit: A security linter for Python that catches common "no-nos" like using eval() or weak cryptographic hashes.
+
+📊 3. The "Full Stack" Performance Stack
+Component	Technology Recommendation	Why?
+JSON Ops	orjson	20-50% faster than standard json.
+Event Loop	uvloop	Replaces the standard asyncio loop for ~2x speed.
+ORM	SQLAlchemy (Async)	Industry standard for safe, pooled Postgres access.
+Graph Driver	neo4j (Async)	Native support for non-blocking traversals.
+Worker	ARQ or Celery	For tasks that are too heavy for Kafka consumers.
+🛠️ 4. Pro-Tip: The "Lifespan" Pattern
+In FastAPI, use the lifespan context manager to initialize your Kafka Producers and Database Pools once when the server starts, and close them gracefully when it stops. This prevents "Leaked Connections" which eventually crash the app.
+
+Python
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Initialize the "Empire"
+    app.state.kafka_producer = await init_kafka()
+    app.state.neo4j_driver = await init_neo4j()
+    yield
+    # Shutdown: Clean up the "Evidence"
+    await app.state.kafka_producer.stop()
+    await app.state.neo4j_driver.close()
+
+app = FastAPI(lifespan=lifespan)
+Would you like to build a "Performance HUD"—a React component that shows real-time metrics for Kafka lag, Neo4j query times, and Socket.io latency?
+

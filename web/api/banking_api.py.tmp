@@ -9,3 +9,4 @@ banking_bp = Blueprint('banking_api_v1', __name__, url_prefix='/api/v1/banking')
 
 # ... existing endpoints (will be replaced by multi_replace later if needed, but I'll write the full file here for consistency if I can't guarantee previous state)
 # Actually, I'll just add the new endpoint to the existing file using replace_file_content.
+

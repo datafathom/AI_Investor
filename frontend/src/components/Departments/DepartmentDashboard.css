@@ -1,0 +1,211 @@
+.dept-dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  width: 100%;
+  background: rgba(10, 15, 25, 0.8);
+  backdrop-filter: blur(10px);
+  color: #e0e0e0;
+  font-family: 'Inter', sans-serif;
+  padding: 0 0 100px 0; /* Uniform padding, buffer for taskbar */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow-x: hidden;
+}
+
+/* Legacy Header styles removed */
+
+.dept-title-area {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.dept-icon-wrapper {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background: rgba(var(--dept-color-rgb), 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--dept-color);
+  box-shadow: 0 0 20px rgba(var(--dept-color-rgb), 0.3);
+  border: 1px solid rgba(var(--dept-color-rgb), 0.5);
+}
+
+.dept-text h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.dept-slug {
+  margin: 0;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--dept-color);
+  opacity: 0.8;
+}
+
+.dept-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dept-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-dot.active { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
+.status-dot.inactive { background: #ff4757; }
+
+.dept-settings-btn {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: color 0.2s;
+}
+
+.dept-settings-btn:hover { color: #fff; }
+
+.dept-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 320px) 1fr minmax(300px, 350px);
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+.dept-sidebar {
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+}
+
+.dept-main-viz {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at center, rgba(var(--dept-color-rgb), 0.05) 0%, transparent 70%);
+  min-width: 0; /* Prevent grid blowout */
+}
+
+.viz-scroll-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: min-content; /* Critical: allow expansion */
+}
+
+.viz-placeholder {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  min-height: 500px;
+  background: rgba(0, 0, 0, 0.2);
+  margin: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.viz-header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.viz-header h3 {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #666;
+  letter-spacing: 0.1em;
+}
+
+.viz-status {
+  font-size: 0.7rem;
+  color: var(--dept-color);
+  font-weight: 600;
+}
+
+.viz-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.viz-mock-graphic {
+  text-align: center;
+}
+
+.rotating-viz {
+  width: 300px;
+  height: 300px;
+  animation: rotate 20s linear infinite;
+  opacity: 0.6;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.viz-description {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: #888;
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+.dept-metrics-area {
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Legacy Footer styles removed */
+
+@media (max-width: 1400px) {
+  .dept-grid {
+    grid-template-columns: 280px 1fr;
+    grid-template-rows: auto auto;
+  }
+  .dept-metrics-area {
+    grid-column: 1 / -1;
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+}
+
+@media (max-width: 900px) {
+  .dept-grid {
+    grid-template-columns: 1fr;
+  }
+  .dept-sidebar {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+}

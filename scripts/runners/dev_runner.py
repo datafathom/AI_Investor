@@ -1,14 +1,4 @@
-"""
-==============================================================================
-FILE: scripts/runners/dev_runner.py
-ROLE: Developer Mode Runner
-PURPOSE: Orchestrates a Hot-Reload development environment.
-         - Ensures Infra is up (lite mode).
-         - Runs Backend in Debug Mode (Auto-Reload).
-         - Runs Frontend in Dev Mode (HMR).
-         - Manages process lifecycle (Ctrl+C kills all).
-==============================================================================
-"""
+# scripts/runners/dev_runner.py
 
 import subprocess
 import sys
@@ -18,6 +8,12 @@ import os
 import threading
 from pathlib import Path
 import psutil
+
+# Fix Windows console encoding for emojis
+if sys.platform == 'win32':
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 # Configuration
 BACKEND_PORT = 5050

@@ -5,27 +5,35 @@
  * Fixed at the top of the application.
  */
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import useEducationStore from "../../stores/educationStore";
-import { Settings } from "lucide-react";
+import { 
+  Settings, Search, Brain, Cpu, Target, TrendingUp, Shield, Grid, 
+  Home, ShieldCheck, Scale, Users, Briefcase, Clock, Zap, Landmark, Layout, Atom,
+  Crosshair, Activity, Terminal, Database, BookOpen, ShoppingBag, Bell
+} from "lucide-react";
+import { DEPT_REGISTRY } from "../../config/departmentRegistry";
+import { getIcon } from "../../config/iconRegistry";
 import "./MenuBar.css";
 
-const MENU_ITEMS = [
+// Remove local ICON_MAP, now handled by iconRegistry.js
+
+const STATIC_MENU_BEFORE = [
   {
     label: "File",
     items: [
-      { label: "Market Dashboard", action: "show-dashboard" },
-      { label: "Mission Control", action: "show-mission-control" },
-      { label: "Political Alpha", action: "show-political-alpha" },
-      { label: "Strategy Distillery", action: "show-strategy-distillery" },
-      { label: "Debate Chamber", action: "show-debate-chamber" },
-      { label: "Auto-Coder", action: "show-auto-coder" },
-      { label: "VR Cockpit", action: "show-vr-cockpit" },
+      { label: "Market Dashboard", action: "nav-path:/special/terminal" },
+      { label: "Mission Control", action: "nav-path:/special/mission-control" },
+      { label: "Political Alpha", action: "nav-path:/special/political" },
+      { label: "Strategy Distillery", action: "nav-path:/special/strategy" },
+      { label: "Debate Chamber", action: "nav-path:/special/debate" },
+      { label: "Auto-Coder", action: "nav-path:/data-scientist/autocoder" },
+      { label: "VR Cockpit", action: "nav-path:/special/vr" },
       { type: "divider" },
-      { label: "Options Analytics", action: "show-options" },
-      { label: "Backtest Portfolio", action: "show-backtest" },
-      { label: "Virtual Brokerage", action: "show-brokerage" },
-      { label: "Global Scanner", action: "show-scanner" },
+      { label: "Options Analytics", action: "nav-path:/trader/options-analytics" },
+      { label: "Backtest Portfolio", action: "nav-path:/strategist/backtest" },
+      { label: "Virtual Brokerage", action: "nav-path:/strategist/brokerage" },
+      { label: "Global Scanner", action: "nav-path:/trader/scanner" },
       { type: "divider" },
       { label: "New Dashboard", action: "new-dashboard", shortcut: "Ctrl+N" },
       { label: "Open Dashboard", action: "open-dashboard", shortcut: "Ctrl+O" },
@@ -79,224 +87,9 @@ const MENU_ITEMS = [
       },
     ],
   },
-  {
-    label: "Roles",
-    items: [
-      {
-        label: "The Architect",
-        action: "nav-overview-architect",
-        submenu: [
-          { label: "System Health", action: "role-architect" },
-          { label: "API & Integrations", action: "role-api" },
-        ],
-      },
-      {
-        label: "The Orchestrator",
-        action: "nav-overview-workspace",
-        submenu: [
-          { label: "Master Graph", action: "role-orchestrator" },
-          { label: "System Reflexivity", action: "role-orchestrator" },
-        ],
-      },
-      {
-        label: "The Strategist",
-        action: "nav-overview-strategist",
-        submenu: [
-          { label: "Social Class Maintenance", action: "role-scm" },
-          { label: "Currency & Cash", action: "role-strategist" },
-          { label: "Estate Planning", action: "role-estate" },
-          { label: "Philanthropy & Impact", action: "role-impact" },
-          { label: "Corporate & Earnings", action: "role-corporate" },
-          { label: "Zen Homeostasis", action: "show-zen" },
-        ],
-      },
-      {
-        label: "The Guardian",
-        action: "nav-overview-guardian",
-        submenu: [
-          { label: "Compliance & KYC", action: "role-guardian" },
-          { label: "Margin & Liquidity", action: "role-margin" },
-          { label: "Regulatory Audit", action: "role-audit" },
-          { label: "Mobile Warden", action: "role-warden" },
-        ],
-      },
-      {
-        label: "The Analyst",
-        action: "nav-overview-analyst",
-        submenu: [
-          { label: "Debate Chamber", action: "role-analyst" },
-          { label: "Macro Observer", action: "role-observer" },
-          { label: "Stress Scenarios", action: "role-scenarios" },
-        ],
-      },
-      { type: "divider" },
-      {
-        label: "Asset Classes",
-        submenu: [
-          { label: "Crypto & Web3", action: "show-crypto" },
-          { label: "Fixed Income", action: "show-fixed-income" },
-          { label: "Real Estate & Illiquid", action: "show-assets" }, // Upcoming 
-        ],
-      },
-      { type: "divider" },
-      { label: "Tax Optimisation", action: "show-tax" },
-      { label: "Portfolio Attribution", action: "show-attribution" },
-      { label: "Global Scanner", action: "show-scanner" },
-      { label: "Backtest Explorer", action: "show-backtest" },
-    ],
-  },
-  {
-    label: "Routes",
-    items: [
-      {
-        label: "Module Overviews",
-        action: "nav-overview-workspace", // Primary landing
-        submenu: [
-          { label: "Orchestrator Overview", action: "nav-overview-orchestrator" },
-          { label: "Architect Overview", action: "nav-overview-architect" },
-          { label: "Analyst Overview", action: "nav-overview-analyst" },
-          { label: "Trader Overview", action: "nav-overview-trader" },
-          { label: "Strategist Overview", action: "nav-overview-strategist" },
-          { label: "Data Scientist Overview", action: "nav-overview-data-scientist" },
-          { label: "Marketing Overview", action: "nav-overview-marketing" },
-          { label: "Legal Overview", action: "nav-overview-legal" },
-          { label: "Guardian Overview", action: "nav-overview-guardian" },
-          { label: "Data Scientist Overview", action: "nav-overview-pioneer" },
-        ],
-      },
-      { type: "divider" },
-      {
-        label: "Orchestrator",
-        action: "nav-overview-orchestrator",
-        submenu: [
-          { label: "Terminal Workspace", action: "show-dashboard" },
-          { label: "Mission Control", action: "show-mission-control" },
-          { label: "Master Graph Control", action: "role-orchestrator" },
-          { label: "Global Chat", action: "show-chat" },
-          { label: "Zen Mode", action: "show-zen" },
-          { type: "divider" },
-          { label: "Market Monitor", action: "toggle-widget-monitor-view" },
-          { label: "Trade Tape", action: "toggle-widget-trade-tape-view" },
-          { label: "Options Chain", action: "toggle-widget-options-chain-view" },
-          { label: "Market Depth", action: "toggle-widget-market-depth-view" },
-          { label: "System Log", action: "toggle-widget-system-log-view" },
-        ],
-      },
-      {
-        label: "Architect",
-        action: "nav-overview-architect",
-        submenu: [
-          { label: "Cloud Admin Center", action: "nav-admin" },
-          { label: "System Health", action: "role-architect" },
-          { label: "API Dashboard", action: "role-api" },
-          { label: "Third-Party Integrations", action: "nav-integrations" },
-          { label: "Developer Platform", action: "nav-developer-platform" },
-        ],
-      },
-       {
-         label: "Data Scientist",
-         action: "nav-overview-data-scientist",
-         submenu: [
-           { label: "AI Predictions", action: "nav-ai-predictions" },
-           { label: "ML Pipeline", action: "nav-ml-training" },
-           { label: "AI Colleague", action: "nav-ai-assistant" },
-           { label: "Auto-Coder", action: "nav-autocoder" },
-           { label: "Debate Chamber", action: "show-debate" },
-           { label: "VR Cockpit", action: "show-vr" },
-         ],
-       },
-      {
-        label: "Trader",
-        action: "nav-overview-trader",
-        submenu: [
-          { label: "Global Scanner", action: "show-scanner" },
-          { label: "Options Strategy Builder", action: "nav-options-strategy" },
-          { label: "Advanced Orders", action: "nav-advanced-orders" },
-          { label: "Algorithmic Trading", action: "nav-algorithmic-trading" },
-          { label: "Paper Trading", action: "nav-paper-trading" },
-          { label: "Advanced Charting", action: "nav-advanced-charting" },
-          { label: "Options Analytics", action: "show-options" },
-        ],
-      },
-      {
-        label: "Strategist",
-        action: "nav-overview-strategist",
-        submenu: [
-          { label: "Portfolio Net Worth", action: "nav-portfolio-management" },
-          { label: "Advanced Analytics", action: "nav-advanced-analytics" },
-          { label: "Portfolio Optimization", action: "nav-portfolio-optimization" },
-          { label: "Portfolio Attribution", action: "show-attribution" },
-          { label: "Backtest Explorer", action: "show-backtest" },
-          { label: "Virtual Brokerage", action: "show-brokerage" },
-          { type: "divider" },
-          { label: "Crypto & Web3 Assets", action: "show-crypto" },
-          { label: "Fixed Income", action: "show-fixed-income" },
-          { label: "Assets & Illiquids", action: "show-assets" },
-          { type: "divider" },
-          { label: "Corporate Actions", action: "role-corporate" },
-          { label: "Philanthropy & Impact", action: "role-impact" },
-          { label: "Social Class Maintenance", action: "role-scm" },
-          { type: "divider" },
-          { label: "Estate Planning", action: "nav-estate-planning" },
-          { label: "Retirement Planning", action: "nav-retirement-planning" },
-          { label: "Budgeting & Planning", action: "nav-budgeting" },
-          { label: "Financial Planning", action: "nav-financial-planning" },
-        ],
-      },
-      {
-        label: "Marketing",
-        action: "nav-overview-marketing",
-        submenu: [
-          { label: "News & Sentiment Analysis", action: "nav-news-sentiment" },
-          { label: "Social Trading", action: "nav-social-trading" },
-          { label: "Community Forums", action: "nav-community-forums" },
-          { label: "Education Platform", action: "nav-education" },
-          { label: "Extension Marketplace", action: "nav-marketplace" },
-          { label: "Research Reports", action: "nav-research-reports" },
-          { label: "Watchlists & Alerts", action: "nav-watchlists-alerts" },
-        ],
-      },
-      {
-        label: "Lawyer",
-        action: "nav-overview-legal",
-        submenu: [
-          { label: "Compliance & KYC", action: "role-guardian" },
-          { label: "Regulatory Audit", action: "role-audit" },
-          { label: "Stress Scenarios", action: "role-scenarios" },
-          { label: "Margin Management", action: "role-margin" },
-          { label: "Tax Optimization", action: "show-tax" },
-          { label: "Legal Terms", action: "nav-legal-terms" },
-          { label: "Privacy Policy", action: "nav-legal-privacy" },
-        ],
-      },
-      {
-        label: "Guardian",
-        action: "nav-overview-guardian",
-        submenu: [
-          { label: "Advanced Risk Management", action: "nav-advanced-risk" },
-          { label: "Credit Monitoring", action: "nav-credit-monitoring" },
-          { label: "Institutional Tools", action: "nav-institutional" },
-          { label: "Enterprise Features", action: "nav-enterprise" },
-          { label: "Bill Payments", action: "nav-bill-payment" },
-          { label: "Cash Flow Tracking", action: "show-cash-flow" },
-          { label: "Family Office", action: "show-tenant" },
-          { label: "Mobile Companion", action: "role-warden" },
-        ],
-      },
-      {
-        label: "Data Scientist",
-        action: "nav-overview-pioneer",
-        submenu: [
-          { label: "Auto-Coder Dashboard", action: "show-auto-coder" },
-          { label: "Auto-Coder Sandbox", action: "show-sandbox" },
-          { label: "VR Cockpit", action: "show-vr-cockpit" },
-          { label: "Debate Chamber", action: "show-debate-chamber" },
-        ],
-      },
-      { type: "divider" },
-      { label: "Mobile Dashboard", action: "role-warden" },
-    ],
-  },
+];
+
+const STATIC_MENU_AFTER = [
   {
     label: "Widgets",
     items: [], // Will be populated dynamically
@@ -337,8 +130,8 @@ const MENU_ITEMS = [
       {
         label: "Legal",
         submenu: [
-          { label: "Terms of Service", action: "nav-legal-terms" },
-          { label: "Privacy Policy", action: "nav-legal-privacy" },
+          { label: "Terms of Service", action: "nav-path:/legal/terms" },
+          { label: "Privacy Policy", action: "nav-path:/legal/privacy" },
         ],
       },
     ],
@@ -348,7 +141,7 @@ const MENU_ITEMS = [
 export default function MenuBar({
   onMenuAction,
   isDarkMode,
-  widgetVisibility,
+  widgetVisibility = {},
   onToggleWidget,
   onTriggerModal,
   onResetLayout,
@@ -358,7 +151,7 @@ export default function MenuBar({
   onLoadLayout,
   onToggleLogCenter,
   showLogCenter,
-  debugStates,
+  debugStates = {},
   widgetTitles = {},
   currentUser,
   onLogout,
@@ -383,7 +176,8 @@ export default function MenuBar({
 
   useEffect(() => {
     const handleProfileUpdate = () => {
-      setLocalUser(authService.getCurrentUser());
+      // In a real app, this would use authService
+      // setLocalUser(authService.getCurrentUser());
     };
     window.addEventListener('user-profile-update', handleProfileUpdate);
     return () => window.removeEventListener('user-profile-update', handleProfileUpdate);
@@ -400,165 +194,239 @@ export default function MenuBar({
     "trade-tape-view",
   ];
 
-  // Build widgets menu dynamically
-  const menuItemsWithWidgets = MENU_ITEMS.map((menu) => {
-    if (menu.label === "Routes") {
-      return {
-        ...menu,
-        items: menu.items.map((routeItem) => {
-          if (routeItem.label === "Orchestrator") {
-            const investorWidgets = Object.entries(widgetTitles)
-              .filter(([id]) => AI_INVESTOR_IDS.includes(id))
-              .map(([id, name]) => ({ id, name }))
-              .sort((a, b) => a.name.localeCompare(b.name));
+  // Build the dynamic menu items for the entire bar
+  const finalMenuItems = useMemo(() => {
+    // 1. Build Departments grouped by quadrant
+    const quadrantConfig = [
+      { id: 'ATTACK', label: '📊 Attack Engine', depts: [3, 4, 5, 6, 7] },
+      { id: 'DEFENSE', label: '🛡️ Defense Fortress', depts: [8, 10, 11, 12] },
+      { id: 'HOUSEHOLD', label: '🏠 Household', depts: [9, 13, 14, 18] },
+      { id: 'META', label: '🧠 Meta-Cognition', depts: [1, 2, 15, 16, 17] }
+    ];
 
-            return {
-              ...routeItem,
-              submenu: [
-                ...routeItem.submenu,
-                { type: "divider" },
-                ...investorWidgets.map(({ id, name }) => ({
-                  label: name,
-                  action: `toggle-widget-${id}`,
-                  checked: widgetVisibility?.[id] !== false,
-                })),
-              ],
-            };
-          }
-          return routeItem;
-        }),
-      };
-    }
-    if (menu.label === "Widgets") {
-      // Sort widgets alphabetically by their display name
-      const otherWidgets = Object.entries(widgetTitles)
-        .filter(([id]) => !AI_INVESTOR_IDS.includes(id))
-        .map(([id, name]) => ({ id, name }))
-        .sort((a, b) => a.name.localeCompare(b.name));
+    const dynamicDeptItems = [];
 
-      return {
-        ...menu,
-        items: [
-          // "Open All Widgets" action at the top
-          { label: "Open All Widgets", action: "open-all-widgets" },
-          // "Close All Widgets" action
-          { label: "Close All Widgets", action: "close-all-widgets" },
-          // Separator
-          { type: "divider" },
-          // Individual widget toggles (alphabetically sorted)
-          ...otherWidgets.map(({ id, name }) => ({
-            label: name,
-            action: `toggle-widget-${id}`,
-            checked: widgetVisibility?.[id] !== false,
-          })),
-        ],
-      };
-    }
-    if (menu.label === "View") {
-      return {
-        ...menu,
-        items: menu.items.map((item) => {
-          if (item.action === "force-loading") {
-            return { ...item, checked: debugStates?.forceLoading || false };
-          }
-          if (item.action === "force-error") {
-            return { ...item, checked: debugStates?.forceError || false };
-          }
-          return item;
-        }),
-      };
-    }
-    if (menu.label === "Workspaces") {
-      return {
-        ...menu,
-        items: [
-          ...menu.items,
-          ...workspaces.map((name) => ({
-            label: name,
-            action: `load-workspace-${name}`,
-            checked: name === activeWorkspace,
-          })),
-        ],
-      };
-    }
-    if (menu.label === "Selection") {
-      // Inject dynamic lock toggle
-      return {
-        ...menu,
+    // Add Scrum of Scrums at top (highlighted)
+    dynamicDeptItems.push({
+      label: '⚡ Scrum of Scrums',
+      action: 'nav-special-scrum',
+      highlight: true
+    });
+    dynamicDeptItems.push({ type: 'divider' });
+
+    // Build items grouped by quadrant
+    quadrantConfig.forEach((quad, quadIndex) => {
+      // Quadrant header (disabled - acts as section label)
+      dynamicDeptItems.push({
+        label: quad.label,
+        disabled: true
+      });
+
+      // Add departments in this quadrant
+      quad.depts.forEach(deptId => {
+        const dept = DEPT_REGISTRY[deptId];
+        if (dept) {
+          dynamicDeptItems.push({
+            label: `  ${dept.shortName}`,
+            icon: getIcon(dept.icon),
+            action: `nav-dept-${dept.id}`,
+            submenu: dept.subModules?.map(mod => ({
+              label: mod.label,
+              action: `nav-path:${mod.path}`
+            })) || []
+          });
+        }
+      });
+
+      // Add divider between quadrants (except after last)
+      if (quadIndex < quadrantConfig.length - 1) {
+        dynamicDeptItems.push({ type: 'divider' });
+      }
+    });
+
+    const specialPagesItem = {
+      label: "Special Pages",
+      submenu: [
+        { label: "💼 Brokerage Account", action: "nav-path:/strategist/brokerage" },
+        { label: "⚡ Scrum of Scrums", action: "nav-special-scrum" },
+        { label: "📱 Mobile Dashboard", action: "nav-special-mobile" },
+        { label: "🥽 VR Cockpit", action: "nav-special-vr" },
+        { label: "🚀 Mission Control", action: "nav-special-mission-control" },
+        { label: "🖥️ System Terminal", action: "nav-special-terminal" },
+        { label: "🧘 Zen Mode", action: "nav-special-zen" },
+        { label: "🏛️ Political Alpha", action: "nav-special-political" },
+        { label: "⚗️ Strategy Distillery", action: "nav-special-strategy" },
+        { label: "⚖️ Debate Chamber", action: "nav-special-debate" },
+        { label: "📝 Paper Trading", action: "nav-special-paper" },
+      ],
+    };
+
+    // 3. Combine dynamic Routes, STATIC_BEFORE, and STATIC_AFTER
+    const baseMenuItems = [
+      {
+        label: "Routes",
         items: [
           {
-            label: "Select All Widgets",
-            action: "select-all-widgets",
-            shortcut: "Ctrl+Shift+A",
+            ...specialPagesItem,
+            label: "🚀 Core Systems", // Renamed for prominence
+            highlight: true
           },
-          { label: "Deselect All", action: "deselect-all" },
-          { type: "divider" },
           {
-            label: globalLock ? "🔒 Unlock Widgets" : "🔓 Lock Widgets",
-            action: "toggle-lock",
-            icon: globalLock ? "lock" : "unlock",
+            label: "🎯 Missions Board",
+            icon: getIcon('Target'), // Using Target icon for Missions
+            action: 'nav-special-missions',
+            highlight: true
           },
           { type: "divider" },
-          { label: "Reset Layout", action: "reset-layout" },
-        ],
-      };
-    }
-    return menu;
-  });
+          ...dynamicDeptItems
+        ]
+      },
+      ...STATIC_MENU_BEFORE,
+      ...STATIC_MENU_AFTER
+    ];
 
-  // Add Account menu at the end
-  const finalMenuItems = [
-    ...menuItemsWithWidgets,
-    {
-      label: "Account",
-      items: localUser
-        ? [
-            { 
-              type: "account-profile", 
-              label: localUser?.username || "Account", 
-              action: "nav-account" 
+    // 4. Inject Dynamic Widget Toggles (preserving legacy logic)
+    const menuItemsWithWidgets = baseMenuItems.map((menu) => {
+      if (menu.label === "Routes") {
+        return {
+          ...menu,
+          items: menu.items.map((routeItem) => {
+            if (routeItem.label === "Orchestrator") {
+              const investorWidgets = Object.entries(widgetTitles)
+                .filter(([id]) => AI_INVESTOR_IDS.includes(id))
+                .map(([id, name]) => ({ id, name }))
+                .sort((a, b) => a.name.localeCompare(b.name));
+
+              return {
+                ...routeItem,
+                submenu: [
+                  ...routeItem.submenu,
+                  { type: "divider" },
+                  ...investorWidgets.map(({ id, name }) => ({
+                    label: name,
+                    action: `toggle-widget-${id}`,
+                    checked: widgetVisibility?.[id] !== false,
+                  })),
+                ],
+              };
+            }
+            return routeItem;
+          }),
+        };
+      }
+      if (menu.label === "Widgets") {
+        const otherWidgets = Object.entries(widgetTitles)
+          .filter(([id]) => !AI_INVESTOR_IDS.includes(id))
+          .map(([id, name]) => ({ id, name }))
+          .sort((a, b) => a.name.localeCompare(b.name));
+
+        return {
+          ...menu,
+          items: [
+            { label: "Open All Widgets", action: "open-all-widgets" },
+            { label: "Close All Widgets", action: "close-all-widgets" },
+            { type: "divider" },
+            ...otherWidgets.map(({ id, name }) => ({
+              label: name,
+              action: `toggle-widget-${id}`,
+              checked: widgetVisibility?.[id] !== false,
+            })),
+          ],
+        };
+      }
+      if (menu.label === "View") {
+        return {
+          ...menu,
+          items: menu.items.map((item) => {
+            if (item.action === "force-loading") {
+              return { ...item, checked: debugStates?.forceLoading || false };
+            }
+            if (item.action === "force-error") {
+              return { ...item, checked: debugStates?.forceError || false };
+            }
+            return item;
+          }),
+        };
+      }
+      if (menu.label === "Selection") {
+        // Inject dynamic lock toggle
+        return {
+          ...menu,
+          items: [
+            {
+              label: "Select All Widgets",
+              action: "select-all-widgets",
+              shortcut: "Ctrl+Shift+A",
             },
+            { label: "Deselect All", action: "deselect-all" },
             { type: "divider" },
             {
-              label: (
-                <span className="menu-label-with-icon">
-                  <Settings size={14} className="menu-icon" /> Settings
-                </span>
-              ),
-              action: "nav-account-settings",
-              submenu: [
-                {
-                  label: "Layout",
-                  submenu: [
-                    { label: "Save Layout", action: "save-layout" },
-                    { label: "Load Layout", action: "load-layout" },
-                    { label: "Reset Layout", action: "reset-layout" },
-                    { label: "AutoSort Current Page", action: "auto-sort" },
-                    { label: "Sync Cloud Layout", action: "save-layout" },
-                    { type: "divider" },
-                    {
-                      label: "Workspaces",
-                      action: "workspace-save-prompt",
-                      shortcut: "Ctrl+Shift+S",
-                    },
-                    { label: "Import Layout", action: "import-layout" },
-                    { label: "Export Layout", action: "export-layout" },
-                    { type: "divider" },
-                    ...workspaces.map((name) => ({
-                      label: name,
-                      action: `load-workspace-${name}`,
-                      checked: name === activeWorkspace,
-                    })),
-                  ],
-                },
-              ],
+              label: globalLock ? "🔒 Unlock Widgets" : "🔓 Lock Widgets",
+              action: "toggle-lock",
+              icon: globalLock ? Shield : ShieldCheck, // Changed to Lucide components
             },
             { type: "divider" },
-            { label: "Logout", action: "logout" },
-          ]
-        : [{ label: "Sign In / Register", action: "signin" }],
-    },
-  ];
+            { label: "Reset Layout", action: "reset-layout" },
+          ],
+        };
+      }
+      return menu;
+    });
+
+    // 5. Add Account menu at the end
+    return [
+      ...menuItemsWithWidgets,
+      {
+        label: "Account",
+        items: localUser
+          ? [
+              { 
+                type: "account-profile", 
+                label: localUser?.username || "Account", 
+                action: "nav-account" 
+              },
+              { type: "divider" },
+              {
+                label: (
+                  <span className="menu-label-with-icon">
+                    <Settings size={14} className="menu-icon" /> Settings
+                  </span>
+                ),
+                action: "nav-account-settings",
+                submenu: [
+                  {
+                    label: "Layout",
+                    submenu: [
+                      { label: "Save Layout", action: "save-layout" },
+                      { label: "Load Layout", action: "load-layout" },
+                      { label: "Reset Layout", action: "reset-layout" },
+                      { label: "AutoSort Current Page", action: "auto-sort" },
+                      { label: "Sync Cloud Layout", action: "save-layout" },
+                      { type: "divider" },
+                      {
+                        label: "Workspaces",
+                        action: "workspace-save-prompt",
+                        shortcut: "Ctrl+Shift+S",
+                      },
+                      { label: "Import Layout", action: "import-layout" },
+                      { label: "Export Layout", action: "export-layout" },
+                      { type: "divider" },
+                      ...workspaces.map((name) => ({
+                        label: name,
+                        action: `load-workspace-${name}`,
+                        checked: name === activeWorkspace,
+                      })),
+                    ],
+                  },
+                ],
+              },
+              { type: "divider" },
+              { label: "Logout", action: "logout" },
+            ]
+          : [{ label: "Sign In / Register", action: "signin" }],
+      },
+    ];
+  }, [widgetVisibility, widgetTitles, localUser, workspaces, activeWorkspace, globalLock, debugStates]);
 
   const userForDisplay = localUser || currentUser;
 
@@ -628,11 +496,29 @@ export default function MenuBar({
 
           {hasSubmenu ? (
             <div className="menu-submenu-trigger">
-              <span className="menu-item-label">{item.label}</span>
+              <span className="menu-item-label">
+                {item.icon ? (
+                  <span className="menu-label-with-icon">
+                    {typeof item.icon === 'string' ? item.icon : <item.icon size={14} className="menu-icon" />}
+                    {item.label}
+                  </span>
+                ) : (
+                  item.label
+                )}
+              </span>
               <span className="menu-submenu-arrow">▶</span>
             </div>
           ) : (
-            <span className="menu-item-label">{item.label}</span>
+            <span className="menu-item-label">
+              {item.icon ? (
+                <span className="menu-label-with-icon">
+                  {typeof item.icon === 'string' ? item.icon : <item.icon size={14} className="menu-icon" />}
+                  {item.label}
+                </span>
+              ) : (
+                item.label
+              )}
+            </span>
           )}
 
           {item.shortcut && (
@@ -715,15 +601,15 @@ export default function MenuBar({
       handleMenuClick(menuLabel);
     } else if (event.key === "ArrowRight" && activeMenu === menuLabel) {
       event.preventDefault();
-      const currentIndex = MENU_ITEMS.findIndex((m) => m.label === menuLabel);
-      const nextIndex = (currentIndex + 1) % MENU_ITEMS.length;
-      setActiveMenu(MENU_ITEMS[nextIndex].label);
+      const currentIndex = finalMenuItems.findIndex((m) => m.label === menuLabel);
+      const nextIndex = (currentIndex + 1) % finalMenuItems.length;
+      setActiveMenu(finalMenuItems[nextIndex].label);
     } else if (event.key === "ArrowLeft" && activeMenu === menuLabel) {
       event.preventDefault();
-      const currentIndex = MENU_ITEMS.findIndex((m) => m.label === menuLabel);
+      const currentIndex = finalMenuItems.findIndex((m) => m.label === menuLabel);
       const prevIndex =
-        (currentIndex - 1 + MENU_ITEMS.length) % MENU_ITEMS.length;
-      setActiveMenu(MENU_ITEMS[prevIndex].label);
+        (currentIndex - 1 + finalMenuItems.length) % finalMenuItems.length;
+      setActiveMenu(finalMenuItems[prevIndex].label);
     }
   };
 

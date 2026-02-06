@@ -38,7 +38,7 @@
     - run `DENY WRITE ON GRAPH neo4j NODES System TO architect` (example PBAC).
 
 ## 3. Redis 8 ACLs (App-Wide)
-**Context**: Redis is used in `web/app.py` (Flask-SocketIO), `services/system/cache_service.py`, and `services/caching/performance_cache.py`.
+**Context**: Redis is used in `web/app.py` (python-socketio), `services/system/cache_service.py`, and `services/caching/performance_cache.py`.
 
 ### 3.1 ACL File Creation
 - **File**: `infra/redis/users.acl`

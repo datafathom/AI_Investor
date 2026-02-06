@@ -1,7 +1,7 @@
 """
 Auth Utils Module
 Provides JWT generation, decoding, and FastAPI dependencies for RBAC.
-Migrated from Flask to FastAPI.
+ to FastAPI.
 """
 
 import datetime
@@ -50,7 +50,7 @@ async def get_current_user(authorization: Optional[str] = Header(None)) -> Dict[
     FastAPI dependency to protect routes with JWT authentication.
     """
     if not authorization or not authorization.startswith('Bearer '):
-        if os.getenv('FLASK_ENV', 'development') == 'development' or os.getenv('ENV', 'development') == 'development':
+        if os.getenv('DEMO_MODE', 'false').lower() == 'true':
             return {
                 "id": "demo-admin",
                 "tenant_id": "default",
@@ -91,7 +91,7 @@ def requires_role(required_role):
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            raise RuntimeError("requires_role decorator is legacy Flask. Use FastAPI dependencies instead.")
+            raise RuntimeError("requires_role decorator is legacy. Use FastAPI dependencies instead.")
         return wrapper
     return decorator
 
@@ -99,3 +99,4 @@ def requires_role(required_role):
 def verify_integrity():
     """Placeholder for integrity verification logic."""
     return True
+
