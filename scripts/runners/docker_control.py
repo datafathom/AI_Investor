@@ -129,3 +129,25 @@ def docker_logs(service: str = "", follow: bool = True):
     except subprocess.CalledProcessError as e:
         print(f"ERROR Error fetching logs.")
         sys.exit(1)
+
+def docker_lanbox_up(profile: str = "full", build: bool = False):
+    """
+    Shorthand to start Docker containers specifically for a LAN Node setup.
+    This assumes LAN_BOX_IP or DOCKER_BIND_IP is already set in .env.
+    """
+    print("🚀 Starting LAN Node Docker Infrastructure...")
+    
+    # We can perform additional validation here if needed, 
+    # e.g., checking if DOCKER_BIND_IP is set to something other than 127.0.0.1
+    _load_env_to_environ()
+    bind_ip = os.environ.get("DOCKER_BIND_IP", "127.0.0.1")
+    
+    if bind_ip == "127.0.0.1":
+        print("⚠️ Warning: DOCKER_BIND_IP is still set to 127.0.0.1.")
+        print("   If this is the LAN Node, you should run 'python cli.py infra set-lan-ip [IP]' first.")
+    else:
+        print(f"📍 Binding services to LAN IP: {bind_ip}")
+
+    # Delegate to the main docker_up logic
+    docker_up(profile=profile, build=build)
+

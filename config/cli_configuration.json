@@ -245,8 +245,32 @@
                 "ps": {
                     "description": "Show Docker container status (formatted table)",
                     "handler": "scripts.runners.docker_control:docker_ps"
+                },
+                "lanbox": {
+                    "description": "LAN Node specific operations",
+                    "subcommands": {
+                        "up": {
+                            "description": "Start Docker containers on the LAN Node",
+                            "flags": [
+                                {
+                                    "name": "build",
+                                    "type": "boolean",
+                                    "default": false,
+                                    "help": "Rebuild images before starting"
+                                },
+                                {
+                                    "name": "profile",
+                                    "type": "string",
+                                    "default": "full",
+                                    "help": "Docker Compose profile to run (e.g. storage, graph, full)"
+                                }
+                            ],
+                            "handler": "scripts.runners.docker_control:docker_lanbox_up"
+                        }
+                    }
                 }
             },
+
             "category": "Development & Infrastructure"
         },
         "db": {
