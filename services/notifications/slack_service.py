@@ -304,51 +304,6 @@ class SlackService:
                 logger.error(f"Error in presence heartbeat: {e}")
                 await asyncio.sleep(60) # Retry after delay
 
-    async def start_bot(self):
-        """Starts the Slack bot and Socket Mode handler."""
-        if self.mock:
-            logger.info("MOCK SlackService started.")
-            return
-
-        if not self.bot_token or not self.socket_token:
-            logger.error("Missing SLACK_BOT_TOKEN or SLACK_SOCKET_TOKEN environment variables.")
-            return
-
-        try:
-            self._handler = AsyncSocketModeHandler(self.bot, self.socket_token)
-            logger.info("🚀 Starting Slack bot (Socket Mode)...")
-            
-            # Start the presence heartbeat task
-            self._presence_task = asyncio.create_task(self._presence_heartbeat())
-
-            await self._handler.start_async()
-        except Exception as e:
-            logger.error(f"Failed to start Slack bot: {e}")
-
-    async def close(self):
-        """Closes the Slack bot, HTTP client, and Kafka producer."""
-        logger.info("Shutting down SlackService...")
-        
-        # Cancel the presence heartbeat task
-        if self._presence_task:
-            self._presence_task.cancel()
-            try:
-                await self._presence_task
-            except asyncio.CancelledError:
-                logger.info("💓 Presence heartbeat task cancelled.")
-
-        if self._handler:
-            logger.info("Stopping Socket Mode handler...")
-            await self._handler.disconnect_async()
-        if self._http_client:
-            logger.info("Closing HTTP client...")
-            await self._http_client.aclose()
-        if self.producer:
-            logger.info("Closing Kafka producer...")
-            await self.producer.stop()
-        self.stop_worker()
-        logger.info("SlackService shut down.")
-
     def _setup_handlers(self):
         """Dynamically register handlers from configuration."""
         if not self.bot:
@@ -964,8 +919,6 @@ class SlackService:
                 channel=self.default_channel
             )
 
-        # 2. Set Status to Online
-        await self.update_bot_status("Online", ":large_green_circle:")
         # 2. Set Status to Online
         await self.update_bot_status("Online", ":large_green_circle:")
         await self.update_bot_presence("auto")

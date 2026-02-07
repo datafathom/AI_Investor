@@ -431,6 +431,18 @@
                 "internal": {
                     "description": "Serve the futuristic Internal Documentation Portal.",
                     "handler": "scripts.runners.system_control:serve_internal_docs"
+                },
+                "combine": {
+                    "description": "Combine all .md docs in a folder into a single master document.",
+                    "arguments": [
+                        {
+                            "name": "doc_type",
+                            "type": "string",
+                            "required": true,
+                            "help": "Folder name under docs/ to combine (e.g., services, agents)"
+                        }
+                    ],
+                    "handler": "scripts.runners.docs_runner:combine_docs"
                 }
             },
             "category": "API & Documentation"
