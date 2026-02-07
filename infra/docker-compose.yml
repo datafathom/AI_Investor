@@ -90,6 +90,28 @@ services:
     networks:
       - investor-network
 
+  slack-bot:
+    build:
+      context: ..
+      dockerfile: infra/slackbot/Dockerfile
+    restart: always
+    profiles: ["bot", "full"]
+    environment:
+      SLACK_BOT_TOKEN: ${SLACK_BOT_TOKEN}
+      SLACK_SOCKET_TOKEN: ${SLACK_SOCKET_TOKEN}
+      SLACK_USER_TOKEN: ${SLACK_USER_TOKEN}
+      SLACK_CHANNEL_ID: ${SLACK_CHANNEL_ID}
+      SLACK_ALLOWED_USERS: ${SLACK_ALLOWED_USERS}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-84zMsasS0WfXGGVFU6t7vLd9}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    depends_on:
+      - redis
+      - kafka
+    networks:
+      - investor-network
+
 networks:
   investor-network:
     driver: bridge

@@ -34,37 +34,70 @@ def _load_env_to_environ():
                     k, v = line.split('=', 1)
                     os.environ[k] = v.strip().strip('"').strip("'")
 
-def docker_up(profile: str = "full", build: bool = False):
-    """Start Docker containers using docker-compose with a specific profile."""
+def docker_up(profile: str = "full", build: bool = False, service: str = None):
+    """Start Docker containers using docker-compose. Can target a profile or a single service."""
     compose_file = _get_compose_file()
     
+    target = f"service '{service}'" if service else f"profile '{profile}'"
     build_msg = " and rebuilding images" if build else ""
-    print(f" Starting Docker Infrastructure Containers with profile '{profile}'{build_msg}...")
+    print(f" Starting Docker Infrastructure {target}{build_msg}...")
     
-    # Force stop first to ensure clean state
-    print("🧹 Pre-flight cleanup: Stopping any running containers...")
-    try:
-        docker_down()
-    except SystemExit:
-        pass # Ignore exit from docker_down if it succeeds
+    # Pre-flight cleanup if starting a profile (to ensure clean env)
+    if not service:
+        print("🧹 Pre-flight cleanup: Stopping all profile containers...")
+        try:
+            docker_down()
+        except SystemExit:
+            pass
         
     try:
         _load_env_to_environ()
         env_file = _get_env_file()
-        cmd = ['sudo', 'docker', 'compose', '--env-file', env_file, '-f', compose_file, '--profile', profile, 'up', '-d', '--remove-orphans']
+        
+        cmd = ['sudo', 'docker', 'compose', '--env-file', env_file, '-f', compose_file]
+        
+        # If not a specific service, use the profile
+        if not service:
+            cmd.extend(['--profile', profile])
+            
+        cmd.extend(['up', '-d', '--remove-orphans'])
+        
         if build:
             cmd.append('--build')
             
-        # Run without capture_output so user sees real-time progress
-        subprocess.run(
-            cmd,
-            check=True
-        )
-        
-        print(f"OK Docker Infrastructure started successfully!")
-        print("\n👉 Remember to start Backend and Frontend on host separately.")
+        if service:
+            # Map user-friendly names to actual service names if needed
+            service_map = {"slackbot": "slack-bot"}
+            actual_service = service_map.get(service.lower(), service.lower())
+            cmd.append(actual_service)
+            
+        subprocess.run(cmd, check=True)
+        print(f"OK Docker {target} started successfully!")
     except subprocess.CalledProcessError:
-        print(f"ERROR Error starting containers.")
+        print(f"ERROR Error starting {target}.")
+        sys.exit(1)
+
+def docker_service_up(service: str, build: bool = False):
+    """Entry point for starting a single service."""
+    docker_up(service=service, build=build)
+
+def docker_service_down(service: str):
+    """Stop a single Docker service."""
+    compose_file = _get_compose_file()
+    env_file = _get_env_file()
+    
+    # Map names
+    service_map = {"slackbot": "slack-bot"}
+    actual_service = service_map.get(service.lower(), service.lower())
+    
+    print(f"🛑 Stopping Docker service '{actual_service}'...")
+    cmd = ['sudo', 'docker', 'compose', '--env-file', env_file, '-f', compose_file, 'stop', actual_service]
+    
+    try:
+        subprocess.run(cmd, check=True)
+        print(f"OK Service '{actual_service}' stopped.")
+    except subprocess.CalledProcessError:
+        print(f"ERROR Error stopping service.")
         sys.exit(1)
 
 def docker_down(volumes: bool = False):

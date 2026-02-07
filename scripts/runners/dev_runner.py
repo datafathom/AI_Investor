@@ -77,7 +77,7 @@ def stream_output(process, prefix):
     except Exception:
         pass
 
-def start_dev_mode(check_infra=True):
+def start_dev_mode(check_infra: bool = True, slackbot: bool = True):
     """Main Entry Point for Dev Mode."""
     print("Starting AI Investor DEV MODE (Hot Reload)...")
     
@@ -165,27 +165,31 @@ def start_dev_mode(check_infra=True):
     t_frontend = threading.Thread(target=stream_output, args=(frontend_proc, "FRONTEND"))
     t_frontend.daemon = True
     t_frontend.start()
-
-    # 5. Start Slack Bot (Cleanup first)
-    from scripts.runners.slack_runner import stop_bot
-    stop_bot(silent=True)
     
-    print("Launching Slack Bot (Catch-up & Dispatch Enabled)...")
-    slack_cmd = [python_exe, "cli.py", "slack", "start"]
-    slack_proc = subprocess.Popen(
-        slack_cmd,
-        cwd=str(PROJECT_ROOT),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        env=backend_env,
-        text=True,
-        bufsize=1,
-        creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if os.name == 'nt' else 0
-    )
+    # 5. Start Slack Bot (Optional)
+    slack_proc = None
+    if slackbot:
+        from scripts.runners.slack_runner import stop_bot
+        stop_bot(silent=True)
+        
+        print("Launching Slack Bot (Catch-up & Dispatch Enabled)...")
+        slack_cmd = [python_exe, "cli.py", "slack", "start"]
+        slack_proc = subprocess.Popen(
+            slack_cmd,
+            cwd=str(PROJECT_ROOT),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            env=backend_env,
+            text=True,
+            bufsize=1,
+            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if os.name == 'nt' else 0
+        )
 
-    t_slack = threading.Thread(target=stream_output, args=(slack_proc, "SLACK"))
-    t_slack.daemon = True
-    t_slack.start()
+        t_slack = threading.Thread(target=stream_output, args=(slack_proc, "SLACK"))
+        t_slack.daemon = True
+        t_slack.start()
+    else:
+        print("⏭️ Skipping Slack Bot startup (--slackbot false).")
 
     print(f"\nDEV MODE ACTIVE. Press Ctrl+C to stop.")
     print(f"   API: http://localhost:{BACKEND_PORT}")
@@ -205,11 +209,11 @@ def start_dev_mode(check_infra=True):
         print("Cleaning up processes...")
         kill_proc_tree(backend_proc.pid)
         kill_proc_tree(frontend_proc.pid)
-        if 'slack_proc' in locals():
+        if slack_proc:
             kill_proc_tree(slack_proc.pid)
         print("Bye!")
 
-def start_dev_full():
+def start_dev_full(slackbot: bool = True):
     """Starts Docker infrastructure AND the development environment."""
     print("🚀 Starting FULL DEV stack (Docker + Backend + Frontend)...")
     try:
@@ -220,9 +224,9 @@ def start_dev_full():
         return
 
     # Proceed with standard checks (which will pass since we just started it)
-    start_dev_mode()
+    start_dev_mode(check_infra=True, slackbot=slackbot)
 
-def start_dev_no_db():
+def start_dev_no_db(slackbot: bool = True):
     """Starts development environment WITHOUT checking infrastructure."""
     print("⚡ Starting LIGHT DEV stack (Backend + Frontend ONLY)...")
     print("   Assuming infrastructure is running elsewhere (2-Node Mode).")
@@ -230,4 +234,5 @@ def start_dev_no_db():
     # We monkey-patch the check_port to always return True for this run
     # OR we just copy the logic but skip the infra check. 
     # Let's refactor start_dev_mode to accept a 'check_infra' arg.
-    start_dev_mode(check_infra=False)
+    start_dev_mode(check_infra=False, slackbot=slackbot)
+```

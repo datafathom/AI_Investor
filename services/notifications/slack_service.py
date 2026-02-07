@@ -16,6 +16,7 @@ import re
 import subprocess
 import sys
 import atexit
+import socket
 from pathlib import Path
 from datetime import timezone
 from typing import Dict, Any, Optional, List, Callable
@@ -29,6 +30,7 @@ import httpx
 
 # Local Integration
 from services.kafka.slack_producer import get_slack_producer
+from services.system.cache_service import get_cache_service
 
 # Load environment variables
 load_dotenv()
@@ -49,9 +51,16 @@ class SlackService:
         self.user_token = os.getenv("SLACK_USER_TOKEN") # High-privilege token
         self.socket_token = os.getenv("SLACK_SOCKET_TOKEN") 
         self.default_channel = os.getenv("SLACK_CHANNEL_ID")
-        self.state_file = ".slack_bot_state"
-        self.last_processed_ts = self._load_state()
+        # Shared State & Identity
+        self.cache = get_cache_service()
+        self.node_id = socket.gethostname()
+        self.is_leader = False
+        self.leader_key = "slack:bot_leader"
+        self.state_key = "slack:bot_state"
+        self.jobs_key = "slack:active_jobs"
         
+        self.last_processed_ts = self._load_state()
+
         # Security: Fetch allowed user IDs from env
         allowed_users_str = os.getenv("SLACK_ALLOWED_USERS", "")
         self.allowed_users = [u.strip() for u in allowed_users_str.split(",") if u.strip()]
@@ -99,23 +108,37 @@ class SlackService:
         # Ensure worker is killed on exit
         atexit.register(self.stop_worker)
 
+    async def _try_acquire_leader_lock(self) -> bool:
+        """Attempts to acquire the leader lock in Redis."""
+        # TTL for the lock (seconds)
+        ttl = 60
+        lock_acquired = self.cache.set(self.leader_key, self.node_id, ttl=ttl)
+        
+        if lock_acquired:
+            # Check if we actually set it or someone else did (simulating SET NX)
+            # CacheService doesn't have SET NX explicitly but we can check the value
+            current_leader = self.cache.get(self.leader_key)
+            if current_leader == self.node_id:
+                if not self.is_leader:
+                    logger.info(f"👑 Node '{self.node_id}' acquired LEADER lock.")
+                    self.is_leader = True
+                return True
+        
+        if self.is_leader:
+            logger.warning(f"🏳️ Node '{self.node_id}' lost LEADER lock to {self.cache.get(self.leader_key)}")
+            self.is_leader = False
+        return False
+
     def _load_active_jobs(self) -> Dict[str, Any]:
-        """Loads active jobs from local persistence."""
-        if os.path.exists(self.job_state_file):
-            try:
-                with open(self.job_state_file, "r") as f:
-                    return json.load(f)
-            except Exception as e:
-                logger.error(f"Error loading job state: {e}")
+        """Loads active jobs from shared Redis cache."""
+        jobs = self.cache.get(self.jobs_key)
+        if isinstance(jobs, dict):
+            return jobs
         return {}
 
     def _save_active_jobs(self):
-        """Saves active jobs to local persistence."""
-        try:
-            with open(self.job_state_file, "w") as f:
-                json.dump(self._active_jobs, f, indent=4)
-        except Exception as e:
-            logger.error(f"Error saving job state: {e}")
+        """Saves active jobs to shared Redis cache."""
+        self.cache.set(self.jobs_key, self._active_jobs, ttl=86400) # 24h retention
 
     def _ensure_worker_running(self):
         """Checks if standalone worker is running and spawns it if needed."""
@@ -260,24 +283,16 @@ class SlackService:
                 logger.error(f"❌ Error updating presence via User Token: {e}")
 
     def _load_state(self) -> str:
-        """Load the last processed message timestamp from file."""
-        if os.path.exists(self.state_file):
-            try:
-                with open(self.state_file, "r") as f:
-                    data = json.load(f)
-                    return data.get("last_processed_ts", "0")
-            except Exception as e:
-                logger.error(f"Error loading state: {e}")
+        """Load the last processed message timestamp from shared Redis cache."""
+        state = self.cache.get(self.state_key)
+        if isinstance(state, dict):
+            return state.get("last_processed_ts", "0")
         return "0"
 
     def _save_state(self, ts: str):
-        """Save the last processed message timestamp to file."""
-        try:
-            with open(self.state_file, "w") as f:
-                json.dump({"last_processed_ts": ts}, f)
-            self.last_processed_ts = ts
-        except Exception as e:
-            logger.error(f"Error saving state: {e}")
+        """Save the last processed message timestamp to shared Redis cache."""
+        self.cache.set(self.state_key, {"last_processed_ts": ts}, ttl=604800) # 7d retention
+        self.last_processed_ts = ts
 
     def _load_config(self) -> Dict[str, Any]:
         """Load the Slack Bot configuration from JSON."""
@@ -290,19 +305,25 @@ class SlackService:
         return {"commands": {}}
 
     async def _presence_heartbeat(self):
-        """Periodically re-assert presence to keep the green dot alive."""
-        logger.info("💓 Presence heartbeat started.")
+        """Periodically renew leader lock and re-assert presence to keep the green dot alive."""
+        logger.info(f"💓 Presence heartbeat started for node: {self.node_id}")
         while True:
             try:
-                await asyncio.sleep(60) # Every minute
-                await self.update_bot_presence("auto")
-                # Uncomment to debug heartbeat noise
-                # logger.debug("💓 Presence refreshed")
+                # 1. Periodically renew LEADER lock
+                is_leader = await self._try_acquire_leader_lock()
+                
+                # 2. Only assert 'auto' presence if we are the leader
+                if is_leader:
+                    await self.update_bot_presence("auto")
+                else:
+                    await self.update_bot_presence("away")
+                
+                await asyncio.sleep(45) # Every 45s (Lock TTL is 60s)
             except asyncio.CancelledError:
                 break
             except Exception as e:
                 logger.error(f"Error in presence heartbeat: {e}")
-                await asyncio.sleep(60) # Retry after delay
+                await asyncio.sleep(10) # Retry after delay
 
     def _setup_handlers(self):
         """Dynamically register handlers from configuration."""
@@ -334,7 +355,13 @@ class SlackService:
 
     async def _handle_dynamic_command(self, cmd_config: Dict[str, Any], message: Dict[str, Any], say: Callable, context: Dict[str, Any]):
         """Executes the action defined in the command configuration."""
+        # Leader Safety: Only handle commands if we own the lock
+        if not self.is_leader:
+            # Silent ignore to avoid spamming the channel from secondary nodes
+            return
+
         action = cmd_config.get("action")
+
         user_id = message.get("user")
         text = message.get("text", "")
         
@@ -841,6 +868,16 @@ class SlackService:
         """Explicitly closes all HTTP sessions and terminates worker."""
         logger.info("🧹 Closing SlackService sessions...")
         
+        # 0. Stop Kafka Consumer
+        if hasattr(self, '_kafka_consumer') and self._kafka_consumer:
+            try:
+                self._kafka_consumer.stop()
+                logger.info("✅ Kafka Alert Consumer stopped.")
+            except Exception as e:
+                logger.error(f"Error stopping Kafka consumer: {e}")
+            finally:
+                self._kafka_consumer = None
+
         # 1. Announce Disconnection and Update Status
         if not self.mock and self.bot:
             try:
@@ -908,6 +945,16 @@ class SlackService:
         if self.mock or not self.bot:
             return
 
+        # 0. Start Kafka Consumer for Outgoing Alerts
+        try:
+            from services.kafka.slack_consumer import get_slack_consumer
+            self._kafka_consumer = get_slack_consumer()
+            self._kafka_consumer.start()
+            logger.info("✅ Kafka Alert Consumer started in background.")
+        except Exception as e:
+            # This is non-blocking for local dev without confluent-kafka
+            logger.warning(f"⚠️ Could not start Kafka Consumer (likely no confluent-kafka or kafka unavailable): {e}")
+
         # 1. Run Catch-up
         if self.default_channel:
             await self.process_missed_messages(self.default_channel)
@@ -919,9 +966,13 @@ class SlackService:
                 channel=self.default_channel
             )
 
-        # 2. Set Status to Online
-        await self.update_bot_status("Online", ":large_green_circle:")
-        await self.update_bot_presence("auto")
+        # 2. Set Status to Initial State
+        await self._try_acquire_leader_lock()
+        status_text = f"Online ({self.node_id})" if self.is_leader else f"Standby ({self.node_id})"
+        status_emoji = ":large_green_circle:" if self.is_leader else ":white_circle:"
+        
+        await self.update_bot_status(status_text, status_emoji)
+        await self.update_bot_presence("auto" if self.is_leader else "away")
 
         # 3. Start Presence Heartbeat (Keep-Alive)
         self._presence_task = asyncio.create_task(self._presence_heartbeat())

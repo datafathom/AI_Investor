@@ -130,16 +130,40 @@
         },
         "dev": {
             "description": "Standard Developer Mode. Starts hot-reloading Backend & Frontend and checks if local Docker services are running. Best for typical local development.",
+            "flags": [
+                {
+                    "name": "slackbot",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Enable/Disable Slack Bot startup"
+                }
+            ],
             "handler": "scripts.runners.dev_runner:start_dev_mode",
             "category": "Development & Infrastructure"
         },
         "dev-full": {
             "description": "Full Stack Mode. Forcefully starts all Docker containers (Postgres, Kafka, etc.) AND the hot-reloading dev environment. Use this if you haven't started infrastructure yet.",
+            "flags": [
+                {
+                    "name": "slackbot",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Enable/Disable Slack Bot startup"
+                }
+            ],
             "handler": "scripts.runners.dev_runner:start_dev_full",
             "category": "Development & Infrastructure"
         },
         "dev-no-db": {
             "description": "Lightweight / Distributed Mode. Starts Backend & Frontend ONLY without checking for local Docker services. Use this when connecting to a remote LAN database box or a 2-node setup.",
+            "flags": [
+                {
+                    "name": "slackbot",
+                    "type": "boolean",
+                    "default": true,
+                    "help": "Enable/Disable Slack Bot startup"
+                }
+            ],
             "handler": "scripts.runners.dev_runner:start_dev_no_db",
             "category": "Development & Infrastructure"
         },
@@ -223,6 +247,81 @@
                 "status": {
                     "description": "Show Docker container status",
                     "handler": "scripts.runners.docker_control:docker_status"
+                },
+                "slackbot": {
+                    "description": "Manage Slack Bot container",
+                    "subcommands": {
+                        "up": {
+                            "description": "Start Slack Bot container",
+                            "handler": "scripts.runners.docker_control:docker_service_up",
+                            "arguments": [ { "name": "service", "type": "string", "default": "slackbot" } ]
+                        },
+                        "down": {
+                            "description": "Stop Slack Bot container",
+                            "handler": "scripts.runners.docker_control:docker_service_down",
+                            "arguments": [ { "name": "service", "type": "string", "default": "slackbot" } ]
+                        }
+                    }
+                },
+                "redis": {
+                    "description": "Manage Redis container",
+                    "subcommands": {
+                        "up": {
+                            "description": "Start Redis container",
+                            "handler": "scripts.runners.docker_control:docker_service_up",
+                            "arguments": [ { "name": "service", "type": "string", "default": "redis" } ]
+                        },
+                        "down": {
+                            "description": "Stop Redis container",
+                            "handler": "scripts.runners.docker_control:docker_service_down",
+                            "arguments": [ { "name": "service", "type": "string", "default": "redis" } ]
+                        }
+                    }
+                },
+                "postgres": {
+                    "description": "Manage Postgres container",
+                    "subcommands": {
+                        "up": {
+                            "description": "Start Postgres container",
+                            "handler": "scripts.runners.docker_control:docker_service_up",
+                            "arguments": [ { "name": "service", "type": "string", "default": "postgres" } ]
+                        },
+                        "down": {
+                            "description": "Stop Postgres container",
+                            "handler": "scripts.runners.docker_control:docker_service_down",
+                            "arguments": [ { "name": "service", "type": "string", "default": "postgres" } ]
+                        }
+                    }
+                },
+                "kafka": {
+                    "description": "Manage Kafka container",
+                    "subcommands": {
+                        "up": {
+                            "description": "Start Kafka container",
+                            "handler": "scripts.runners.docker_control:docker_service_up",
+                            "arguments": [ { "name": "service", "type": "string", "default": "kafka" } ]
+                        },
+                        "down": {
+                            "description": "Stop Kafka container",
+                            "handler": "scripts.runners.docker_control:docker_service_down",
+                            "arguments": [ { "name": "service", "type": "string", "default": "kafka" } ]
+                        }
+                    }
+                },
+                "neo4j": {
+                    "description": "Manage Neo4j container",
+                    "subcommands": {
+                        "up": {
+                            "description": "Start Neo4j container",
+                            "handler": "scripts.runners.docker_control:docker_service_up",
+                            "arguments": [ { "name": "service", "type": "string", "default": "neo4j" } ]
+                        },
+                        "down": {
+                            "description": "Stop Neo4j container",
+                            "handler": "scripts.runners.docker_control:docker_service_down",
+                            "arguments": [ { "name": "service", "type": "string", "default": "neo4j" } ]
+                        }
+                    }
                 },
                 "logs": {
                     "description": "View/Follow Docker container logs",
