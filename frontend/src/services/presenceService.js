@@ -30,11 +30,17 @@ class PresenceService {
     }
 
     this.currentUser = { id: userId, username };
-    // Use relative path to leverage Vite proxy correctly in all environments
-    this.socket = io({
+    // Explicitly target the backend port 5050 to bypass potentially misconfigured proxies
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const socketUrl = isLocal ? 'http://127.0.0.1:5050' : window.location.origin;
+
+    this.socket = io(socketUrl, {
       path: '/socket.io',
-      transports: ['polling'],
-      reconnectionAttempts: 5
+      transports: ['polling', 'websocket'], // Try polling first, then upgrade
+      reconnectionAttempts: 10,
+      reconnectionDelay: 2000,
+      timeout: 20000,
+      withCredentials: true
     });
 
     // Register user

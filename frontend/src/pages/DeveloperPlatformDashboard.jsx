@@ -47,10 +47,10 @@ const DeveloperPlatformDashboard = () => {
 
       <Box sx={{ mb: 4 }}>
         <Grid container spacing={3}>
-            <Grid item xs={12} md={8}>
+            <Grid size={{ xs: 12, md: 8 }}>
                 <AgentLogicEditor />
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
                 <HistoryReplay />
             </Grid>
         </Grid>
@@ -84,7 +84,7 @@ const DeveloperPlatformDashboard = () => {
 
         {/* Create API Key & Keys List (Simplified for space) */}
         <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
                 <div className="create-key-panel" style={{ height: '100%' }}>
                   <h2>Generate Sovereign Access Key</h2>
                   <div className="key-form" style={{ marginTop: '16px' }}>

@@ -51,6 +51,13 @@
 - ✅ `docker status` - Container status
 - ✅ `docker logs` - View logs
 
+### Slack / Notifications
+- ✅ `slack send` - Send notifications
+- ✅ `slack complete` - Task completion alerts
+- ✅ `slack ask` - Request human input
+- ✅ `slack start` - Start bot listener
+- ✅ `slack stop` - Stop bot listener
+
 ---
 
 ## 📁 Files Created

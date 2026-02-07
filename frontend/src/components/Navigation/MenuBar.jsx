@@ -197,91 +197,77 @@ export default function MenuBar({
   // Build the dynamic menu items for the entire bar
   const finalMenuItems = useMemo(() => {
     // 1. Build Departments grouped by quadrant
-    const quadrantConfig = [
-      { id: 'ATTACK', label: '📊 Attack Engine', depts: [3, 4, 5, 6, 7] },
-      { id: 'DEFENSE', label: '🛡️ Defense Fortress', depts: [8, 10, 11, 12] },
-      { id: 'HOUSEHOLD', label: '🏠 Household', depts: [9, 13, 14, 18] },
-      { id: 'META', label: '🧠 Meta-Cognition', depts: [1, 2, 15, 16, 17] }
+    const allMissionRoutes = [
+      { label: "🎯 Global Mission Board", action: 'nav-special-missions', highlight: true },
+      { label: "🚀 Active Mission Control", action: "nav-special-mission-control", highlight: true },
+      { label: "📊 Fleet Analytics", action: "nav-path:/special/fleet" },
+      { label: "⚡ Scrum of Scrums", action: "nav-special-scrum" },
+      { label: "🖥️ Master Terminal", action: "nav-special-terminal" }
     ];
 
-    const dynamicDeptItems = [];
+    const allSpecialTools = [
+      { label: "💼 Brokerage Account", action: "nav-path:/strategist/brokerage" },
+      { label: "📱 Mobile Dashboard", action: "nav-path:/special/mobile" },
+      { label: "🥽 VR Cockpit", action: "nav-path:/special/vr" },
+      { label: "🧘 Zen Mode", action: "nav-path:/special/zen" },
+      { label: "🏛️ Political Alpha", action: "nav-path:/special/political" },
+      { label: "⚗️ Strategy Distillery", action: "nav-path:/special/strategy" },
+      { label: "⚖️ Debate Chamber", action: "nav-path:/special/debate" },
+      { label: "📝 Paper Trading", action: "nav-path:/special/paper" }
+    ];
 
-    // Add Scrum of Scrums at top (highlighted)
-    dynamicDeptItems.push({
-      label: '⚡ Scrum of Scrums',
-      action: 'nav-special-scrum',
-      highlight: true
-    });
-    dynamicDeptItems.push({ type: 'divider' });
-
-    // Build items grouped by quadrant
-    quadrantConfig.forEach((quad, quadIndex) => {
-      // Quadrant header (disabled - acts as section label)
-      dynamicDeptItems.push({
-        label: quad.label,
-        disabled: true
-      });
-
-      // Add departments in this quadrant
-      quad.depts.forEach(deptId => {
-        const dept = DEPT_REGISTRY[deptId];
-        if (dept) {
-          dynamicDeptItems.push({
-            label: `  ${dept.shortName}`,
-            icon: getIcon(dept.icon),
-            action: `nav-dept-${dept.id}`,
-            submenu: dept.subModules?.map(mod => ({
-              label: mod.label,
-              action: `nav-path:${mod.path}`
-            })) || []
-          });
-        }
-      });
-
-      // Add divider between quadrants (except after last)
-      if (quadIndex < quadrantConfig.length - 1) {
-        dynamicDeptItems.push({ type: 'divider' });
-      }
-    });
-
-    const specialPagesItem = {
-      label: "Special Pages",
+    const allDeptRoutes = Object.values(DEPT_REGISTRY).map(dept => ({
+      label: dept.name,
+      icon: getIcon(dept.icon),
+      action: `nav-dept-${dept.id}`,
       submenu: [
-        { label: "💼 Brokerage Account", action: "nav-path:/strategist/brokerage" },
-        { label: "⚡ Scrum of Scrums", action: "nav-special-scrum" },
-        { label: "📱 Mobile Dashboard", action: "nav-special-mobile" },
-        { label: "🥽 VR Cockpit", action: "nav-special-vr" },
-        { label: "🚀 Mission Control", action: "nav-special-mission-control" },
-        { label: "🖥️ System Terminal", action: "nav-special-terminal" },
-        { label: "🧘 Zen Mode", action: "nav-special-zen" },
-        { label: "🏛️ Political Alpha", action: "nav-special-political" },
-        { label: "⚗️ Strategy Distillery", action: "nav-special-strategy" },
-        { label: "⚖️ Debate Chamber", action: "nav-special-debate" },
-        { label: "📝 Paper Trading", action: "nav-special-paper" },
-      ],
-    };
+        { label: `${dept.shortName} Dashboard`, action: `nav-dept-${dept.id}` },
+        ...(dept.subModules || []).map(mod => ({
+          label: mod.label,
+          action: `nav-path:${mod.path}`
+        }))
+      ]
+    }));
+
+    const allWorkstationRoutes = Object.values(DEPT_REGISTRY).flatMap(dept => 
+      (dept.subModules || []).map(mod => ({
+        label: `${dept.shortName}: ${mod.label}`,
+        action: `nav-path:${mod.path}`
+      }))
+    );
 
     // 3. Combine dynamic Routes, STATIC_BEFORE, and STATIC_AFTER
     const baseMenuItems = [
+      ...STATIC_MENU_BEFORE,
       {
         label: "Routes",
         items: [
           {
-            ...specialPagesItem,
-            label: "🚀 Core Systems", // Renamed for prominence
+            label: "🎯 Missions & Fleet",
+            submenu: allMissionRoutes,
             highlight: true
           },
           {
-            label: "🎯 Missions Board",
-            icon: getIcon('Target'), // Using Target icon for Missions
-            action: 'nav-special-missions',
+            label: "🚀 Special Operations",
+            submenu: allSpecialTools
+          },
+          {
+            label: "🏢 Department Dashboards",
+            submenu: allDeptRoutes,
             highlight: true
           },
+          {
+            label: "🛠️ Agent Workstations",
+            submenu: allWorkstationRoutes
+          },
           { type: "divider" },
-          ...dynamicDeptItems
+          { label: "🖥️ Master Terminal", action: "nav-special-terminal" },
+          { label: "🎯 Mission Control", action: "nav-special-mission-control" },
+          { label: "📊 Fleet Analytics", action: "nav-path:/special/fleet" },
+          { type: "divider" },
+          { label: "🔐 Account Profile", action: "nav-path:/account" }
         ]
       },
-      ...STATIC_MENU_BEFORE,
       ...STATIC_MENU_AFTER
     ];
 
@@ -426,7 +412,7 @@ export default function MenuBar({
           : [{ label: "Sign In / Register", action: "signin" }],
       },
     ];
-  }, [widgetVisibility, widgetTitles, localUser, workspaces, activeWorkspace, globalLock, debugStates]);
+  }, [widgetVisibility, widgetTitles, localUser, workspaces, activeWorkspace, globalLock, debugStates, toggleTheme, onLogout, onSignin, onMenuAction]);
 
   const userForDisplay = localUser || currentUser;
 
@@ -464,7 +450,7 @@ export default function MenuBar({
       return (
         <div
           key={`menu-item-${index}`}
-          className={`menu-dropdown-item ${item.disabled ? "disabled" : ""} ${isChecked ? "checked" : ""} ${hasSubmenu ? "has-submenu" : ""}`}
+          className={`menu-dropdown-item ${item.disabled ? "disabled" : ""} ${isChecked ? "checked" : ""} ${hasSubmenu ? "has-submenu" : ""} ${item.highlight ? "highlight" : ""}`}
           onClick={(e) => {
             if (!item.disabled) {
               if (hasSubmenu && item.action) {

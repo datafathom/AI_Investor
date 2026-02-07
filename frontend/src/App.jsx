@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, Suspense, lazy, useMemo } from 'react';
+import React, { useEffect, useState, useRef, Suspense, lazy, useMemo, useCallback } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useColorPalette } from './hooks/useColorPalette';
 import { useWidgetLayout } from './hooks/useWidgetLayout';
@@ -52,6 +52,7 @@ import TimelineScrubber from './components/Timeline/TimelineScrubber';
 
 // Lazy load other pages
 const MissionControl = lazy(() => import('./pages/MissionControl'));
+const Homeostasis = lazy(() => import('./pages/Homeostasis'));
 const PoliticalAlpha = lazy(() => import('./pages/PoliticalAlpha'));
 const StrategyDistillery = lazy(() => import('./pages/StrategyDistillery'));
 const DebateRoom = lazy(() => import('./pages/DebateRoom'));
@@ -116,6 +117,9 @@ const IntegrationsDashboard = lazy(() => import('./pages/IntegrationsDashboard')
 const SentinelStrategyDashboard = lazy(() => import('./pages/SentinelStrategyDashboard'));
 const MissionsOverview = lazy(() => import('./pages/MissionsOverview'));
 const FleetDashboard = lazy(() => import('./pages/FleetDashboard'));
+const GlobalSearchPage = lazy(() => import('./pages/GlobalSearch'));
+const CommandCenter = lazy(() => import('./components/Admin/CommandCenter'));
+
 
 // --- Dynamic Workstation Loader ---
 // This loader dynamically imports components from the workstations directory based on the URL path.
@@ -381,12 +385,9 @@ function AppContent() {
     'Meta+K': () => setCommandPaletteOpen(prev => !prev), // Mac support
   });
 
-  const handleSaveWorkspacePrompt = () => {
-    const name = prompt('Enter a name for this workspace:', activeWorkspace);
-    if (name) saveWorkspace(name);
-  };
 
   // Theme is now managed by ThemeContext - no need for local useEffect
+
 
   // Socket.io initialization (Consolidated with PresenceService)
   useEffect(() => {
@@ -452,6 +453,7 @@ function AppContent() {
   }, [currentUser]);
 
   //  Verification: Spawn Welcome Window
+  const windowIds = useWindowStore(useShallow((state) => state.windows.map(w => w.id)));
   const addWindow = useWindowStore((state) => state.addWindow);
   useEffect(() => {
       if (useWindowStore.getState().windows.length === 0) {
@@ -646,7 +648,18 @@ function AppContent() {
       }
   }, []);
 
-  const handleMenuAction = (action) => {
+  const handleLogout = useCallback(() => {
+    authService.logout();
+    setCurrentUser(null);
+    setIsAuthModalOpen(true);
+  }, []);
+
+  const handleSaveWorkspacePrompt = useCallback(() => {
+    const name = prompt('Enter a name for this workspace:', activeWorkspace);
+    if (name) saveWorkspace(name);
+  }, [activeWorkspace, saveWorkspace]);
+
+  const handleMenuAction = useCallback((action) => {
     // Handle widget toggle actions
     if (action?.startsWith('toggle-widget-')) {
       const widgetId = action.replace('toggle-widget-', '');
@@ -708,13 +721,11 @@ function AppContent() {
 
       default: break;
     }
-  };
+  }, [navigate, location.pathname, toggleTheme, resetLayout, handleLogout]);
 
-  const handleLogout = () => {
-    authService.logout();
-    setCurrentUser(null);
-    setIsAuthModalOpen(true);
-  };
+  const onToggleWidget = useCallback((widgetId) => {
+    setWidgetVisibility(prev => ({ ...prev, [widgetId]: prev[widgetId] === false ? true : false }));
+  }, []);
 
   return (
     <GlobalErrorBoundary>
@@ -726,7 +737,7 @@ function AppContent() {
             isDarkMode={isDark}
             toggleTheme={toggleTheme}
             widgetVisibility={widgetVisibility}
-            onToggleWidget={(widgetId) => setWidgetVisibility(prev => ({ ...prev, [widgetId]: prev[widgetId] === false ? true : false }))}
+            onToggleWidget={onToggleWidget}
             onResetLayout={resetLayout}
             widgetTitles={{
               'monitor-view': 'Market Monitor',
@@ -878,6 +889,7 @@ function AppContent() {
                 <Route path="/special/mobile" element={<MobileDashboard />} />
                 <Route path="/special/vr" element={<VRCockpit />} />
                 <Route path="/special/mission-control" element={<MissionControl />} />
+                <Route path="/special/homeostasis" element={<Homeostasis />} />
                 <Route path="/special/terminal" element={<TerminalWorkspace handleViewSource={() => { }} globalLock={globalLock} isDarkMode={isDark} widgetStates={widgetStates} setWidgetStates={setWidgetStates} widgetVisibility={widgetVisibility} setWidgetVisibility={setWidgetVisibility} />} />
                 <Route path="/special/political" element={<PoliticalAlpha />} />
                 <Route path="/special/strategy" element={<StrategyDistillery />} />
@@ -885,11 +897,11 @@ function AppContent() {
                 <Route path="/special/paper" element={<PaperTradingDashboard />} />
                 <Route path="/special/zen" element={<ZenMode />} />
                 <Route path="/special/missions" element={<MissionsOverview />} />
+                <Route path="/special/search" element={<GlobalSearchPage />} />
+                <Route path="/special/command" element={<CommandCenter />} />
+                <Route path="/special/venn" element={<VennIntersectionView />} />
                 <Route path="/missions" element={<Navigate to="/special/missions" replace />} />
                 
-                {/* --- Dynamic Workstation Routes --- */}
-                <Route path="/:deptSlug/:subSlug" element={<DynamicWorkstation />} />
-
                 {/* --- Agent Department Routes --- */}
                 <Route path="/dept" element={<Navigate to="/special/scrum" replace />} />
                 <Route path="/scrum" element={<Navigate to="/special/scrum" replace />} />
@@ -914,6 +926,9 @@ function AppContent() {
                 <Route path="/dept/stress-tester" element={<StressTesterPage />} />
                 <Route path="/dept/refiner" element={<RefinerPage />} />
                 <Route path="/dept/banker" element={<BankerPage />} />
+
+                {/* --- Dynamic Workstation Routes --- */}
+                <Route path="/:deptSlug/:subSlug" element={<DynamicWorkstation />} />
 
                 {/* --- Catch-All Sub-Module Route --- */}
                 <Route path="/:deptId/:subPage" element={<SubPageBoilerplate />} />
@@ -973,11 +988,17 @@ function AppContent() {
           currentUser={currentUser}
         />
 
-        {/* : Window Manager Layer */}
-        {useWindowStore(useShallow((state) => state.windows.map(w => w.id))).map((id) => (
-            <WindowWrapper key={id} id={id} />
-        ))}
-        <Taskbar />
+
+        {/* Window Manager Layer - conditionally rendered but hook called unconditionally above */}
+        {!isAuthModalOpen && currentUser && windowIds.length > 0 && (
+          <>
+            {windowIds.map((id) => (
+                <WindowWrapper key={id} id={id} />
+            ))}
+            <Taskbar />
+          </>
+        )}
+        {!isAuthModalOpen && currentUser && windowIds.length === 0 && <Taskbar />}
         
         {/* Command Palette (Ctrl+K) */}
         <CommandPalette 
@@ -987,18 +1008,20 @@ function AppContent() {
         />
         
         {/* Mobile Bottom Nav */}
-        <BottomNav />
+        {!isAuthModalOpen && currentUser && <BottomNav />}
         
         {/* Quick Actions FAB */}
-        <QuickActions 
-          onAction={(actionId) => {
-            switch(actionId) {
-              case 'trade': setTradeModal({ open: true, details: { symbol: 'SPY', side: 'BUY', quantity: 10, price: 480 }}); break;
-              case 'settings': navigate('/settings'); break;
-              default: console.log('Quick action:', actionId);
-            }
-          }}
-        />
+        {!isAuthModalOpen && currentUser && (
+          <QuickActions 
+            onAction={(actionId) => {
+              switch(actionId) {
+                case 'trade': setTradeModal({ open: true, details: { symbol: 'SPY', side: 'BUY', quantity: 10, price: 480 }}); break;
+                case 'settings': navigate('/settings'); break;
+                default: console.log('Quick action:', actionId);
+              }
+            }}
+          />
+        )}
 
         {/* : Global Safety Logic */}
         <MFAVerificationModal 
@@ -1023,8 +1046,9 @@ function AppContent() {
         />
         <FrozenOverlay isFrozen={isSystemFrozen} onUnlock={() => setIsSystemFrozen(false)} />
         
+        
         {/* Sprint 6: Event Timeline Scrubber */}
-        <TimelineScrubber />
+        {!isAuthModalOpen && currentUser && <TimelineScrubber />}
         <PreTradeRiskModal 
             isOpen={riskModalOpen} 
             onClose={() => setRiskModalOpen(false)}

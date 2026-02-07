@@ -63,7 +63,7 @@ const FleetDashboard = () => {
 
             <Grid container spacing={1} className="fleet-grid">
                 {filteredAgents.map((agent) => (
-                    <Grid item key={agent.id} xs={12} sm={6} md={3} lg={2} xl={1.5}>
+                    <Grid key={agent.id} size={{ xs: 12, sm: 6, md: 3, lg: 2, xl: 1.5 }}>
                         <Card className={`agent-tiny-card ${agent.status.toLowerCase()}`}>
                             <Box className="card-top">
                                 <Typography className="agent-id-text">{agent.id}</Typography>

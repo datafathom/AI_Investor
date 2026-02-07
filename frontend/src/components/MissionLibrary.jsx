@@ -56,7 +56,7 @@ const MissionLibrary = () => {
 
             <Grid container spacing={2}>
                 {filteredTemplates.map((template) => (
-                    <Grid item xs={12} sm={6} md={4} key={template.id}>
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }} key={template.id}>
                         <Card sx={{ 
                             height: '100%', 
                             display: 'flex', 

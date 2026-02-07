@@ -1,8 +1,16 @@
+import React, { useState, useEffect } from 'react';
+import { Responsive, WidthProvider } from 'react-grid-layout';
+import { Activity, Shield, ShieldAlert, Zap, Terminal, AlertOctagon } from 'lucide-react';
+import { StorageService } from '../utils/storageService';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
+import './MissionControl.css'; // Import custom styles
 import NetworkMap from '../components/MissionControl/NetworkMap';
 import ResourceTimeline from '../components/MissionControl/ResourceTimeline';
 import WidgetWindow from '../components/MissionControl/WidgetWindow';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
+
 
 const MissionControl = () => {
     const DEFAULT_LAYOUT = {
@@ -19,7 +27,7 @@ const MissionControl = () => {
 
     const [layouts, setLayouts] = useState(() => {
         try {
-            const saved = localStorage.getItem(STORAGE_KEY);
+            const saved = StorageService.get(STORAGE_KEY);
             return saved ? JSON.parse(saved) : DEFAULT_LAYOUT;
         } catch (e) {
             return DEFAULT_LAYOUT;
@@ -50,7 +58,7 @@ const MissionControl = () => {
     }, []);
 
     return (
-        <div className="full-bleed-page mission-control-container text-slate-300 font-sans">
+        <div className="mission-control-page text-slate-300 font-sans">
             <div className="scrollable-content-wrapper">
                 <ResponsiveGridLayout
                     className="layout"
@@ -216,8 +224,8 @@ const MissionControl = () => {
                 </div>
                 </ResponsiveGridLayout>
                 
-                {/* Bottom Buffer */}
-                <div className="scroll-buffer-100" />
+                {/* Bottom Buffer - Explicit height to force scroll past floating UI */}
+                <div style={{ height: '150px', width: '100%', flexShrink: 0 }} />
             </div>
         </div>
     );

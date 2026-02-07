@@ -139,6 +139,25 @@ python cli.py docker logs
 python cli.py docker logs --service backend --follow
 ```
 
+### Slack Operations
+
+```bash
+# Send notification
+python cli.py slack send "Build complete" --level success
+
+# Send task completion alert
+python cli.py slack complete "Database Migration" "All tables updated"
+
+# Request human input
+python cli.py slack ask "Deploy to Prod?" --context "Tests passed"
+
+# Start bot listener
+python cli.py slack start
+
+# Stop bot listener
+python cli.py slack stop
+```
+
 ### Development Mode
 
 ```bash

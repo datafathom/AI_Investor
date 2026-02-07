@@ -189,13 +189,42 @@ app.include_router(tax_optimization_api.router)
 # Mount Socket.IO
 app.mount("/socket.io", socket_app)
 
+# Global Slack Service reference for lifecycle management
+_slack_service = None
+
 @app.on_event("startup")
 async def startup_event():
+    global _slack_service
     logger.info("Sovereign OS Gateway starting up...")
+    try:
+        from services.notifications.slack_service import get_slack_service
+        _slack_service = get_slack_service()
+        
+        # 1. Announce Online
+        await _slack_service.send_notification(
+            text="🚀 *AI Investor Backend Online:* Unified Gateway is active.", 
+            level="success"
+        )
+        
+        # 2. Start Bot Listener in Background (non-blocking)
+        import asyncio
+        asyncio.create_task(_slack_service.start_bot())
+        logger.info("📡 Slack Bot listener integrated and running.")
+        
+    except Exception as e:
+        logger.warning(f"Failed to initialize integrated Slack Bot: {e}")
 
 @app.on_event("shutdown")
 async def shutdown_event():
     logger.info("Sovereign OS Gateway shutting down...")
+    try:
+        if _slack_service:
+            # Cleanup resources (this also updates status and sends disconnection message)
+            await _slack_service.close()
+            _slack_service = None
+            logger.info("✅ Slack Service resources released.")
+    except Exception as e:
+        logger.warning(f"Failed to gracefully shutdown Slack Service: {e}")
 
 if __name__ == "__main__":
     import uvicorn

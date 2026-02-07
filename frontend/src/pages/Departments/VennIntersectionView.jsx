@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useDepartmentStore } from '../../stores/departmentStore';
+import { useShallow } from 'zustand/react/shallow';
 import { DEPT_REGISTRY } from '../../config/departmentRegistry';
 import { getIcon } from '../../config/iconRegistry';
 import AgentPanel from '../../components/Departments/AgentPanel';
@@ -16,10 +17,10 @@ const VennIntersectionView = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   
-  const { departments, exitVennMode } = useDepartmentStore(state => ({
+  const { departments, exitVennMode } = useDepartmentStore(useShallow(state => ({
     departments: state.departments,
     exitVennMode: state.exitVennMode
-  }));
+  })));
   
   // Parse department IDs from URL
   const dept1Id = parseInt(searchParams.get('d1') || '0', 10);

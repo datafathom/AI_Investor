@@ -24,10 +24,10 @@ const MasterView = () => {
       </Box>
 
       <Grid container spacing={3}>
-        <Grid item xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <SCMScore />
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Box sx={{ bgcolor: 'rgba(255,255,255,0.03)', borderRadius: 2, p: 2, height: '100%', border: '1px solid rgba(255,255,255,0.05)' }}>
              <Typography variant="h6" gutterBottom>Global Unified exposure</Typography>
              {/* Map or Graph placeholder */}
@@ -40,7 +40,7 @@ const MasterView = () => {
              </Box>
           </Box>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid size={{ xs: 12, md: 3 }}>
           <Paper sx={{ p: 2, bgcolor: 'rgba(33, 150, 243, 0.1)', border: '1px solid #2196f3', height: '100%' }}>
             <Typography variant="subtitle2" color="primary" gutterBottom>EVENT STREAM</Typography>
             <Box sx={{ fontSize: '0.8rem', fontFamily: 'monospace' }}>
@@ -53,7 +53,7 @@ const MasterView = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={activeTab} onChange={(e, v) => setActiveTab(v)}>
               <Tab icon={<BusinessCenterIcon />} label="Fundamental Diligence" />

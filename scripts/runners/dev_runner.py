@@ -12,8 +12,11 @@ import psutil
 # Fix Windows console encoding for emojis
 if sys.platform == 'win32':
     import io
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+    # We use a more careful wrapping to avoid double-buffer hangs
+    if not isinstance(sys.stdout, io.TextIOWrapper):
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    if not isinstance(sys.stderr, io.TextIOWrapper):
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 # Configuration
 BACKEND_PORT = 5050
@@ -29,16 +32,23 @@ def check_port(port):
 
 def kill_port(port):
     """Forcefully kill any process listening on the given port."""
-    print(f"🔪 Cleaning port {port}...")
-    for proc in psutil.process_iter(['pid', 'name']):
-        try:
-            for conn in proc.connections(kind='inet'):
-                if conn.laddr.port == port:
-                    print(f"   Found process {proc.info['name']} (PID {proc.info['pid']}) on port {port}. Killing...")
-                    proc.kill()
-                    proc.wait(timeout=5)
-        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.TimeoutExpired):
-            continue
+    print(f"🔪 Cleaning port {port}...", flush=True)
+    try:
+        if sys.platform == "win32":
+            # Use netstat to find PID
+            cmd = f"netstat -ano | findstr :{port}"
+            res = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+            for line in res.stdout.strip().split('\n'):
+                if "LISTENING" in line:
+                    pid = line.strip().split()[-1]
+                    if pid and pid != "0":
+                        print(f"   Found process on port {port} (PID {pid}). Killing...", flush=True)
+                        subprocess.run(f"taskkill /F /T /PID {pid}", shell=True, stderr=subprocess.DEVNULL)
+        else:
+            # Unix/macOS
+            subprocess.run(f"fuser -k {port}/tcp", shell=True, stderr=subprocess.DEVNULL)
+    except Exception as e:
+        print(f"   Warning cleaning port {port}: {e}", flush=True)
 
 def kill_proc_tree(pid, including_parent=True):
     """Kill a process tree (including children)."""
@@ -63,7 +73,7 @@ def stream_output(process, prefix):
     try:
         for line in iter(process.stdout.readline, ''):
             if line:
-                print(f"[{prefix}] {line.strip()}")
+                print(f"[{prefix}] {line.strip()}", flush=True)
     except Exception:
         pass
 
@@ -156,6 +166,27 @@ def start_dev_mode(check_infra=True):
     t_frontend.daemon = True
     t_frontend.start()
 
+    # 5. Start Slack Bot (Cleanup first)
+    from scripts.runners.slack_runner import stop_bot
+    stop_bot(silent=True)
+    
+    print("Launching Slack Bot (Catch-up & Dispatch Enabled)...")
+    slack_cmd = [python_exe, "cli.py", "slack", "start"]
+    slack_proc = subprocess.Popen(
+        slack_cmd,
+        cwd=str(PROJECT_ROOT),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        env=backend_env,
+        text=True,
+        bufsize=1,
+        creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if os.name == 'nt' else 0
+    )
+
+    t_slack = threading.Thread(target=stream_output, args=(slack_proc, "SLACK"))
+    t_slack.daemon = True
+    t_slack.start()
+
     print(f"\nDEV MODE ACTIVE. Press Ctrl+C to stop.")
     print(f"   API: http://localhost:{BACKEND_PORT}")
     print(f"   GUI: http://localhost:{FRONTEND_PORT}\n")
@@ -174,6 +205,8 @@ def start_dev_mode(check_infra=True):
         print("Cleaning up processes...")
         kill_proc_tree(backend_proc.pid)
         kill_proc_tree(frontend_proc.pid)
+        if 'slack_proc' in locals():
+            kill_proc_tree(slack_proc.pid)
         print("Bye!")
 
 def start_dev_full():

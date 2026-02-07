@@ -33,7 +33,7 @@ const SentinelStrategyDashboard = () => {
             <Divider sx={{ mb: 4, borderColor: 'rgba(255,255,255,0.1)' }} />
 
             <Grid container spacing={3}>
-                <Grid item xs={12} md={4}>
+                <Grid size={{ xs: 12, md: 4 }}>
                     <Card sx={{ bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)' }}>
                         <CardContent>
                             <Typography variant="h6" color="primary" gutterBottom>Market Regime</Typography>
@@ -58,7 +58,7 @@ const SentinelStrategyDashboard = () => {
                     </Card>
                 </Grid>
 
-                <Grid item xs={12} md={8}>
+                <Grid size={{ xs: 12, md: 8 }}>
                     <Card sx={{ bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', height: '100%' }}>
                         <CardContent>
                             <Typography variant="h6" color="primary" gutterBottom>Adaptive Policy Logic</Typography>
@@ -79,7 +79,7 @@ const SentinelStrategyDashboard = () => {
                     </Card>
                 </Grid>
                 
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                      <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>SCM Projection</Typography>
                      <SCMScore score={1.15} clewRate={0.084} yieldRate={0.115} />
                 </Grid>

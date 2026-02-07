@@ -13,7 +13,7 @@ const CommandCenter = () => {
       <Divider sx={{ mb: 4 }} />
 
       <Grid container spacing={4}>
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Paper sx={{ p: 3, mb: 3 }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
               <Typography variant="h6">System Core Enforced Constraints</Typography>
@@ -35,7 +35,7 @@ const CommandCenter = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Paper sx={{ p: 3, bgcolor: '#001e3c', color: 'white' }}>
             <Typography variant="h6" color="primary" gutterBottom>Microservice Health (200 Phases)</Typography>
             <Box sx={{ mt: 2 }}>

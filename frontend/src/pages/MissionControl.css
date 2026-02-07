@@ -1,0 +1,26 @@
+.mission-control-page {
+    /* Ensure it fills at least the OS-bleed container */
+    min-height: 100%;
+    height: auto; 
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    /* Let the parent (institutional-os-container) handle the scroll */
+    overflow: visible;
+    /* Add padding to clear the TimelineScrubber (70px) and Taskbar (48px) = ~120px */
+    padding: 0.5rem 1rem 250px 1rem;
+    position: relative;
+}
+
+.mission-control-page .scrollable-content-wrapper {
+    flex: 1;
+    min-height: 0;
+    overflow: visible; 
+}
+
+/* Ensure grid layout behaves */
+.mission-control-page .react-grid-layout {
+    position: relative;
+    /* Ensure it doesn't get cut off */
+    min-height: 100%; 
+}

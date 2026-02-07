@@ -55,10 +55,13 @@ const Globe = ({ color }) => {
   );
 };
 
-const GlobeMesh = ({ color = "#ef4444" }) => {
+const GlobeMesh = ({ color = "#ef4444", isVisible = true }) => {
   return (
     <div style={{ width: '100%', height: '100%', minHeight: '400px', background: 'linear-gradient(to bottom, #000, #111)' }}>
-      <Canvas camera={{ position: [0, 0, 7] }}>
+      <Canvas 
+        camera={{ position: [0, 0, 7] }}
+        frameloop={isVisible ? 'always' : 'never'}
+      >
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />
         <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />

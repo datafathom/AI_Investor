@@ -10,10 +10,12 @@ from typing import Dict, Any, List
 logger = logging.getLogger(__name__)
 
 # Create a Socket.IO server (ASGI version)
+# NOTE: CORS is handled by FastAPI's CORSMiddleware to prevent duplicate headers
 sio = socketio.AsyncServer(
     async_mode='asgi',
-    cors_allowed_origins=["http://localhost:5173", "http://127.0.0.1:5173"]
+    cors_allowed_origins=[]  # Disable - FastAPI middleware handles CORS
 )
+
 
 # ASGI App to be mounted in FastAPI
 socket_app = socketio.ASGIApp(sio)

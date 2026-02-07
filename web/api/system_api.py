@@ -127,7 +127,18 @@ async def restart_service(
     try:
         success = await service.restart_service(service_name)
         if not success:
-            return JSONResponse(status_code=500, content={"success": False, "detail": "Failed to restart service"})
+            return JSONResponse(status_code=500, content={"success": False, "detail": f"Failed to restart {service_name}"})
+        
+        # Notify Slack of system action
+        try:
+            from services.notifications.slack_service import get_slack_service
+            slack = get_slack_service()
+            await slack.send_notification(
+                text=f"⚙️ *System Action:* Service `{service_name}` has been manually restarted via API.",
+                level="info"
+            )
+        except: pass
+
         return {"success": True, "data": {"status": "success", "message": f"{service_name} restart triggered"}}
     except Exception as e:
         logger.exception(f"Failed to restart service {service_name}")
@@ -200,6 +211,17 @@ async def log_frontend_error(
     """
     try:
         logger.error(f"FRONTEND_CRASH: {log.error}\nStack: {log.stack}\nContext: {log.context}")
+        
+        # Immediate Slack Alert for critical frontend crashes
+        try:
+            from services.notifications.slack_service import get_slack_service
+            slack = get_slack_service()
+            await slack.send_notification(
+                text=f"🚨 *Critical Frontend Error:* {log.error}\nContext: `{log.context}`",
+                level="critical"
+            )
+        except: pass
+
         return {"success": True, "data": {"status": "logged"}}
     except Exception as e:
         logger.exception("Failed to log frontend error")

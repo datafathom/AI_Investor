@@ -7,7 +7,7 @@
   backdrop-filter: blur(10px);
   color: #e0e0e0;
   font-family: 'Inter', sans-serif;
-  padding: 0 0 100px 0; /* Uniform padding, buffer for taskbar */
+  padding: 0; 
   border: 1px solid rgba(255, 255, 255, 0.05);
   overflow-x: hidden;
 }
@@ -99,7 +99,7 @@
 
 .dept-sidebar {
   border-right: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 1rem;
+  padding: 1rem 1rem 200px 1rem; /* Force clearance for fixed footer */
 }
 
 .dept-main-viz {
@@ -182,7 +182,7 @@
 
 .dept-metrics-area {
   border-left: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 1rem;
+  padding: 1rem 1rem 200px 1rem; /* Force clearance for fixed footer */
   background: rgba(0, 0, 0, 0.2);
 }
 

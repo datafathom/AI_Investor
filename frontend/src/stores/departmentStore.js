@@ -481,17 +481,26 @@ export const useDepartmentStore = create(
         fetchDepartments: async () => {
           set({ isLoading: true, error: null });
           try {
-            const data = await apiClient.get('/departments');
-            // Transform data if needed or just replace
-            // For now we use the ID-keyed object structure
-            const departmentsMap = {};
+            const response = await apiClient.get('/departments');
+            const data = response.data || [];
+            
+            const currentDepartments = get().departments;
+            const updatedDepartments = { ...currentDepartments };
+
             data.forEach(dept => {
-              departmentsMap[dept.id] = {
-                ...get().departments[dept.id], // Keep local static data (icons, etc)
-                ...dept
-              };
+              if (dept && dept.id) {
+                updatedDepartments[dept.id] = {
+                  ...currentDepartments[dept.id], // Preserve static config (name, slug, color, icon)
+                  ...dept, // Overwrite with dynamic data (status, agents, metrics)
+                  metrics: {
+                    ...(currentDepartments[dept.id]?.metrics || {}),
+                    ...(dept.metrics || {})
+                  }
+                };
+              }
             });
-            set({ departments: departmentsMap, isLoading: false });
+            
+            set({ departments: updatedDepartments, isLoading: false });
           } catch (err) {
             set({ error: err.message, isLoading: false });
             console.error('Failed to fetch departments:', err);

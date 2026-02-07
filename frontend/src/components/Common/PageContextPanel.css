@@ -26,7 +26,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 1.5rem;
+  gap: 0.5rem; /* Tighter spacing between icon and title */
   flex: 1;
   position: relative;
 }
@@ -186,6 +186,40 @@
   color: #fff;
   text-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
   line-height: 1;
+}
+
+/* Title row - horizontal layout for dept title + page title */
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Icon inline with title (right side of text) */
+.title-icon-inline {
+  color: var(--accent);
+  opacity: 0.9;
+  flex-shrink: 0;
+}
+
+/* Inline page title - smaller, secondary text */
+.page-title-inline {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent);
+  opacity: 0.8;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: 'Space Mono', monospace;
+}
+
+/* Icon in dropdown dashboard item */
+.dropdown-item-icon {
+  flex-shrink: 0;
+  margin-right: 6px; /* Tighter spacing - approx 2x word spacing */
+  color: var(--accent);
+  opacity: 0.9;
 }
 
 .context-brand {

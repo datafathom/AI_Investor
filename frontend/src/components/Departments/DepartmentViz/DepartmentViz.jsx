@@ -9,12 +9,14 @@ import Timeline from './Timeline';
 import GlobeMesh from './GlobeMesh';
 import ThreeDSurface from './ThreeDSurface';
 import Fractal from './Fractal';
+import useVisibility from '../../../hooks/useVisibility';
 import { D3_TYPES } from '../../../config/departmentRegistry';
 
 /**
  * DepartmentViz - Factory for D3 visualizations
  */
 const DepartmentViz = ({ type, color, deptId, agents = [] }) => {
+  const [containerRef, isVisible] = useVisibility();
   
   // Dynamic Data Generators
   const forceData = useMemo(() => {
@@ -77,25 +79,25 @@ const DepartmentViz = ({ type, color, deptId, agents = [] }) => {
   const renderViz = () => {
     switch (type) {
       case D3_TYPES.FORCE_GRAPH:
-        return <ForceGraph data={forceData} color={color} />;
+        return <ForceGraph data={forceData} color={color} isVisible={isVisible} />;
       case D3_TYPES.BUBBLE_CHART:
-        return <BubbleChart data={bubbleData} color={color} />;
+        return <BubbleChart data={bubbleData} color={color} isVisible={isVisible} />;
       case D3_TYPES.RADIAL_TREE:
-        return <RadialTree data={treeData} color={color} />;
+        return <RadialTree data={treeData} color={color} isVisible={isVisible} />;
       case D3_TYPES.FLOWCHART:
-        return <FlowChart data={flowData} color={color} />;
+        return <FlowChart data={flowData} color={color} isVisible={isVisible} />;
       case D3_TYPES.SANKEY:
-        return <Sankey color={color} />;
+        return <Sankey color={color} isVisible={isVisible} />;
       case D3_TYPES.SUNBURST:
-        return <Sunburst color={color} />;
+        return <Sunburst color={color} isVisible={isVisible} />;
       case D3_TYPES.TIMELINE:
-        return <Timeline color={color} />;
+        return <Timeline color={color} isVisible={isVisible} />;
       case D3_TYPES.THREE_D_SURFACE:
-        return <ThreeDSurface color={color} />;
+        return <ThreeDSurface color={color} isVisible={isVisible} />;
       case D3_TYPES.GLOBE_MESH:
-        return <GlobeMesh color={color} />;
+        return <GlobeMesh color={color} isVisible={isVisible} />;
       case D3_TYPES.FRACTAL:
-        return <Fractal color={color} />;
+        return <Fractal color={color} isVisible={isVisible} />;
       default:
         return (
           <div className="viz-fallback" style={{ color: '#444', textAlign: 'center' }}>
@@ -107,10 +109,10 @@ const DepartmentViz = ({ type, color, deptId, agents = [] }) => {
   };
 
   return (
-    <div className="dept-viz-container" style={{ width: '100%', height: '100%', minHeight: '400px' }}>
+    <div ref={containerRef} className="dept-viz-container" style={{ width: '100%', height: '100%', minHeight: '400px' }}>
       {renderViz()}
     </div>
   );
 };
 
-export default DepartmentViz;
+export default React.memo(DepartmentViz);

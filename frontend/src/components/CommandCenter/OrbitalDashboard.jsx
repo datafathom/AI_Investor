@@ -54,7 +54,7 @@ const OrbitalDashboard = () => {
 
                 <Grid container spacing={1}>
                     {filteredFleet.map((agent) => (
-                        <Grid item xs={1} key={agent.id}>
+                        <Grid size={{ xs: 1 }} key={agent.id}>
                             <Box 
                                 sx={{ 
                                     height: 40, 

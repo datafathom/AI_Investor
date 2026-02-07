@@ -7,6 +7,7 @@ import './PageContextPanel.css';
  */
 const PageContextPanel = ({ 
   title, 
+  pageTitle = "", // Specific page name (e.g., "Strategic Missions")
   status = "SYSTEM_ACTIVE", 
   color = "#00f2ff", 
   telemetry = [],
@@ -56,7 +57,11 @@ const PageContextPanel = ({
           </div>
           <div className="context-text">
             <div className="context-brand">CONTEXT WEAVER // {status}</div>
-            <h1 className="context-title">{title.toUpperCase()}</h1>
+            <div className="title-row">
+              <h1 className="context-title">{title.toUpperCase()}</h1>
+              <IconComponent size={20} className="title-icon-inline" />
+              {pageTitle && <span className="page-title-inline">{pageTitle}</span>}
+            </div>
           </div>
           <div className={`dropdown-indicator ${(subPages.length > 0) ? 'visible' : ''} ${isDropdownOpen ? 'open' : ''}`}>▼</div>
 
@@ -72,6 +77,7 @@ const PageContextPanel = ({
                   setIsDropdownOpen(false);
                 }}
               >
+                <IconComponent size={16} className="dropdown-item-icon" />
                 <span className="item-label">{title.toUpperCase()} DASHBOARD</span>
                 <span className="item-arrow">→</span>
               </button>

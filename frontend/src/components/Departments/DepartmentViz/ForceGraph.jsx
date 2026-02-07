@@ -5,7 +5,7 @@ import * as d3 from 'd3';
  * ForceGraph - Network visualization of agents and topics
  * Optimized with useMemo and useCallback to prevent unnecessary re-renders.
  */
-const ForceGraph = ({ data, color }) => {
+const ForceGraph = ({ data, color, isVisible = true }) => {
   const svgRef = useRef();
 
   // Memoize node/link data to prevent D3 re-initialization on every render
@@ -101,9 +101,14 @@ const ForceGraph = ({ data, color }) => {
         .attr('cy', d => d.y);
     });
 
+    if (!isVisible) {
+      simulation.stop();
+      return;
+    }
+
     // Cleanup on unmount
     return () => simulation.stop();
-  }, [graphData, color, createDrag]);
+  }, [graphData, color, createDrag, isVisible]);
 
   return (
     <div className="d3-viz-wrapper" style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

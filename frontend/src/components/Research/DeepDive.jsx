@@ -63,7 +63,7 @@ const DeepDive = () => {
 
       {report && (
         <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Paper sx={{ p: 2, textAlign: 'center', height: '100%', borderTop: '4px solid #4caf50' }}>
               <Typography variant="caption">INTRINSIC VALUE</Typography>
               <Typography variant="h4" sx={{ fontWeight: 'bold' }}>${report.intrinsicValue}</Typography>
@@ -76,7 +76,7 @@ const DeepDive = () => {
             </Paper>
           </Grid>
           
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Paper sx={{ p: 2, textAlign: 'center', height: '100%', borderTop: '4px solid #2196f3' }}>
               <Typography variant="caption">ECONOMIC MOAT</Typography>
               <Typography variant="h4" sx={{ fontWeight: 'bold' }}>{report.moat}</Typography>
@@ -84,7 +84,7 @@ const DeepDive = () => {
             </Paper>
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Paper sx={{ p: 2, textAlign: 'center', height: '100%', borderTop: '4px solid #9c27b0' }}>
               <Typography variant="caption">INSIDER SIGNAL</Typography>
               <Typography variant="h4" sx={{ fontWeight: 'bold' }}>BULLISH</Typography>
@@ -92,7 +92,7 @@ const DeepDive = () => {
             </Paper>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" gutterBottom>10-K Risk Factor Summary (AI Generated)</Typography>
               <Divider sx={{ mb: 2 }} />

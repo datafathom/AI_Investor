@@ -26,7 +26,6 @@
   transform: scale(1) !important;
 }
 
-
 .menu-bar-left {
   display: flex;
   align-items: center;
@@ -65,7 +64,6 @@
   color: #ffffff !important;
 }
 
-
 .menu-dropdown {
   position: absolute;
   top: 100%;
@@ -80,7 +78,7 @@
   margin-top: 1px;
   z-index: 100000;
   max-height: 80vh; /* Scalable max height to guarantee visibility */
-  overflow-y: auto;
+  overflow: visible; /* Changed from auto to allow submenus to appear */
   animation: menuFadeIn 0.15s ease-out;
 }
 
@@ -95,7 +93,6 @@
   background: rgba(255, 255, 255, 0.2);
   border-radius: 2px;
 }
-
 
 .menu-bar.dark .menu-dropdown {
   background: var(--color-surface-200, #2a2520);
@@ -126,7 +123,6 @@
   position: relative;
 }
 
-
 /* Always use readable text color */
 .menu-bar.dark .menu-dropdown-item {
   color: var(--color-text-light, #fffef0);
@@ -150,7 +146,6 @@
   background: rgba(255, 255, 255, 0.1) !important;
   color: #ffffff !important;
 }
-
 
 .menu-dropdown-item.disabled {
   opacity: 0.5;
@@ -187,14 +182,14 @@
   z-index: 100001;
 }
 
-
 .menu-bar.dark .menu-submenu {
   background: var(--color-surface-200, #2a2520);
   border-color: var(--color-surface-400, #3a342d);
 }
 
-.menu-dropdown-item:hover .menu-submenu,
-.menu-dropdown-item:focus-within .menu-submenu {
+/* Only show DIRECT CHILD submenu on hover, not all nested descendants */
+.menu-dropdown-item:hover > .menu-submenu,
+.menu-dropdown-item:focus-within > .menu-submenu {
   display: block;
   animation: menuFadeIn 0.15s ease-out;
 }
@@ -207,7 +202,7 @@
   font-size: 11px;
   opacity: 0.7;
   margin-left: 24px;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
 }
 
 .menu-dropdown-item:hover .menu-item-shortcut,
@@ -250,7 +245,9 @@
   color: var(--color-text-on_burgundy, #fffef0);
   transition: background-color 0.15s;
   outline: none;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
 }
 
 .menu-bar-button:hover,
@@ -330,7 +327,7 @@
 }
 
 .menu-bar-theme-toggle .switch .slider::before {
-  content: '';
+  content: "";
   position: absolute;
   height: 14px;
   width: 14px;
@@ -414,4 +411,3 @@
   text-overflow: ellipsis;
   max-width: 140px;
 }
-

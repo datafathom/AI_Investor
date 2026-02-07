@@ -62,6 +62,23 @@ def stop_python_processes(**kwargs):
         logger.error(f"Error killing python processes: {e}")
         return False
 
+def stop_node_processes(**kwargs):
+    """Terminate all running Node.js processes on the host."""
+    import subprocess
+    import sys
+    
+    print("🔪 Terminating all Node.js processes...")
+    try:
+        if sys.platform == "win32":
+            subprocess.run("taskkill /F /IM node.exe /T", shell=True, stderr=subprocess.DEVNULL)
+        else:
+            subprocess.run("pkill -9 node", shell=True, stderr=subprocess.DEVNULL)
+        print("OK Node.js processes terminated.")
+        return True
+    except Exception as e:
+        logger.error(f"Error killing Node.js processes: {e}")
+        return False
+
 def verify_pipeline(**kwargs):
     """Verify data pipeline."""
     logger.info("Verifying Pipeline...")
@@ -172,6 +189,7 @@ def start_backend(**kwargs):
     # Setup environment
     env = os.environ.copy()
     env["PYTHONPATH"] = project_root
+    env["PYTHONUNBUFFERED"] = "1"
     
     # Path to venv python
     python_exe = os.path.join(project_root, "venv", "Scripts", "python.exe")
@@ -186,6 +204,9 @@ def start_backend(**kwargs):
     cmd = [python_exe, "-m", "uvicorn", "web.fastapi_gateway:app", "--host", "127.0.0.1", "--port", "5050"]
     
     try:
+        # Redundant: Slack Bot is now integrated into web/fastapi_gateway.py startup_event
+        # We no longer need to spawn it as a separate CLI process.
+        
         # Run in a way that output is shown but potentially doesn't block if handled as background
         # For now, we'll let the user run it and see logs
         print(f"Running: {' '.join(cmd)}")
@@ -348,6 +369,9 @@ def run_demo_mode(**kwargs):
         except Exception as e:
             logger.error(f"Failed to launch frontend: {e}")
 
+        # 4.5 Slack Bot is now integrated into web/fastapi_gateway.py
+        # It starts automatically when uvicorn loads the app.
+
         print("\n⏳ Waiting for Backend to be ready (checking http://127.0.0.1:5050/health)...", flush=True)
         import urllib.request
         import urllib.error
@@ -411,4 +435,33 @@ def run_demo_mode(**kwargs):
     except Exception as e:
         print(f"\nERROR FATAL ERROR in run_demo_mode: {e}", flush=True)
         traceback.print_exc()
+        return False
+def serve_internal_docs(**kwargs):
+    """Start the internal documentation portal."""
+    import subprocess
+    import os
+    import sys
+    from pathlib import Path
+
+    logger.info(" Starting Internal Documentation Portal...")
+    
+    project_root = str(Path(__file__).parent.parent.parent.absolute())
+    python_exe = os.path.join(project_root, "venv", "Scripts", "python.exe")
+    if not os.path.exists(python_exe):
+        python_exe = sys.executable
+
+    server_script = os.path.join(project_root, "scripts", "docs_server.py")
+    
+    # We use uvicorn to run our docs_server:app
+    cmd = [python_exe, server_script]
+    
+    try:
+        print(f"🚀 Documentation Portal: http://127.0.0.1:5055")
+        subprocess.run(cmd, check=True)
+        return True
+    except KeyboardInterrupt:
+        print("\n🛑 Documentation Portal stopped.")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to start Documentation Portal: {e}")
         return False

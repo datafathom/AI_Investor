@@ -19,16 +19,6 @@ const DepartmentDashboard = ({ deptId }) => {
   const department = departments[deptId];
   const registryInfo = DEPT_REGISTRY[deptId];
 
-  if (!department || !registryInfo) {
-    return (
-      <div className="dept-error">
-        <h1>Department {deptId} Not Found</h1>
-      </div>
-    );
-  }
-
-  const { color, name, icon, d3Type, description, agents, subModules } = registryInfo;
-
   const fetchDepartments = useDepartmentStore((state) => state.fetchDepartments);
 
   useEffect(() => {
@@ -39,6 +29,25 @@ const DepartmentDashboard = ({ deptId }) => {
       setActiveDepartment(null);
     };
   }, [deptId, setActiveDepartment, fetchDepartments]);
+
+  if (!registryInfo) {
+    return (
+      <div className="dept-error">
+        <h1>Department {deptId} Not Found</h1>
+        <p>Registry entry missing for ID: {deptId}</p>
+      </div>
+    );
+  }
+
+  // Fallback if department record is missing from store but registry is present
+  const activeDeptData = department || {
+    id: deptId,
+    status: 'initialization',
+    metrics: {},
+    agents: []
+  };
+
+  const { color, name, icon, d3Type, description, agents, subModules } = registryInfo;
 
   const handleWorkflowExecute = async (workflow) => {
     addLogEntry(deptId, {
@@ -89,7 +98,7 @@ const DepartmentDashboard = ({ deptId }) => {
                   type={d3Type} 
                   color={color} 
                   deptId={deptId}
-                  agents={department?.agents || agents}
+                  agents={activeDeptData.agents.length > 0 ? activeDeptData.agents : agents}
                 />
               </div>
             </div>
@@ -104,7 +113,7 @@ const DepartmentDashboard = ({ deptId }) => {
         {/* Right/Bottom: Metrics & Pulse */}
         <section className="dept-metrics-area">
           <DepartmentMetricPanel 
-            metrics={department.metrics} 
+            metrics={activeDeptData.metrics} 
             primaryMetric={registryInfo.primaryMetric}
             primaryLabel={registryInfo.primaryMetricLabel}
             unit={registryInfo.primaryMetricUnit}
@@ -114,7 +123,9 @@ const DepartmentDashboard = ({ deptId }) => {
           />
         </section>
       </div>
-
+      
+      {/* FORCE SCROLL BUFFER: Physical element to ensure bottom clearance */}
+      <div style={{ height: '150px', width: '100%', flexShrink: 0 }} />
     </div>
   );
 };

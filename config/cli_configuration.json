@@ -58,6 +58,76 @@
             "handler": "scripts.runners.system_control:run_demo_mode",
             "category": "System Control"
         },
+        "slack": {
+            "description": "Slack notifications and bot control.",
+            "subcommands": {
+                "send": {
+                    "description": "Send a notification to the configured Slack channel.",
+                    "arguments": [
+                        {
+                            "name": "message",
+                            "type": "string",
+                            "required": true,
+                            "help": "Message content"
+                        }
+                    ],
+                    "flags": [
+                        {
+                            "name": "level",
+                            "type": "string",
+                            "default": "info",
+                            "help": "Severity: info, success, warning, critical"
+                        }
+                    ],
+                    "handler": "scripts.runners.slack_runner:send_notification"
+                },
+                "complete": {
+                    "description": "Send a task completion alert.",
+                    "arguments": [
+                        {
+                            "name": "task",
+                            "type": "string",
+                            "required": true,
+                            "help": "Task name"
+                        },
+                        {
+                            "name": "summary",
+                            "type": "string",
+                            "required": true,
+                            "help": "Brief summary"
+                        }
+                    ],
+                    "handler": "scripts.runners.slack_runner:notify_complete"
+                },
+                "ask": {
+                    "description": "Send a request for human input.",
+                    "arguments": [
+                        {
+                            "name": "prompt",
+                            "type": "string",
+                            "required": true,
+                            "help": "Question or action required"
+                        },
+                        {
+                            "name": "context",
+                            "type": "string",
+                            "default": "",
+                            "help": "Additional context"
+                        }
+                    ],
+                    "handler": "scripts.runners.slack_runner:request_human_input"
+                },
+                "stop": {
+                    "description": "Stop the background Slack bot process.",
+                    "handler": "scripts.runners.slack_runner:stop_bot"
+                },
+                "start": {
+                    "description": "Start the Slack bot listener (Socket Mode).",
+                    "handler": "scripts.runners.slack_runner:start_bot"
+                }
+            },
+            "category": "Notifications"
+        },
         "dev": {
             "description": "Standard Developer Mode. Starts hot-reloading Backend & Frontend and checks if local Docker services are running. Best for typical local development.",
             "handler": "scripts.runners.dev_runner:start_dev_mode",
@@ -109,6 +179,11 @@
         "stop-py": {
             "description": "Terminate all running Python processes on the host.",
             "handler": "scripts.runners.system_control:stop_python_processes",
+            "category": "System Control"
+        },
+        "stop-node": {
+            "description": "Terminate all running Node.js processes on the host.",
+            "handler": "scripts.runners.system_control:stop_node_processes",
             "category": "System Control"
         },
         "docker": {
@@ -352,6 +427,10 @@
                 "api-routes-postman": {
                     "description": "Generate a date-stamped Postman Collection.",
                     "handler": "scripts.runners.api_docs:build_api_routes_postman"
+                },
+                "internal": {
+                    "description": "Serve the futuristic Internal Documentation Portal.",
+                    "handler": "scripts.runners.system_control:serve_internal_docs"
                 }
             },
             "category": "API & Documentation"

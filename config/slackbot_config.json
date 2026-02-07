@@ -1,0 +1,136 @@
+{
+    "bot_name": "AI Investor Bot",
+    "version": "1.0.0",
+    "commands": {
+        "nuke-channel": {
+            "description": "Permanently delete all messages in this channel.",
+            "example": "!nuke-channel",
+            "pattern": "^!nuke-channel\\s*$",
+            "action": "service_call",
+            "method": "nuke_current_channel"
+        },
+        "ping": {
+            "description": "Verify the bot is alive and responsive.",
+            "example": "ping",
+            "pattern": "^ping\\s*$",
+            "action": "reply",
+            "reply_text": "🏓 Pong! AI Investor is active and listening."
+        },
+        "job": {
+            "description": "Dispatch a job request to the system event bus (Kafka).",
+            "example": "!job run-assessment --ticker AAPL",
+            "pattern": "^!job\\s+(?P<subcommand>[\\w-]+)(?:\\s+(?P<args>.*))?\\s*$",
+            "action": "kafka_dispatch",
+            "topic": "slack.jobs.pending",
+            "subcommands": {
+                "run-assessment": {
+                    "description": "Run an automated investment assessment.",
+                    "example": "!job run-assessment --ticker AAPL",
+                    "command_template": "engine assessment {args}"
+                },
+                "report-gen": {
+                    "description": "Generate a portfolio or risk report.",
+                    "example": "!job report-gen --type risk",
+                    "command_template": "engine report {args}"
+                },
+                "analyze": {
+                    "description": "Deep AI analysis of a specific asset.",
+                    "example": "!job analyze TSLA",
+                    "command_template": "research analyze {args}"
+                }
+            }
+        },
+        "status": {
+            "description": "Check the health status of a specific service.",
+            "example": "!status market-data-service",
+            "pattern": "^!status\\s+(?P<service>[\\w-]+)\\s*$",
+            "action": "reply",
+            "reply_text": "🔍 Checking status for `{service}`... (Request received)"
+        },
+        "health": {
+            "description": "Show a summary of system and infrastructure health.",
+            "example": "!health",
+            "pattern": "^!health\\s*$",
+            "action": "service_call",
+            "method": "get_system_health_summary"
+        },
+        "risk": {
+            "description": "Show real-time risk metrics (VaR) and circuit breaker status.",
+            "example": "!risk",
+            "pattern": "^!risk\\s*$",
+            "action": "service_call",
+            "method": "get_risk_summary"
+        },
+        "portfolio": {
+            "description": "Show current trading account balance and positions.",
+            "example": "!portfolio",
+            "pattern": "^!portfolio\\s*$",
+            "action": "service_call",
+            "method": "get_portfolio_summary"
+        },
+        "analyze": {
+            "description": "Run AI Due Diligence analysis on a specific ticker.",
+            "example": "!analyze AAPL",
+            "pattern": "^!analyze\\s+(?P<ticker>[a-zA-Z]+)\\s*$",
+            "action": "kafka_dispatch",
+            "topic": "slack.jobs.pending",
+            "command_template": "research analyze {ticker}"
+        },
+        "dcf": {
+            "description": "Calculate Intrinsic Value (DCF) for a specific ticker.",
+            "example": "!dcf MSFT",
+            "pattern": "^!dcf\\s+(?P<ticker>[a-zA-Z]+)\\s*$",
+            "action": "kafka_dispatch",
+            "topic": "slack.jobs.pending",
+            "command_template": "research calc-dcf {ticker}"
+        },
+        "deals": {
+            "description": "Show the current private market deal waitlist.",
+            "example": "!deals",
+            "pattern": "^!deals\\s*$",
+            "action": "service_call",
+            "method": "get_deals_summary"
+        },
+        "queue": {
+            "description": "Show the list of active/pending jobs.",
+            "example": "!queue",
+            "pattern": "^!queue\\s*$",
+            "action": "service_call",
+            "method": "get_job_queue"
+        },
+        "test-add-job": {
+            "description": "Add a test job to the queue without starting execution.",
+            "example": "!test-add-job",
+            "pattern": "^!test-add-job\\s*$",
+            "action": "kafka_dispatch",
+            "topic": "slack.jobs.pending",
+            "command_template": "test add"
+        },
+        "test-start-job": {
+            "description": "Start processing the job queue sequentially.",
+            "example": "!test-start-job",
+            "pattern": "^!test-start-job\\s*$",
+            "action": "kafka_dispatch",
+            "topic": "slack.jobs.pending",
+            "command_template": "test start",
+            "skip_registration": true
+        },
+        "test-clear-queue": {
+            "description": "Deletes all jobs in the local tracker for debugging.",
+            "example": "!test-clear-queue",
+            "pattern": "^!test-clear-queue\\s*$",
+            "action": "service_call",
+            "method": "clear_job_queue"
+        },
+        "help": {
+            "description": "List all available bot commands and their usage.",
+            "example": "!help",
+            "pattern": "^!help\\s*$",
+            "action": "help"
+        }
+    },
+    "default_responses": {
+        "unauthorized": "🛑 *Access Denied:* You are not authorized to run this command.",
+        "unknown_command": "🤔 *Unknown Command:* Type `!help` for a list of available capabilities."
+    }
+}
