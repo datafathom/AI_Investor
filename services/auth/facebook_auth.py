@@ -24,7 +24,7 @@ CREATED: 2026-01-21
 import logging
 import asyncio
 import httpx
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from datetime import datetime, timedelta
 from dataclasses import dataclass
 

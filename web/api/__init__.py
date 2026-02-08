@@ -77,5 +77,12 @@ from . import settlement_api
 from . import social_api
 from . import social_trading_api
 from . import spatial_api
+from .admin import deployments_api
+from .admin import ops_api
+from .admin import workspaces_api
 from . import system_telemetry_api
 from . import tax_optimization_api
+from . import indicators_api
+from . import compliance_144a_api
+from . import market
+market_api = market # Alias for consistency with gateway imports

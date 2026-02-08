@@ -1,0 +1,32 @@
+{
+  "DARK_MODE": {
+    "enabled": false,
+    "percentage": 100,
+    "targeting": [],
+    "description": "Global dark mode theme toggle."
+  },
+  "BETA_TRADING_ALGO": {
+    "enabled": false,
+    "percentage": 0,
+    "targeting": [],
+    "description": "Next-gen Alpha Signal generation algorithm."
+  },
+  "NEW_DASHBOARD_LAYOUT": {
+    "enabled": false,
+    "percentage": 0,
+    "targeting": [],
+    "description": "Refactored high-fidelity Mission Control layout."
+  },
+  "MAINTENANCE_MODE": {
+    "enabled": false,
+    "percentage": 0,
+    "targeting": [],
+    "description": "Restricts access during system upgrades."
+  },
+  "DEBUG_LOGGING": {
+    "enabled": false,
+    "percentage": 0,
+    "targeting": [],
+    "description": "Enable verbose trace logs for all system components."
+  }
+}

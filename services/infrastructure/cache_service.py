@@ -59,7 +59,48 @@ class AgentResponseCache:
                 json.dump(cache_data, f, indent=2)
             logger.info(f"Cached response for agent {agent_id}")
         except Exception as e:
-            logger.error(f"Error writing cache file {file_path}: {e}")
+            logger.error(f"Error writing to cache file {file_path}: {e}")
+
+    def get_stats(self) -> Dict[str, Any]:
+        """Get cache statistics (file-based)."""
+        try:
+            files = os.listdir(self.cache_dir)
+            total_size = sum(os.path.getsize(os.path.join(self.cache_dir, f)) for f in files if os.path.isfile(os.path.join(self.cache_dir, f)))
+            
+            return {
+                "type": "File System",
+                "active": True,
+                "key_count": len(files),
+                "memory_used_mb": total_size / (1024 * 1024),
+                "memory_max_mb": 1024.0, # 1GB virtual limit
+                "hit_rate": 0.0, # Tracking hit/miss for files would need a counter
+                "miss_rate": 0.0
+            }
+        except Exception as e:
+            logger.error(f"Error getting agent cache stats: {e}")
+            return {}
+
+    def invalidate_pattern(self, pattern: str) -> int:
+        """Invalidate entries by pattern (simplistic glob match on agent_id in content)."""
+        # Since keys are MD5, we have to look inside or just clear all if pattern is '*'
+        count = 0
+        try:
+            if pattern == "*" or pattern == "":
+                for f in os.listdir(self.cache_dir):
+                    os.remove(os.path.join(self.cache_dir, f))
+                    count += 1
+            else:
+                # Iterate and check content - expensive but works for this scale
+                for f_name in os.listdir(self.cache_dir):
+                    f_path = os.path.join(self.cache_dir, f_name)
+                    with open(f_path, 'r') as f:
+                        data = json.load(f)
+                        if pattern in data.get("agent_id", ""):
+                            os.remove(f_path)
+                            count += 1
+        except Exception as e:
+            logger.error(f"Error invalidating agent cache: {e}")
+        return count
 
 # Singleton helper
 _cache_instance = None

@@ -56,6 +56,19 @@ class Neo4jService:
             logger.error(f"Neo4jService: Query execution failed: {str(e)}")
             return []
 
+    def get_schema(self) -> Dict[str, Any]:
+        """Fetch labels and relationship types for schema visualization."""
+        try:
+            nodes = self.execute_query("CALL db.labels() YIELD label RETURN label")
+            rels = self.execute_query("CALL db.relationshipTypes() YIELD relationshipType RETURN relationshipType")
+            return {
+                "nodes": [n['label'] for n in nodes],
+                "relationships": [r['relationshipType'] for r in rels]
+            }
+        except Exception as e:
+            logger.error(f"Neo4jService: Schema fetch failed: {e}")
+            return {"nodes": [], "relationships": []}
+
     def close(self):
         """Close the driver connection."""
         if self._driver:
@@ -64,3 +77,6 @@ class Neo4jService:
 
 # Global Singleton instance
 neo4j_service = Neo4jService()
+
+def get_neo4j() -> Neo4jService:
+    return neo4j_service

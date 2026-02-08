@@ -1,0 +1,142 @@
+.alert-config-container {
+    padding: 20px;
+    background: #000;
+    color: #e0e0e0;
+    font-family: 'Space Mono', monospace;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #1a1a1a;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.add-rule-btn {
+    background: #00ff88;
+    color: #000;
+    border: none;
+    padding: 8px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.rule-card {
+    background: #050505;
+    border: 1px solid #222;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    transition: all 0.3s;
+}
+
+.rule-card.disabled { opacity: 0.4; }
+.rule-card:hover:not(.disabled) { border-color: #444; background: #080808; }
+
+.rule-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.severity-badge {
+    font-size: 0.6rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.critical .severity-badge { background: rgba(255, 71, 87, 0.1); color: #ff4757; border: 1px solid #ff4757; }
+.error .severity-badge { background: rgba(255, 152, 0, 0.1); color: #ff9800; border: 1px solid #ff9800; }
+.warning .severity-badge { background: rgba(255, 255, 0, 0.1); color: #ffff00; border: 1px solid #ffff00; }
+
+.rule-header h3 {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #eee;
+    flex: 1;
+}
+
+.delete-rule-btn {
+    background: transparent;
+    border: none;
+    color: #333;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.delete-rule-btn:hover { color: #ff4757; }
+
+.rule-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.rule-body label {
+    display: block;
+    font-size: 0.55rem;
+    color: #444;
+    margin-bottom: 4px;
+}
+
+.condition span {
+    font-size: 0.8rem;
+    color: #0088ff;
+}
+
+.channel-list {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.channel-tag {
+    font-size: 0.6rem;
+    background: #111;
+    color: #666;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.rule-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid #111;
+    padding-top: 15px;
+}
+
+.status-text {
+    font-size: 0.6rem;
+    color: #333;
+}
+
+.alerts-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #00ff88;
+}
+
+/* Switch Styles (reuse from Middleware if possible, but localized here for independence) */
+.switch { position: relative; display: inline-block; width: 34px; height: 14px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #111; transition: .4s; border-radius: 34px; border: 1px solid #222; }
+.slider:before { position: absolute; content: ""; height: 10px; width: 10px; left: 2px; bottom: 1px; background-color: #333; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: rgba(0, 255, 136, 0.1); border-color: #00ff88; }
+input:checked + .slider:before { transform: translateX(18px); background-color: #00ff88; }

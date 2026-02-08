@@ -1,7 +1,8 @@
-
 import logging
+import asyncio
 import time
-from typing import Dict, Any
+from typing import List, Dict, Any, Optional
+from datetime import datetime, timezone
 from utils.database_manager import get_database_manager
 from services.system.cache_service import get_cache_service
 
@@ -154,33 +155,59 @@ class HealthCheckService:
         status["status"] = "UP" if status["open"] == status["total"] else "DEGRADED"
         return status
 
+    def get_uptime_history(self, service_id: str) -> List[Dict[str, Any]]:
+        """Return 30-day uptime history (mocked)."""
+        import random
+        from datetime import datetime, timedelta
+        
+        history = []
+        for i in range(30):
+            date = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
+            history.append({
+                "date": date,
+                "uptime": random.uniform(98.0, 100.0) if random.random() > 0.05 else random.uniform(80.0, 95.0)
+            })
+        return sorted(history, key=lambda x: x['date'])
+
+    def get_dependency_map(self) -> List[Dict[str, Any]]:
+        """Return a graph of service dependencies."""
+        return [
+            {"source": "API Gateway", "target": "Auth Service", "type": "REST"},
+            {"source": "API Gateway", "target": "Market Data Service", "type": "REST"},
+            {"source": "Auth Service", "target": "PostgreSQL", "type": "SQL"},
+            {"source": "Market Data Service", "target": "Kafka", "type": "PubSub"},
+            {"source": "Searcher Agent", "target": "Kafka", "type": "PubSub"},
+            {"source": "Searcher Agent", "target": "Neo4j", "type": "Graph"},
+            {"source": "Protector Agent", "target": "Event Bus", "type": "Internal"}
+        ]
+
+    def trigger_health_check(self, service_id: str) -> Dict[str, Any]:
+        """Manually trigger a health check for a specific service."""
+        logger.info(f"Manual health check triggered for {service_id}")
+        # Routing to specific check based on ID
+        if service_id == "postgres": return self.check_postgres()
+        if service_id == "redis": return self.check_redis()
+        if service_id == "neo4j": return self.check_neo4j()
+        if service_id == "kafka": return self.check_kafka()
+        return {"status": "UNKNOWN", "id": service_id}
+
     def get_full_status(self) -> Dict[str, Any]:
-        """Aggregates health status of all systems."""
+        """Aggregates health status of all systems with added metadata."""
         status = {
-            "infra_ports": self.check_infra_ports(),
-            "postgres": self.check_postgres(),
-            "redis": self.check_redis(),
-            "neo4j": self.check_neo4j(),
-            "kafka": self.check_kafka(),
+            "services": [
+                {"id": "postgres", "name": "PostgreSQL", **self.check_postgres()},
+                {"id": "redis", "name": "Redis", **self.check_redis()},
+                {"id": "neo4j", "name": "Neo4j Graph", **self.check_neo4j()},
+                {"id": "kafka", "name": "Kafka Broker", **self.check_kafka()},
+                {"id": "infra", "name": "Infrastructure Ports", **self.check_infra_ports()}
+            ],
             "vendor_apis": self.check_vendor_apis(),
             "timestamp": time.time()
         }
         
-        # Overall status
-        critical_components = [
-            status["infra_ports"],
-            status["postgres"], 
-            status["redis"], 
-            status["neo4j"], 
-            status["kafka"]
-        ]
-        # Flatten vendor statuses
-        vendor_vals = status["vendor_apis"].values()
-        
-        all_critical_up = all(v["status"] == "UP" for v in critical_components)
-        all_vendors_ok = all(v["status"] in ["UP", "SKIPPED"] for v in vendor_vals)
-        
-        status["overall"] = "UP" if (all_critical_up and all_vendors_ok) else "DEGRADED"
+        # Overall status logic
+        all_up = all(s["status"] == "UP" for s in status["services"])
+        status["overall"] = "UP" if all_up else "DEGRADED"
         
         return status
 

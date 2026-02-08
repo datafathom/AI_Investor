@@ -1,0 +1,92 @@
+import React from 'react';
+
+const TopicList = ({ topics, stats, onSelect, selectedTopic }) => {
+    return (
+        <div className="topic-list-container">
+            <h3 className="section-title">ACTIVE_TOPICS</h3>
+            <div className="topics-scroll">
+                {topics.map(topic => {
+                    const topicStats = stats[topic.topic] || {};
+                    const isActive = selectedTopic === topic.topic;
+                    
+                    return (
+                        <div 
+                            key={topic.topic} 
+                            className={`topic-card ${isActive ? 'active' : ''}`}
+                            onClick={() => onSelect(topic.topic)}
+                        >
+                            <div className="topic-name">{topic.topic}</div>
+                            <div className="topic-meta">
+                                <span>SUBS: {topic.subscriber_count}</span>
+                                <span>MSGS: {topicStats.publish_count || 0}</span>
+                            </div>
+                            <div className="last-seen">
+                                {topicStats.last_published ? 
+                                    new Date(topicStats.last_published).toLocaleTimeString() : 
+                                    'NEVER'}
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+            <style jsx>{`
+                .topic-list-container {
+                    padding: 15px;
+                    display: flex;
+                    flex-direction: column;
+                    height: 100%;
+                }
+                .section-title {
+                    font-size: 0.9rem;
+                    color: #888;
+                    margin-bottom: 15px;
+                    letter-spacing: 1px;
+                }
+                .topics-scroll {
+                    overflow-y: auto;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                }
+                .topic-card {
+                    padding: 12px;
+                    background: rgba(40, 40, 40, 0.3);
+                    border: 1px solid #222;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .topic-card:hover {
+                    background: rgba(0, 242, 255, 0.05);
+                    border-color: #00f2ff66;
+                }
+                .topic-card.active {
+                    background: rgba(0, 242, 255, 0.1);
+                    border-color: #00f2ff;
+                }
+                .topic-name {
+                    font-size: 0.9rem;
+                    font-weight: bold;
+                    color: #fff;
+                    margin-bottom: 5px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                .topic-meta {
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 0.65rem;
+                    color: #888;
+                }
+                .last-seen {
+                    font-size: 0.6rem;
+                    color: #555;
+                    margin-top: 5px;
+                    text-align: right;
+                }
+            `}</style>
+        </div>
+    );
+};
+
+export default TopicList;

@@ -1,0 +1,50 @@
+.latency-histogram {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 120px;
+    padding: 10px 0;
+}
+
+.histogram-bar-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.bar-wrapper {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+}
+
+.bar {
+    width: 80%;
+    background: linear-gradient(to top, #00f2ff, #00ff88);
+    border-radius: 4px 4px 0 0;
+    position: relative;
+    transition: height 0.3s ease;
+}
+
+.bar-label {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.6rem;
+    color: #fff;
+}
+
+.bucket-range {
+    font-size: 0.55rem;
+    color: #444;
+    transform: rotate(-45deg);
+    margin-top: 5px;
+    white-space: nowrap;
+}

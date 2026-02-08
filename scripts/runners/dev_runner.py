@@ -235,4 +235,3 @@ def start_dev_no_db(slackbot: bool = True):
     # OR we just copy the logic but skip the infra check. 
     # Let's refactor start_dev_mode to accept a 'check_infra' arg.
     start_dev_mode(check_infra=False, slackbot=slackbot)
-```

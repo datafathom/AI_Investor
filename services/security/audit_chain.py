@@ -5,7 +5,7 @@ SHA-256 hash chaining for tamper-proof logs.
 import logging
 import hashlib
 import json
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 logger = logging.getLogger(__name__)
 

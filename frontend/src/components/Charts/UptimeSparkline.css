@@ -1,0 +1,24 @@
+.uptime-sparkline {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 40px;
+}
+
+.spark-bar {
+    flex: 1;
+    background: #111;
+    border-radius: 1px;
+    min-width: 4px;
+    transition: background 0.3s;
+}
+
+.spark-bar.perfect { background: #00ff88; }
+.spark-bar.good { background: #00ff8888; }
+.spark-bar.degraded { background: #ff9800; }
+.spark-bar.down { background: #ff4757; }
+
+.spark-bar:hover {
+    filter: brightness(1.5);
+    transform: scaleY(1.1);
+}

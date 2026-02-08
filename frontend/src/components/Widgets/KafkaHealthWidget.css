@@ -1,0 +1,146 @@
+.kafka_health_widget {
+    background: rgba(10, 10, 10, 0.8);
+    border: 1px solid #222;
+    border-radius: 8px;
+    padding: 15px;
+    font-family: 'Space Mono', monospace;
+    color: #fff;
+    backdrop-filter: blur(8px);
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+.widget-header h3 {
+    font-size: 0.85rem;
+    color: #ff9800; /* Kafka Orange */
+    margin: 0;
+}
+
+.broker-status {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+.broker-status.online {
+    background: rgba(0, 255, 136, 0.1);
+    color: #00ff88;
+    border: 1px solid #00ff88;
+}
+
+.broker-status.offline {
+    background: rgba(255, 71, 87, 0.1);
+    color: #ff4757;
+    border: 1px solid #ff4757;
+}
+
+.metrics-summary {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.summary-item label {
+    font-size: 0.6rem;
+    color: #666;
+}
+
+.summary-item value {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.summary-item value.healthy { color: #00f2ff; }
+.summary-item value.warning { color: #ff9800; }
+
+.groups-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.group-card {
+    background: rgba(30, 30, 30, 0.5);
+    border: 1px solid #222;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.group-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.group-id {
+    font-size: 0.75rem;
+    color: #aaa;
+    font-weight: bold;
+}
+
+.group-status {
+    font-size: 0.6rem;
+    color: #00ff88;
+}
+
+.group-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat label {
+    font-size: 0.55rem;
+    color: #555;
+    margin-bottom: 2px;
+}
+
+.stat span {
+    font-size: 0.75rem;
+    color: #ddd;
+}
+
+.stat span.crit {
+    color: #ff4757;
+    text-shadow: 0 0 5px rgba(255, 71, 87, 0.5);
+}
+
+.lag-bar {
+    height: 3px;
+    background: #111;
+    border-radius: 1.5px;
+    overflow: hidden;
+}
+
+.lag-fill {
+    height: 100%;
+    transition: width 0.5s ease;
+}
+
+.kafka-widget-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    font-size: 0.8rem;
+    color: #ff9800;
+}

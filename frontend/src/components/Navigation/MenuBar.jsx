@@ -11,7 +11,12 @@ import {
   Settings, Search, Brain, Cpu, Target, TrendingUp, Shield, Grid, 
   Home, ShieldCheck, Scale, Users, Briefcase, Clock, Zap, Landmark, Layout, Atom,
   Crosshair, Activity, Terminal, Database, BookOpen, ShoppingBag, Bell
+import { 
+  Settings, Search, Brain, Cpu, Target, TrendingUp, Shield, Grid, 
+  Home, ShieldCheck, Scale, Users, Briefcase, Clock, Zap, Landmark, Layout, Atom,
+  Crosshair, Activity, Terminal, Database, BookOpen, ShoppingBag, Bell
 } from "lucide-react";
+import EnvVarsModal from "../admin/EnvVarsModal";
 import { DEPT_REGISTRY } from "../../config/departmentRegistry";
 import { getIcon } from "../../config/iconRegistry";
 import "./MenuBar.css";
@@ -114,6 +119,15 @@ const STATIC_MENU_AFTER = [
     items: [
       { label: "Widget Settings", action: "widget-settings" },
       { label: "Layout Manager", action: "layout-manager" },
+      { label: "Deployment Controller", action: "nav-path:/admin/deployments" },
+      { label: "Operations Dashboard", action: "nav-path:/admin/ops" },
+      { label: "Workspace Manager", action: "nav-path:/admin/workspaces" },
+      { label: "Environment Variables", action: "open-env-vars" },
+      { label: "Feature Flags", action: "nav-path:/admin/features" },
+      { label: "Forced Seller Monitor", action: "nav-path:/data-scientist/forced-sellers" },
+      { label: "Whale Flow Terminal", action: "nav-path:/data-scientist/whale-flow" },
+      { label: "Technical Indicators", action: "nav-path:/data-scientist/indicators" },
+      { label: "Rule 144A Compliance", action: "nav-path:/legal/144a-compliance" },
       { type: "divider" },
       { label: "Developer Tools", action: "dev-tools", shortcut: "F12" },
       { label: "Console", action: "console" },
@@ -414,6 +428,10 @@ export default function MenuBar({
     ];
   }, [widgetVisibility, widgetTitles, localUser, workspaces, activeWorkspace, globalLock, debugStates, toggleTheme, onLogout, onSignin, onMenuAction]);
 
+  // State for search
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showEnvVars, setShowEnvVars] = useState(false);
+
   const userForDisplay = localUser || currentUser;
 
   const renderMenuItems = (items) => {
@@ -688,6 +706,8 @@ export default function MenuBar({
           </label>
           <span>Dark</span>
         </div>
+        <CommandDialog open={commandOpen} onOpenChange={setCommandOpen} />
+        <EnvVarsModal open={showEnvVars} onOpenChange={setShowEnvVars} />
       </div>
     </div>
   );

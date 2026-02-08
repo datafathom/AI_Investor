@@ -2892,6 +2892,48 @@
             "description": "Run the gitleaks audit tool for the project .git repo.",
             "handler": "scripts.runners.git_leaks_runner:run_gitleaks_audit",
             "category": "Development & Infrastructure"
+        },
+        "vault": {
+            "description": "Cross-platform encrypted folder vault (AES-256).",
+            "subcommands": {
+                "lock": {
+                    "description": "Compress and encrypt a folder into a .vault file.",
+                    "arguments": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "required": true,
+                            "help": "Path to the folder to lock"
+                        },
+                        {
+                            "name": "passkey",
+                            "type": "string",
+                            "required": true,
+                            "help": "Secret passkey for encryption"
+                        }
+                    ],
+                    "handler": "scripts.runners.vault_runner:lock_vault"
+                },
+                "unlock": {
+                    "description": "Decrypt and extract a .vault file back into a folder.",
+                    "arguments": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "required": true,
+                            "help": "Path to the .vault file to unlock"
+                        },
+                        {
+                            "name": "passkey",
+                            "type": "string",
+                            "required": true,
+                            "help": "Secret passkey for decryption"
+                        }
+                    ],
+                    "handler": "scripts.runners.vault_runner:unlock_vault"
+                }
+            },
+            "category": "Security & Governance"
         }
     }
 }

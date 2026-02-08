@@ -7,7 +7,7 @@ import os
 import json
 import hashlib
 import logging
-from typing import Any, Optional, Callable
+from typing import Any, Optional, Callable, Dict
 from datetime import timezone, datetime, timedelta
 from functools import wraps
 
@@ -158,6 +158,42 @@ class PerformanceCache:
     def invalidate_pattern(self, pattern: str):
         """Invalidate all keys matching pattern."""
         self.clear(pattern)
+
+    def get_stats(self) -> Dict[str, Any]:
+        """Get cache performance statistics."""
+        stats = {
+            "type": "Redis" if self._redis_client else "In-Memory",
+            "active": True if (self._redis_client or self._local_cache is not None) else False,
+            "key_count": 0,
+            "memory_used_mb": 0,
+            "memory_max_mb": 0,
+            "hit_rate": 0.0,
+            "miss_rate": 0.0
+        }
+        
+        try:
+            if self._redis_client:
+                info = self._redis_client.info()
+                stats["key_count"] = self._redis_client.dbsize()
+                stats["memory_used_mb"] = info.get("used_memory", 0) / (1024 * 1024)
+                stats["memory_max_mb"] = info.get("maxmemory", 0) / (1024 * 1024)
+                
+                # Calculate hit rate from Redis stats if available
+                hits = info.get("keyspace_hits", 0)
+                misses = info.get("keyspace_misses", 0)
+                total = hits + misses
+                if total > 0:
+                    stats["hit_rate"] = hits / total
+                    stats["miss_rate"] = misses / total
+            else:
+                stats["key_count"] = len(self._local_cache)
+                # Estimating memory for local cache is hard, using simplified estimate
+                stats["memory_used_mb"] = (len(self._local_cache) * 0.01) # 10KB per entry approx
+                stats["memory_max_mb"] = 100.0 # Default limit
+        except Exception as e:
+            logger.error(f"Error getting performance cache stats: {e}")
+            
+        return stats
 
 
 def cache_key(*args, **kwargs) -> str:

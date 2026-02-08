@@ -1,0 +1,53 @@
+{
+    "active_env": "green",
+    "traffic_split": {
+        "blue": 0,
+        "green": 100
+    },
+    "environments": {
+        "blue": {
+            "version": "v1.0.0",
+            "status": "idle",
+            "last_deployed": "2026-02-08T10:07:10.406256"
+        },
+        "green": {
+            "version": "v1.1.0-rc1",
+            "status": "active",
+            "last_deployed": "2026-02-08T10:07:10.406273"
+        }
+    },
+    "history": [
+        {
+            "action": "rollback",
+            "from": "blue",
+            "to": "green",
+            "timestamp": "2026-02-08T10:07:10.451446"
+        },
+        {
+            "action": "switch",
+            "from": "blue",
+            "to": "blue",
+            "timestamp": "2026-02-08T10:07:10.446593"
+        },
+        {
+            "action": "traffic_update",
+            "split": {
+                "blue": 80,
+                "green": 20
+            },
+            "timestamp": "2026-02-08T10:07:10.439197"
+        },
+        {
+            "action": "switch",
+            "from": "green",
+            "to": "blue",
+            "timestamp": "2026-02-08T10:07:10.426593"
+        },
+        {
+            "action": "switch",
+            "from": "blue",
+            "to": "green",
+            "timestamp": "2026-02-08T10:07:10.420450"
+        }
+    ]
+}

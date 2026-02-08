@@ -12,9 +12,17 @@ from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api/v1/market", tags=["Market Data"])
+router = APIRouter(prefix="/api/v1/market-data", tags=["Market Data"])
 
 from services.data.alpha_vantage import get_alpha_vantage_client
+from web.api.market_data.forced_sellers_api import router as forced_sellers_router
+from web.api.market_data.whale_flow_api import router as whale_flow_router
+from web.api.market_data.promo_api import router as promo_router
+
+# Include sub-routers
+router.include_router(forced_sellers_router, prefix="/forced-sellers")
+router.include_router(whale_flow_router, prefix="/whale-flow")
+router.include_router(promo_router, prefix="/promotions")
 
 
 def get_alpha_provider():

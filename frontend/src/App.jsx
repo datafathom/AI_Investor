@@ -119,6 +119,23 @@ const MissionsOverview = lazy(() => import('./pages/MissionsOverview'));
 const FleetDashboard = lazy(() => import('./pages/FleetDashboard'));
 const GlobalSearchPage = lazy(() => import('./pages/GlobalSearch'));
 const CommandCenter = lazy(() => import('./components/Admin/CommandCenter'));
+const EventBusMonitor = lazy(() => import('./pages/admin/EventBusMonitor'));
+const StorageManager = lazy(() => import('./pages/admin/StorageManager'));
+const GraphBrowser = lazy(() => import('./pages/admin/GraphBrowser'));
+const LogViewer = lazy(() => import('./pages/admin/LogViewer'));
+const ServiceHealthGrid = lazy(() => import('./pages/admin/ServiceHealthGrid'));
+const MiddlewarePipeline = lazy(() => import('./pages/admin/MiddlewarePipeline'));
+const MonitoringDashboard = lazy(() => import('./pages/admin/MonitoringDashboard'));
+const AlertConfigPage = lazy(() => import('./pages/admin/AlertConfigPage'));
+const DeploymentController = lazy(() => import('./pages/admin/DeploymentController'));
+const OperationsDashboard = lazy(() => import('./pages/admin/OperationsDashboard'));
+const WorkspaceManager = lazy(() => import('./pages/admin/WorkspaceManager'));
+const FeatureFlagManager = lazy(() => import('./pages/admin/FeatureFlagManager'));
+const EnvironmentSettings = lazy(() => import('./pages/admin/EnvironmentSettings'));
+const ForcedSellerMonitor = lazy(() => import('./pages/data-scientist/ForcedSellerMonitor'));
+const WhaleFlowTerminal = lazy(() => import('./pages/data-scientist/WhaleFlowTerminal'));
+const TechnicalIndicatorsPage = lazy(() => import('./pages/data-scientist/TechnicalIndicatorsPage'));
+const Rule144CompliancePage = lazy(() => import('./pages/legal/Rule144CompliancePage'));
 
 
 // --- Dynamic Workstation Loader ---
@@ -863,10 +880,24 @@ function AppContent() {
                 <Route path="/legal/compliance" element={<ComplianceDashboard />} />
                 <Route path="/legal/audit" element={<AuditDashboard />} />
                 <Route path="/legal/scenarios" element={<ScenarioDashboard />} />
+                <Route path="/admin/event-bus" element={<EventBusMonitor />} />
+                <Route path="/admin/storage" element={<StorageManager />} />
+                <Route path="/admin/graph" element={<GraphBrowser />} />
+                <Route path="/admin/logs" element={<LogViewer />} />
+                <Route path="/admin/health" element={<ServiceHealthGrid />} />
+                <Route path="/admin/middleware" element={<MiddlewarePipeline />} />
+                <Route path="/admin/performance" element={<MonitoringDashboard />} />
+                <Route path="/admin/alerts" element={<AlertConfigPage />} />
+                <Route path="/admin/deployments" element={<DeploymentController />} />
+                <Route path="/admin/ops" element={<OperationsDashboard />} />
+                <Route path="/admin/workspaces" element={<WorkspaceManager />} />
+                <Route path="/admin/features" element={<FeatureFlagManager />} />
+                <Route path="/admin/env" element={<EnvironmentSettings />} />
                 <Route path="/legal/margin" element={<MarginDashboard />} />
                 <Route path="/legal/tax" element={<TaxDashboard />} />
                 <Route path="/legal/terms" element={<TermsOfService />} />
                 <Route path="/legal/privacy" element={<PrivacyPolicy />} />
+                <Route path="/legal/144a-compliance" element={<Rule144CompliancePage />} />
 
                 <Route path="/guardian/risk" element={<AdvancedRiskDashboard />} />
                 <Route path="/guardian/credit" element={<CreditMonitoringDashboard />} />
@@ -883,6 +914,9 @@ function AppContent() {
                 <Route path="/data-scientist/debate" element={<DebateRoom />} />
                 <Route path="/data-scientist/evolution" element={<EvolutionDashboard />} />
                 <Route path="/data-scientist/sentinel" element={<SentinelStrategyDashboard />} />
+                <Route path="/data-scientist/forced-sellers" element={<ForcedSellerMonitor />} />
+                <Route path="/data-scientist/whale-flow" element={<WhaleFlowTerminal />} />
+                <Route path="/data-scientist/indicators" element={<TechnicalIndicatorsPage />} />
 
                 {/* --- Special Routes --- */}
                 <Route path="/special/scrum" element={<ScrumMaster />} />

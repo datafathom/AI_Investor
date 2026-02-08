@@ -3,7 +3,7 @@ Batch 17: Final sub-deliverables for 75
 Rebalancer.
 """
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 logger = logging.getLogger(__name__)
 

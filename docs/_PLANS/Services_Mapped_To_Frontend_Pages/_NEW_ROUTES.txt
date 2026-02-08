@@ -1,0 +1,60 @@
+Log Viewer: http://localhost:5173/admin/logs (Added in recent sweep)
+Event Bus Monitor: http://localhost:5173/admin/event-bus
+Storage Manager: http://localhost:5173/admin/storage
+[!NOTE] If you are redirected to the login screen, use your admin cr
+
+# Auto-Extracted Routes from Phase Plans
+Phase_1 - Neo4j Graph Browser Page: http://localhost:5173/admin/graph-browser
+Phase_2 - Service Health Grid Page: http://localhost:5173/admin/health
+Phase_2 - Middleware Pipeline Page: http://localhost:5173/admin/middleware
+Phase_2 - Alert Configuration Page: http://localhost:5173/admin/alerts-config
+Phase_3 - Deployment Controller Page: http://localhost:5173/admin/deployments
+Phase_3 - Operations Dashboard Page: http://localhost:5173/admin/ops
+Phase_3 - Workspace Manager Page: http://localhost:5173/admin/workspaces
+Phase_3 - Feature Flags Page: http://localhost:5173/admin/features
+Phase_4 - Forced Seller Monitor Page: http://localhost:5173/data-scientist/forced-sellers
+Phase_4 - Whale Flow Terminal Page: http://localhost:5173/data-scientist/whale-flow
+Phase_4 - Technical Indicators Page: http://localhost:5173/data-scientist/indicators
+
+# Manually Implemented Routes - Phase 4
+Phase_4 - Forced Seller Monitor: http://localhost:5173/data-scientist/forced-sellers
+Phase_4 - Whale Flow Terminal: http://localhost:5173/data-scientist/whale-flow
+
+
+# Auto-Extracted Routes from Phase Plans
+Phase_1 - Event Bus Monitor Page: http://localhost:5173/admin/event-bus-monitor
+Phase_1 - Private Cloud Storage Page: http://localhost:5173/admin/storage-manager
+Phase_1 - System Logs Viewer Page: http://localhost:5173/admin/log-viewer
+Phase_2 - Service Health Grid Page: http://localhost:5173/admin/service-health-grid
+Phase_2 - Middleware Pipeline Page: http://localhost:5173/admin/middleware-pipeline
+Phase_2 - Alert Configuration Page: http://localhost:5173/admin/alert-config-page
+Phase_3 - Deployment Controller Page: http://localhost:5173/admin/deployment-controller
+Phase_3 - Operations Dashboard Page: http://localhost:5173/admin/operations-dashboard
+Phase_3 - Workspace Manager Page: http://localhost:5173/admin/workspace-manager
+Phase_3 - Feature Flags Page: http://localhost:5173/admin/feature-flags-page
+Phase_4 - Forced Seller Monitor Page: http://localhost:5173/data-scientist/forced-seller-monitor
+Phase_4 - Whale Flow Terminal Page: http://localhost:5173/data-scientist/whale-flow-terminal
+Phase_4 - Technical Indicators Page: http://localhost:5173/data-scientist/technical-indicators-page
+Phase_5 - Data Pipeline Manager Page: http://localhost:5173/admin/data-pipeline-manager
+Phase_5 - API Connector Hub Page: http://localhost:5173/admin/a-p-i-connector-hub
+Phase_5 - External Data Sources Page: http://localhost:5173/data-scientist/external-data-sources
+Phase_5 - Webhook Receiver Page: http://localhost:5173/admin/webhook-receiver
+Phase_6 - News Aggregator Page: http://localhost:5173/hunter/news-aggregator
+Phase_6 - Social Sentiment Radar Page: http://localhost:5173/data-scientist/social-sentiment-radar
+Phase_6 - Social Trading Feed Page: http://localhost:5173/hunter/social-trading-feed
+Phase_6 - Rumor Mill Page: http://localhost:5173/hunter/rumor-mill
+Phase_7 - Research Workspace Page: http://localhost:5173/data-scientist/research-workspace
+Phase_7 - Factor Analysis Suite Page: http://localhost:5173/data-scientist/factor-analysis-suite
+Phase_7 - Fundamental Scanner Page: http://localhost:5173/data-scientist/fundamental-scanner
+Phase_7 - Quant Backtest Lab Page: http://localhost:5173/data-scientist/quant-backtest-lab
+
+
+# Finalized Routes - Phase 4 (Market Data Foundation)
+Phase_4 - Forced Seller Monitor: http://localhost:5173/data-scientist/forced-sellers
+Phase_4 - Whale Flow Terminal: http://localhost:5173/data-scientist/whale-flow
+Phase_4 - Technical Indicators: http://localhost:5173/data-scientist/indicators
+Phase_4 - Rule 144A Compliance (Supplemental): http://localhost:5173/legal/144a-compliance
+
+# Widgets - Phase 4
+- Market Regime Classifier (Widget): Used in Strategist dashboards.
+- Volume Promo Detector (Widget): Used in Market Intelligence dashboards.

@@ -1,0 +1,162 @@
+.storage-manager-container {
+    padding: 20px;
+    background: #000;
+    color: #e0e0e0;
+    font-family: 'Space Mono', monospace;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #1a1a1a;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.page-header h1 {
+    font-size: 1.5rem;
+    color: #00f2ff;
+    margin: 0;
+}
+
+.sync-btn {
+    background: rgba(0, 242, 255, 0.1);
+    border: 1px solid #00f2ff;
+    color: #00f2ff;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    transition: all 0.3s;
+}
+
+.sync-btn:hover:not(:disabled) {
+    background: #00f2ff;
+    color: #000;
+}
+
+.sync-btn.syncing {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.storage-grid {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 20px;
+}
+
+section h3 {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 15px;
+    letter-spacing: 2px;
+}
+
+.pool-card {
+    background: rgba(15, 15, 15, 0.6);
+    border: 1px solid #222;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.pool-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.pool-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.pool-health {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.pool-health.good { background: rgba(0, 255, 136, 0.1); color: #00ff88; border: 1px solid #00ff88; }
+.pool-health.bad { background: rgba(255, 71, 87, 0.1); color: #ff4757; border: 1px solid #ff4757; }
+
+.pool-metrics {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 20px;
+}
+
+.metric label, .pool-scan label, .vdevs-list label, .sync-item label, .sync-progress label {
+    display: block;
+    font-size: 0.65rem;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.pool-scan p {
+    font-size: 0.75rem;
+    color: #888;
+    background: #050505;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 0 0 20px 0;
+}
+
+.vdev-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    padding: 5px 0;
+    border-bottom: 1px solid #111;
+}
+
+.vdev-status {
+    color: #00ff88;
+}
+
+.sync-card {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid #333;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.sync-item {
+    margin-bottom: 15px;
+}
+
+.sync-item span {
+    font-size: 0.9rem;
+}
+
+.status-glow {
+    color: #00f2ff;
+    text-shadow: 0 0 8px rgba(0, 242, 255, 0.5);
+}
+
+.bar-bg {
+    height: 6px;
+    background: #000;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background: #00f2ff;
+    transition: width 1s ease;
+}
+
+.storage-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #00f2ff;
+}

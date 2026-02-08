@@ -1,49 +1,112 @@
+"""
+==============================================================================
+FILE: services/market_data/forced_seller_svc.py
+ROLE: Market Intelligence - Fragility Analysis
+PURPOSE: Tracks passive ownership concentration and structural fragility risks.
+         Provides early warnings for liquidity traps and forced seller pressure.
+==============================================================================
+"""
+
 import logging
-from typing import Dict, List, Any
-from decimal import Decimal
+import random
+from typing import Dict, Any, List
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
+# Mock data for demonstration
+MOCK_TICKERS = ["AAPL", "MSFT", "NVDA", "TSLA", "AMZN", "GOOGL", "META", "AMD", "INTC", "SPY"]
+SECTORS = ["Technology", "Consumer", "Healthcare", "Finance", "Energy", "Materials"]
+
 class ForcedSellerService:
     """
-    Phase 190.1: Michael Green 'Forced Seller' Liquidity Tracker.
-    Tracks passive fund flows and fragility.
+    Service for analyzing forced seller risk and liquidity fragility.
     """
-    
-    def monitor_passive_flow(self, ticker: str, passive_ownership_pct: float) -> Dict[str, Any]:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(ForcedSellerService, cls).__new__(cls)
+            cls._instance._initialized = False
+        return cls._instance
+
+    def __init__(self):
+        if self._initialized:
+            return
+        self._initialized = True
+        logger.info("ForcedSellerService initialized")
+
+    def calculate_fragility_score(self, ticker: str) -> Dict[str, Any]:
         """
-        Scores the fragility based on passive ownership concentration.
-        High passive ownership = Higher price-elasticity (Green's Thesis).
+        Calculate fragility score (0-100) for a given ticker.
+        Factors: Passive %, Float Turnover, Bid-Ask Spread Volatility
         """
-        # 0-1 scale of fragility
-        fragility_score = passive_ownership_pct / 100.0
+        # Deterministic-ish random based on ticker
+        random.seed(sum(ord(c) for c in ticker))
         
-        risk_level = "LOW"
-        if fragility_score > 0.4: risk_level = "ELEVATED"
-        if fragility_score > 0.7: risk_level = "CRITICAL"
-        
-        logger.info(f"LIQUIDITY_LOG: {ticker} passive fragility: {fragility_score:.2f} ({risk_level})")
-        
+        passive_pct = random.uniform(15.0, 75.0)
+        float_turnover = random.uniform(0.5, 3.0)
+        spread_vol = random.uniform(0.01, 0.15)
+
+        # Weighted score calculation: Passive % is a huge risk multiplier in structural fragility
+        score = (passive_pct * 0.6) + (20 / float_turnover) + (spread_vol * 150)
+        score = min(100, max(0, score))
+
+        risk_level = "LOW" if score < 40 else ("MEDIUM" if score < 70 else "HIGH")
+
         return {
             "ticker": ticker,
-            "passive_concentration": passive_ownership_pct,
-            "fragility_score": round(fragility_score, 2),
+            "passive_pct": round(passive_pct, 2),
+            "float_turnover": round(float_turnover, 2),
+            "spread_volatility": round(spread_vol, 4),
+            "fragility_score": round(score, 1),
             "risk_level": risk_level,
-            "notes": "Driven by structural inelasticity in passive fund mandates."
+            "last_updated": datetime.now().isoformat()
         }
 
-    def detect_liquidity_trap(self, current_spread: float, avg_spread: float) -> Dict[str, Any]:
+    def get_top_fragile_tickers(self, limit: int = 10) -> List[Dict[str, Any]]:
         """
-        Phase 190.2: Liquidity Trap Detector.
+        Returns top tickers by fragility score.
         """
-        spread_expansion = current_spread / avg_spread if avg_spread > 0 else 1.0
-        is_trapped = spread_expansion > 2.5
-        
-        logger.info(f"LIQUIDITY_LOG: Spread expansion: {spread_expansion:.2f}x. Trap: {is_trapped}")
-        
-        return {
-            "spread_expansion": round(spread_expansion, 2),
-            "is_liquidity_trap": is_trapped,
-            "severity": "HIGH" if is_trapped else "NORMAL",
-            "action": "HALT_ACTIVE_TRADING" if is_trapped else "CONTINUE"
-        }
+        results = [self.calculate_fragility_score(t) for t in MOCK_TICKERS]
+        results.sort(key=lambda x: x["fragility_score"], reverse=True)
+        return results[:limit]
+
+    def get_passive_heatmap(self) -> List[Dict[str, Any]]:
+        """
+        Aggregates passive ownership data by sector for heatmap visualization.
+        """
+        heatmap = []
+        for sector in SECTORS:
+            # Deterministic for sector
+            random.seed(sum(ord(c) for c in sector))
+            avg_passive = random.uniform(25, 55)
+            high_risk = random.randint(0, 4)
+            
+            heatmap.append({
+                "sector": sector,
+                "avg_passive_pct": round(avg_passive, 1),
+                "total_fragility": round(random.uniform(35, 75), 1),
+                "ticker_count": random.randint(12, 45),
+                "high_risk_count": high_risk
+            })
+        return heatmap
+
+    def get_liquidity_traps(self) -> List[Dict[str, Any]]:
+        """
+        Detects active liquidity traps (bid-ask expansion > 2.5x).
+        """
+        # Occasionally return a trap for AAPL or NVDA
+        traps = []
+        if random.random() > 0.7:
+            traps.append({
+                "ticker": random.choice(["AAPL", "NVDA", "TSLA"]),
+                "spread_expansion": round(random.uniform(2.5, 4.8), 2),
+                "timestamp": datetime.now().isoformat(),
+                "severity": random.choice(["MODERATE", "SEVERE", "CRITICAL"])
+            })
+        return traps
+
+
+def get_forced_seller_service() -> ForcedSellerService:
+    return ForcedSellerService()

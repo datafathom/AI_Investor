@@ -32,6 +32,10 @@ from web.api import (
     margin_api,
     mobile_api,
     integrations_api,
+    admin,
+    deployments_api,
+    ops_api,
+    workspaces_api,
     advanced_risk_api,
     advanced_orders_api,
     ai_assistant_api,
@@ -60,6 +64,7 @@ from web.api import (
     hedging_api,
     incident_api,
     institutional_api,
+    market_api,
     marketplace_api,
     ml_training_api,
     news_api,
@@ -81,6 +86,8 @@ from web.api import (
     system_telemetry_api,
     tax_optimization_api
 )
+from web.api import indicators_api
+from web.api import compliance_144a_api
 from web.routes import approval_router
 
 # Setup logging
@@ -133,6 +140,10 @@ app.include_router(corporate_api.router)
 app.include_router(margin_api.router)
 app.include_router(mobile_api.router)
 app.include_router(integrations_api.router)
+app.include_router(admin.router)
+# app.include_router(deployments_api.router)
+# app.include_router(ops_api.router)
+# app.include_router(workspaces_api.router) # New
 
 # Phase 6+ and Supplemental Routers
 app.include_router(advanced_risk_api.router)
@@ -164,6 +175,7 @@ app.include_router(hedging_api.router)
 app.include_router(incident_api.router)
 app.include_router(institutional_api.router)
 app.include_router(marketplace_api.router)
+app.include_router(market_api.router)
 app.include_router(ml_training_api.router)
 app.include_router(news_api.router)
 app.include_router(optimization_api.router)
@@ -183,11 +195,16 @@ app.include_router(social_trading_api.router)
 app.include_router(spatial_api.router)
 app.include_router(system_telemetry_api.router)
 app.include_router(tax_optimization_api.router)
+app.include_router(indicators_api.router)
+app.include_router(compliance_144a_api.router)
 
 # app.include_router(mission_api.router) # If found later
 
 # Mount Socket.IO
 app.mount("/socket.io", socket_app)
+
+from web.websocket.event_bus_ws import eb_socket_app
+app.mount("/ws/admin/event-bus", eb_socket_app)
 
 # Global Slack Service reference for lifecycle management
 _slack_service = None
@@ -206,7 +223,15 @@ async def startup_event():
             level="success"
         )
         
-        # 2. Start Bot Listener in Background (non-blocking)
+        # 2. Start Event Bus Broadcaster
+        try:
+            from web.websocket.event_bus_ws import start_event_bus_broadcast
+            start_event_bus_broadcast()
+            logger.info("🛰️ Event Bus WS Broadcaster started.")
+        except Exception as e:
+            logger.error(f"Failed to start Event Bus WS Broadcaster: {e}")
+
+        # 3. Start Bot Listener in Background (non-blocking)
         import asyncio
         asyncio.create_task(_slack_service.start_bot())
         logger.info("📡 Slack Bot listener integrated and running.")

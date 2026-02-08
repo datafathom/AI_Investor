@@ -19,7 +19,7 @@ DEPENDENCIES:
 """
 import asyncio
 import logging
-from typing import Dict, Any, Optional, Set
+from typing import Dict, Any, Optional, Set, List
 from datetime import datetime, timezone
 import jwt
 
@@ -43,6 +43,15 @@ dept_socket_app = socketio.ASGIApp(dept_sio, socketio_path='')
 # Track connected clients per department for load management
 _dept_connections: Dict[int, Set[str]] = {}
 MAX_CONNECTIONS_PER_DEPT = 100
+
+# Global stats tracking
+_global_stats = {
+    "total_connections": 0,
+    "max_concurrent": 0,
+    "messages_sent": 0,
+    "messages_received": 0,
+    "errors": []
+}
 
 # Heartbeat interval (seconds)
 HEARTBEAT_INTERVAL = 30
@@ -103,6 +112,10 @@ async def connect(sid: str, environ: Dict, auth: Optional[Dict] = None) -> bool:
         await dept_sio.save_session(sid, {'user_id': 'anonymous', 'authenticated': False})
     
     logger.info(f"Client connected: {sid} (user: {user_id})")
+    
+    _global_stats["total_connections"] += 1
+    current_active = sum(len(s) for s in _dept_connections.values()) + 1 # rough estimate
+    _global_stats["max_concurrent"] = max(_global_stats["max_concurrent"], current_active)
     
     # Send welcome message
     await dept_sio.emit('connected', {
@@ -255,5 +268,32 @@ class DepartmentBroadcaster:
     async def event(self, dept_id: int, event_type: str, payload: Dict[str, Any]) -> None:
         await broadcast_event(dept_id, event_type, payload)
 
+def get_websocket_stats() -> Dict[str, Any]:
+    """Get global WebSocket statistics."""
+    return {
+        "active": sum(len(s) for s in _dept_connections.values()),
+        "max": 1000, # total server capacity
+        "total_served": _global_stats["total_connections"],
+        "msg_in": _global_stats["messages_received"],
+        "msg_out": _global_stats["messages_sent"],
+        "error_count": len(_global_stats["errors"])
+    }
+
+def list_active_connections() -> List[Dict[str, Any]]:
+    """List summary of active connections (mocked for security)."""
+    conns = []
+    for dept_id, sids in _dept_connections.items():
+        for sid in sids:
+            conns.append({
+                "id": sid,
+                "dept_id": dept_id,
+                "type": "department_subscriber"
+            })
+    return conns
+
+async def force_disconnect(sid: str):
+    """Forcefully disconnect a client."""
+    await dept_sio.disconnect(sid)
+    logger.warning(f"Forced disconnect for SID: {sid}")
 
 dept_broadcaster = DepartmentBroadcaster()
