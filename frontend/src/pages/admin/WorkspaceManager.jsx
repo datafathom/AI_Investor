@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Layout, Save, Trash2, Upload, Plus, Monitor } from 'lucide-react';
+import { LayoutGrid, Save, Trash2, Upload, Plus, Monitor, ChevronLeft, ShieldAlert, Search } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { useWidgetLayout } from '../../hooks/useWidgetLayout';
 import {
@@ -16,10 +17,14 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog";
 
+const API_BASE = '/admin/workspaces';
+
 const WorkspaceManager = () => {
     const [workspaces, setWorkspaces] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
     const [createDialogOpen, setCreateDialogOpen] = useState(false);
+    const [selectedWorkspace, setSelectedWorkspace] = useState(null);
     const [newWorkspaceName, setNewWorkspaceName] = useState("");
     const { toast } = useToast();
     
@@ -29,11 +34,8 @@ const WorkspaceManager = () => {
     // Fetch workspaces
     const fetchWorkspaces = async () => {
         try {
-            const response = await fetch('http://localhost:5050/api/v1/admin/workspaces');
-            if (response.ok) {
-                const data = await response.json();
-                setWorkspaces(data);
-            }
+            const data = await apiClient.get(API_BASE);
+            setWorkspaces(data);
         } catch (error) {
             console.error("Failed to fetch workspaces", error);
         } finally {
@@ -48,25 +50,12 @@ const WorkspaceManager = () => {
     const handleCreateWorkspace = async () => {
         if (!newWorkspaceName.trim()) return;
         
-        // In a real app, we'd capture the *actual* current layout state here via the hook or store
-        // For this demo, we'll assume the backend or hook handles the actual layout capture, 
-        // OR we send a dummy layout if just creating the metadata.
-        // Let's assume we want to save the "current" layout configuration.
-        // Since `saveWorkspace` in the hook likely saves to localStorage, we'll simulate the API call here 
-        // to persist it to our new backend.
-        
-        const currentLayoutMock = {
-    const handleCreate = async (workspaceData) => {
         try {
-            const response = await fetch(API_BASE, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(workspaceData)
-            });
-            if (response.ok) {
-                toast({ title: "Workspace Created", description: "Successfully provisioned new workspace.", variant: "success" });
-                fetchWorkspaces();
-            }
+            await apiClient.post(API_BASE, { name: newWorkspaceName });
+            toast({ title: "Workspace Created", description: "Successfully provisioned new workspace.", variant: "success" });
+            setCreateDialogOpen(false);
+            setNewWorkspaceName("");
+            fetchWorkspaces();
         } catch (error) {
             toast({ title: "Creation Failed", variant: "destructive" });
         }
@@ -75,48 +64,18 @@ const WorkspaceManager = () => {
     const handleDelete = async (id) => {
         if (!confirm("Are you sure you want to decommission this workspace? This cannot be undone.")) return;
         try {
-            const response = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
-            if (response.ok) {
-                toast({ title: "Workspace Deleted" });
-                if (selectedWorkspace?.id === id) setSelectedWorkspace(null);
-                fetchWorkspaces();
-            }
+            await apiClient.delete(`${API_BASE}/${id}`);
+            toast({ title: "Workspace Deleted" });
+            if (selectedWorkspace?.id === id) setSelectedWorkspace(null);
+            fetchWorkspaces();
         } catch (error) {
             toast({ title: "Deletion Failed", variant: "destructive" });
         }
     };
 
-    const handleUpdateQuotas = async (updatedQuotas) => {
-        try {
-            const response = await fetch(`${API_BASE}/${selectedWorkspace.id}/quotas`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedQuotas)
-            });
-            if (response.ok) {
-                toast({ title: "Quotas Updated", description: "Resource limits applied successfully.", variant: "success" });
-                fetchWorkspaces();
-            }
-        } catch (error) {
-            toast({ title: "Update Failed", variant: "destructive" });
-        }
-    };
-
-    const handleRemoveUser = async (userId) => {
-        try {
-            const response = await fetch(`${API_BASE}/${selectedWorkspace.id}/users/${userId}`, { method: 'DELETE' });
-            if (response.ok) {
-                toast({ title: "User Removed", description: `Revoked access for ${userId}.` });
-                fetchWorkspaces();
-            }
-        } catch (error) {
-            toast({ title: "Revocation Failed", variant: "destructive" });
-        }
-    };
-
     const filteredWorkspaces = workspaces.filter(ws => 
-        ws.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        ws.id.toLowerCase().includes(searchTerm.toLowerCase())
+        ws.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        ws.id?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     if (selectedWorkspace) {
@@ -147,38 +106,6 @@ const WorkspaceManager = () => {
                         </Button>
                      </div>
                 </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 space-y-8">
-                        <div className="space-y-4">
-                            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                                <Search className="h-4 w-4 text-indigo-400" /> Authorized Identities
-                            </h3>
-                            <UserAssignmentTable users={selectedWorkspace.users} onRemoveUser={handleRemoveUser} />
-                            <div className="flex justify-start">
-                                <Button size="sm" variant="outline" className="border-gray-800 text-indigo-400 hover:bg-indigo-900/10 border-dashed">
-                                    <Plus className="h-4 w-4 mr-2" /> Invite Service Provider / User
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="space-y-8">
-                         <QuotaSettings quotas={selectedWorkspace.quotas} onUpdate={handleUpdateQuotas} />
-                         
-                         <div className="bg-amber-950/20 border border-amber-900/50 rounded-lg p-4">
-                             <div className="flex gap-3">
-                                <ShieldAlert className="h-5 w-5 text-amber-500 mt-0.5" />
-                                <div>
-                                    <p className="text-amber-200 text-sm font-bold">Policy Enforcement</p>
-                                    <p className="text-amber-500/80 text-xs mt-1 leading-relaxed">
-                                        Isolation is enforced at the network level. Users without valid tokens for this workspace will be automatically rejected.
-                                    </p>
-                                </div>
-                             </div>
-                         </div>
-                    </div>
-                </div>
             </div>
         );
     }
@@ -195,23 +122,38 @@ const WorkspaceManager = () => {
                         Manage isolated environments, resource allocation, and team containment policies.
                     </p>
                 </div>
-                <Button onClick={() => setIsCreateModalOpen(true)} className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold h-12 px-6 gap-2 shadow-lg shadow-indigo-900/20">
+                <Button onClick={() => setCreateDialogOpen(true)} className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold h-12 px-6 gap-2 shadow-lg shadow-indigo-900/20">
                     <Plus className="h-5 w-5" /> Initialize Workspace
                 </Button>
             </header>
 
-                            </Button>
-                        </CardFooter>
-                    </Card>
-                ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {loading ? (
+                    <div className="col-span-full text-center py-20 text-gray-500">Scanning environments...</div>
+                ) : (
+                    filteredWorkspaces.map(ws => (
+                        <Card key={ws.id} className="bg-gray-900/40 border-gray-800 hover:border-indigo-500/50 transition-all group">
+                            <CardHeader>
+                                <div className="flex justify-between items-start">
+                                    <CardTitle className="text-white group-hover:text-indigo-400 transition-colors">{ws.name}</CardTitle>
+                                    <Badge variant="outline" className="font-mono text-[10px] opacity-60">{ws.id.slice(0, 8)}</Badge>
+                                </div>
+                                <CardDescription>Provisioned: {new Date(ws.created_at).toLocaleDateString()}</CardDescription>
+                            </CardHeader>
+                            <CardFooter>
+                                <Button variant="secondary" className="w-full" onClick={() => setSelectedWorkspace(ws)}>Manage Resources</Button>
+                            </CardFooter>
+                        </Card>
+                    ))
+                )}
             </div>
 
             <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
                 <DialogContent className="bg-gray-950 border-gray-800 text-white">
                     <DialogHeader>
-                        <DialogTitle>Save Workspace</DialogTitle>
+                        <DialogTitle>Provision Workspace</DialogTitle>
                         <DialogDescription>
-                            Name your current layout configuration to access it later.
+                            Create a new isolated environment for team collaboration.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
@@ -222,13 +164,13 @@ const WorkspaceManager = () => {
                                 value={newWorkspaceName} 
                                 onChange={(e) => setNewWorkspaceName(e.target.value)}
                                 className="col-span-3 bg-gray-900 border-gray-700" 
-                                placeholder="e.g., Morning Focus"
+                                placeholder="e.g., Alpha Quant Lab"
                             />
                         </div>
                     </div>
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>Cancel</Button>
-                        <Button onClick={handleCreateWorkspace}>Save Workspace</Button>
+                        <Button onClick={handleCreateWorkspace}>Create Workspace</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

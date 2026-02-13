@@ -1,190 +1,132 @@
-"""
-==============================================================================
-FILE: web/api/news_api.py
-ROLE: News & Sentiment API Endpoints (FastAPI)
-PURPOSE: REST endpoints for news aggregation and sentiment analysis.
-==============================================================================
-"""
-
-from fastapi import APIRouter, HTTPException, Depends, Query
-from typing import List, Optional
+from fastapi import APIRouter, HTTPException, Query, WebSocket, WebSocketDisconnect
+from typing import List, Optional, Dict
+from pydantic import BaseModel
+import asyncio
+import json
 import logging
-from services.news.news_aggregation_service import get_news_aggregation_service
-from services.news.sentiment_analysis_service import get_sentiment_analysis_service
-from web.auth_utils import get_current_user
+
+from services.news.aggregator import NewsAggregator
+from services.news.rumor_classifier import RumorClassifier
 
 logger = logging.getLogger(__name__)
-
 router = APIRouter(prefix="/api/v1/news", tags=["News"])
 
+# --- Models ---
+class ArticleResponse(BaseModel):
+    id: str
+    title: str
+    source: str
+    published_at: str
+    sentiment_label: str
 
-@router.get('/articles')
-async def get_news_articles(
-    symbols: Optional[str] = Query(None),
-    limit: int = Query(50),
-    hours_back: int = Query(24),
-    current_user: dict = Depends(get_current_user),
-    service = Depends(get_news_aggregation_service)
+class SavedSearchRequest(BaseModel):
+    name: str
+    filters: Dict
+
+# --- News Aggregator Endpoints ---
+
+@router.get("/articles")
+async def get_articles(
+    limit: int = 20, 
+    cursor: Optional[str] = None,
+    source: Optional[str] = None,
+    ticker: Optional[str] = None,
+    tag: Optional[str] = None
 ):
-    """
-    Get news articles.
-    """
+    service = NewsAggregator()
+    return await service.get_articles(limit, cursor, source, ticker, tag)
+
+@router.get("/articles/{id}")
+async def get_article_details(id: str):
+    service = NewsAggregator()
+    article = await service.get_article_details(id)
+    if not article:
+        raise HTTPException(status_code=404, detail="Article not found")
+    return article
+
+@router.get("/sources")
+async def list_sources():
+    service = NewsAggregator()
+    return await service.get_sources()
+
+@router.post("/saved-searches")
+async def create_saved_search(req: SavedSearchRequest):
+    service = NewsAggregator()
+    return await service.create_saved_search(req.name, req.filters)
+
+@router.get("/saved-searches")
+async def list_saved_searches():
+    service = NewsAggregator()
+    return await service.list_saved_searches()
+
+# --- Rumor Mill Endpoints ---
+
+@router.get("/rumors")
+async def list_rumors():
+    service = RumorClassifier()
+    return await service.list_rumors()
+
+@router.get("/rumors/{id}")
+async def get_rumor(id: str):
+    service = RumorClassifier()
+    r = await service.get_rumor(id)
+    if not r:
+        raise HTTPException(status_code=404, detail="Rumor not found")
+    return r
+
+@router.post("/rumors/{id}/vote")
+async def vote_rumor(id: str, vote_type: str = Query(..., regex="^(up|down)$")):
+    service = RumorClassifier()
+    r = await service.vote(id, vote_type)
+    if not r:
+        raise HTTPException(status_code=404, detail="Rumor not found")
+    return r
+
+# --- WebSockets ---
+
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def broadcast(self, message: dict):
+        for connection in self.active_connections:
+            try:
+                await connection.send_json(message)
+            except:
+                pass
+
+manager = ConnectionManager()
+
+@router.websocket("/stream")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
     try:
-        symbol_list = symbols.split(',') if symbols else None
-        articles = await service.fetch_news(
-            symbols=symbol_list,
-            limit=limit,
-            hours_back=hours_back
-        )
-        
-        return {
-            'success': True,
-            'data': [a.model_dump() for a in articles]
-        }
-        
-    except Exception as e:
-        logger.exception(f"Error fetching news: {e}")
-        from fastapi.responses import JSONResponse
-        return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
+        while True:
+            # Keep connection alive, consume messages if any
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
 
+# Mock background task to simulate real-time news
+async def mock_news_stream():
+    service = NewsAggregator()
+    while True:
+        await asyncio.sleep(5) # Emit every 5 seconds
+        if manager.active_connections:
+            # Pick a random article and re-emit it as "new"
+            if service.cached_articles:
+                article = service.cached_articles[0] 
+                # Shallow copy and update timestamp
+                new_article = article.copy()
+                new_article['published_at'] = datetime.now().isoformat()
+                new_article['title'] = f"[LIVE] {article['title']}"
+                await manager.broadcast({"type": "news", "data": new_article})
 
-@router.get('/symbol/{symbol}')
-async def get_news_for_symbol(
-    symbol: str,
-    limit: int = Query(20),
-    current_user: dict = Depends(get_current_user)
-):
-    """
-    Get news articles for a specific symbol.
-    """
-    try:
-        service = get_news_aggregation_service()
-        articles = await service.get_news_for_symbol(symbol, limit)
-        
-        return {
-            'success': True,
-            'data': [a.model_dump() for a in articles]
-        }
-        
-    except Exception as e:
-        logger.exception(f"Error fetching news for symbol {symbol}: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.get('/trending')
-async def get_trending_news(
-    limit: int = Query(20),
-    current_user: dict = Depends(get_current_user)
-):
-    """
-    Get trending news articles.
-    """
-    try:
-        service = get_news_aggregation_service()
-        articles = await service.get_trending_news(limit)
-        
-        return {
-            'success': True,
-            'data': [a.model_dump() for a in articles]
-        }
-        
-    except Exception as e:
-        logger.exception(f"Error fetching trending news: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.get('/sentiment/{symbol}')
-async def get_sentiment(
-    symbol: str,
-    hours_back: int = Query(24),
-    current_user: dict = Depends(get_current_user),
-    service = Depends(get_sentiment_analysis_service)
-):
-    """
-    Get sentiment analysis for a symbol.
-    """
-    try:
-        sentiment = await service.get_symbol_sentiment(symbol, hours_back)
-        
-        return {
-            'success': True,
-            'data': sentiment.model_dump()
-        }
-        
-    except Exception as e:
-        logger.exception(f"Error getting sentiment for {symbol}: {e}")
-        from fastapi.responses import JSONResponse
-        return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
-
-
-@router.get('/impact/{symbol}')
-async def get_market_impact(
-    symbol: str,
-    current_user: dict = Depends(get_current_user)
-):
-    """
-    Assess market impact from news sentiment.
-    """
-    try:
-        service = get_sentiment_analysis_service()
-        impact = await service.assess_market_impact(symbol)
-        
-        return {
-            'success': True,
-            'data': impact.model_dump()
-        }
-        
-    except Exception as e:
-        logger.exception(f"Error assessing market impact for {symbol}: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.get('/sectors')
-async def get_sector_sentiment(
-    current_user: dict = Depends(get_current_user)
-):
-    """
-    Get sentiment across all market sectors for the Flow Radar.
-    """
-    try:
-        service = get_sentiment_analysis_service()
-        sectors = await service.get_all_sectors_sentiment()
-        
-        return {
-            'success': True,
-            'data': [s.model_dump() for s in sectors]
-        }
-    except Exception as e:
-        logger.exception(f"Error getting sector sentiment: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.get('/headlines')
-async def get_headlines(
-    mock: bool = Query(False),
-    limit: int = Query(10),
-    current_user: dict = Depends(get_current_user)
-):
-    """
-    Get market headlines with sentiment analysis.
-    """
-    try:
-        service = get_news_aggregation_service()
-        articles = await service.get_trending_news(limit)
-        
-        return {
-            'success': True,
-            'data': [a.model_dump() for a in articles]
-        }
-    except Exception as e:
-        logger.exception(f"Error fetching headlines: {e}")
-        # Return mock headlines as fallback
-        return {
-            'success': True,
-            'data': [
-                {'title': 'Markets rally on Fed signals', 'sentiment': 0.72, 'source': 'Reuters', 'published': '2026-02-03T15:30:00Z'},
-                {'title': 'Tech sector leads gains', 'sentiment': 0.65, 'source': 'Bloomberg', 'published': '2026-02-03T14:45:00Z'},
-                {'title': 'Oil prices stabilize', 'sentiment': 0.42, 'source': 'WSJ', 'published': '2026-02-03T13:20:00Z'}
-            ]
-        }
-
+# Note: In a real app, `mock_news_stream` would be started by the app lifecycle

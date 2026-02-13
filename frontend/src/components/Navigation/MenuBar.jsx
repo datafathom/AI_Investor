@@ -6,16 +6,14 @@
  */
 
 import React, { useState, useRef, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import useEducationStore from "../../stores/educationStore";
 import { 
   Settings, Search, Brain, Cpu, Target, TrendingUp, Shield, Grid, 
   Home, ShieldCheck, Scale, Users, Briefcase, Clock, Zap, Landmark, Layout, Atom,
   Crosshair, Activity, Terminal, Database, BookOpen, ShoppingBag, Bell
-import { 
-  Settings, Search, Brain, Cpu, Target, TrendingUp, Shield, Grid, 
-  Home, ShieldCheck, Scale, Users, Briefcase, Clock, Zap, Landmark, Layout, Atom,
-  Crosshair, Activity, Terminal, Database, BookOpen, ShoppingBag, Bell
 } from "lucide-react";
+import CommandPalette from "../Layout/CommandPalette";
 import EnvVarsModal from "../admin/EnvVarsModal";
 import { DEPT_REGISTRY } from "../../config/departmentRegistry";
 import { getIcon } from "../../config/iconRegistry";
@@ -178,11 +176,13 @@ export default function MenuBar({
   onLoadWorkspace,
   onSaveWorkspacePrompt,
 }) {
+  const navigate = useNavigate();
   const [activeMenu, setActiveMenu] = useState(null);
   const menuRefs = useRef({});
   const menuBarRef = useRef(null);
 
   const [localUser, setLocalUser] = useState(currentUser);
+  const [commandOpen, setCommandOpen] = useState(false);
 
   useEffect(() => {
     setLocalUser(currentUser);
@@ -230,25 +230,75 @@ export default function MenuBar({
       { label: "📝 Paper Trading", action: "nav-path:/special/paper" }
     ];
 
-    const allDeptRoutes = Object.values(DEPT_REGISTRY).map(dept => ({
-      label: dept.name,
-      icon: getIcon(dept.icon),
-      action: `nav-dept-${dept.id}`,
-      submenu: [
-        { label: `${dept.shortName} Dashboard`, action: `nav-dept-${dept.id}` },
-        ...(dept.subModules || []).map(mod => ({
-          label: mod.label,
+    const allDeptRoutes = Object.values(DEPT_REGISTRY)
+      .filter(dept => {
+        // Exclude Admin from general list, we'll handle it separately for visibility
+        if (dept.id === 19) return false;
+        
+        if (dept.minRole === 'admin') {
+          return currentUser?.role === 'admin' && currentUser?.username?.toLowerCase() === 'admin';
+        }
+        return true;
+      })
+      .sort((a, b) => (a.name || "").localeCompare(b.name || ""))
+      .map(dept => {
+        const uniqueSubModules = (dept.subModules || []).filter(mod => mod.path !== dept.route);
+        return {
+          label: dept.name,
+          icon: getIcon(dept.icon),
+          action: `nav-dept-${dept.id}`,
+          submenu: [
+            { label: `${dept.shortName} Dashboard`, action: `nav-dept-${dept.id}` },
+            ...uniqueSubModules.map(mod => ({
+              label: mod.label,
+              action: `nav-path:${mod.path}`
+            }))
+          ]
+        };
+      });
+
+    // DEBUG: Log current user to debug admin visibility
+    console.log('[MenuBar] Admin Check:', { 
+        user: currentUser, 
+        role: currentUser?.role, 
+        username: currentUser?.username,
+        isAdmin: currentUser?.role === 'admin'
+    });
+
+    const isAdminUser = currentUser?.role === 'admin'; // Relaxed check: Role only
+    const adminDept = DEPT_REGISTRY[19];
+    const adminMenuItems = isAdminUser && adminDept ? [
+      {
+        label: "🛡️ Admin Controls",
+        icon: ShieldCheck,
+        action: `nav-dept-19`,
+        highlight: true,
+        submenu: [
+          { label: "Admin Dashboard", action: "nav-dept-19" },
+          ...(adminDept.subModules || [])
+            .filter(mod => mod.path !== adminDept.route)
+            .map(mod => ({
+              label: mod.label,
+              action: `nav-path:${mod.path}`
+            }))
+        ]
+      },
+      { type: "divider" }
+    ] : [];
+
+    const allWorkstationRoutes = Object.values(DEPT_REGISTRY)
+      .filter(dept => {
+        if (dept.minRole === 'admin') {
+          return currentUser?.role === 'admin' && currentUser?.username?.toLowerCase() === 'admin';
+        }
+        return true;
+      })
+      .flatMap(dept => 
+        (dept.subModules || []).map(mod => ({
+          label: `${dept.shortName}: ${mod.label}`,
           action: `nav-path:${mod.path}`
         }))
-      ]
-    }));
-
-    const allWorkstationRoutes = Object.values(DEPT_REGISTRY).flatMap(dept => 
-      (dept.subModules || []).map(mod => ({
-        label: `${dept.shortName}: ${mod.label}`,
-        action: `nav-path:${mod.path}`
-      }))
-    );
+      );
 
     // 3. Combine dynamic Routes, STATIC_BEFORE, and STATIC_AFTER
     const baseMenuItems = [
@@ -275,6 +325,7 @@ export default function MenuBar({
             submenu: allWorkstationRoutes
           },
           { type: "divider" },
+          ...adminMenuItems,
           { label: "🖥️ Master Terminal", action: "nav-special-terminal" },
           { label: "🎯 Mission Control", action: "nav-special-mission-control" },
           { label: "📊 Fleet Analytics", action: "nav-path:/special/fleet" },
@@ -582,6 +633,11 @@ export default function MenuBar({
       return;
     }
 
+    if (action === "open-env-vars") {
+      setShowEnvVars(true);
+      return;
+    }
+
     if (action === "logout" && onLogout) {
       onLogout();
     }
@@ -591,6 +647,19 @@ export default function MenuBar({
 
     if (action === "auto-sort") {
       onAutoSort();
+      return;
+    }
+
+    // Handle Admin/Department Navigation
+    if (action?.startsWith("nav-dept-")) {
+      const deptId = action.replace("nav-dept-", "");
+      navigate(deptId === '19' ? '/dept/admin' : `/dept/${deptId}`);
+      return;
+    }
+
+    if (action?.startsWith("nav-path:")) {
+      const path = action.replace("nav-path:", "");
+      navigate(path);
       return;
     }
 
@@ -706,7 +775,7 @@ export default function MenuBar({
           </label>
           <span>Dark</span>
         </div>
-        <CommandDialog open={commandOpen} onOpenChange={setCommandOpen} />
+        <CommandPalette open={commandOpen} onOpenChange={setCommandOpen} />
         <EnvVarsModal open={showEnvVars} onOpenChange={setShowEnvVars} />
       </div>
     </div>

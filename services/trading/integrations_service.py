@@ -74,6 +74,28 @@ class IntegrationsService:
         logger.info(f"Testing webhook {webhook_id}")
         return {"status": "success", "delivery_rate": "100%"}
 
+    async def get_available_integrations(self) -> List[Dict]:
+        return [
+            {"id": "int_1", "name": "Salesforce", "category": "CRM", "description": "Sync customer data", "icon": "cloud"},
+            {"id": "int_2", "name": "Slack", "category": "Communication", "description": "Send alerts to channels", "icon": "message-circle"},
+            {"id": "int_3", "name": "QuickBooks", "category": "Finance", "description": "Sync invoices and expenses", "icon": "dollar-sign"},
+            {"id": "int_4", "name": "Jira", "category": "Project Mgmt", "description": "Create tickets from alerts", "icon": "trello"},
+             {"id": "int_5", "name": "Google Sheets", "category": "Data", "description": "Export reports to sheets", "icon": "table"},
+        ]
+
+    async def get_connected_integrations(self, user_id: str) -> List[Dict]:
+        return [
+            {"id": "conn_101", "integration_id": "int_2", "name": "Slack", "status": "active", "connected_at": "2024-01-15T10:00:00"},
+            {"id": "conn_102", "integration_id": "int_5", "name": "Google Sheets", "status": "active", "connected_at": "2024-02-01T14:30:00"},
+        ]
+
+    async def get_sync_history(self, user_id: str, limit: int) -> List[Dict]:
+        return [
+            {"id": "sync_501", "connector": "Salesforce", "status": "success", "records": 150, "timestamp": "2024-02-09T08:00:00"},
+             {"id": "sync_500", "connector": "QuickBooks", "status": "failed", "error": "Auth token expired", "timestamp": "2024-02-08T18:00:00"},
+             {"id": "sync_499", "connector": "Slack", "status": "success", "records": 1, "timestamp": "2024-02-08T12:00:00"},
+        ]
+
 # Singleton
 _integrations_service: Optional[IntegrationsService] = None
 

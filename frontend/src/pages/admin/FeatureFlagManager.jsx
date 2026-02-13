@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Zap, Search, RefreshCw, X, Settings2 } from 'lucide-react';
+import apiClient from '../../services/apiClient';
+import { Zap, Search, Settings2, AlertTriangle } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
     Dialog,
     DialogContent,
@@ -14,7 +16,6 @@ import {
 
 // Sub-components
 import FeatureFlagCard from '@/components/cards/FeatureFlagCard';
-import TargetingRulesEditor from '@/components/admin/TargetingRulesEditor';
 
 const API_BASE = '/api/v1/admin/features';
 
@@ -107,14 +108,20 @@ const FeatureFlagManager = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-gray-400">
-                                    {name.includes("BETA") ? "⚠️ Experimental feature. Use with caution." : "Standard system feature toggle."}
-                                </p>
-                            </CardContent>
-                        </Card>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {loading ? (
+                    <div className="col-span-full py-20 text-center text-gray-500">Initializing registry...</div>
+                ) : (
+                    filteredFlagNames.map(name => (
+                        <FeatureFlagCard 
+                            key={name}
+                            name={name}
+                            flag={flags[name]}
+                            onToggle={() => handleToggle(name)}
+                            onEdit={() => handleEdit(name, flags[name])}
+                        />
                     ))
                 )}
             </div>
@@ -126,6 +133,33 @@ const FeatureFlagManager = () => {
                     <p>Changes take effect immediately for new requests. Some active sessions may require a refresh to see changes.</p>
                 </div>
             </div>
+
+            {/* Edit Dialog */}
+            <Dialog open={!!editingFlag} onOpenChange={() => setEditingFlag(null)}>
+                <DialogContent className="bg-gray-950 border-gray-800 text-white">
+                    <DialogHeader>
+                        <DialogTitle>Update {editingFlag}</DialogTitle>
+                        <DialogDescription>Modify targeting rules and rollout percentage.</DialogDescription>
+                    </DialogHeader>
+                    {editData && (
+                        <div className="space-y-4 py-4">
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase">Rollout Percentage</label>
+                                <Input 
+                                    type="number" 
+                                    value={editData.rollout_pct} 
+                                    onChange={(e) => setEditData({...editData, rollout_pct: parseInt(e.target.value)})}
+                                    className="bg-gray-900 border-gray-800"
+                                />
+                            </div>
+                        </div>
+                    )}
+                    <DialogFooter>
+                        <Button variant="ghost" onClick={() => setEditingFlag(null)}>Cancel</Button>
+                        <Button onClick={handleSaveConfig} className="bg-indigo-600">Save Changes</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

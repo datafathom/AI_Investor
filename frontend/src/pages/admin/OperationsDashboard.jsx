@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,10 +15,11 @@ import {
 } from "@/components/ui/dialog";
 
 // Sub-components
-import JobScheduleTable from '@/components/admin/JobScheduleTable';
-import JobRunHistory from '@/components/admin/JobRunHistory';
+import JobScheduleTable from '@/components/Admin/JobScheduleTable';
+import JobRunHistory from '@/components/Admin/JobRunHistory';
+import DataQualityWidget from '@/components/Widgets/DataQualityWidget';
 
-const API_BASE = '/api/v1/admin/ops';
+const API_BASE = '/admin/ops';
 
 const OperationsDashboard = () => {
     const [jobs, setJobs] = useState([]);
@@ -30,11 +32,8 @@ const OperationsDashboard = () => {
     // Fetch initial data
     const fetchJobs = async () => {
         try {
-            const response = await fetch(`${API_BASE}/jobs`);
-            if (response.ok) {
-                const data = await response.json();
-                setJobs(data);
-            }
+            const data = await apiClient.get(`${API_BASE}/jobs`);
+            setJobs(data);
         } catch (error) {
             console.error("Failed to fetch jobs", error);
         } finally {
@@ -51,13 +50,7 @@ const OperationsDashboard = () => {
     const handleTriggerJob = async (jobId) => {
         try {
             toast({ title: "Triggering Job...", description: `Starting job ${jobId}` });
-            const response = await fetch(`${API_BASE}/jobs/${jobId}/trigger`, {
-                method: 'POST'
-            });
-            
-            if (!response.ok) throw new Error("Failed to trigger job");
-            
-            const result = await response.json();
+            const result = await apiClient.post(`${API_BASE}/jobs/${jobId}/trigger`);
             
             toast({
                 title: result.status === 'success' ? "Job Completed" : "Job Failed",
@@ -75,11 +68,8 @@ const OperationsDashboard = () => {
         setSelectedJob(job);
         setLogsOpen(true);
         try {
-             const response = await fetch(`${API_BASE}/jobs/${jobId}/runs`);
-             if (response.ok) {
-                 const data = await response.json();
-                 setJobHistory(data);
-             }
+             const data = await apiClient.get(`${API_BASE}/jobs/${jobId}/runs`);
+             setJobHistory(data);
         } catch (error) {
             toast({ title: "Error fetching logs", variant: "destructive" });
         }
@@ -141,27 +131,34 @@ const OperationsDashboard = () => {
                  </Card>
             </div>
 
-            <Card className="bg-gray-900/40 border-gray-800">
-                <CardHeader className="border-b border-gray-800/50 pb-4">
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <CardTitle className="text-xl">Job Registry</CardTitle>
-                            <CardDescription>Managed automated tasks and system crons.</CardDescription>
-                        </div>
-                        <Badge variant="outline" className="bg-purple-900/10 text-purple-400 border-purple-500/30">
-                            SCHEDULER: ACTIVE
-                        </Badge>
-                    </div>
-                </CardHeader>
-                <CardContent className="pt-6">
-                    <JobScheduleTable 
-                        jobs={jobs} 
-                        onTrigger={handleTriggerJob} 
-                        onViewLogs={handleViewLogs}
-                        onEditSchedule={handleEditSchedule}
-                    />
-                </CardContent>
-            </Card>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                    <Card className="bg-gray-900/40 border-gray-800 h-full">
+                        <CardHeader className="border-b border-gray-800/50 pb-4">
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <CardTitle className="text-xl">Job Registry</CardTitle>
+                                    <CardDescription>Managed automated tasks and system crons.</CardDescription>
+                                </div>
+                                <Badge variant="outline" className="bg-purple-900/10 text-purple-400 border-purple-500/30">
+                                    SCHEDULER: ACTIVE
+                                </Badge>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="pt-6">
+                            <JobScheduleTable 
+                                jobs={jobs} 
+                                onTrigger={handleTriggerJob} 
+                                onViewLogs={handleViewLogs}
+                                onEditSchedule={handleEditSchedule}
+                            />
+                        </CardContent>
+                    </Card>
+                </div>
+                <div className="lg:col-span-1 h-full min-h-[500px]">
+                     <DataQualityWidget />
+                </div>
+            </div>
 
             {/* Logs Dialog */}
             <Dialog open={logsOpen} onOpenChange={setLogsOpen}>

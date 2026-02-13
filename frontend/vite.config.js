@@ -117,7 +117,8 @@ export default defineConfig({
 
   resolve: {
     alias: {
-      'three': resolve(__dirname, 'node_modules/three')
+      'three': resolve(__dirname, 'node_modules/three'),
+      '@': resolve(__dirname, './src')
     }
   },
 
@@ -136,6 +137,13 @@ export default defineConfig({
         // Target the Express backend server
         // BACKEND_PORT is set by run_nodeApps.py when starting the server
         target: `http://127.0.0.1:${process.env.BACKEND_PORT || '5050'}`,
+        changeOrigin: true,
+        secure: false,
+      },
+      // Proxy for WebSocket endpoints (EventBus, etc.)
+      '/ws': {
+        target: `http://127.0.0.1:${process.env.BACKEND_PORT || '5050'}`,
+        ws: true,
         changeOrigin: true,
         secure: false,
       },

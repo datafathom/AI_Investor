@@ -1,0 +1,68 @@
+﻿
+ [31mΓ¥»[39m tests/utils/authService.test.js [2m([22m[2m16 tests[22m[2m | 
+[22m[31m13 failed[39m[2m)[22m[32m 79[2mms[22m[39m
+ [31mΓ¥»[39m tests/components/MenuBar.test.jsx [2m([22m[2m14 tests[22m[2m 
+| [22m[31m14 failed[39m[2m)[22m[33m 547[2mms[22m[39m
+ [31mΓ¥»[39m tests/components/LoginModal.test.jsx [2m([22m[2m9 
+tests[22m[2m | [22m[31m7 failed[39m[2m)[22m[33m 2518[2mms[22m[39m
+[22m[39mFailed to fetch departments: Error: Network error
+ [31mΓ¥»[39m src/stores/__tests__/departmentStore.test.js [2m([22m[2m12 
+tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 222[2mms[22m[39m
+ [31mΓ¥»[39m tests/components/AuthGuard.test.jsx [2m([22m[2m6 tests[22m[2m 
+| [22m[31m6 failed[39m[2m)[22m[32m 102[2mms[22m[39m
+ [31mΓ¥»[39m tests/pages/AdvancedPortfolioAnalytics.test.jsx [2m([22m[2m3 
+tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1296[2mms[22m[39m
+ [31mΓ¥»[39m src/services/evolutionService.test.js [2m([22m[2m3 
+tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 27[2mms[22m[39m
+ [31mΓ¥»[39m tests/pages/AdvancedRiskDashboard.test.jsx [2m([22m[2m2 
+tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1410[2mms[22m[39m
+ [31mΓ¥»[39m src/services/politicsService.test.js [2m([22m[2m3 
+tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 743[2mms[22m[39m
+ [31mΓ¥»[39m tests/pages/AdvancedChartingDashboard.test.jsx [2m([22m[2m2 
+tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 2068[2mms[22m[39m
+ [31mΓ¥»[39m tests/pages/CommunityForumsDashboard.test.jsx [2m([22m[2m2 
+tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 2106[2mms[22m[39m
+[22m[39mFailed to fetch Market Prediction: ReferenceError: Worker is not defined
+[22m[39mFailed to fetch Market Prediction: Error: Network Error
+ [31mΓ¥»[39m src/services/marketService.test.js [2m([22m[2m2 tests[22m[2m 
+| [22m[31m1 failed[39m[2m)[22m[32m 30[2mms[22m[39m
+ [31mΓ¥»[39m src/services/debateService.test.js [2m([22m[2m2 tests[22m[2m 
+| [22m[31m2 failed[39m[2m)[22m[32m 10[2mms[22m[39m
+[22m[39mFailed to fetch leaderboard: TypeError: Cannot read properties of 
+undefined (reading 'getLeaderboard')
+Failed to fetch followed traders: TypeError: Cannot read properties of undefined 
+(reading 'getFollowedTraders')
+Failed to fetch copy trades: TypeError: Cannot read properties of undefined 
+(reading 'getCopyTrades')
+[22m[39mFailed to fetch traces: TypeError: Failed to parse URL from 
+/api/v1/dev/traces
+ [31mΓ¥»[39m tests/pages/DeveloperPlatformDashboard.test.jsx [2m([22m[2m1 
+test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 2385[2mms[22m[39m
+ [31mΓ¥»[39m tests/pages/InstitutionalToolsDashboard.test.jsx [2m([22m[2m1 
+test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 547[2mms[22m[39m
+[22m[39mFailed to init assistant: TypeError: Cannot read properties of 
+undefined (reading 'data')
+ [31mΓ¥»[39m src/tests/MiddlewarePipeline.test.jsx [2m([22m[2m1 
+test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1029[2mms[22m[39m
+ [31mΓ¥»[39m src/tests/MonitoringDashboard.test.jsx [2m([22m[2m1 
+test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1036[2mms[22m[39m
+ [31mΓ¥»[39m tests/pages/FinancialPlanningDashboard.test.jsx [2m([22m[2m1 
+test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1083[2mms[22m[39m
+ [31mΓ¥»[39m src/tests/ServiceHealthGrid.test.jsx [2m([22m[2m1 test[22m[2m 
+| [22m[31m1 failed[39m[2m)[22m[33m 1035[2mms[22m[39m
+ [31mΓ¥»[39m src/tests/GraphBrowser.test.jsx [2m([22m[2m1 test[22m[2m | 
+[22m[31m1 failed[39m[2m)[22m[33m 1036[2mms[22m[39m
+[22m[39mFailed to fetch reports: TypeError: Cannot read properties of undefined 
+(reading 'getReports')
+Failed to fetch templates: TypeError: Cannot read properties of undefined 
+(reading 'getTemplates')
+ [31mΓ¥»[39m tests/pages/IntegrationsDashboard.test.jsx [2m([22m[2m1 
+test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1037[2mms[22m[39m
+ [31mΓ¥»[39m tests/pages/ResearchReportsDashboard.test.jsx [2m([22m[2m1 
+test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 1103[2mms[22m[39m
+ [31mΓ¥»[39m tests/components/DepartmentDashboard.test.jsx [2m([22m[2m3 
+tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 63[2mms[22m[39m
+ [31mΓ¥»[39m tests/hooks/useLocalStorage.test.js [2m([22m[2m6 tests[22m[2m 
+| [22m[31m2 failed[39m[2m)[22m[32m 104[2mms[22m[39m
+
+

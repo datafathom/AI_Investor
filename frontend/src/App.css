@@ -60,7 +60,7 @@ main {
 }
 
 .switch .slider::before {
-  content: '';
+  content: "";
   position: absolute;
   height: 18px;
   width: 18px;
@@ -71,11 +71,11 @@ main {
   transition: transform 0.2s ease;
 }
 
-.switch input:checked+.slider {
+.switch input:checked + .slider {
   background: rgba(90, 21, 32, 0.25);
 }
 
-.switch input:checked+.slider::before {
+.switch input:checked + .slider::before {
   transform: translateX(22px);
 }
 
@@ -144,7 +144,10 @@ main {
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -157,7 +160,11 @@ main {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--color-burgundy-primary, #5a1520), var(--color-burgundy-accent, #7a2230));
+  background: linear-gradient(
+    135deg,
+    var(--color-burgundy-primary, #5a1520),
+    var(--color-burgundy-accent, #7a2230)
+  );
   color: var(--color-text-on_burgundy, #fffef0);
   box-shadow: 0 12px 18px rgba(90, 21, 32, 0.25);
 }
@@ -192,7 +199,9 @@ main {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
 }
 
 .btn-icon:hover {
@@ -259,12 +268,12 @@ main {
 .institutional-os-container.os-bleed {
   /* Exact height calculation: 100vh minus MenuBar (30px) and Taskbar (48px) */
   height: calc(100vh - 30px - 48px);
-  padding: 0 !important; 
+  padding: 0 !important;
   margin: 0 !important;
-  /* overflow: hidden !important;  <-- REMOVED: Causing clipped content on small screens */
-  overflow: auto !important; /* Allow scroll if content exceeds viewport */
+  overflow: hidden !important; /* Enforce hidden to allow inner scrolling */
   display: flex;
   flex-direction: column;
+  position: relative; /* Nuclear anchor */
 }
 
 /* Breadcrumbs container for OS pages - minimal */
@@ -286,7 +295,8 @@ main {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  overflow: visible;
+  overflow: hidden; 
+  position: relative; /* Nuclear anchor */
 }
 
 /* Regular route content - allows scrolling */
@@ -413,7 +423,7 @@ body.theme-dark .widget-wrapper {
   border-radius: 0;
 }
 
-.widget-wrapper>section {
+.widget-wrapper > section {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -425,7 +435,7 @@ body.theme-dark .widget-wrapper {
 }
 
 /* Ensure glass card styles don't override widget gradient */
-.widget-wrapper>section.glass.card {
+.widget-wrapper > section.glass.card {
   background: transparent !important;
   backdrop-filter: blur(8px) !important;
   border: none !important;
@@ -453,7 +463,9 @@ body.theme-dark .widget-wrapper {
   backdrop-filter: blur(4px);
   border-radius: var(--radius-chip);
   opacity: 0;
-  transition: opacity 0.2s, background 0.2s;
+  transition:
+    opacity 0.2s,
+    background 0.2s;
   user-select: none;
   display: flex;
   align-items: center;
@@ -533,7 +545,9 @@ body.theme-dark .widget-wrapper {
   background-origin: content-box;
   box-sizing: border-box;
   opacity: 0;
-  transition: opacity 0.15s, background-color 0.15s;
+  transition:
+    opacity 0.15s,
+    background-color 0.15s;
   z-index: 5;
   pointer-events: auto;
 }
@@ -724,7 +738,12 @@ body.theme-dark .widget-wrapper {
 .skeleton {
   height: 16px;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.4), rgba(0, 0, 0, 0.05));
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.05),
+    rgba(255, 255, 255, 0.4),
+    rgba(0, 0, 0, 0.05)
+  );
   background-size: 200% 100%;
 }
 
@@ -757,7 +776,7 @@ body.theme-dark .widget-wrapper {
 }
 
 .code-block {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: "JetBrains Mono", "Courier New", monospace;
   font-size: 0.85rem;
   background: var(--color-bg-code, #3d0e15);
   color: var(--color-code-text, #fffef0);
@@ -801,7 +820,7 @@ body.theme-dark .widget-wrapper {
 
 .palette-swatch .token-name {
   display: inline-block;
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   font-size: 0.75rem;
   padding: 0.125rem 0.25rem;
   border-radius: 0.125rem;
@@ -1026,7 +1045,7 @@ body.theme-dark .widget-wrapper {
   background: rgba(0, 0, 0, 0.07);
   padding: 1rem;
   border-radius: var(--radius-card);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: "JetBrains Mono", monospace;
   line-height: 1.6;
 }
 
@@ -1041,44 +1060,44 @@ body.theme-dark .widget-wrapper {
   gap: 0.75rem;
 }
 
-[data-animate='fade'] {
+[data-animate="fade"] {
   animation: fadeInUp 0.8s ease forwards;
   opacity: 0;
   transform: translateY(15px);
 }
 
-[data-animate='slide-up'] {
+[data-animate="slide-up"] {
   animation: slideUp 0.8s ease forwards;
   opacity: 0;
   transform: translateY(25px);
 }
 
-[data-animate='delay-1'],
-[data-animate='delay-2'],
-[data-animate='delay-3'],
-[data-animate='delay-4'],
-[data-animate='delay-5'] {
+[data-animate="delay-1"],
+[data-animate="delay-2"],
+[data-animate="delay-3"],
+[data-animate="delay-4"],
+[data-animate="delay-5"] {
   opacity: 0;
   animation: fadeInUp 0.9s forwards;
 }
 
-[data-animate='delay-1'] {
+[data-animate="delay-1"] {
   animation-delay: 0.1s;
 }
 
-[data-animate='delay-2'] {
+[data-animate="delay-2"] {
   animation-delay: 0.2s;
 }
 
-[data-animate='delay-3'] {
+[data-animate="delay-3"] {
   animation-delay: 0.3s;
 }
 
-[data-animate='delay-4'] {
+[data-animate="delay-4"] {
   animation-delay: 0.4s;
 }
 
-[data-animate='delay-5'] {
+[data-animate="delay-5"] {
   animation-delay: 0.5s;
 }
 
@@ -1168,7 +1187,6 @@ body.theme-dark .widget-wrapper {
 }
 
 @keyframes pulse {
-
   0%,
   100% {
     opacity: 1;
@@ -1324,4 +1342,26 @@ body.theme-dark .widget-wrapper {
   .theme-dark .widget-wrapper {
     border-color: var(--color-cream-primary, #fefae8);
   }
+}
+/* High-Density Layout Utilities */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #1e293b; /* slate-800 */
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #10b981; /* emerald-500 */
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+}
+
+.selection\:bg-emerald-500\/30::selection {
+  background-color: rgba(16, 185, 129, 0.3);
 }

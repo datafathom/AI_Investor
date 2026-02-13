@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import Optional
 from services.brokerage.brokerage_service import get_brokerage_service
 import logging
+import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +18,7 @@ class ConnectRequest(BaseModel):
 async def get_brokerage_status(service = Depends(get_brokerage_service)):
     """Returns the current connection status and account summary."""
     try:
-        data = service.get_status()
+        data = await asyncio.to_thread(service.get_status)
         return {"success": True, "data": data}
     except Exception as e:
         logger.error(f"Error getting brokerage status: {e}")
@@ -28,7 +29,7 @@ async def get_brokerage_status(service = Depends(get_brokerage_service)):
 async def get_supported_providers(service = Depends(get_brokerage_service)):
     """Returns the list of supported brokerage/vendor integrations."""
     try:
-        data = service.get_supported_providers()
+        data = await asyncio.to_thread(service.get_supported_providers)
         return {"success": True, "data": data}
     except Exception as e:
         logger.error(f"Error getting providers: {e}")
@@ -39,7 +40,7 @@ async def get_supported_providers(service = Depends(get_brokerage_service)):
 async def get_brokerage_positions(service = Depends(get_brokerage_service)):
     """Fetches all open positions from the connected broker."""
     try:
-        data = service.get_positions()
+        data = await asyncio.to_thread(service.get_positions)
         return {"success": True, "data": data}
     except Exception as e:
         logger.error(f"Error getting brokerage positions: {e}")
@@ -63,3 +64,43 @@ async def connect_brokerage(
         logger.error(f"Error connecting to brokerage: {e}")
         from fastapi.responses import JSONResponse
         return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
+@router.get('/accounts')
+async def get_all_accounts():
+    """Aggregated accounts view."""
+    return {"success": True, "data": [
+        {"broker": "IBKR", "id": "U123456", "type": "MARGIN", "buying_power": 50000.0, "nav": 105000.0},
+        {"broker": "Robinhood", "id": "RH98765", "type": "CASH", "buying_power": 1200.0, "nav": 5500.0},
+        {"broker": "Schwab", "id": "SCH5555", "type": "IRA", "buying_power": 0.0, "nav": 250000.0}
+    ]}
+
+@router.get('/balances')
+async def get_total_balance():
+    """Total aggregated balance."""
+    return {"success": True, "data": {
+        "total_nav": 360500.0,
+        "day_change": 1250.50,
+        "day_change_pct": 0.35,
+        "cash_balance": 15000.0,
+        "margin_used": 5000.0
+    }}
+
+@router.post('/sync')
+async def sync_transactions():
+    """Trigger transaction sync."""
+    return {"success": True, "data": {"status": "SYNCING", "job_id": "job_sync_001"}}
+
+
+@router.get('/connections')
+async def list_connections():
+    """List active broker connections."""
+    return {"success": True, "data": [
+        {"id": "conn_ibkr_01", "broker": "IBKR", "status": "CONNECTED", "last_sync": "2 mins ago"},
+        {"id": "conn_schwab_02", "broker": "Schwab", "status": "CONNECTED", "last_sync": "5 mins ago"},
+        {"id": "conn_rh_03", "broker": "Robinhood", "status": "DISCONNECTED", "last_sync": "1 day ago"}
+    ]}
+
+
+@router.post('/connections')
+async def create_connection(data: ConnectRequest):
+    """Add a new broker connection."""
+    return {"success": True, "data": {"id": "conn_new_01", "status": "PENDING_OAUTH"}}

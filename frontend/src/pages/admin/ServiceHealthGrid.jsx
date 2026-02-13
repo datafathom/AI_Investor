@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ServiceHealthGrid.css';
 import ServiceCard from '../../components/cards/ServiceCard';
+import apiClient from '../../services/apiClient';
 
 const ServiceHealthGrid = () => {
     const [healthData, setHealthData] = useState(null);
@@ -15,8 +16,7 @@ const ServiceHealthGrid = () => {
 
     const fetchHealth = async () => {
         try {
-            const response = await fetch('/api/v1/admin/health/services');
-            const data = await response.json();
+            const data = await apiClient.get('/admin/health/services');
             setHealthData(data);
             setLastUpdated(new Date());
         } catch (error) {

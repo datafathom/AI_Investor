@@ -1,7 +1,8 @@
 import logging
-from typing import List, Dict, Any, Optional
 import random
-from datetime import timezone, datetime
+from typing import List, Dict, Any, Optional
+from datetime import datetime, timezone
+import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -30,25 +31,43 @@ class DebateOrchestrator:
         Initializes a new debate session for a given ticker.
         """
         logger.info(f"Starting debate for {ticker}")
+        session_id = str(uuid.uuid4())
         self.active_session = {
-            "id": f"DBT-{random.randint(1000,9999)}",
+            "id": session_id,
             "ticker": ticker,
+            "status": "ACTIVE",
             "start_time": datetime.now(timezone.utc).isoformat(),
             "transcript": [],
+            "sentiment_history": [],
             "consensus": {
-                "score": 5.0,
-                "decision": "HOLD",
-                "buy_ratio": 0.5
+                "score": 50.0, # 0-100 scale
+                "decision": "NEUTRAL",
+                "bullish_votes": 0,
+                "bearish_votes": 0,
+                "total_votes": 0
             },
-            "participants": ["The Bull", "The Bear", "The Risk Manager"]
+            "participants": [
+                {"name": "The Bull", "role": "Optimist", "avatar": "🐂"},
+                {"name": "The Bear", "role": "Skeptic", "avatar": "🐻"},
+                {"name": "The Risk Manager", "role": "Pragmatist", "avatar": "🛡️"}
+            ]
         }
         
-        # Seed with initial opening statements (Simulated LLM calls)
-        self._generate_turn("The Bull", f"Opening statement regarding {ticker}")
+        # Seed with initial opening statements
+        self._add_turn("The Bull", "Optimist", f"I believe {ticker} is poised for significant growth due to recent sector rotation.", "BULLISH")
+        self._add_turn("The Bear", "Skeptic", f"While growth is possible, {ticker} faces severe headwinds from macro conditions.", "BEARISH")
         
         return self.active_session
 
-    def inject_argument(self, user_id: str, argument_text: str) -> Dict[str, Any]:
+    def get_session(self, session_id: Optional[str] = None) -> Optional[Dict]:
+        """Get the current active session."""
+        if not self.active_session:
+            return None
+        if session_id and self.active_session["id"] != session_id:
+            return None # Simulating single active session for now
+        return self.active_session
+
+    def inject_argument(self, user_id: str, argument_text: str, sentiment: str = "NEUTRAL") -> Dict[str, Any]:
         """
         Injects a user argument into the debate and triggers agent responses.
         """
@@ -56,72 +75,53 @@ class DebateOrchestrator:
             raise ValueError("No active debate session")
 
         # 1. Add User Argument to Transcript
-        last_msg = self.active_session["transcript"][-1] if self.active_session["transcript"] else None
+        self._add_turn("Human Trader", "Intervenor", argument_text, sentiment, is_human=True)
         
-        user_entry = {
-            "id": f"MSG-{len(self.active_session['transcript']) + 1}",
-            "parent_id": last_msg["id"] if last_msg else None,
-            "persona": "User",
-            "role": "Human Intervenor",
-            "signal": "NEUTRAL",
-            "reasoning": argument_text,
-            "timestamp": datetime.now(timezone.utc).isoformat()
-        }
-        self.active_session["transcript"].append(user_entry)
-        
-        # 2. Trigger Agent Response
-        responder = "The Bear" if "bullish" in argument_text.lower() else "The Bull"
-        self._generate_turn(responder, f"Response to user argument: '{argument_text}'", user_entry["id"])
+        # 2. Trigger Agent Response (Mock)
+        responder = "The Bear" if sentiment == "BULLISH" else "The Bull"
+        response_text = f"That is an interesting point about '{argument_text}', but we must consider the counter-evidence."
+        self._add_turn(responder, "Responder", response_text, "NEUTRAL")
         
         return self.active_session
 
-    def _generate_turn(self, persona: str, prompt_context: str, parent_id: Optional[str] = None):
-        """
-        Simulates an agent taking a turn.
-        """
-        # Auto-link to last message if parent_id not provided
-        if not parent_id and self.active_session["transcript"]:
-             parent_id = self.active_session["transcript"][-1]["id"]
-
-        # Mock responses
-        mock_responses = [
-            f"Based on {prompt_context}, I must emphasize the volatility risk.",
-            f"I see your point, but {self.active_session['ticker']} fundamentals remain strong.",
-            f"Technical indicators suggest a reversal contradicts {prompt_context}.",
-            f"We must consider the macro environment impact on {self.active_session['ticker']}."
-        ]
-        
-        response_text = random.choice(mock_responses)
-        signal = "BUY" if persona == "The Bull" else "SELL" if persona == "The Bear" else "HOLD"
-        
-        entry = {
-            "id": f"MSG-{len(self.active_session['transcript']) + 1}",
-            "parent_id": parent_id,
-            "persona": persona,
-            "role": "AI Agent",
-            "signal": signal,
-            "reasoning": response_text,
+    def _add_turn(self, speaker: str, role: str, text: str, sentiment: str, is_human: bool = False):
+        """Adds a turn to the transcript and updates state."""
+        turn = {
+            "id": str(uuid.uuid4()),
+            "speaker": speaker,
+            "role": role,
+            "text": text,
+            "sentiment": sentiment, # BULLISH, BEARISH, NEUTRAL
+            "is_human": is_human,
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
-        
-        self.active_session["transcript"].append(entry)
-        self._recalculate_consensus()
+        self.active_session["transcript"].append(turn)
+        self._update_consensus(sentiment)
 
-    def _recalculate_consensus(self):
-        """
-        Simple heuristic update of consensus based on recent transcript sentiment.
-        """
-        # Mock logic: Randomly drift the consensus
+    def _update_consensus(self, sentiment: str):
+        """Update consensus score based on turn sentiment."""
         current_score = self.active_session["consensus"]["score"]
-        drift = random.uniform(-1.0, 1.0)
-        new_score = max(0.0, min(10.0, current_score + drift))
         
+        impact = 0
+        if sentiment == "BULLISH":
+            impact = random.uniform(2, 5)
+            self.active_session["consensus"]["bullish_votes"] += 1
+        elif sentiment == "BEARISH":
+            impact = random.uniform(-5, -2)
+            self.active_session["consensus"]["bearish_votes"] += 1
+        
+        self.active_session["consensus"]["total_votes"] += 1
+            
+        new_score = max(0, min(100, current_score + impact))
         self.active_session["consensus"]["score"] = round(new_score, 1)
-        self.active_session["consensus"]["buy_ratio"] = new_score / 10.0
+        self.active_session["sentiment_history"].append({
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "score": new_score
+        })
         
-        if new_score > 7.0:
-            self.active_session["consensus"]["decision"] = "BUY"
-        elif new_score < 3.0:
-            self.active_session["consensus"]["decision"] = "SELL"
+        if new_score > 60:
+            self.active_session["consensus"]["decision"] = "BULLISH"
+        elif new_score < 40:
+            self.active_session["consensus"]["decision"] = "BEARISH"
         else:
-            self.active_session["consensus"]["decision"] = "HOLD"
+            self.active_session["consensus"]["decision"] = "NEUTRAL"

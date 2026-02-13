@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import './LogViewer.css';
 
 const LogViewer = () => {
@@ -17,8 +18,8 @@ const LogViewer = () => {
 
     const fetchFiles = async () => {
         try {
-            const response = await fetch('/api/v1/admin/logs/files');
-            const data = await response.json();
+            const data = await apiClient.get('/admin/logs/files');
+            // apiClient returns response.data directly
             setFiles(data);
         } catch (error) {
             console.error("Error fetching log files:", error);
@@ -28,10 +29,9 @@ const LogViewer = () => {
     const fetchLogs = async () => {
         try {
             const url = searchQuery 
-                ? `/api/v1/admin/logs/search?query=${searchQuery}`
-                : `/api/v1/admin/logs/tail/${selectedFile}?lines=100`;
-            const response = await fetch(url);
-            const data = await response.json();
+                ? `/admin/logs/search?query=${searchQuery}`
+                : `/admin/logs/tail/${selectedFile}?lines=100`;
+            const data = await apiClient.get(url);
             setLogs(searchQuery ? data.results : data.map(l => ({ content: l })));
         } catch (error) {
             console.error("Error fetching logs:", error);

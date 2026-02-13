@@ -53,8 +53,9 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
 
                 <form onSubmit={handleSubmit}>
                     <div className="input-group">
-                        <label>Email Address</label>
+                        <label htmlFor="email">Email Address</label>
                         <input
+                            id="email"
                             type="text"
                             name="email"
                             value={email}
@@ -64,9 +65,10 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
                         />
                     </div>
                     <div className="input-group">
-                        <label>Password</label>
+                        <label htmlFor="password">Password</label>
                         <div className="password-field">
                             <input
+                                id="password"
                                 type={showPassword ? 'text' : 'password'}
                                 name="password"
                                 value={password}

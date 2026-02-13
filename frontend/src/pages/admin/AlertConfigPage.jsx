@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import './AlertConfigPage.css';
 
 const AlertConfigPage = () => {
@@ -12,8 +13,7 @@ const AlertConfigPage = () => {
 
     const fetchRules = async () => {
         try {
-            const response = await fetch('/api/v1/admin/alerts/rules');
-            const data = await response.json();
+            const data = await apiClient.get('/admin/alerts/rules');
             setRules(data);
         } catch (error) {
             console.error("Error fetching rules:", error);
@@ -24,11 +24,7 @@ const AlertConfigPage = () => {
 
     const handleToggle = async (id, enabled) => {
         try {
-            await fetch(`/api/v1/admin/alerts/rules/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ enabled })
-            });
+            await apiClient.put(`/admin/alerts/rules/${id}`, { enabled });
             setRules(rules.map(r => r.id === id ? { ...r, enabled } : r));
         } catch (error) {
             console.error("Error toggling rule:", error);
@@ -38,7 +34,7 @@ const AlertConfigPage = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("DELETE_ALERT_RULE?")) return;
         try {
-            await fetch(`/api/v1/admin/alerts/rules/${id}`, { method: 'DELETE' });
+            await apiClient.delete(`/admin/alerts/rules/${id}`);
             setRules(rules.filter(r => r.id !== id));
         } catch (error) {
             console.error("Error deleting rule:", error);

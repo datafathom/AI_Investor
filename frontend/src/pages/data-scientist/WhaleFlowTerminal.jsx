@@ -29,9 +29,9 @@ const WhaleFlowTerminal = () => {
                 apiClient.get('/market-data/whale-flow/crowding')
             ]);
             
-            setSummary(summaryRes.data || null);
-            setFilings(filingsRes.data || []);
-            setCrowding(crowdingRes.data || []);
+            setSummary(summaryRes || null);
+            setFilings(filingsRes || []);
+            setCrowding(crowdingRes || []);
             
         } catch (error) {
             console.error("Failed to fetch whale flow data", error);

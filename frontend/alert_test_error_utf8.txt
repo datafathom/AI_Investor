@@ -1,0 +1,17 @@
+﻿
+> react-node-template@1.0.0 test
+> vitest src/tests/AlertConfigPage.test.jsx
+
+
+[1m[44m DEV [49m[22m [34mv4.0.16 [39m[90mC:/Users/astir/Desktop/AI_Company/AI_Investor/frontend[39m
+
+[31mCancelling test run. Press CTRL+c again to exit forcefully.
+[39m
+
+[2m Test Files [22m [90m (1)[39m
+[2m      Tests [22m [2mno tests[22m
+[2m   Start at [22m 19:38:42
+[2m   Duration [22m 1.96s[2m (transform 0ms, setup 0ms, import 0ms, tests 0ms, environment 0ms)[22m
+
+[1m[41m CANCELLED [49m[22m [31mTest run cancelled. Watching for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m

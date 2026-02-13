@@ -23,14 +23,20 @@ class CodeValidateRequest(BaseModel):
 class CodeDeployRequest(BaseModel):
     agent_id: str
     code: str
-    file_path: str
+    file_path: Optional[str] = None
+
+class CodeDeployFrontendRequest(BaseModel):
+    name: str # e.g. "AutocoderAgent" or "StrategyAgent"
+    code: str
 
 @router.get("/status")
 async def get_dev_status():
-    """Get development environment status."""
+    """Get development environment status aligned with frontend."""
     return {
         "success": True,
         "data": {
+            "status": "active",
+            "registry_count": 15,
             "autocoder_active": True,
             "last_activity": datetime.now(timezone.utc).isoformat() + "Z",
             "pending_tasks": 0,
@@ -43,15 +49,41 @@ async def get_dev_status():
         }
     }
 
+@router.post("/deploy")
+async def deploy_module(request: CodeDeployFrontendRequest):
+    """Bridge for frontend's deployModule call."""
+    try:
+        # Map frontend 'name' to internal agent/path
+        # For now, we use a simple mapping or just target a scratchpad
+        agent_mapping = {
+            "AutocoderAgent": ("autocoder_agent", "agents/autocoder_agent.py"),
+            "StrategyAgent": ("strategy_agent", "agents/strategy_agent.py")
+        }
+        
+        agent_id, file_path = agent_mapping.get(request.name, ("dev_scratchpad", "agents/scratchpad.py"))
+        
+        bg_service = get_blue_green_service()
+        result = await bg_service.deploy_hot_swap(
+            agent_id=agent_id,
+            new_code=request.code,
+            file_path=file_path
+        )
+        return {"success": True, "data": result}
+    except Exception as e:
+        logger.exception("Deployment failed")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.post("/hotswap")
 async def hotswap_agent_logic(request: CodeDeployRequest):
-    """Zero-Downtime Hot-Swap deployment."""
+    """Direct Zero-Downtime Hot-Swap deployment."""
     try:
         bg_service = get_blue_green_service()
+        # Fallback path if not provided
+        file_path = request.file_path or f"agents/{request.agent_id}.py"
         result = await bg_service.deploy_hot_swap(
             agent_id=request.agent_id,
             new_code=request.code,
-            file_path=request.file_path
+            file_path=file_path
         )
         return result
     except Exception as e:

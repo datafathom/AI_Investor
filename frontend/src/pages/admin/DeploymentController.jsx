@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import { ShieldCheck } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 
 // Sub-components
 import EnvironmentCard from '@/components/cards/EnvironmentCard';
 import TrafficSlider from '@/components/controls/TrafficSlider';
-import DeploymentTimeline from '@/components/admin/DeploymentTimeline';
+import DeploymentTimeline from '@/components/Admin/DeploymentTimeline';
 import RollbackConfirmModal from '@/components/modals/RollbackConfirmModal';
 
-const API_BASE = '/api/v1/admin/deployments';
+const API_BASE = '/admin/deployments';
 
 const DeploymentController = () => {
     const [status, setStatus] = useState(null);
@@ -19,9 +20,7 @@ const DeploymentController = () => {
     // Fetch full status
     const fetchStatus = async () => {
         try {
-            const response = await fetch(`${API_BASE}/status`);
-            if (!response.ok) throw new Error('Failed to fetch status');
-            const data = await response.json();
+            const data = await apiClient.get(`${API_BASE}/status`);
             
             // Inject traffic pct into environment data for easier rendering
             const enrichedData = {
@@ -52,12 +51,7 @@ const DeploymentController = () => {
     // Handlers
     const handleSwitch = async (targetEnv) => {
         try {
-            const response = await fetch(`${API_BASE}/switch`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ target_env: targetEnv })
-            });
-            if (!response.ok) throw new Error('Switch failed');
+            await apiClient.post(`${API_BASE}/switch`, { target_env: targetEnv });
             
             toast({
                 title: "Environment Switched",
@@ -84,12 +78,7 @@ const DeploymentController = () => {
         }));
 
         try {
-            const response = await fetch(`${API_BASE}/traffic`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ blue: bluePct, green: greenPct })
-            });
-            if (!response.ok) throw new Error('Traffic update failed');
+            await apiClient.post(`${API_BASE}/traffic`, { blue: bluePct, green: greenPct });
         } catch (error) {
             toast({ title: "Traffic Update Failed", description: error.message, variant: "destructive" });
             fetchStatus(); // Revert on failure
@@ -99,8 +88,7 @@ const DeploymentController = () => {
     const handleRollback = async () => {
         setIsRollbackModalOpen(false);
         try {
-            const response = await fetch(`${API_BASE}/rollback`, { method: 'POST' });
-            if (!response.ok) throw new Error('Rollback failed');
+            await apiClient.post(`${API_BASE}/rollback`);
             toast({ title: "Rollback Complete", description: "Reverted to previous state.", variant: "success" });
             fetchStatus();
         } catch (error) {

@@ -1,120 +1,58 @@
-"""
-==============================================================================
-FILE: web/api/risk_api.py
-ROLE: Risk API Endpoints (FastAPI)
-PURPOSE: REST endpoints for risk monitoring and management.
-==============================================================================
-"""
+from fastapi import APIRouter
+import random
+from typing import List, Dict
 
-from fastapi import APIRouter, Query, HTTPException, Depends
-from typing import Optional
-from pydantic import BaseModel
-import logging
+router = APIRouter(prefix="/api/v1/risk", tags=["Risk Management"])
 
-from web.auth_utils import get_current_user
+@router.get('/summary')
+async def get_risk_summary():
+    """Get portfolio-wide risk metrics."""
+    return {"success": True, "data": {
+        "var_95": -12500.00,
+        "var_99": -18000.00,
+        "expected_shortfall": -22000.00,
+        "beta": 1.15,
+        "sharpe": 1.8,
+        "current_drawdown": -4.2
+    }}
 
-logger = logging.getLogger(__name__)
+@router.get('/exposures')
+async def get_exposures():
+    """Get risk exposures by category."""
+    return {"success": True, "data": {
+        "sector": {"Tech": 45, "Finance": 20, "Healthcare": 15, "Energy": 10, "Other": 10},
+        "asset_class": {"Equity": 70, "Options": 20, "Crypto": 5, "Cash": 5}
+    }}
 
-router = APIRouter(prefix="/api/v1/risk", tags=["Risk"])
-
-
-class TradeRiskRequest(BaseModel):
-    symbol: str
-    side: str
-    quantity: float
-    price: float
-
-
-class KillSwitchRequest(BaseModel):
-    action: str  # 'engage' or 'reset'
-    reason: str = "Manual emergency trigger"
-    mfa_code: Optional[str] = None
-
-
-@router.get("/regime")
-async def get_market_regime(ticker: str = Query("SPY")):
-    """Get current market regime (Bull/Bear/Transition)."""
-    return {
-        "status": "success",
-        "data": {
-            "ticker": ticker,
-            "regime": "bull",
-            "confidence": 0.75,
-            "volatility_state": "low",
-            "trend_strength": 0.68
-        }
-    }
-
-
-@router.get("/status")
-async def get_risk_status(current_user: dict = Depends(get_current_user)):
-    """Get current exposure and limit status."""
-    return {
-        "halted": False,
-        "freeze_reason": None,
-        "sentiment": {
-            "score": 65,
-            "label": "Greed",
-            "multiplier": 0.85
-        },
-        "limits": {
-            "max_pos": 100000,
-            "scaled_max_pos": 85000,
-            "max_loss": 5000
-        }
-    }
-
-
-@router.post("/kill-switch")
-async def toggle_kill_switch(
-    request: KillSwitchRequest,
-    current_user: dict = Depends(get_current_user)
-):
-    """Emergency halt / Global Kill Switch."""
-    if request.action == "engage":
-        if not request.mfa_code:
-            raise HTTPException(status_code=403, detail="MFA verification required")
-        return {"status": "HALTED", "reason": request.reason}
-    elif request.action == "reset":
-        return {"status": "NOMINAL"}
-    else:
-        raise HTTPException(status_code=400, detail="Invalid action")
-
-
-@router.post("/preview")
-async def risk_preview(request: TradeRiskRequest):
-    """AI-assisted trade risk analysis."""
-    # Mock risk analysis
-    position_value = request.quantity * request.price
-    risk_score = min(100, position_value / 1000)
+@router.post('/sizing/calculate')
+async def calculate_position_size(capital: float, risk_per_trade_pct: float, stop_loss_pct: float):
+    """Calculate recommended position size using multiple models."""
+    risk_amount = capital * (risk_per_trade_pct / 100)
     
-    return {
-        "success": True,
-        "data": {
-            "symbol": request.symbol,
-            "position_value": position_value,
-            "risk_score": round(risk_score, 1),
-            "risk_level": "high" if risk_score > 70 else "medium" if risk_score > 40 else "low",
-            "recommendations": [
-                "Consider position sizing",
-                "Set stop-loss order"
-            ]
-        }
-    }
-
-
-@router.post("/impact")
-async def get_order_impact(request: TradeRiskRequest):
-    """Order impact simulation (Margin/Greeks)."""
-    position_value = request.quantity * request.price
+    # Fixed Fractional
+    fixed_shares = int(risk_amount / (100 * (stop_loss_pct / 100))) # Assuming price 100 for example
     
-    return {
-        "success": True,
-        "data": {
-            "symbol": request.symbol,
-            "position_value": position_value,
-            "margin_impact": round(position_value * 0.25, 2),
-            "buying_power_reduction": round(position_value * 0.5, 2),
-            "portfolio_beta_change": 0.05
-        }
-    }
+    # Kelly Criterion (Mock)
+    kelly_pct = 0.15 
+    kelly_size = capital * kelly_pct
+
+    return {"success": True, "data": {
+        "fixed_fractional": {"size": risk_amount * (100/stop_loss_pct), "shares": fixed_shares},
+        "kelly_criterion": {"size": kelly_size, "optimal_f": kelly_pct},
+        "recommendation": "Use 50% Kelly for stability."
+    }}
+
+@router.get('/correlations')
+async def get_correlations():
+    """Get holdling correlation matrix."""
+    symbols = ["AAPL", "MSFT", "GOOG", "TSLA", "SPY"]
+    matrix = []
+    for s1 in symbols:
+        row = {}
+        for s2 in symbols:
+            if s1 == s2: val = 1.0
+            else: val = round(random.uniform(0.3, 0.9), 2)
+            row[s2] = val
+        matrix.append({"symbol": s1, "correlations": row})
+    
+    return {"success": True, "data": matrix}

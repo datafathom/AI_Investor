@@ -158,3 +158,65 @@ async def legacy_invoke_agent(request: LegacyInvokeRequest):
         raise HTTPException(status_code=500, detail=result)
         
     return result
+
+# -------------------------------------------------------------------------
+# Fleet Management Endpoints (Phase 9)
+# -------------------------------------------------------------------------
+from services.agents.fleet_manager import FleetManager
+
+@router.get("/fleet/all")
+async def list_fleet_agents(department: Optional[str] = None):
+    manager = FleetManager()
+    return await manager.list_agents(department)
+
+@router.post("/fleet/{agent_id}/restart")
+async def restart_agent(agent_id: str):
+    manager = FleetManager()
+    result = await manager.restart_agent(agent_id)
+    if not result["success"]:
+        raise HTTPException(status_code=404, detail=result["message"])
+    return result
+
+# -------------------------------------------------------------------------
+# Rogue Agent Detector Endpoints (Phase 9)
+# -------------------------------------------------------------------------
+from services.agents.rogue_killer import RogueKiller
+
+@router.get("/rogue/kills")
+async def get_kill_history():
+    killer = RogueKiller()
+    return killer.get_history()
+
+@router.post("/rogue/{agent_id}/kill")
+async def kill_agent(agent_id: str, reason: str = "Manual Override"):
+    killer = RogueKiller()
+    return killer.kill_agent(agent_id, reason)
+
+# -------------------------------------------------------------------------
+# Agent Logs Endpoints (Phase 9)
+# -------------------------------------------------------------------------
+from services.agents.log_streamer import log_streamer
+
+@router.get("/{agent_id}/logs")
+async def get_agent_logs(agent_id: str, limit: int = 50):
+    return log_streamer.get_logs(agent_id, limit)
+
+# -------------------------------------------------------------------------
+# Heartbeat Monitor Endpoints (Phase 9)
+# -------------------------------------------------------------------------
+from services.agents.heartbeat_service import heartbeat_service
+
+@router.get("/heartbeats")
+async def get_heartbeats():
+    # Simulate some activity for demo purposes if empty
+    import random
+    if not heartbeat_service._heartbeats:
+        from services.agents.fleet_manager import FleetManager
+        fleet = FleetManager()
+        for agent_id in fleet.agents.keys():
+            if random.random() > 0.1: # 90% alive
+                await heartbeat_service.record_heartbeat(agent_id, "alive")
+            else:
+                await heartbeat_service.record_heartbeat(agent_id, "dead")
+                
+    return await heartbeat_service.get_all_agents()

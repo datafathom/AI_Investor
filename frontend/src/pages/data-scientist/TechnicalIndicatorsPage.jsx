@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Binary, Calculator, Search, Activity, ChevronRight, Zap, Target, Gauge, RefreshCcw } from "lucide-react";
-import { notify } from "@/components/ui/use-toast";
-import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "@/components/ui/use-toast";
+import { motion } from "framer-motion";
 import apiClient from '@/services/apiClient';
 
 // Sub-components
@@ -28,10 +28,10 @@ const TechnicalIndicatorsPage = () => {
             if (data.length > 0) setSelectedIndicator(data[0]);
         } catch (error) {
             console.error("Failed to fetch indicators", error);
-            notify({ 
+            toast({ 
                 title: "Quant Lib Fault", 
-                body: "Failed to load technical indicator library.", 
-                type: "error" 
+                description: "Failed to load technical indicator library.",
+                variant: "destructive"
             });
         } finally {
             setLoading(false);
@@ -53,17 +53,17 @@ const TechnicalIndicatorsPage = () => {
                 params: params
             });
             setCalcResult(response.data);
-            notify({ 
+            toast({ 
                 title: "Calculation Success", 
-                body: `Computed ${indicatorId} for ${ticker.toUpperCase()}`, 
-                type: "success" 
+                description: `Computed ${indicatorId} for ${ticker.toUpperCase()}`,
+                variant: "success"
             });
         } catch (error) {
             console.error("Calculation failed", error);
-            notify({ 
+            toast({ 
                 title: "Compute Error", 
-                body: "The quantification engine encountered a numerical instability.", 
-                type: "error" 
+                description: "The quantification engine encountered a numerical instability.",
+                variant: "destructive"
             });
         } finally {
             setCalcLoading(false);
@@ -184,7 +184,7 @@ const TechnicalIndicatorsPage = () => {
                                     <CardTitle className="text-lg font-black text-white flex items-center gap-2">
                                         <Calculator className="h-5 w-5 text-indigo-400" />
                                         ANALYSIS_OUTPUT_STREAM
-                                    </CardTitle>
+维持                                    </CardTitle>
                                     <CardDescription className="text-xs font-mono uppercase tracking-widest text-slate-500">
                                         Real-time quantitative signal projection and buffer.
                                     </CardDescription>
@@ -192,12 +192,25 @@ const TechnicalIndicatorsPage = () => {
                                 {calcLoading && <div className="p-2 rounded-full border border-indigo-500/20 bg-indigo-500/10"><RefreshCcw className="h-4 w-4 text-indigo-500 animate-spin" /></div>}
                             </div>
                         </CardHeader>
+                        <CardContent className="p-6 overflow-auto">
+                            {calcResult ? (
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">Calculated_Signals</h4>
+                                    </div>
+                                    <div className="rounded-lg border border-slate-900 overflow-hidden">
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow className="bg-slate-900/50 hover:bg-slate-900/50 border-slate-800">
+                                                    <TableHead className="text-slate-500 font-mono text-[10px] uppercase">Timestamp</TableHead>
+                                                    <TableHead className="text-slate-500 font-mono text-[10px] uppercase">Value</TableHead>
+                                                </TableRow>
                                             </TableHeader>
                                             <TableBody>
                                                 {calcResult.values?.slice(0, 10).map((v, idx) => (
-                                                    <TableRow key={idx}>
-                                                        <TableCell className="text-gray-400 text-xs">{v.timestamp.split('T')[0]}</TableCell>
-                                                        <TableCell className="font-mono">{v.value}</TableCell>
+                                                    <TableRow key={idx} className="border-slate-900 hover:bg-slate-900/30">
+                                                        <TableCell className="text-slate-400 font-mono text-[11px] truncate">{v.timestamp?.split('T')[0] || v.timestamp}</TableCell>
+                                                        <TableCell className="font-mono text-indigo-400">{v.value?.toFixed(4) || v.value}</TableCell>
                                                     </TableRow>
                                                 ))}
                                             </TableBody>
@@ -205,14 +218,18 @@ const TechnicalIndicatorsPage = () => {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="text-center py-10 text-gray-500">
-                                    Click on an indicator in the Library tab to calculate
+                                <div className="flex flex-col items-center justify-center h-[300px] text-slate-700 space-y-4">
+                                    <Calculator className="h-12 w-12 opacity-20" />
+                                    <div className="text-center">
+                                        <p className="text-xs font-black uppercase tracking-widest opacity-40">Stream_Idle</p>
+                                        <p className="text-[10px] font-mono opacity-30 mt-1">EXECUTE_INDICATOR_TO_BEGIN_ANALYSIS</p>
+                                    </div>
                                 </div>
                             )}
                         </CardContent>
                     </Card>
-                </TabsContent>
-            </Tabs>
+                </div>
+            </div>
         </div>
     );
 };

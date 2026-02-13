@@ -48,37 +48,27 @@ const cache = {
 // Request Interceptor
 apiClient.interceptors.request.use(
   async (config) => {
-    console.log(`[API Debug] Request to ${config.url} started`);
-    // Check Cache for GET requests
-    if (config.method === 'get' && config.useCache) {
-      const cachedData = await cache.get(config.url + JSON.stringify(config.params || {}));
-      if (cachedData) {
-        config.adapter = () => Promise.resolve({
-          data: cachedData,
-          status: 200,
-          statusText: 'OK',
-          headers: {},
-          config,
-          request: {}
-        });
-      }
-    }
+    // Skip token/tenant lookups for auth endpoints to avoid potential stalls during login
+    const isAuthRequest = config.url && config.url.includes('/auth/login');
+    
     // Set global loading state
     const setLoading = useStore.getState().setLoading;
     setLoading(true);
 
-    // Add Auth Token if available
-    const token = await StorageService.get('widget_os_token') || 
-                  await StorageService.get('token') || 
-                  await StorageService.get('auth_token');
+    if (!isAuthRequest) {
+      // Add Auth Token if available - use getSync to avoid IndexedDB stalls
+      const token = StorageService.getSync('widget_os_token') || 
+                    StorageService.getSync('token') || 
+                    StorageService.getSync('auth_token');
 
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      // Add Tenant ID
+      const tenantId = StorageService.getSync('widget_os_tenant_id');
+      config.headers['X-Tenant-ID'] = tenantId || 'default';
     }
-
-    // Add Tenant ID
-    const tenantId = await StorageService.get('widget_os_tenant_id');
-    config.headers['X-Tenant-ID'] = tenantId || 'default';
 
     //  / Sprint 6: Hardware Signature for high-value transactions (Multi-Sig)
     const HIGH_VALUE_THRESHOLD = 200000; // $200k threshold for hardware signature

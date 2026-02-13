@@ -39,7 +39,7 @@ class DatabaseManager:
                     minconn=1,
                     maxconn=20,
                     dsn=pg_url,
-                    connect_timeout=30
+                    connect_timeout=5
                 )
                 logger.info("PostgreSQL connection pool initialized.")
             except Exception as e:
@@ -68,9 +68,15 @@ class DatabaseManager:
         if not self._pg_pool:
             raise ConnectionError("PostgreSQL pool not initialized.")
 
-        # In a real app we might want to wait for a connection with a timeout
-        # but ThreadedConnectionPool.getconn() blocks if minconn=maxconn and all busy.
-        # With min=1, max=20, it should be fine unless we leak.
+        # Monitor pool utilization
+        if self._pg_pool:
+            used_conns = len(self._pg_pool._used)
+            total_conns = self._pg_pool.maxconn
+            if used_conns > (total_conns * 0.8):
+                 logger.warning(f"⚠️ High DB Pool Usage: {used_conns}/{total_conns}")
+            else:
+                 logger.debug(f"DB Pool Usage: {used_conns}/{total_conns}")
+
         conn = self._pg_pool.getconn()
         
         # Apply Tenant Isolation

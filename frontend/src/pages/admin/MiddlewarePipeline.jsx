@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import './MiddlewarePipeline.css';
-import MiddlewareStep from '../../components/admin/MiddlewareStep';
+import MiddlewareStep from '../../components/Admin/MiddlewareStep';
 
 const MiddlewarePipeline = () => {
     const [pipeline, setPipeline] = useState([]);
@@ -13,8 +14,7 @@ const MiddlewarePipeline = () => {
 
     const fetchPipeline = async () => {
         try {
-            const response = await fetch('/api/v1/admin/middleware/pipeline');
-            const data = await response.json();
+            const data = await apiClient.get('/admin/middleware/pipeline');
             setPipeline(data.steps);
         } catch (error) {
             console.error("Error fetching pipeline:", error);
@@ -25,11 +25,7 @@ const MiddlewarePipeline = () => {
 
     const handleToggle = async (id, enabled) => {
         try {
-            await fetch(`/api/v1/admin/middleware/${id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ enabled })
-            });
+            await apiClient.patch(`/admin/middleware/${id}`, { enabled });
             setPipeline(pipeline.map(step => step.id === id ? { ...step, enabled } : step));
         } catch (error) {
             console.error("Error toggling middleware:", error);
@@ -47,11 +43,7 @@ const MiddlewarePipeline = () => {
     const saveOrder = async () => {
         setSaving(true);
         try {
-            await fetch('/api/v1/admin/middleware/pipeline', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(pipeline.map(s => s.id))
-            });
+            await apiClient.put('/admin/middleware/pipeline', pipeline.map(s => s.id));
             alert("PIPELINE_ORDER_SAVED. RESTART_REQUIRED.");
         } catch (error) {
             console.error("Error saving order:", error);

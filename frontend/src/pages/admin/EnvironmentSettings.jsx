@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import { Settings, ShieldAlert, History, Key, Info } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 // Sub-components
-import EnvVarTable from '@/components/admin/EnvVarTable';
-import EnvHistoryLog from '@/components/admin/EnvHistoryLog';
+import EnvVarTable from '@/components/Admin/EnvVarTable';
+import EnvHistoryLog from '@/components/Admin/EnvHistoryLog';
 
-const API_BASE = '/api/v1/admin/env';
+const API_BASE = '/admin/env';
 
 const EnvironmentSettings = () => {
     const [variables, setVariables] = useState([]);
@@ -18,13 +19,12 @@ const EnvironmentSettings = () => {
 
     const fetchData = async () => {
         try {
-            const [varsRes, histRes] = await Promise.all([
-                fetch(API_BASE),
-                fetch(`${API_BASE}/history`)
+            const [varsData, histData] = await Promise.all([
+                apiClient.get(API_BASE),
+                apiClient.get(`${API_BASE}/history`)
             ]);
-
-            if (varsRes.ok) setVariables(await varsRes.json());
-            if (histRes.ok) setHistory(await histRes.json());
+            setVariables(varsData);
+            setHistory(histData);
         } catch (error) {
             console.error("Failed to fetch environment data", error);
         } finally {
@@ -38,18 +38,9 @@ const EnvironmentSettings = () => {
 
     const handleUpdateVar = async (key, value) => {
         try {
-            const response = await fetch(API_BASE, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ key, value })
-            });
-
-            if (response.ok) {
-                toast({ title: "Configuration Updated", description: `Changed value for ${key}.`, variant: "success" });
-                fetchData();
-            } else {
-                throw new Error("Update failed");
-            }
+            await apiClient.post(API_BASE, { key, value });
+            toast({ title: "Configuration Updated", description: `Changed value for ${key}.`, variant: "success" });
+            fetchData();
         } catch (error) {
             toast({ title: "Update Failed", description: "Verify backend permissions.", variant: "destructive" });
         }

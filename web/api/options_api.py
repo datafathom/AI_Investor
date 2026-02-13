@@ -203,3 +203,96 @@ async def analyze_strategy(strategy_id: str, request: AnalysisRequest):
             }
         }
     }
+
+
+@router.get("/{ticker}/greeks/surface")
+async def get_greeks_surface(ticker: str):
+    """3D Greeks Surface Data."""
+    strikes = [150, 160, 170, 180, 190, 200]
+    expiries = ["2026-03-20", "2026-04-17", "2026-05-15", "2026-06-19"]
+    data = []
+    
+    import math
+    for exp in expiries:
+        for strike in strikes:
+            # Mock surface shape
+            normalized = (strike - 175) / 50.0
+            delta = 0.5 + (0.5 * math.tanh(normalized))
+            gamma = 0.05 * math.exp(-0.5 * normalized**2)
+            vega = 0.2 * math.exp(-0.2 * normalized**2)
+            
+            data.append({
+                "expiry": exp,
+                "strike": strike,
+                "delta": delta,
+                "gamma": gamma,
+                "vega": vega
+            })
+    return {"success": True, "data": data}
+
+
+@router.get("/portfolio/greeks")
+async def get_portfolio_greeks():
+    """Portfolio-level Greeks."""
+    return {
+        "success": True,
+        "data": {
+            "net_delta": 125.50,
+            "net_gamma": 4.20,
+            "net_theta": -15.75,
+            "net_vega": 210.00,
+            "positions": [
+                {"symbol": "AAPL", "delta": 50.0, "gamma": 2.0, "theta": -5.0, "vega": 100.0},
+                {"symbol": "TSLA", "delta": 75.5, "gamma": 2.2, "theta": -10.75, "vega": 110.0}
+            ]
+        }
+    }
+
+
+@router.post("/scenarios")
+async def run_scenario(request: AnalysisRequest):
+    """P&L Scenario Analysis."""
+    scenarios = []
+    # Generate -20% to +20% price moves
+    base_price = request.underlying_price
+    for i in range(-20, 21, 5):
+        pct = i / 100.0
+        price = base_price * (1 + pct)
+        pnl = (price - base_price) * 100 * 0.5 # Mock PnL
+        scenarios.append({
+            "price_pct": i,
+            "price": price,
+            "pnl": pnl,
+            "delta_proj": 0.5 + (pct * 2)
+        })
+    return {"success": True, "data": scenarios}
+
+
+@router.get("/{ticker}/iv-rank")
+async def get_iv_rank(ticker: str):
+    """IV Rank and Percentile."""
+    return {
+        "success": True,
+        "data": {
+            "ticker": ticker,
+            "current_iv": 0.24,
+            "iv_rank": 35.0,
+            "iv_percentile": 42.0,
+            "high_52w": 0.45,
+            "low_52w": 0.15,
+            "term_structure": "contango"
+        }
+    }
+
+
+@router.get("/flow")
+async def get_unusual_flow(ticker: Optional[str] = None):
+    """Options Flow Scanner."""
+    flow = [
+        {"time": "10:30:05", "ticker": "AAPL", "contract": "2026-03-20 C 180", "premium": 1500000, "type": "SWEEP", "sentiment": "BULLISH"},
+        {"time": "10:32:12", "ticker": "NVDA", "contract": "2026-02-21 P 800", "premium": 450000, "type": "BLOCK", "sentiment": "BEARISH"},
+        {"time": "10:45:00", "ticker": "TSLA", "contract": "2026-06-19 C 250", "premium": 800000, "type": "SPLIT", "sentiment": "BULLISH"}
+    ]
+    if ticker:
+        flow = [f for f in flow if f["ticker"] == ticker]
+    return {"success": True, "data": flow}

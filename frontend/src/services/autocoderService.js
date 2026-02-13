@@ -45,12 +45,25 @@ class AutoCoderService {
     }
 
     /**
+     * Executes the generated code in the sandbox.
+     */
+    async executeCode(code) {
+        try {
+            const response = await apiClient.post(`${this.baseUrl}/execute`, { code });
+            return response.data || response;
+        } catch (error) {
+            console.error('AutoCoder Store Error [execute]:', error);
+            throw error;
+        }
+    }
+
+    /**
      * Gets the current status of the AutoCoder registry.
      */
     async getStatus() {
         try {
             const response = await apiClient.get(`${this.baseUrl}/status`);
-            return response.data;
+            return response.data || response;
         } catch (error) {
             console.error('AutoCoder Store Error [status]:', error);
             return { status: 'offline', modules: [] };

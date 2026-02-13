@@ -1,0 +1,31 @@
+﻿
+> react-node-template@1.0.0 test
+> vitest src/tests/AdminDashboard.test.jsx src/tests/LogViewer.test.jsx src/tests/EventBusMonitor.test.jsx src/tests/StorageManager.test.jsx src/tests/FeatureFlagManager.test.jsx src/tests/AlertConfigPage.test.jsx
+
+
+[1m[44m DEV [49m[22m [34mv4.0.16 [39m[90mC:/Users/astir/Desktop/AI_Company/AI_Investor/frontend[39m
+
+ [32mΓ£ô[39m src/tests/EventBusMonitor.test.jsx [2m([22m[2m3 tests[22m[2m)[22m[32m 119[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/LogViewer.test.jsx [2m([22m[2m5 tests[22m[2m)[22m[32m 209[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/StorageManager.test.jsx [2m([22m[2m4 tests[22m[2m)[22m[33m 307[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/AlertConfigPage.test.jsx [2m([22m[2m1 test[22m[2m)[22m[32m 51[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/AdminDashboard.test.jsx [2m([22m[2m3 tests[22m[2m)[22m[32m 78[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[32m16 passed[39m[22m[90m (16)[39m
+[2m   Start at [22m 19:50:01
+[2m   Duration [22m 19.36s[2m (transform 1.37s, setup 4.58s, import 1.50s, tests 765ms, environment 59.36s)[22m
+
+[1m[41m FAIL [49m[22m [31mTests failed. Watching for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/tests/FeatureFlagManager.test.jsx [22m[34mx1 [34m[39m
+       [2m Filename pattern: [22m[34msrc/tests/AdminDashboard.test.jsx, src/tests/LogViewer.test.jsx, src/tests/EventBusMonitor.test.jsx, src/tests/StorageManager.test.jsx, src/tests/FeatureFlagManager.test.jsx, src/tests/AlertConfigPage.test.jsx[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [2mno tests[22m
+[2m   Start at [22m 19:51:11
+[2m   Duration [22m 805ms
+
+[1m[41m FAIL [49m[22m [31mTests failed. Watching for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m

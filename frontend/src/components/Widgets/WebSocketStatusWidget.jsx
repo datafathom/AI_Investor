@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiClient from '@/services/apiClient';
 import './WebSocketStatusWidget.css';
 import ConnectionPoolMeter from '../charts/ConnectionPoolMeter';
 
@@ -19,8 +20,7 @@ const WebSocketStatusWidget = () => {
 
     const fetchStats = async () => {
         try {
-            const response = await fetch('/api/v1/admin/websocket/stats');
-            const data = await response.json();
+            const data = await apiClient.get('/admin/websocket/stats');
             setStats(data);
         } catch (error) {
             console.error("Error fetching WS stats:", error);
@@ -31,8 +31,7 @@ const WebSocketStatusWidget = () => {
 
     const fetchConnections = async () => {
         try {
-            const response = await fetch('/api/v1/admin/websocket/connections');
-            const data = await response.json();
+            const data = await apiClient.get('/admin/websocket/connections');
             setConnections(data);
         } catch (error) {
             console.error("Error fetching WS connections:", error);
@@ -42,7 +41,7 @@ const WebSocketStatusWidget = () => {
     const handleDisconnect = async (connId) => {
         if (!window.confirm(`FORCE_DISCONNECT_CLIENT ${connId}?`)) return;
         try {
-            await fetch(`/api/v1/admin/websocket/connections/${connId}/disconnect`, { method: 'POST' });
+            await apiClient.post(`/admin/websocket/connections/${connId}/disconnect`);
             fetchConnections();
         } catch (error) {
             console.error("Error disconnecting client:", error);

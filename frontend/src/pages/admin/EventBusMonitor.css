@@ -1,86 +1,165 @@
 .event-bus-monitor-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100vh;
   background: #050505;
   color: #e0e0e0;
   font-family: "Space Mono", monospace;
-  padding: 20px;
-  gap: 20px;
+  padding: 0; /* Removing top padding for clean header */
+  overflow: hidden;
 }
 
 .monitor-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 2px solid #1a1a1a;
-  padding-bottom: 15px;
+  padding: 10px 20px;
+  background: #0a0a0a;
+  border-bottom: 1px solid #1a1a1a;
 }
 
-.header-title h1 {
-  font-size: 1.5rem;
-  color: #00f2ff;
-  text-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
+.breadcrumb-path {
+  font-size: 0.6rem;
+  color: #444;
+  letter-spacing: 0.2em;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+
+.header-main-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-main-row h1 {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.05em;
   margin: 0;
 }
 
-.status-indicator {
-  font-size: 0.7rem;
-  padding: 2px 8px;
-  border-radius: 4px;
-  display: inline-block;
-  margin-top: 5px;
+.source-label {
+  font-size: 0.6rem;
+  color: #00f2ff;
+  background: rgba(0, 242, 255, 0.05);
+  border: 1px solid rgba(0, 242, 255, 0.2);
+  padding: 1px 6px;
+  font-weight: 800;
 }
 
-.status-indicator.online {
-  background: rgba(0, 255, 136, 0.1);
-  color: #00ff88;
-  border: 1px solid #00ff88;
-}
-
-.status-indicator.offline {
-  background: rgba(255, 71, 87, 0.1);
-  color: #ff4757;
-  border: 1px solid #ff4757;
-}
-
-.monitor-grid {
+.monitor-layout-grid {
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 320px 1fr;
   flex: 1;
-  gap: 20px;
   overflow: hidden;
+  background: #111;
 }
 
-.monitor-sidebar {
-  background: rgba(20, 20, 20, 0.5);
-  border: 1px solid #1a1a1a;
-  border-radius: 8px;
+.monitor-sidebar-full {
+  background: #080808;
   overflow-y: auto;
-  backdrop-filter: blur(10px);
-}
-
-.monitor-main {
+  border-right: 1px solid #1a1a1a;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  overflow: hidden;
 }
 
-.chart-section {
-  height: 300px;
-  background: rgba(20, 20, 20, 0.5);
-  border: 1px solid #1a1a1a;
-  border-radius: 8px;
+.monitor-main-content {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background: #050505;
+  height: 100%;
+}
+
+.main-pulse-wrapper {
+  background: #0a0a0a;
   padding: 15px;
+  border-bottom: 1px solid #1a1a1a;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
-.inspector-section {
-  flex: 1;
-  background: rgba(20, 20, 20, 0.5);
-  border: 1px solid #1a1a1a;
-  border-radius: 8px;
+.resize-handle-horizontal {
+  height: 6px;
+  background: #111;
+  cursor: row-resize;
   display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  z-index: 10;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.resize-handle-horizontal:hover {
+  background: #1a1a1a;
+}
+
+.resize-handle-horizontal:active {
+  background: #00f2ff44;
+}
+
+.handle-line {
+  width: 30px;
+  height: 2px;
+  background: #333;
+  border-radius: 1px;
+}
+
+.resize-handle-horizontal:hover .handle-line {
+  background: #00f2ff;
+}
+
+.main-controls-wrapper {
+  background: #080808;
+  padding: 8px 15px;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.main-inspector-wrapper {
+  flex: 1;
+  padding: 15px;
+  background: #050505;
+  min-height: 0; /* Important for flex-shrink/scroll */
+}
+
+.reconnect-btn {
+  background: rgba(255, 0, 60, 0.1);
+  color: #ff003c;
+  border: 1px solid #ff003c;
+  font-family: "Space Mono", monospace;
+  font-size: 0.6rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+}
+
+.reconnect-btn:hover {
+  background: #ff003c;
+  color: #000;
+  box-shadow: 0 0 15px rgba(255, 0, 60, 0.4);
+}
+
+/* Cyberpunk Scrollbar */
+.custom-scrollbar-cyber::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.custom-scrollbar-cyber::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+.custom-scrollbar-cyber::-webkit-scrollbar-thumb {
+  background: #00f2ff;
+  box-shadow: 0 0 8px rgba(0, 242, 255, 0.6);
+  border-radius: 10px;
+}
+
+.monitor-footer-buffer {
+  height: 120px;
+  flex-shrink: 0;
+  width: 100%;
+  background: #000;
 }

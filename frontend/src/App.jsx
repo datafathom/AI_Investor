@@ -136,6 +136,56 @@ const ForcedSellerMonitor = lazy(() => import('./pages/data-scientist/ForcedSell
 const WhaleFlowTerminal = lazy(() => import('./pages/data-scientist/WhaleFlowTerminal'));
 const TechnicalIndicatorsPage = lazy(() => import('./pages/data-scientist/TechnicalIndicatorsPage'));
 const Rule144CompliancePage = lazy(() => import('./pages/legal/Rule144CompliancePage'));
+const DataPipelineManager = lazy(() => import('./pages/admin/DataPipelineManager'));
+const APIConnectorHub = lazy(() => import('./pages/admin/APIConnectorHub'));
+const ExternalDataSources = lazy(() => import('./pages/admin/ExternalDataSources'));
+const WebhookReceiver = lazy(() => import('./pages/admin/WebhookReceiver'));
+const DataQualityDashboard = lazy(() => import('./pages/admin/DataQualityDashboard'));
+const NewsAggregator = lazy(() => import('./pages/hunter/NewsAggregator'));
+const SocialSentimentRadar = lazy(() => import('./pages/data-scientist/SocialSentimentRadar'));
+const SocialTradingFeed = lazy(() => import('./pages/hunter/SocialTradingFeed'));
+const RumorMill = lazy(() => import('./pages/hunter/RumorMill'));
+const ResearchWorkspace = lazy(() => import('./pages/data-scientist/ResearchWorkspace'));
+const FactorAnalysisSuite = lazy(() => import('./pages/data-scientist/FactorAnalysisSuite'));
+const FundamentalScanner = lazy(() => import('./pages/data-scientist/FundamentalScanner'));
+const QuantBacktestLab = lazy(() => import('./pages/data-scientist/QuantBacktestLab'));
+const AdvancedChartBuilder = lazy(() => import('./pages/data-scientist/AdvancedChartBuilder'));
+const HeatmapGenerator = lazy(() => import('./pages/data-scientist/HeatmapGenerator'));
+const AgentFleetOverview = lazy(() => import('./pages/admin/AgentFleetOverview'));
+const AgentTaskQueue = lazy(() => import('./pages/admin/AgentTaskQueue'));
+const AgentLogsViewer = lazy(() => import('./pages/admin/AgentLogsViewer'));
+const DebateArena = lazy(() => import('./pages/data-scientist/DebateArena'));
+const DebateHistory = lazy(() => import('./pages/data-scientist/DebateHistory'));
+const OrderManagementSystem = lazy(() => import('./pages/admin/OrderManagementSystem'));
+const RiskLimitManager = lazy(() => import('./pages/admin/RiskLimitManager'));
+const ComplianceTracker = lazy(() => import('./pages/admin/ComplianceTracker'));
+const DataValidation = lazy(() => import('./pages/admin/DataValidation'));
+const ReconciliationDashboard = lazy(() => import('./pages/admin/ReconciliationDashboard'));
+const TreasuryDashboard = lazy(() => import('./pages/admin/TreasuryDashboard'));
+const PortfolioOverview = lazy(() => import('./pages/admin/PortfolioOverview'));
+const CryptoWalletPage = lazy(() => import('./pages/admin/CryptoWalletPage'));
+const ExecSummaryPage = lazy(() => import('./pages/admin/ExecSummaryPage'));
+const CrashSimulator = lazy(() => import('./pages/admin/CrashSimulator'));
+const TacticalCommandCenter = lazy(() => import('./pages/admin/TacticalCommandCenter'));
+const PricingVerifier = lazy(() => import('./pages/admin/PricingVerifier'));
+const SourceReputation = lazy(() => import('./pages/admin/SourceReputation'));
+const QualityIncidents = lazy(() => import('./pages/admin/QualityIncidents'));
+const DiscrepancyResolution = lazy(() => import('./pages/admin/DiscrepancyResolution'));
+const TransactionLedger = lazy(() => import('./pages/admin/TransactionLedger'));
+const TransferCenter = lazy(() => import('./pages/admin/TransferCenter'));
+const TaxHarvester = lazy(() => import('./pages/admin/TaxHarvester'));
+const TaxLiabilityDashboard = lazy(() => import('./pages/admin/TaxLiabilityDashboard'));
+const ExpenseManager = lazy(() => import('./pages/admin/ExpenseManager'));
+const YieldOptimizer = lazy(() => import('./pages/admin/YieldOptimizer'));
+const TrustAdmin = lazy(() => import('./pages/admin/TrustAdmin'));
+const DonationManager = lazy(() => import('./pages/admin/DonationManager'));
+const PhilanthropyCenter = lazy(() => import('./pages/admin/PhilanthropyCenter'));
+const SuccessionModeler = lazy(() => import('./pages/admin/SuccessionModeler'));
+const EstateVisualizer = lazy(() => import('./pages/admin/EstateVisualizer'));
+const GiftingOptimizer = lazy(() => import('./pages/admin/GiftingOptimizer'));
+const BlackSwanGenerator = lazy(() => import('./pages/admin/BlackSwanGenerator'));
+const WarGameArena = lazy(() => import('./pages/admin/WarGameArena'));
+const RobustnessLab = lazy(() => import('./pages/admin/RobustnessLab'));
 
 
 // --- Dynamic Workstation Loader ---
@@ -151,22 +201,40 @@ const DynamicWorkstation = () => {
         const loadComponent = async () => {
             setLoading(true);
             try {
-                // Construct the component name based on path
-                // e.g. strategist/builder -> StrategistBuilder
-                const compName = (deptSlug.charAt(0).toUpperCase() + deptSlug.slice(1) + 
-                                 subSlug.charAt(0).toUpperCase() + subSlug.slice(1))
-                                .replace(/-/g, '');
-                                
-                // Find matching module in the glob
-                const match = Object.keys(workstationModules).find(key => 
-                    key.includes(`/${deptSlug}/`) && key.includes(`${compName}.jsx`)
+                // Helper to convert kebab-case to PascalCase (e.g. debate-history -> DebateHistory)
+                const toPascal = (s) => s.split('-').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join('');
+
+                const deptPascal = toPascal(deptSlug);
+                const subPascal = toPascal(subSlug);
+
+                // Strategy 1: Look for exact PascalCase submodule name in the department folder
+                // e.g. /data-scientist/debate-history -> Look for .../DebateHistory.jsx
+                let match = Object.keys(workstationModules).find(key => 
+                    key.includes(`/${deptSlug}/`) && key.endsWith(`/${subPascal}.jsx`)
                 );
+                
+                // Strategy 2: Look for Dept+Sub naming convention (legacy or specific files)
+                // e.g. .../DatascientistDebatehistory.jsx OR .../DataScientistDebateHistory.jsx
+                if (!match) {
+                    const combinedName = deptPascal + subPascal;
+                    match = Object.keys(workstationModules).find(key => 
+                        key.includes(`/${deptSlug}/`) && 
+                        (key.endsWith(`/${combinedName}.jsx`) || key.toLowerCase().endsWith(`/${combinedName.toLowerCase()}.jsx`))
+                    );
+                }
+
+                // Strategy 3: Loose match (case-insensitive) for subPascal in the department folder
+                if (!match) {
+                     match = Object.keys(workstationModules).find(key => 
+                        key.includes(`/${deptSlug}/`) && key.toLowerCase().endsWith(`/${subPascal.toLowerCase()}.jsx`)
+                    );
+                }
 
                 if (match) {
                     const module = await workstationModules[match]();
                     setComponent(() => module.default);
                 } else {
-                    console.warn(`Workstation not found: ${compName}`);
+                    console.warn(`Workstation not found for path: ${deptSlug}/${subSlug}. Checked: ${subPascal}.jsx, ${deptPascal}${subPascal}.jsx`);
                 }
             } catch (err) {
                 console.error("Failed to load dynamic workstation:", err);
@@ -220,6 +288,7 @@ const RefinerPage = lazy(() => import('./pages/Departments/RefinerPage'));
 const BankerPage = lazy(() => import('./pages/Departments/BankerPage'));
 const AccountOverview = lazy(() => import('./pages/Accounts/AccountOverview'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AdminPage = lazy(() => import('./pages/Departments/AdminPage'));
 const Settings = lazy(() => import('./pages/Settings'));
 const DeveloperPlatformDashboard = lazy(() => import('./pages/DeveloperPlatformDashboard')); // 
 const MarketplaceDashboard = lazy(() => import('./pages/MarketplaceDashboard')); // 
@@ -450,9 +519,8 @@ function AppContent() {
         // Check with API
         // Check with API
         apiClient.get('/onboarding/status')
-          .then(res => {
-            const data = res.data;
-            if (data.success && !data.data.completed) {
+          .then(data => {
+            if (data.success && !data.data?.completed) {
               // Double check local storage didn't change during fetch
               if (!localStorage.getItem('onboarding_completed')) {
                   setShowOnboarding(true);
@@ -880,43 +948,88 @@ function AppContent() {
                 <Route path="/legal/compliance" element={<ComplianceDashboard />} />
                 <Route path="/legal/audit" element={<AuditDashboard />} />
                 <Route path="/legal/scenarios" element={<ScenarioDashboard />} />
-                <Route path="/admin/event-bus" element={<EventBusMonitor />} />
-                <Route path="/admin/storage" element={<StorageManager />} />
-                <Route path="/admin/graph" element={<GraphBrowser />} />
-                <Route path="/admin/logs" element={<LogViewer />} />
-                <Route path="/admin/health" element={<ServiceHealthGrid />} />
-                <Route path="/admin/middleware" element={<MiddlewarePipeline />} />
-                <Route path="/admin/performance" element={<MonitoringDashboard />} />
-                <Route path="/admin/alerts" element={<AlertConfigPage />} />
-                <Route path="/admin/deployments" element={<DeploymentController />} />
-                <Route path="/admin/ops" element={<OperationsDashboard />} />
-                <Route path="/admin/workspaces" element={<WorkspaceManager />} />
-                <Route path="/admin/features" element={<FeatureFlagManager />} />
-                <Route path="/admin/env" element={<EnvironmentSettings />} />
-                <Route path="/legal/margin" element={<MarginDashboard />} />
-                <Route path="/legal/tax" element={<TaxDashboard />} />
-                <Route path="/legal/terms" element={<TermsOfService />} />
-                <Route path="/legal/privacy" element={<PrivacyPolicy />} />
-                <Route path="/legal/144a-compliance" element={<Rule144CompliancePage />} />
 
-                <Route path="/guardian/risk" element={<AdvancedRiskDashboard />} />
-                <Route path="/guardian/credit" element={<CreditMonitoringDashboard />} />
-                <Route path="/guardian/institutional" element={<InstitutionalToolsDashboard />} />
-                <Route path="/guardian/enterprise" element={<EnterpriseDashboard />} />
-                <Route path="/guardian/payments" element={<BillPaymentDashboard />} />
-                <Route path="/guardian/cash-flow" element={<CashFlowDashboard />} />
-                <Route path="/guardian/tenants" element={<TenantDashboard />} />
-                <Route path="/guardian/mobile" element={<MobileDashboard />} />
-
-                <Route path="/data-scientist/autocoder" element={<AutoCoderDashboard />} />
-                <Route path="/data-scientist/sandbox" element={<AutoCoderSandbox />} />
-                <Route path="/data-scientist/vr" element={<VRCockpit />} />
-                <Route path="/data-scientist/debate" element={<DebateRoom />} />
-                <Route path="/data-scientist/evolution" element={<EvolutionDashboard />} />
-                <Route path="/data-scientist/sentinel" element={<SentinelStrategyDashboard />} />
-                <Route path="/data-scientist/forced-sellers" element={<ForcedSellerMonitor />} />
-                <Route path="/data-scientist/whale-flow" element={<WhaleFlowTerminal />} />
-                <Route path="/data-scientist/indicators" element={<TechnicalIndicatorsPage />} />
+                {/* --- SECURE ADMIN ROUTES --- */}
+                <Route path="/dept/admin" element={
+                  <AuthGuard onShowLogin={() => setIsAuthModalOpen(true)} requiredRole="admin">
+                    <AdminPage />
+                  </AuthGuard>
+                } />
+                
+                <Route path="/admin/*" element={
+                  <AuthGuard onShowLogin={() => setIsAuthModalOpen(true)} requiredRole="admin">
+                    <Routes>
+                      <Route index element={<AdminDashboard />} />
+                      <Route path="event-bus" element={<EventBusMonitor />} />
+                      <Route path="storage" element={<StorageManager />} />
+                      <Route path="graph" element={<GraphBrowser />} />
+                      <Route path="logs" element={<LogViewer />} />
+                      <Route path="health" element={<ServiceHealthGrid />} />
+                      <Route path="middleware" element={<MiddlewarePipeline />} />
+                      <Route path="performance" element={<MonitoringDashboard />} />
+                      <Route path="alerts" element={<AlertConfigPage />} />
+                      <Route path="deployments" element={<DeploymentController />} />
+                      <Route path="ops" element={<OperationsDashboard />} />
+                      <Route path="workspaces" element={<WorkspaceManager />} />
+                      <Route path="features" element={<FeatureFlagManager />} />
+                      <Route path="data-pipeline-manager" element={<DataPipelineManager />} />
+                      <Route path="connections" element={<APIConnectorHub />} />
+                      <Route path="external-data" element={<ExternalDataSources />} />
+                      <Route path="webhooks" element={<WebhookReceiver />} />
+                      <Route path="data-quality" element={<DataQualityDashboard />} />
+                      <Route path="agents/fleet" element={<AgentFleetOverview />} />
+                      <Route path="agents/tasks" element={<AgentTaskQueue />} />
+                      <Route path="agents/logs" element={<AgentLogsViewer />} />
+                      <Route path="env" element={<EnvironmentSettings />} />
+                      <Route path="autocoder" element={<AutoCoderDashboard />} />
+                      <Route path="order-management" element={<OrderManagementSystem />} />
+                      <Route path="risk-limits" element={<RiskLimitManager />} />
+                      <Route path="compliance-tracker" element={<ComplianceTracker />} />
+                      <Route path="data-validation" element={<DataValidation />} />
+                      <Route path="reconciliation" element={<ReconciliationDashboard />} />
+                      <Route path="treasury" element={<TreasuryDashboard />} />
+                      <Route path="portfolio-overview" element={<PortfolioOverview />} />
+                      <Route path="crypto-wallet" element={<CryptoWalletPage />} />
+                      <Route path="executive-summary" element={<ExecSummaryPage />} />
+                      <Route path="crash-simulator" element={<CrashSimulator />} />
+                      <Route path="tactical-command-center" element={<TacticalCommandCenter />} />
+                      <Route path="pricing-verifier" element={<PricingVerifier />} />
+                      <Route path="source-reputation" element={<SourceReputation />} />
+                      <Route path="quality-incidents" element={<QualityIncidents />} />
+                      <Route path="discrepancy-resolution" element={<DiscrepancyResolution />} />
+                      <Route path="transaction-ledger" element={<TransactionLedger />} />
+                      <Route path="transfer-center" element={<TransferCenter />} />
+                      <Route path="tax-harvester" element={<TaxHarvester />} />
+                      <Route path="tax-liability" element={<TaxLiabilityDashboard />} />
+                      <Route path="expense-manager" element={<ExpenseManager />} />
+                      <Route path="yield-optimizer" element={<YieldOptimizer />} />
+                      <Route path="trust-admin" element={<TrustAdmin />} />
+                      <Route path="donation-manager" element={<DonationManager />} />
+                      <Route path="philanthropy-center" element={<PhilanthropyCenter />} />
+                      <Route path="succession-modeler" element={<SuccessionModeler />} />
+                      <Route path="/estate-visualizer" element={<EstateVisualizer />} />
+                      <Route path="gifting-optimizer" element={<GiftingOptimizer />} />
+                      <Route path="black-swan-generator" element={<BlackSwanGenerator />} />
+                      <Route path="war-game-arena" element={<WarGameArena />} />
+                      <Route path="robustness-lab" element={<RobustnessLab />} />
+                    </Routes>
+                  </AuthGuard>
+                } />
+                <Route path="/hunter/news" element={<NewsAggregator />} />
+                <Route path="/social/sentiment" element={<SocialSentimentRadar />} />
+                <Route path="/hunter/social-trading" element={<SocialTradingFeed />} />
+                <Route path="/hunter/rumors" element={<RumorMill />} />
+                <Route path="/data-scientist/research-workspace" element={<ResearchWorkspace />} />
+                <Route path="/data-scientist/factor-analysis" element={<FactorAnalysisSuite />} />
+                <Route path="/data-scientist/fundamental-scanner" element={<FundamentalScanner />} />
+                <Route path="/data-scientist/quant-backtest" element={<QuantBacktestLab />} />
+                <Route path="/data-scientist/advanced-charting" element={<AdvancedChartBuilder />} />
+                <Route path="/data-scientist/heatmap" element={<HeatmapGenerator />} />
+                <Route path="/data-scientist/debate" element={<DebateArena />} />
+                <Route path="/data-scientist/debate-history" element={<DebateHistory />} />
+                <Route path="/admin/autocoder" element={<AutoCoderDashboard />} />
+                <Route path="/autocoder/dashboard" element={<AutoCoderDashboard />} />
+                <Route path="/admin/executive-summary" element={<Navigate to="/admin/executive-summary" replace />} />
 
                 {/* --- Special Routes --- */}
                 <Route path="/special/scrum" element={<ScrumMaster />} />

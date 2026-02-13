@@ -10,6 +10,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from datetime import timezone, datetime
 import logging
+import asyncio
 
 from services.system.health_check_service import get_health_check_service
 from services.security.system_health_service import get_system_health_service
@@ -53,8 +54,8 @@ async def readiness_check(
     Checks database connectivity.
     """
     try:
-        postgres_status = health_service.check_postgres()
-        redis_status = health_service.check_redis()
+        postgres_status = await asyncio.to_thread(health_service.check_postgres)
+        redis_status = await asyncio.to_thread(health_service.check_redis)
         
         if postgres_status.get('status') == 'UP' and redis_status.get('status') == 'UP':
             return {
@@ -125,16 +126,18 @@ async def detailed_health(
     Used for monitoring dashboards.
     """
     try:
-        system_status = system_health_service.get_health_status()
-        
+        system_status = await asyncio.to_thread(system_health_service.get_health_status)
+        pg_status = await asyncio.to_thread(health_service.check_postgres)
+        rd_status = await asyncio.to_thread(health_service.check_redis)
+
         return {
             "success": True,
             "data": {
                 'status': 'healthy',
                 'timestamp': datetime.now(timezone.utc).isoformat(),
                 'checks': {
-                    'postgres': health_service.check_postgres(),
-                    'redis': health_service.check_redis(),
+                    'postgres': pg_status,
+                    'redis': rd_status,
                     'system': system_status
                 }
             }

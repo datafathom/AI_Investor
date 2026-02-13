@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiClient from '../../services/apiClient';
 import './StorageManager.css';
 
 const StorageManager = () => {
@@ -15,12 +16,10 @@ const StorageManager = () => {
 
     const fetchData = async () => {
         try {
-            const [poolRes, syncRes] = await Promise.all([
-                fetch('/api/v1/admin/storage/pools'),
-                fetch('/api/v1/admin/storage/sync-status')
+            const [poolData, syncData] = await Promise.all([
+                apiClient.get('/admin/storage/pools'),
+                apiClient.get('/admin/storage/sync-status')
             ]);
-            const poolData = await poolRes.json();
-            const syncData = await syncRes.json();
             setPools(poolData);
             setSyncStatus(syncData);
         } catch (error) {
@@ -33,7 +32,7 @@ const StorageManager = () => {
     const handleTriggerSync = async () => {
         setSyncing(true);
         try {
-            await fetch('/api/v1/admin/storage/sync/trigger', { method: 'POST' });
+            await apiClient.post('/admin/storage/sync/trigger');
             fetchData();
         } catch (error) {
             console.error("Error triggering sync:", error);

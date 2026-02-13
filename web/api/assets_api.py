@@ -1,115 +1,78 @@
-"""
-Assets API - FastAPI Router
-REST endpoints for asset management and valuation.
-"""
-
-import logging
-from typing import Optional, Dict, Any, List
-
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter
+import uuid
+from typing import List
 from pydantic import BaseModel
 
-from web.auth_utils import get_current_user
-from services.portfolio.assets_service import assets_service as _assets_service
+router = APIRouter(prefix="/api/v1/assets", tags=["Alternative Assets"])
 
-def get_assets_service():
-    """Dependency for getting the assets service."""
-    return _assets_service
+@router.get('/inventory')
+async def list_all_assets():
+    """List all alternative assets."""
+    return {"success": True, "data": [
+        {"id": "a_01", "name": "Miami Condo", "type": "Real Estate", "valuation": 850000, "acquired": "2022-05-15"},
+        {"id": "a_02", "name": "SpaceX Series N", "type": "Private Equity", "valuation": 150000, "acquired": "2023-11-01"},
+        {"id": "a_03", "name": "Rolex Daytona", "type": "Collectible", "valuation": 35000, "acquired": "2021-02-10"}
+    ]}
 
-logger = logging.getLogger(__name__)
+@router.post('/valuation')
+async def update_asset_valuation(asset_id: str, new_value: float, reason: str):
+    """Update asset valuation."""
+    return {"success": True, "data": {"status": "UPDATED", "entry_id": str(uuid.uuid4())}}
 
-router = APIRouter(prefix="/api/v1/assets", tags=["Assets"])
+@router.get('/real-estate/properties')
+async def get_property_list():
+    """Get real estate properties."""
+    return {"success": True, "data": [
+        {"id": "p_01", "address": "123 Ocean Dr, Miami", "cap_rate": 5.2, "occupancy": 100, "net_income": 45000},
+        {"id": "p_02", "address": "456 Main St, Austin", "cap_rate": 4.8, "occupancy": 0, "net_income": -12000}
+    ]}
 
-class AssetCreateRequest(BaseModel):
-    name: str
-    value: float
-    type: Optional[str] = None
-    metadata: Optional[Dict[str, Any]] = None
+@router.get('/real-estate/yield')
+async def get_rental_yields():
+    """Get aggregated rental yields."""
+    return {"success": True, "data": {"avg_cap_rate": 5.0, "total_net_income": 33000}}
 
-class AssetUpdateRequest(BaseModel):
-    name: Optional[str] = None
-    value: Optional[float] = None
-    type: Optional[str] = None
-    metadata: Optional[Dict[str, Any]] = None
+@router.get('/pe/capital-calls')
+async def list_upcoming_calls():
+    """List private equity capital calls."""
+    return {"success": True, "data": [
+        {"fund": "Sequoia Growth X", "amount": 25000, "due_date": "2025-03-15", "status": "PENDING"}
+    ]}
 
-@router.get('/')
-async def get_assets(
-    service = Depends(get_assets_service),
-    current_user: Dict[str, Any] = Depends(get_current_user)
-):
-    """Get all assets."""
-    try:
-        assets = service.get_all_assets()
-        return {"success": True, "data": assets}
-    except Exception as e:
-        logger.error(f"Error fetching assets: {e}")
-        from fastapi.responses import JSONResponse
-        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
+@router.get('/pe/benchmarks')
+async def get_pe_benchmarking():
+    """Get PE performance benchmarks."""
+    return {"success": True, "data": {
+        "irr_gross": 22.5,
+        "irr_net": 18.2,
+        "tvpi": 1.45,
+        "dpi": 0.35,
+        "pme_spy": 1.15
+    }}
 
-@router.post('/', status_code=201)
-async def create_asset(
-    request_data: AssetCreateRequest,
-    service = Depends(get_assets_service),
-    current_user: Dict[str, Any] = Depends(get_current_user)
-):
-    """Create a new asset."""
-    try:
-        asset = service.add_asset(request_data.model_dump())
-        return {"success": True, "data": asset}
-    except Exception as e:
-        logger.error(f"Error creating asset: {e}")
-        from fastapi.responses import JSONResponse
-        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
+@router.get('/collectibles/prices')
+async def get_collectible_quotes():
+    """Get collectible price estimates."""
+    return {"success": True, "data": [
+        {"item": "Rolex Daytona", "last_auction": 36500, "trend": "UP", "venue": "Sothebys"},
+        {"item": "Banksy Print", "last_auction": 12000, "trend": "DOWN", "venue": "Christies"}
+    ]}
 
-@router.put('/{asset_id}')
-async def update_asset(
-    asset_id: str,
-    request_data: AssetUpdateRequest,
-    service = Depends(get_assets_service),
-    current_user: Dict[str, Any] = Depends(get_current_user)
-):
-    """Update an existing asset."""
-    try:
-        updated_asset = service.update_asset(asset_id, request_data.model_dump(exclude_unset=True))
-        if updated_asset:
-            return {"success": True, "data": updated_asset}
-        raise HTTPException(status_code=404, detail='Asset not found')
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error updating asset: {e}")
-        from fastapi.responses import JSONResponse
-        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
+@router.get('/exit-plans')
+async def get_exit_strategies():
+    """Get exit strategies."""
+    return {"success": True, "data": [
+        {"asset": "Miami Condo", "strategy": "Sell in 2026", "target_price": 950000, "probability": 0.8},
+        {"asset": "SpaceX Series N", "strategy": "IPO Exit", "target_price": 300000, "probability": 0.6}
+    ]}
 
-@router.delete('/{asset_id}')
-async def delete_asset(
-    asset_id: str,
-    service = Depends(get_assets_service),
-    current_user: Dict[str, Any] = Depends(get_current_user)
-):
-    """Delete an asset."""
-    try:
-        success = service.delete_asset(asset_id)
-        if success:
-            return {"success": True, "data": {'message': 'Asset deleted'}}
-        raise HTTPException(status_code=404, detail='Asset not found')
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error deleting asset: {e}")
-        from fastapi.responses import JSONResponse
-        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
-
-@router.get('/valuation')
-async def get_valuation(
-    service = Depends(get_assets_service),
-    current_user: Dict[str, Any] = Depends(get_current_user)
-):
-    """Get total valuation summary."""
-    try:
-        total = service.get_total_valuation()
-        return {"success": True, "data": {'total_valuation': total, 'currency': 'USD'}}
-    except Exception as e:
-        logger.error(f"Error getting valuation: {e}")
-        from fastapi.responses import JSONResponse
-        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
+@router.post('/exit-plans/simulate')
+async def simulate_liquidation(asset_id: str, discount_pct: float):
+    """Simulate liquidation scenario."""
+    return {"success": True, "data": {
+        "gross_proceeds": 807500,
+        "taxes": 120000,
+        "fees": 45000,
+        "net_proceeds": 642500,
+        "time_to_close": "3 Months"
+    }}

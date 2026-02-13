@@ -17,7 +17,8 @@ Usage:
 
 from dataclasses import dataclass, field
 from datetime import timezone, datetime
-from typing import Dict, List, Optional, Any
+import typing
+from typing import Dict, List, Optional, Any, Union
 from enum import Enum
 import logging
 import math
@@ -244,7 +245,7 @@ class LPTrackerService:
         
         return round(apr, 2)
 
-    async def get_liquidity_depth(self, pool_address: str) -> dict:
+    async def get_liquidity_depth(self, pool_address: str) -> typing.Dict[str, typing.Any]:
         """
         Analyzes the depth of a specific liquidity pool to map slippage zones.
         Uses deterministic derivation based on pool address to simulate consistency.

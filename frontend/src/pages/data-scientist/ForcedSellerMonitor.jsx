@@ -26,12 +26,12 @@ const ForcedSellerMonitor = () => {
             const [risksRes, heatmapRes, trapsRes] = await Promise.all([
                 apiClient.get('/market-data/forced-sellers'),
                 apiClient.get('/market-data/forced-sellers/heatmap'),
-                apiClient.get('/market-data/forced-sellers/traps')
+                apiClient.get('/market-data/forced-sellers/liquidity-traps')
             ]);
             
-            setRisks(risksRes.data || []);
-            setHeatmap(heatmapRes.data || []);
-            setTraps(trapsRes.data || []);
+            setRisks(risksRes || []);
+            setHeatmap(heatmapRes || []);
+            setTraps(trapsRes || []);
             
         } catch (error) {
             console.error("Failed to fetch data", error);

@@ -1,94 +1,137 @@
 import logging
-from fastapi import FastAPI
+import asyncio
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from web.socket_gateway import socket_app, sio
-from web.api import (
-    health_api,
-    auth_api,
-    system_api,
-    agents_api,
-    dev_api,
-    debate_api,
-    departments_api,
-    master_orchestrator_api,
-    onboarding_api,
-    tasks_api,
-    dashboard_api,
-    brokerage_api,
-    strategy_api,
-    risk_api,
-    market_data_api,
-    news_api,
-    watchlist_api,
-    scanner_api,
-    homeostasis_api,
-    evolution_api,
-    identity_api,
-    compliance_api,
-    estate_api,
-    tax_api,
-    macro_api,
-    corporate_api,
-    margin_api,
-    mobile_api,
-    integrations_api,
-    admin,
-    deployments_api,
-    ops_api,
-    workspaces_api,
-    advanced_risk_api,
-    advanced_orders_api,
-    ai_assistant_api,
-    ai_predictions_api,
-    analytics_api,
-    assets_api,
-    attribution_api,
-    banking_api,
-    billing_api,
-    budgeting_api,
-    calendar_api,
-    cash_api,
-    communication_api,
-    community_api,
-    credit_api,
-    crypto_api,
-    docs_api,
-    documents_api,
-    economics_api,
-    education_api,
-    email_api,
-    enterprise_api,
-    financial_planning_api,
-    fixed_income_api,
-    growth_api,
-    hedging_api,
-    incident_api,
-    institutional_api,
-    market_api,
-    marketplace_api,
-    ml_training_api,
-    news_api,
-    optimization_api,
-    options_api,
-    paper_trading_api,
-    payment_transfer_api,
-    philanthropy_api,
-    politics_api,
-    privacy_api,
-    public_api,
-    research_api,
-    retirement_api,
-    search_api,
-    settlement_api,
-    social_api,
-    social_trading_api,
-    spatial_api,
-    system_telemetry_api,
-    tax_optimization_api
-)
+from web.socket_gateway import get_socket_app, get_sio
+
+from web.api import health_api
+from web.api import auth_api
+from web.api import system_api
+from web.api import agents_api
+from web.api import dev_api
+from web.api import debate_api
+from web.api import departments_api
+from web.api import master_orchestrator_api
+from web.api import onboarding_api
+from web.api import tasks_api
+from web.api import dashboard_api
+from web.api import brokerage_api
+from web.api import strategy_api
+from web.api import risk_api
+from web.api import market_data_api
+from web.api import news_api
+from web.api import watchlist_api
+from web.api import scanner_api
+from web.api import homeostasis_api
+from web.api import evolution_api
+from web.api import identity_api
+from web.api import compliance_api
+from web.api import estate_api
+from web.api import tax_api
+from web.api import macro_api
+from web.api import corporate_api
+from web.api import margin_api
+from web.api import mobile_api
+from web.api import integrations_api
+from web.api import admin
+from web.api.admin import deployments_api
+from web.api.admin import ops_api
+from web.api.admin import workspaces_api
+from web.api import advanced_risk_api
+
+from web.api import advanced_orders_api
+from web.api import ai_assistant_api
+from web.api import ai_predictions_api
+from web.api import analytics_api
+from web.api import assets_api
+from web.api import attribution_api
+from web.api import banking_api
+from web.api import billing_api
+from web.api import budgeting_api
+from web.api import calendar_api
+from web.api import cash_api
+from web.api import communication_api
+from web.api import community_api
+from web.api import credit_api
+from web.api import crypto_api
+from web.api import docs_api
+from web.api import documents_api
+from web.api import economics_api
+from web.api import education_api
+from web.api import email_api
+from web.api import enterprise_api
+from web.api import financial_planning_api
+from web.api import fixed_income_api
+from web.api import growth_api
+from web.api import hedging_api
+from web.api import incident_api
+from web.api import institutional_api
+from web.api import marketplace_api
+from web.api import ml_training_api
+from web.api import news_api
+from web.api import optimization_api
+from web.api import options_api
+from web.api import paper_trading_api
+from web.api import payment_transfer_api
+from web.api import philanthropy_api
+from web.api import politics_api
+from web.api import privacy_api
+from web.api import public_api
+from web.api import research_api
+from web.api import retirement_api
+from web.api import search_api
+from web.api import settlement_api
+from web.api import social_api
+from web.api import social_trading_api
+from web.api import spatial_api
+from web.api import system_telemetry_api
+from web.api import tax_optimization_api
 from web.api import indicators_api
 from web.api import compliance_144a_api
+from web.api import ingestion_api
+from web.api import external_data_api
+from web.api import webhook_ingestion_api
+from web.api import quantitative_api
+from web.api import analysis_api
+from web.api import charting_api
+from web.api import pricing_api
+from web.api import missions_api
+from web.api import modes_api
+from web.api import meta_api
+from web.api import singularity_api
+from web.api import execution_core_api
+from web.api import smart_router_api
+from web.api import execution_analytics_api
+from web.api import broker_health_api
+from web.api import brokerage_integration_api
+from web.api import backtest_api
+from web.api import simulation_api
+from web.api import alerts_api
+from web.api import opportunities_api
+from web.api import screener_api
+from web.api import watchlist_share_api
+from web.api import fraud_api
+from web.api import risk_limits_api
+from web.api import legal_api
+from web.api import audit_api
+from web.api import security_api
+from web.api import warden_api
+from web.api import audit_recon_api
+from web.api import reporting_api
+from web.api import validation_api
+from web.api import valuation_api
+from web.api import reputation_api
+from web.api import treasury_api
+from web.api import portfolio_api
+from web.api import order_api
+from web.api import defi_api
+from web.api import tax_reporting_api
+from web.api import wealth_planning_api
+from web.api import stress_test_api
+from web.api import orchestrator_api
 from web.routes import approval_router
+import web.api.market as market_api
+
 
 # Setup logging
 logger = logging.getLogger(__name__)
@@ -99,6 +142,22 @@ app = FastAPI(
     description="Unified API Gateway for the Sovereign AI Investor Organization.",
     version="1.0.0"
 )
+
+# --- Debug Middleware for Event Loop Stalls ---
+@app.middleware("http")
+async def log_request_time(request: Request, call_next):
+    import time
+    start_time = time.time()
+    response = None
+    try:
+        response = await call_next(request)
+    finally:
+        process_time = time.time() - start_time
+        if process_time > 1.0: # Log any request taking more than 1s
+            logger.warning(f"🐢 SLOW REQUEST: {request.method} {request.url.path} took {process_time:.4f}s")
+        else:
+            logger.debug(f"⚡ FAST REQUEST: {request.method} {request.url.path} took {process_time:.4f}s")
+    return response
 
 # Configure CORS
 app.add_middleware(
@@ -151,7 +210,10 @@ app.include_router(advanced_orders_api.router)
 app.include_router(ai_assistant_api.router)
 app.include_router(ai_predictions_api.router)
 app.include_router(analytics_api.router)
-app.include_router(assets_api.router)
+app.include_router(analysis_api.router)
+app.include_router(analysis_api.router)
+app.include_router(assets_api.router) # Now fully populated
+app.include_router(attribution_api.router)
 app.include_router(attribution_api.router)
 app.include_router(banking_api.router)
 app.include_router(billing_api.router)
@@ -184,9 +246,12 @@ app.include_router(paper_trading_api.router)
 app.include_router(payment_transfer_api.router)
 app.include_router(philanthropy_api.router)
 app.include_router(politics_api.router)
+app.include_router(pricing_api.router)
 app.include_router(privacy_api.router)
 app.include_router(public_api.router)
 app.include_router(research_api.router)
+app.include_router(research_api.router)
+app.include_router(quantitative_api.router)
 app.include_router(retirement_api.router)
 app.include_router(search_api.router)
 app.include_router(settlement_api.router)
@@ -195,16 +260,61 @@ app.include_router(social_trading_api.router)
 app.include_router(spatial_api.router)
 app.include_router(system_telemetry_api.router)
 app.include_router(tax_optimization_api.router)
-app.include_router(indicators_api.router)
+# app.include_router(identifiers_api.router) # Not imported - identity_api covers it
 app.include_router(compliance_144a_api.router)
+app.include_router(ingestion_api.router)
+app.include_router(external_data_api.router)
+app.include_router(webhook_ingestion_api.router)
+app.include_router(indicators_api.router)
+app.include_router(missions_api.router)
+app.include_router(modes_api.router)
+app.include_router(meta_api.router)
+app.include_router(singularity_api.router)
+app.include_router(execution_core_api.router)
+app.include_router(smart_router_api.router)
+app.include_router(execution_analytics_api.router)
+app.include_router(broker_health_api.router)
+app.include_router(brokerage_integration_api.router)
+app.include_router(backtest_api.router)
+app.include_router(simulation_api.router)
+app.include_router(watchlist_api.router)
+app.include_router(alerts_api.router)
+app.include_router(opportunities_api.router)
+app.include_router(screener_api.router)
+app.include_router(watchlist_share_api.router)
+app.include_router(risk_api.router)
+app.include_router(fraud_api.router)
+app.include_router(risk_limits_api.router)
+app.include_router(compliance_api.router)
+app.include_router(legal_api.router)
+app.include_router(audit_api.router)
+app.include_router(security_api.router)
+app.include_router(auth_api.router)
+app.include_router(warden_api.router)
+app.include_router(audit_recon_api.router)
+app.include_router(reporting_api.router)
+app.include_router(validation_api.router)
+app.include_router(valuation_api.router)
+app.include_router(reputation_api.router)
+app.include_router(treasury_api.router)
+app.include_router(portfolio_api.router)
+app.include_router(reporting_api.router)
+app.include_router(tax_reporting_api.router)
+app.include_router(wealth_planning_api.router)
+app.include_router(stress_test_api.router)
+app.include_router(philanthropy_api.router)
+app.include_router(banking_api.router)
+app.include_router(crypto_api.router)
+app.include_router(defi_api.router)
+app.include_router(admin.router)
 
 # app.include_router(mission_api.router) # If found later
 
 # Mount Socket.IO
-app.mount("/socket.io", socket_app)
+app.mount("/socket.io", get_socket_app())
 
-from web.websocket.event_bus_ws import eb_socket_app
-app.mount("/ws/admin/event-bus", eb_socket_app)
+# Mounted via main Socket.IO app using namespace /admin/event-bus
+
 
 # Global Slack Service reference for lifecycle management
 _slack_service = None
@@ -213,31 +323,41 @@ _slack_service = None
 async def startup_event():
     global _slack_service
     logger.info("Sovereign OS Gateway starting up...")
-    try:
-        from services.notifications.slack_service import get_slack_service
-        _slack_service = get_slack_service()
-        
-        # 1. Announce Online
-        await _slack_service.send_notification(
-            text="🚀 *AI Investor Backend Online:* Unified Gateway is active.", 
-            level="success"
-        )
-        
-        # 2. Start Event Bus Broadcaster
+    
+    async def init_services():
+        global _slack_service
         try:
-            from web.websocket.event_bus_ws import start_event_bus_broadcast
-            start_event_bus_broadcast()
-            logger.info("🛰️ Event Bus WS Broadcaster started.")
+            from services.notifications.slack_service import get_slack_service
+            _slack_service = get_slack_service()
+            
+            # 1. Announce Online (with timeout)
+            try:
+                await asyncio.wait_for(
+                    _slack_service.send_notification(
+                        text="🚀 *AI Investor Backend Online:* Unified Gateway is active.", 
+                        level="success"
+                    ),
+                    timeout=5.0
+                )
+            except Exception as e:
+                logger.warning(f"Slack notification failed: {e}")
+            
+            # 2. Start Bot Listener
+            asyncio.create_task(_slack_service.start_bot())
+            logger.info("📡 Slack Bot listener integration scheduled.")
         except Exception as e:
-            logger.error(f"Failed to start Event Bus WS Broadcaster: {e}")
+            logger.warning(f"Failed to initialize integrated Slack Bot: {e}")
 
-        # 3. Start Bot Listener in Background (non-blocking)
-        import asyncio
-        asyncio.create_task(_slack_service.start_bot())
-        logger.info("📡 Slack Bot listener integrated and running.")
-        
+    # Start services in background
+    # asyncio.create_task(init_services())
+
+    # 3. Start Event Bus Broadcaster (Background)
+    try:
+        from web.ws_legacy.event_bus_ws import start_event_bus_broadcast
+        start_event_bus_broadcast()
+        logger.info("📡 Event Bus WS Broadcaster initialized.")
     except Exception as e:
-        logger.warning(f"Failed to initialize integrated Slack Bot: {e}")
+        logger.error(f"Failed to initialize Event Bus WS Broadcaster: {e}")
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -253,4 +373,12 @@ async def shutdown_event():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=5050)
+    uvicorn.run(
+        app, 
+        host="127.0.0.1", 
+        port=5050, 
+        log_level="info",
+        reload=False,
+        workers=1
+    )
+

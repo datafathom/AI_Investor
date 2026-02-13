@@ -8,10 +8,12 @@ Phase_1 - Neo4j Graph Browser Page: http://localhost:5173/admin/graph-browser
 Phase_2 - Service Health Grid Page: http://localhost:5173/admin/health
 Phase_2 - Middleware Pipeline Page: http://localhost:5173/admin/middleware
 Phase_2 - Alert Configuration Page: http://localhost:5173/admin/alerts-config
+Phase_2 - Monitoring Dashboard: http://localhost:5173/admin/monitoring
 Phase_3 - Deployment Controller Page: http://localhost:5173/admin/deployments
 Phase_3 - Operations Dashboard Page: http://localhost:5173/admin/ops
 Phase_3 - Workspace Manager Page: http://localhost:5173/admin/workspaces
 Phase_3 - Feature Flags Page: http://localhost:5173/admin/features
+Phase_3 - Environment Settings: http://localhost:5173/admin/environment-settings
 Phase_4 - Forced Seller Monitor Page: http://localhost:5173/data-scientist/forced-sellers
 Phase_4 - Whale Flow Terminal Page: http://localhost:5173/data-scientist/whale-flow
 Phase_4 - Technical Indicators Page: http://localhost:5173/data-scientist/indicators
@@ -58,3 +60,195 @@ Phase_4 - Rule 144A Compliance (Supplemental): http://localhost:5173/legal/144a-
 # Widgets - Phase 4
 - Market Regime Classifier (Widget): Used in Strategist dashboards.
 - Volume Promo Detector (Widget): Used in Market Intelligence dashboards.
+
+# Auto-Extracted Routes from Phase 8 (Charting)
+Phase_8 - Advanced Charting: http://localhost:5173/charts/advanced
+Phase_8 - Technical Analysis: http://localhost:5173/charts/technical
+
+# Auto-Extracted Routes from Phase 9 (Agent Fleet)
+Phase_9 - Agent Fleet Overview: http://localhost:5173/admin/fleet
+Phase_9 - Agent Task Queue: http://localhost:5173/admin/task-queue
+Phase_9 - Agent Logs Viewer: http://localhost:5173/admin/agent-logs
+
+# Auto-Extracted Routes from Phase 10 (AI Debate)
+Phase_10 - Debate Arena: http://localhost:5173/debate/room
+Phase_10 - Debate History: http://localhost:5173/data-scientist/debate-history
+
+# Auto-Extracted Routes from Phase 11 (System Evolution)
+Phase_11 - Auto-Coder Dashboard: http://localhost:5173/admin/autocoder
+Phase_11 - Auto-Coder Sandbox: http://localhost:5173/admin/autocoder/sandbox
+Phase_11 - Evolution Dashboard: http://localhost:5173/admin/evolution
+Phase_11 - System Health Dashboard: http://localhost:5173/admin/system-health
+
+# Auto-Extracted Routes from Phase 12 (Mission & Mode Control)
+Phase_12 - Mission Control: http://localhost:5173/mission-control
+Phase_12 - Missions Overview: http://localhost:5173/missions
+Phase_12 - Mission Planner: http://localhost:5173/mission-planner
+Phase_12 - Mission Progress: http://localhost:5173/mission-progress
+Phase_12 - Autopilot Configuration: http://localhost:5173/autopilot
+
+# Widgets - Phase 8
+- Multi-Timeframe Widget: Used in Advanced Charting.
+- Probability Cone Widget: Used in Advanced Charting.
+
+# Widgets - Phase 9
+- Heartbeat Monitor (Widget): Used in Agent Fleet Overview.
+- Rogue Agent Detector (Widget): Used in Agent Fleet Overview.
+
+# Widgets - Phase 10
+- Consensus Voting Panel (Widget): Used in Debate Arena.
+- Sentiment Graph (Widget): Used in Debate Arena.
+
+# Widgets - Phase 11
+- Fitness Surface 3D (Widget): Used in Evolution Dashboard.
+- Lineage Map (Widget): Used in Evolution Dashboard.
+- Kafka Health (Widget): Used in System Health Dashboard.
+
+# Widgets - Phase 12
+- Mode Switcher (Widget): Used in Mission Control.
+- Mode Aware Alerts (Widget): Used in Mission Control.
+- Zen Mode (Widget): Used in various dashboards.
+
+# Auto-Extracted Routes from Phase 13 (Meta-Optimization)
+Phase_13 - Meta-Optimizer: http://localhost:5173/admin/meta-optimizer
+Phase_13 - Strategy Lab: http://localhost:5173/admin/strategy-lab
+Phase_13 - Singularity Monitor: http://localhost:5173/admin/singularity
+Phase_13 - Prompt A/B Tester: http://localhost:5173/admin/prompt-tester
+Phase_13 - Agent DNA Viewer: http://localhost:5173/admin/agent-dna
+
+# Auto-Extracted Routes from Phase 14 (Order Execution)
+Phase_14 - Order Management: http://localhost:5173/admin/order-management
+Phase_14 - Smart Order Router: http://localhost:5173/admin/smart-router
+Phase_14 - Execution Analytics: http://localhost:5173/admin/execution-analytics
+
+# Auto-Extracted Routes from Phase 15 (Options Suite)
+Phase_15 - Greeks Surface: http://localhost:5173/admin/greeks-surface
+Phase_15 - Position Greeks: http://localhost:5173/admin/position-greeks
+Phase_15 - P&L Modeler: http://localhost:5173/admin/pnl-modeler
+Phase_15 - Options Flow: http://localhost:5173/admin/options-flow
+Phase_15 - IV Rank (Widget): Used in Options Dashboards.
+
+# Auto-Extracted Routes from Phase 16 (Broker Integration)
+Phase_16 - Connections: http://localhost:5173/admin/broker-connections
+Phase_16 - Aggregator: http://localhost:5173/admin/account-aggregator
+Phase_16 - Health Monitor: http://localhost:5173/admin/broker-health
+Phase_16 - Transaction Sync: http://localhost:5173/admin/transaction-sync
+
+# Auto-Extracted Routes from Phase 17 (Backtest)
+Phase_17 - Backtest Engine: http://localhost:5173/admin/backtest-engine
+Phase_17 - Walk-Forward: http://localhost:5173/admin/walk-forward
+Phase_17 - Performance: http://localhost:5173/admin/performance-report
+Phase_17 - Strategy Library: http://localhost:5173/admin/strategy-library
+Phase_17 - Monte Carlo (Widget): Used in Backtest Dashboard.
+
+# Auto-Extracted Routes from Phase 18 (Watchlist)
+Phase_18 - Watchlist Manager: http://localhost:5173/admin/watchlist-manager
+Phase_18 - Alerts Center: http://localhost:5173/admin/alert-center
+Phase_18 - Opportunities: http://localhost:5173/admin/opportunity-tracker
+Phase_18 - Screener: http://localhost:5173/admin/screener-builder
+
+# Auto-Extracted Routes from Phase 19 (Risk Console)
+Phase_19 - Risk Dashboard: http://localhost:5173/admin/risk-dashboard
+Phase_19 - Position Sizer: http://localhost:5173/admin/position-sizer
+Phase_19 - Correlations: http://localhost:5173/admin/correlation-risk
+Phase_19 - Fraud Center: http://localhost:5173/admin/fraud-center
+Phase_19 - Limit Manager: http://localhost:5173/admin/risk-limits
+
+# Auto-Extracted Routes from Phase 20 (Compliance)
+Phase_20 - Compliance Tracker: http://localhost:5173/admin/compliance-tracker
+Phase_20 - Trade Surveillance: http://localhost:5173/admin/trade-surveillance
+Phase_20 - Filing Manager: http://localhost:5173/admin/filing-manager
+Phase_20 - Doc Generator: http://localhost:5173/admin/doc-generator
+
+# Auto-Extracted Routes from Phase 21 (Security)
+Phase_21 - Security Center: http://localhost:5173/admin/security-center
+Phase_21 - Session Manager: http://localhost:5173/admin/session-manager
+Phase_21 - Warden Panel: http://localhost:5173/admin/warden-panel
+Phase_21 - API Keys: http://localhost:5173/admin/api-key-manager
+Phase_21 - Audit Logs: http://localhost:5173/admin/security-logs
+
+# Auto-Extracted Routes from Phase 22 (Audit & Recon)
+Phase_22 - Reconciliation: http://localhost:5173/admin/reconciliation-dashboard
+Phase_22 - Discrepancies: http://localhost:5173/admin/discrepancy-resolution
+Phase_22 - Tax Lots: http://localhost:5173/admin/tax-lot-analyzer
+Phase_22 - Ledger: http://localhost:5173/admin/transaction-ledger
+Phase_22 - Fee Auditor: http://localhost:5173/admin/fee-auditor
+
+# Auto-Extracted Routes from Phase 23 (Validation)
+Phase_23 - Data Validation: http://localhost:5173/admin/data-validation
+Phase_23 - Model Validator: http://localhost:5173/admin/model-validator
+Phase_23 - Pricing Verifier: http://localhost:5173/admin/pricing-verifier
+Phase_23 - Source Reputation: http://localhost:5173/admin/source-reputation
+Phase_23 - Quality Incidents: http://localhost:5173/admin/quality-incidents
+Phase_23 - Data Quality Dashboard: http://localhost:5173/admin/data-quality-dashboard
+
+# Auto-Extracted Routes from Phase 24 (Banking)
+Phase_24 - Treasury: http://localhost:5173/admin/treasury-dashboard
+Phase_24 - Yield Optimizer: http://localhost:5173/admin/yield-optimizer
+Phase_24 - Transfer Center: http://localhost:5173/admin/transfer-center
+Phase_24 - Expense Manager: http://localhost:5173/admin/expense-manager
+Phase_24 - Banks: http://localhost:5173/admin/bank-manager
+
+# Auto-Extracted Routes from Phase 25 (Portfolio)
+Phase_25 - Overview: http://localhost:5173/admin/portfolio-overview
+Phase_25 - Rebalancer: http://localhost:5173/admin/rebalancer
+Phase_25 - Tax Harvester: http://localhost:5173/admin/tax-harvester
+Phase_25 - Attribution: http://localhost:5173/admin/performance-attribution
+Phase_25 - Construction Lab: http://localhost:5173/admin/construction-lab
+
+# Auto-Extracted Routes from Phase 26 (Orders)
+Phase_26 - Algo Entry: http://localhost:5173/admin/algo-order-entry
+Phase_26 - Iceberg: http://localhost:5173/admin/iceberg-slicer
+Phase_26 - Bracket: http://localhost:5173/admin/bracket-manager
+Phase_26 - Multi-Leg: http://localhost:5173/admin/multi-leg-builder
+Phase_26 - Dark Pools: http://localhost:5173/admin/dark-pool-access
+
+# Auto-Extracted Routes from Phase 27 (Crypto)
+Phase_27 - Wallet: http://localhost:5173/admin/crypto-wallet
+Phase_27 - DeFi Yield: http://localhost:5173/admin/defi-yield-dashboard
+Phase_27 - On-Chain: http://localhost:5173/admin/on-chain-terminal
+Phase_27 - Crypto Analytics: http://localhost:5173/admin/crypto-analytics
+Phase_27 - Web3 Sim: http://localhost:5173/admin/web3-simulator
+
+# Auto-Extracted Routes from Phase 28 (Assets)
+Phase_28 - Inventory: http://localhost:5173/admin/asset-inventory
+Phase_28 - Real Estate: http://localhost:5173/admin/real-estate-suite
+Phase_28 - PE Terminal: http://localhost:5173/admin/private-equity-terminal
+Phase_28 - Collectibles: http://localhost:5173/admin/collectible-viewer
+Phase_28 - Exit Plan: http://localhost:5173/admin/exit-planner
+
+# Auto-Extracted Routes from Phase 29 (Reporting)
+Phase_29 - Exec Summary: http://localhost:5173/admin/executive-summary
+Phase_29 - Report Builder: http://localhost:5173/admin/report-builder
+Phase_29 - Tax Dashboard: http://localhost:5173/admin/tax-liability-dashboard
+Phase_29 - Attribution: http://localhost:5173/admin/attribution-analysis
+Phase_29 - Investor Portal: http://localhost:5173/admin/investor-portal
+
+# Auto-Extracted Routes from Phase 30 (Wealth)
+Phase_30 - Estate Visualizer: http://localhost:5173/admin/estate-visualizer
+Phase_30 - Succession Modeler: http://localhost:5173/admin/succession-modeler
+Phase_30 - Gifting: http://localhost:5173/admin/gifting-optimizer
+Phase_30 - Trust Admin: http://localhost:5173/admin/trust-admin
+Phase_30 - Wealth Benchmark: http://localhost:5173/admin/wealth-benchmark
+
+# Auto-Extracted Routes from Phase 31 (Stress Test)
+Phase_31 - Crash Simulator: http://localhost:5173/admin/crash-simulator
+Phase_31 - Black Swan: http://localhost:5173/admin/black-swan-generator
+Phase_31 - Liquidity Stress: http://localhost:5173/admin/liquidity-stress
+Phase_31 - War Game: http://localhost:5173/admin/wargame-arena
+Phase_31 - Robustness: http://localhost:5173/admin/robustness-lab
+
+# Auto-Extracted Routes from Phase 32 (Philanthropy)
+Phase_32 - Philanthropy Center: http://localhost:5173/admin/philanthropy-center
+Phase_32 - Impact Scorecard: http://localhost:5173/admin/impact-scorecard
+Phase_32 - Donation Manager: http://localhost:5173/admin/donation-manager
+Phase_32 - Opportunity Finder: http://localhost:5173/admin/giving-opportunity-finder
+Phase_32 - Legacy Storytelling: http://localhost:5173/admin/legacy-storytelling
+
+# Auto-Extracted Routes from Phase 33 (Orchestrator)
+Phase_33 - Tactical Command: http://localhost:5173/admin/tactical-command-center
+Phase_33 - Autonomy Control: http://localhost:5173/admin/autonomy-controller
+Phase_33 - Consensus Visualizer: http://localhost:5173/admin/consensus-visualizer
+Phase_33 - Unified Alerts: http://localhost:5173/admin/unified-alert-center
+Phase_33 - OS Health: http://localhost:5173/admin/os-health-dashboard
+

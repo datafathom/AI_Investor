@@ -72,6 +72,59 @@ const AutoCoderDashboard = () => {
         }
     };
 
+    const validateCode = async () => {
+        if (!code.trim()) return;
+        setLoading(true);
+        addLog('System', 'Validating syntax and safety...');
+        try {
+            const isValid = await autocoderService.validateCode(code);
+            if (isValid) {
+                addLog('System', 'Validation SUCCESS. Code is safe for execution.', 'success');
+            } else {
+                addLog('System', 'Validation FAILED. Blocked imports or syntax error detected.', 'error');
+            }
+        } catch (error) {
+            addLog('System', `Validation error: ${error.message}`, 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const executeCode = async () => {
+        if (!code.trim()) return;
+        setLoading(true);
+        addLog('System', 'Executing in sandboxed environment...');
+        try {
+            const result = await autocoderService.executeCode(code);
+            if (result.success) {
+                addLog('AI', `Execution SUCCESS. Output follows.`, 'success');
+                if (result.output) addLog('Output', result.output);
+            } else {
+                addLog('AI', `Execution FAILED. Error: ${result.error}`, 'error');
+            }
+        } catch (error) {
+            addLog('AI', `Execution error: ${error.message}`, 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const deployCode = async () => {
+        if (!code.trim()) return;
+        setLoading(true);
+        addLog('System', 'Initiating Blue-Green deployment sequence...');
+        try {
+            // Defaulting to AutocoderAgent for this sandbox
+            const result = await autocoderService.deployModule('AutocoderAgent', code);
+            const status = result?.status || 'unknown';
+            addLog('System', `Deployment ${status.toUpperCase()}. ID: ${result?.deployment_id || 'N/A'}`, status === 'success' ? 'success' : 'error');
+        } catch (error) {
+            addLog('System', `Deployment error: ${error.message}`, 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="autocoder-container">
             <header className="autocoder-header">
@@ -156,9 +209,30 @@ const AutoCoderDashboard = () => {
                             </button>
                         </div>
                         <div className="flex gap-3">
-                            <button className="text-slate-400 hover:text-cyan-400 transition-colors"><ShieldCheck size={14} /></button>
-                            <button className="text-slate-400 hover:text-green-400 transition-colors"><Play size={14} /></button>
-                            <button className="text-slate-400 hover:text-purple-400 transition-colors"><Rocket size={14} /></button>
+                            <button 
+                                onClick={validateCode}
+                                disabled={loading || !code}
+                                className="text-slate-400 hover:text-cyan-400 transition-colors disabled:opacity-30" 
+                                title="Validate Syntax/Security"
+                            >
+                                <ShieldCheck size={14} />
+                            </button>
+                            <button 
+                                onClick={executeCode}
+                                disabled={loading || !code}
+                                className="text-slate-400 hover:text-green-400 transition-colors disabled:opacity-30"
+                                title="Run in Sandbox"
+                            >
+                                <Play size={14} />
+                            </button>
+                            <button 
+                                onClick={deployCode}
+                                disabled={loading || !code}
+                                className="text-slate-400 hover:text-purple-400 transition-colors disabled:opacity-30"
+                                title="Deploy to Agent Registry"
+                            >
+                                <Rocket size={14} />
+                            </button>
                         </div>
                     </div>
 

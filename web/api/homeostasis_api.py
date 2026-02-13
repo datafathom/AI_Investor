@@ -5,6 +5,7 @@ from typing import Optional
 from services.portfolio.homeostasis_service import homeostasis_service
 from services.execution.philanthropy_service import philanthropy_service
 import logging
+import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +31,7 @@ async def get_status(
 ):
     try:
         tenant_id = 'default' 
-        status = homeostasis_service.get_homeostasis_status(tenant_id)
+        status = await asyncio.to_thread(homeostasis_service.get_homeostasis_status, tenant_id)
         return {"success": True, "data": status}
     except Exception as e:
         logger.exception("Failed to get homeostasis status")
@@ -44,9 +45,9 @@ async def update_metrics(
     try:
         tenant_id = 'default' 
         if data.net_worth is not None:
-            homeostasis_service.update_net_worth(tenant_id, data.net_worth)
+            await asyncio.to_thread(homeostasis_service.update_net_worth, tenant_id, data.net_worth)
             
-        status = homeostasis_service.get_homeostasis_status(tenant_id)
+        status = await asyncio.to_thread(homeostasis_service.get_homeostasis_status, tenant_id)
         return {"success": True, "data": status}
     except Exception as e:
         logger.exception("Failed to update metrics")

@@ -291,6 +291,21 @@ export const useDepartmentStore = create(
             },
             color: '#059669',
             lastUpdate: null
+          },
+          19: { 
+            id: 19, 
+            name: 'System Admin', 
+            slug: 'admin',
+            quadrant: 'META',
+            status: 'active', 
+            agents: [],
+            metrics: {
+              systemUptime: 0,
+              activeAlerts: 0,
+              errorRate: 0
+            },
+            color: '#64748b', // Slate-500
+            lastUpdate: null
           }
         },
         
@@ -304,7 +319,7 @@ export const useDepartmentStore = create(
           netWorth: 0,
           threatLevel: 'Low',
           dailyAlpha: 0,
-          liquidityDays: 180,
+          liquidityDays: 180, // Default safe value
           systemHealth: 'green',
           lastUpdate: null
         },
@@ -564,7 +579,7 @@ export const useDepartmentStore = create(
         }
       }),
       {
-        name: 'department-storage',
+        name: 'department-storage-v2', // Changed to v2 to force schema update in local storage
         partialize: (state) => ({
           activeDepartment: state.activeDepartment,
           // Don't persist real-time metrics

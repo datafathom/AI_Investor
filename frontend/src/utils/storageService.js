@@ -20,6 +20,7 @@ export const StorageService = {
     console.log(`[Storage Debug] get(${key}) started`);
     // 1. Check Memory
     if (memoryCache.has(key)) {
+      console.log(`[Storage Debug] get(${key}) found in memory`);
       return memoryCache.get(key);
     }
 
@@ -32,6 +33,7 @@ export const StorageService = {
       
       const idbValue = await Promise.race([idbPromise, timeoutPromise]);
       if (idbValue !== undefined) {
+        console.log(`[Storage Debug] get(${key}) found in IDB`);
         memoryCache.set(key, idbValue);
         return idbValue;
       }
@@ -47,10 +49,10 @@ export const StorageService = {
     try {
       const localValue = localStorage.getItem(key);
       if (localValue) {
+        console.log(`[Storage Debug] get(${key}) found in LocalStorage`);
         try {
           const parsed = JSON.parse(localValue);
           memoryCache.set(key, parsed);
-          // Auto-migrate to IDB? Maybe later.
           return parsed;
         } catch (err) {
           memoryCache.set(key, localValue);
@@ -61,6 +63,7 @@ export const StorageService = {
       console.error('LocalStorage unavailable:', e);
     }
 
+    console.log(`[Storage Debug] get(${key}) NOT FOUND`);
     return null;
   },
 
@@ -105,20 +108,20 @@ export const StorageService = {
     // 1. Update Memory
     memoryCache.set(key, value);
 
-    try {
-      // 2. Update IndexedDB (Always) with 250ms Timeout
-      const idbPromise = IndexedDBProvider.set(key, value);
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('IDB timeout')), 250)
-      );
-      await Promise.race([idbPromise, timeoutPromise]);
-    } catch (e) {
-      if (e.message === 'IDB timeout') {
-        console.warn(`[StorageService] IDB Write TIMEOUT for ${key}.`);
-      } else {
-        console.warn(`[StorageService] IDB Write Error for ${key}:`, e);
-      }
-    }
+    // try {
+    //   // 2. Update IndexedDB (Always) with 250ms Timeout
+    //   const idbPromise = IndexedDBProvider.set(key, value);
+    //   const timeoutPromise = new Promise((_, reject) => 
+    //     setTimeout(() => reject(new Error('IDB timeout')), 250)
+    //   );
+    //   await Promise.race([idbPromise, timeoutPromise]);
+    // } catch (e) {
+    //   if (e.message === 'IDB timeout') {
+    //     console.warn(`[StorageService] IDB Write TIMEOUT for ${key}.`);
+    //   } else {
+    //     console.warn(`[StorageService] IDB Write Error for ${key}:`, e);
+    //   }
+    // }
 
     // 3. Update LocalStorage (Only if small keys/values to avoid quota limits)
     // We treat LocalStorage as a sync backup for critical small data

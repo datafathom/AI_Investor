@@ -45,7 +45,8 @@ class KafkaAdminService:
         if not self.admin:
             return []
         try:
-            groups = self.admin.list_groups(timeout=10)
+            # Reduced timeout to prevent event loop stalls
+            groups = self.admin.list_groups(timeout=2)
             return [g.id for g in groups]
         except Exception as e:
             logger.error(f"Error listing groups: {e}")
@@ -72,7 +73,8 @@ class KafkaAdminService:
         if not self.admin:
             return []
         try:
-            metadata = self.admin.list_topics(timeout=10)
+            # Reduced timeout to prevent event loop stalls
+            metadata = self.admin.list_topics(timeout=2)
             return list(metadata.topics.keys())
         except Exception as e:
             logger.error(f"Error listing topics: {e}")

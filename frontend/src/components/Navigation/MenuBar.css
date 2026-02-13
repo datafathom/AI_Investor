@@ -194,6 +194,12 @@
   animation: menuFadeIn 0.15s ease-out;
 }
 
+/* Fix: Submenus near the bottom of the screen should open upwards */
+.menu-dropdown-item:nth-last-child(-n+6) > .menu-submenu {
+  top: auto;
+  bottom: -4px;
+}
+
 .menu-item-label {
   flex: 1;
 }

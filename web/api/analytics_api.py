@@ -216,3 +216,27 @@ async def get_tail_risk(
         logger.error(f"Error calculating tail risk: {e}")
         from fastapi.responses import JSONResponse
         return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
+        return JSONResponse(status_code=500, content={"success": False, "detail": str(e)})
+
+# --- Phase 7: Sector Rotation Endpoints ---
+from services.analytics.sector_rotation import SectorRotationService
+
+@router.get('/sector-rotation')
+async def get_sector_rotation():
+    service = SectorRotationService()
+    return await service.get_sector_rotation()
+
+@router.get('/sector-rotation/signals')
+async def get_rotation_signals():
+    service = SectorRotationService()
+    return await service.get_rotation_signals()
+
+@router.get('/sectors/performance')
+async def get_sector_performance():
+    service = SectorRotationService()
+    return await service.get_sector_performance()
+
+@router.get('/cycle/phase')
+async def get_business_cycle_phase():
+    service = SectorRotationService()
+    return await service.get_business_cycle_phase()

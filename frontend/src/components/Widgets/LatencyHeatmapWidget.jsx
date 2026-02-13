@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import apiClient from '@/services/apiClient';
 import './LatencyHeatmapWidget.css';
 import LatencyHistogram from '../charts/LatencyHistogram';
 
@@ -16,8 +17,7 @@ const LatencyHeatmapWidget = () => {
 
     const fetchSummary = async () => {
         try {
-            const response = await fetch('/api/v1/admin/latency/summary');
-            const data = await response.json();
+            const data = await apiClient.get('/admin/latency/summary');
             setSummary(data);
         } catch (error) {
             console.error("Error fetching latency summary:", error);
@@ -30,8 +30,7 @@ const LatencyHeatmapWidget = () => {
         setSelectedEndpoint(path);
         setHistogram(null);
         try {
-            const response = await fetch(`/api/v1/admin/latency/endpoints/${encodeURIComponent(path)}/histogram`);
-            const data = await response.json();
+            const data = await apiClient.get(`/admin/latency/endpoints/${encodeURIComponent(path)}/histogram`);
             setHistogram(data);
         } catch (error) {
             console.error("Error fetching histogram:", error);

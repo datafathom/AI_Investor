@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './GraphBrowser.css';
+import apiClient from '../../services/apiClient';
 
 const GraphBrowser = () => {
     const [query, setQuery] = useState('MATCH (n) RETURN n LIMIT 25');
@@ -14,8 +15,7 @@ const GraphBrowser = () => {
 
     const fetchSchema = async () => {
         try {
-            const response = await fetch('/api/v1/admin/graph/schema');
-            const data = await response.json();
+            const data = await apiClient.get('/admin/graph/schema');
             setSchema(data);
         } catch (error) {
             console.error("Error fetching schema:", error);
@@ -27,12 +27,7 @@ const GraphBrowser = () => {
     const handleRunQuery = async () => {
         setExecuting(true);
         try {
-            const response = await fetch('/api/v1/admin/graph/query', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query })
-            });
-            const data = await response.json();
+            const data = await apiClient.post('/admin/graph/query', { query });
             setResults(data.results || []);
         } catch (error) {
             console.error("Error executing query:", error);

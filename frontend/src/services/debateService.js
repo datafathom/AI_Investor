@@ -1,39 +1,27 @@
-/**
- * debateService.js
- * 
- * Handles API calls to the Debate Chamber.
- */
-
 import apiClient from './apiClient';
 
 export const debateService = {
-    /**
-     * Triggers an AI committee debate for a ticker.
-     * @param {string} ticker 
-     * @param {string} summary 
-     */
-    triggerDebate: async (ticker, summary) => {
-        try {
-            const response = await apiClient.post('/analysis/debate', { ticker, summary });
-            return response.data;
-        } catch (error) {
-            console.error('Error triggering debate:', error);
-            throw error;
-        }
-    },
+  startDebate: async (ticker, context) => {
+    return await apiClient.post('/debate/sessions', { ticker, context });
+  },
 
-    /**
-     * Gets the status of the debate chamber.
-     */
-    getStatus: async () => {
-        try {
-            const response = await apiClient.get('/analysis/debate/status');
-            return response.data;
-        } catch (error) {
-            console.error('Error getting debate status:', error);
-            throw error;
-        }
-    }
+  getSession: async (sessionId) => {
+    return await apiClient.get(`/debate/sessions/${sessionId}`);
+  },
+
+  injectArgument: async (sessionId, argument, sentiment) => {
+    return await apiClient.post(`/debate/sessions/${sessionId}/intervene`, { argument, sentiment });
+  },
+  
+  getVerdict: async (sessionId) => {
+    return await apiClient.get(`/debate/sessions/${sessionId}/verdict`);
+  },
+
+  getHistory: async (filters = {}) => {
+    return await apiClient.get('/debate/history', { params: filters });
+  },
+
+  getTranscript: async (sessionId) => {
+    return await apiClient.get(`/debate/history/${sessionId}/transcript`);
+  }
 };
-
-export default debateService;

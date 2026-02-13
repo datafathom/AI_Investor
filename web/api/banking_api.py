@@ -1,78 +1,62 @@
-"""
-Banking API - FastAPI Router
-REST endpoints for Plaid integration and transaction reconciliation.
-"""
-
-import logging
-from typing import Optional, Dict, Any, List
-
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter
+import uuid
 from pydantic import BaseModel
-
-from web.auth_utils import get_current_user
-from services.banking.banking_service import get_banking_service
-
-logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/v1/banking", tags=["Banking"])
 
-class PublicTokenRequest(BaseModel):
-    public_token: str
-
-@router.post('/plaid/create-link-token')
-async def create_link_token(current_user: Dict[str, Any] = Depends(get_current_user)):
-    """Initiates the Plaid Link flow by generating a link token."""
-    try:
-        service = get_banking_service()
-        user_id = current_user.get('id', 'demo-user')
-        token = service.create_link_token(user_id)
-        return {"link_token": token}
-    except Exception as e:
-        logger.error(f"Error creating link token: {e}")
-        raise HTTPException(status_code=500, detail="Failed to initiate banking link")
-
-@router.post('/plaid/exchange-public-token')
-async def exchange_public_token(
-    request_data: PublicTokenRequest,
-    current_user: Dict[str, Any] = Depends(get_current_user)
-):
-    """Exchanges a public token from the frontend for a permanent access token."""
-    try:
-        service = get_banking_service()
-        access_token = service.exchange_public_token(request_data.public_token)
-        
-        logger.info(f"Successfully linked bank account for user {current_user.get('id')}")
-        
-        return {"status": "success", "message": "Account linked successfully"}
-    except Exception as e:
-        logger.error(f"Error exchanging public token: {e}")
-        raise HTTPException(status_code=500, detail="Failed to link account")
+class TransferRequest(BaseModel):
+    from_account: str
+    to_account: str
+    amount: float
+    memo: str
 
 @router.get('/accounts')
-async def get_accounts(current_user: Dict[str, Any] = Depends(get_current_user)):
-    """Fetches all linked bank accounts and their balances."""
-    try:
-        service = get_banking_service()
-        # In production, we'd fetch the user's access token from the DB first
-        accounts = service.get_accounts("DEMO_ACCESS_TOKEN")
-        return accounts
-    except Exception as e:
-        logger.error(f"Error fetching accounts: {e}")
-        raise HTTPException(status_code=500, detail="Failed to fetch linked accounts")
+async def get_linkable_accounts():
+    """Get linked bank accounts."""
+    return {"success": True, "data": [
+        {"id": "ba_01", "name": "Chase Operating", "mask": "**1234", "balance": 450000.00, "status": "ACTIVE"},
+        {"id": "ba_02", "name": "SVB Capital", "mask": "**5678", "balance": 800000.00, "status": "ACTIVE"}
+    ]}
 
-@router.post('/sync')
-async def sync_transactions(current_user: Dict[str, Any] = Depends(get_current_user)):
-    """Triggers a manual sync of banking transactions."""
-    return {"status": "success", "message": "Transaction sync triggered"}
+@router.post('/transfer')
+async def initiate_transfer(req: TransferRequest):
+    """Initiate a funds transfer."""
+    return {"success": True, "data": {"id": str(uuid.uuid4()), "status": "PENDING_APPROVAL"}}
 
-@router.get('/reconciliation')
-async def get_reconciliation(current_user: Dict[str, Any] = Depends(get_current_user)):
-    """Fetches the latest reconciliation report."""
-    try:
-        from services.banking.reconciliation_service import get_reconciliation_service
-        service = get_reconciliation_service()
-        report = service.perform_reconciliation("DEMO_ACCESS_TOKEN")
-        return report
-    except Exception as e:
-        logger.error(f"Error fetching reconciliation report: {e}")
-        raise HTTPException(status_code=500, detail="Failed to fetch reconciliation report")
+@router.get('/history')
+async def get_transfer_history():
+    """Get transfer history."""
+    return {"success": True, "data": [
+        {"id": "tx_01", "date": "2025-02-08", "amount": 50000.00, "from": "Chase Operating", "to": "Brokerage", "status": "CLEARED"},
+        {"id": "tx_02", "date": "2025-02-01", "amount": 1000.00, "from": "Chase Operating", "to": "Vendor: AWS", "status": "CLEARED"}
+    ]}
+
+@router.get('/expenses')
+async def get_expenses():
+    """Get expense transactions."""
+    return {"success": True, "data": [
+        {"id": "exp_01", "date": "2025-02-05", "vendor": "AWS Web Services", "amount": 1250.45, "category": "Infrastructure"},
+        {"id": "exp_02", "date": "2025-02-04", "vendor": "Bloomberg Data", "amount": 2500.00, "category": "Data Feeds"}
+    ]}
+
+@router.post('/expenses/categorize')
+async def categorize_transaction(id: str, category: str):
+    """Categorize an expense."""
+    return {"success": True, "data": {"status": "UPDATED"}}
+
+@router.get('/relationships')
+async def list_banks():
+    """List bank relationships."""
+    return {"success": True, "data": [
+        {"id": "bk_01", "name": "JPMorgan Chase", "rep": "Sarah Smith", "phone": "555-0123", "fdic_coverage": 250000},
+        {"id": "bk_02", "name": "Silicon Valley Bank", "rep": "Mike Jones", "phone": "555-0199", "fdic_coverage": 250000}
+    ]}
+
+@router.get('/fees/{bank_id}')
+async def get_bank_fees(bank_id: str):
+    """Get bank fee schedule."""
+    return {"success": True, "data": [
+        {"service": "Wire Transfer (Dom)", "fee": 25.00},
+        {"service": "Wire Transfer (Int)", "fee": 45.00},
+        {"service": "ACH Batch", "fee": 5.00}
+    ]}

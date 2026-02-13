@@ -32,7 +32,7 @@ def check_port(port):
 
 def kill_port(port):
     """Forcefully kill any process listening on the given port."""
-    print(f"🔪 Cleaning port {port}...", flush=True)
+    print(f"[KILL] Cleaning port {port}...", flush=True)
     try:
         if sys.platform == "win32":
             # Use netstat to find PID
@@ -111,13 +111,14 @@ def start_dev_mode(check_infra: bool = True, slackbot: bool = True):
         venv_python = PROJECT_ROOT / "venv" / "bin" / "python"
         
     if venv_python.exists():
-        print(f"📦 Using virtual environment: {venv_python}")
+        print(f"[VENV] Using virtual environment: {venv_python}")
         python_exe = str(venv_python)
     else:
-        print(f"⚠️ Warning: Virtual environment not found. Using system python: {python_exe}")
+        print(f"[WARN] Warning: Virtual environment not found. Using system python: {python_exe}")
 
     backend_env = os.environ.copy()
     backend_env["PYTHONIOENCODING"] = "utf-8"
+    backend_env["PYTHONUNBUFFERED"] = "1"
     backend_env["PYTHONPATH"] = str(PROJECT_ROOT)
     
     backend_cmd = [
@@ -143,6 +144,10 @@ def start_dev_mode(check_infra: bool = True, slackbot: bool = True):
     t_backend = threading.Thread(target=stream_output, args=(backend_proc, "BACKEND"))
     t_backend.daemon = True
     t_backend.start()
+
+    # BRIEF DELAY: Ensure backend has a head start on port 5050
+    print("Waiting for backend to bind to port...")
+    time.sleep(2)
 
     # 4. Start Frontend (Vite)
     print("Launching Frontend (Vite HMR)...")
@@ -189,7 +194,7 @@ def start_dev_mode(check_infra: bool = True, slackbot: bool = True):
         t_slack.daemon = True
         t_slack.start()
     else:
-        print("⏭️ Skipping Slack Bot startup (--slackbot false).")
+        print(">>> Skipping Slack Bot startup (--slackbot false).")
 
     print(f"\nDEV MODE ACTIVE. Press Ctrl+C to stop.")
     print(f"   API: http://localhost:{BACKEND_PORT}")
@@ -204,7 +209,7 @@ def start_dev_mode(check_infra: bool = True, slackbot: bool = True):
                 break
             # Frontend via npm shell=True is harder to poll accurately on Windows but we try
     except KeyboardInterrupt:
-        print("\n🛑 Stopping Dev Mode...")
+        print("\n[STOP] Stopping Dev Mode...")
     finally:
         print("Cleaning up processes...")
         kill_proc_tree(backend_proc.pid)
@@ -215,12 +220,12 @@ def start_dev_mode(check_infra: bool = True, slackbot: bool = True):
 
 def start_dev_full(slackbot: bool = True):
     """Starts Docker infrastructure AND the development environment."""
-    print("🚀 Starting FULL DEV stack (Docker + Backend + Frontend)...")
+    print("[START] Starting FULL DEV stack (Docker + Backend + Frontend)...")
     try:
         # Force Docker Up
         subprocess.run([sys.executable, "cli.py", "docker", "up", "--profile", "full"], check=True)
     except subprocess.CalledProcessError:
-        print("❌ Error starting Docker infrastructure.")
+        print("[ERROR] Error starting Docker infrastructure.")
         return
 
     # Proceed with standard checks (which will pass since we just started it)
@@ -228,7 +233,7 @@ def start_dev_full(slackbot: bool = True):
 
 def start_dev_no_db(slackbot: bool = True):
     """Starts development environment WITHOUT checking infrastructure."""
-    print("⚡ Starting LIGHT DEV stack (Backend + Frontend ONLY)...")
+    print("Starting LIGHT DEV stack (Backend + Frontend ONLY)...")
     print("   Assuming infrastructure is running elsewhere (2-Node Mode).")
     
     # We monkey-patch the check_port to always return True for this run

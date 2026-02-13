@@ -1,10 +1,20 @@
 import React from 'react';
+import './TopicList.css';
 
 const TopicList = ({ topics, stats, onSelect, selectedTopic }) => {
     return (
         <div className="topic-list-container">
             <h3 className="section-title">ACTIVE_TOPICS</h3>
             <div className="topics-scroll">
+                <div 
+                    className={`topic-card ${!selectedTopic ? 'active' : ''}`}
+                    onClick={() => onSelect(null)}
+                >
+                    <div className="topic-name">ALL_TOPICS</div>
+                    <div className="topic-meta">
+                        <span>VIEW ALL EVENTS</span>
+                    </div>
+                </div>
                 {topics.map(topic => {
                     const topicStats = stats[topic.topic] || {};
                     const isActive = selectedTopic === topic.topic;
@@ -29,62 +39,6 @@ const TopicList = ({ topics, stats, onSelect, selectedTopic }) => {
                     );
                 })}
             </div>
-            <style jsx>{`
-                .topic-list-container {
-                    padding: 15px;
-                    display: flex;
-                    flex-direction: column;
-                    height: 100%;
-                }
-                .section-title {
-                    font-size: 0.9rem;
-                    color: #888;
-                    margin-bottom: 15px;
-                    letter-spacing: 1px;
-                }
-                .topics-scroll {
-                    overflow-y: auto;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 8px;
-                }
-                .topic-card {
-                    padding: 12px;
-                    background: rgba(40, 40, 40, 0.3);
-                    border: 1px solid #222;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    transition: all 0.2s;
-                }
-                .topic-card:hover {
-                    background: rgba(0, 242, 255, 0.05);
-                    border-color: #00f2ff66;
-                }
-                .topic-card.active {
-                    background: rgba(0, 242, 255, 0.1);
-                    border-color: #00f2ff;
-                }
-                .topic-name {
-                    font-size: 0.9rem;
-                    font-weight: bold;
-                    color: #fff;
-                    margin-bottom: 5px;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-                .topic-meta {
-                    display: flex;
-                    justify-content: space-between;
-                    font-size: 0.65rem;
-                    color: #888;
-                }
-                .last-seen {
-                    font-size: 0.6rem;
-                    color: #555;
-                    margin-top: 5px;
-                    text-align: right;
-                }
-            `}</style>
         </div>
     );
 };

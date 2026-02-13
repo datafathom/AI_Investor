@@ -1,0 +1,122 @@
+[
+  {
+    "level": "DEBUG",
+    "message": "http://127.0.0.1:5173/@vite/client 494:8 \"[vite] connecting...\"",
+    "source": "console-api",
+    "timestamp": 1770674025312
+  },
+  {
+    "level": "DEBUG",
+    "message": "http://127.0.0.1:5173/@vite/client 617:14 \"[vite] connected.\"",
+    "source": "console-api",
+    "timestamp": 1770674025387
+  },
+  {
+    "level": "INFO",
+    "message": "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=164ddcb6 21550:24 \"%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools\" \"font-weight:bold\"",
+    "source": "console-api",
+    "timestamp": 1770674025831
+  },
+  {
+    "level": "INFO",
+    "message": "http://127.0.0.1:5173/src/utils/errorTracking.js 45:12 \"Error tracking not configured (development mode or DSN not set)\"",
+    "source": "console-api",
+    "timestamp": 1770674025834
+  },
+  {
+    "level": "INFO",
+    "message": "http://127.0.0.1:5173/src/utils/requestGuard.js 13:10 \"[RequestGuard] Initialized. Direct fetch/XHR is restricted.\"",
+    "source": "console-api",
+    "timestamp": 1770674025960
+  },
+  {
+    "level": "INFO",
+    "message": "http://127.0.0.1:5173/src/utils/errorTracking.js 45:12 \"Error tracking not configured (development mode or DSN not set)\"",
+    "source": "console-api",
+    "timestamp": 1770674025961
+  },
+  {
+    "level": "INFO",
+    "message": "http://127.0.0.1:5173/src/core/initWidgets.js 32:10 \"[WidgetRegistry] Core widgets registered\"",
+    "source": "console-api",
+    "timestamp": 1770674025961
+  },
+  {
+    "level": "INFO",
+    "message": "http://127.0.0.1:5173/src/hooks/useNotifications.js 14:16 \"[DEBUG] useNotifications: Initializing...\"",
+    "source": "console-api",
+    "timestamp": 1770674026335
+  },
+  {
+    "level": "INFO",
+    "message": "http://127.0.0.1:5173/src/hooks/useNotifications.js 14:16 \"[DEBUG] useNotifications: Initializing...\"",
+    "source": "console-api",
+    "timestamp": 1770674026338
+  },
+  {
+    "level": "DEBUG",
+    "message": "http://127.0.0.1:5173/ - [DOM] Input elements should have autocomplete attributes (suggested: \"current-password\"): (More info: https://goo.gl/9p2vKq) %o",
+    "source": "recommendation",
+    "timestamp": 1770674026432
+  },
+  {
+    "level": "DEBUG",
+    "message": "http://127.0.0.1:5173/@vite/client 494:8 \"[vite] connecting...\"",
+    "source": "console-api",
+    "timestamp": 1770674026587
+  },
+  {
+    "level": "DEBUG",
+    "message": "http://127.0.0.1:5173/@vite/client 617:14 \"[vite] connected.\"",
+    "source": "console-api",
+    "timestamp": 1770674027533
+  },
+  {
+    "level": "INFO",
+    "message": "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=164ddcb6 21550:24 \"%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools\" \"font-weight:bold\"",
+    "source": "console-api",
+    "timestamp": 1770674027662
+  },
+  {
+    "level": "INFO",
+    "message": "http://127.0.0.1:5173/src/utils/errorTracking.js 45:12 \"Error tracking not configured (development mode or DSN not set)\"",
+    "source": "console-api",
+    "timestamp": 1770674027663
+  },
+  {
+    "level": "INFO",
+    "message": "http://127.0.0.1:5173/src/utils/requestGuard.js 13:10 \"[RequestGuard] Initialized. Direct fetch/XHR is restricted.\"",
+    "source": "console-api",
+    "timestamp": 1770674027719
+  },
+  {
+    "level": "INFO",
+    "message": "http://127.0.0.1:5173/src/utils/errorTracking.js 45:12 \"Error tracking not configured (development mode or DSN not set)\"",
+    "source": "console-api",
+    "timestamp": 1770674027719
+  },
+  {
+    "level": "INFO",
+    "message": "http://127.0.0.1:5173/src/core/initWidgets.js 32:10 \"[WidgetRegistry] Core widgets registered\"",
+    "source": "console-api",
+    "timestamp": 1770674027719
+  },
+  {
+    "level": "INFO",
+    "message": "http://127.0.0.1:5173/src/hooks/useNotifications.js 14:16 \"[DEBUG] useNotifications: Initializing...\"",
+    "source": "console-api",
+    "timestamp": 1770674027978
+  },
+  {
+    "level": "INFO",
+    "message": "http://127.0.0.1:5173/src/hooks/useNotifications.js 14:16 \"[DEBUG] useNotifications: Initializing...\"",
+    "source": "console-api",
+    "timestamp": 1770674027980
+  },
+  {
+    "level": "DEBUG",
+    "message": "http://127.0.0.1:5173/admin/graph-browser - [DOM] Input elements should have autocomplete attributes (suggested: \"current-password\"): (More info: https://goo.gl/9p2vKq) %o",
+    "source": "recommendation",
+    "timestamp": 1770674028006
+  }
+]

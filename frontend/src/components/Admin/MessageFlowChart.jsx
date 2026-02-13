@@ -24,7 +24,7 @@ const MessageFlowChart = ({ stats }) => {
                     ))}
                 </div>
             </div>
-            <style jsx>{`
+            <style jsx="true">{`
                 .flow-chart-container {
                     display: flex;
                     flex-direction: column;

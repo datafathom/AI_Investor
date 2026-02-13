@@ -1,7 +1,7 @@
 import logging
 from fastapi import APIRouter, HTTPException
 from typing import List, Dict, Any
-from web.websocket.department_gateway import get_websocket_stats, list_active_connections, force_disconnect
+from web.ws_legacy.department_gateway import get_websocket_stats, list_active_connections, force_disconnect
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/websocket", tags=["Admin", "Infrastructure"])

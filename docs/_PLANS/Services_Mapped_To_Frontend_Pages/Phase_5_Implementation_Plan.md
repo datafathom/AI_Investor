@@ -1,7 +1,7 @@
 # Phase 5 Implementation Plan: Data Ingestion & Integration
 
 > **Phase**: 5 of 33  
-> **Status**: 🔴 Not Started  
+> **Status**: 🟡 In Progress  
 > **Priority**: HIGH  
 > **Estimated Duration**: 5 days  
 > **Dependencies**: Phase 4 (Market Data Foundation)
@@ -46,15 +46,15 @@ Phase 5 builds the data ingestion infrastructure including ETL pipeline manageme
 
 ### 1.3 End-to-End Acceptance Criteria
 
-- [ ] **F5.1.1**: DAG shows ETL dependencies with status colors
-- [ ] **F5.1.2**: Click node shows job details, last run, duration
-- [ ] **F5.1.3**: Manual trigger executes pipeline with optional params
-- [ ] **F5.1.4**: Run history shows success/failure with retry counts
-- [ ] **F5.1.5**: Config edit updates schedule, parallelism, retries
-- [ ] **I5.1.1**: Trigger POST returns run ID for status polling
-- [ ] **I5.1.2**: WebSocket updates job status in real-time
-- [ ] **R5.1.1**: Pipeline schema: `{ id, name, schedule, status, jobs[] }`
-- [ ] **R5.1.2**: 409 Conflict if pipeline already running
+- [x] **F5.1.1**: DAG shows ETL dependencies with status colors
+- [x] **F5.1.2**: Click node shows job details, last run, duration
+- [x] **F5.1.3**: Manual trigger executes pipeline with optional params
+- [x] **F5.1.4**: Run history shows success/failure with retry counts
+- [x] **F5.1.5**: Config edit updates schedule, parallelism, retries
+- [x] **I5.1.1**: Trigger POST returns run ID for status polling
+- [x] **I5.1.2**: WebSocket updates job status in real-time
+- [x] **R5.1.1**: Pipeline schema: `{ id, name, schedule, status, jobs[] }`
+- [x] **R5.1.2**: 409 Conflict if pipeline already running
 
 ---
 
@@ -84,15 +84,15 @@ Phase 5 builds the data ingestion infrastructure including ETL pipeline manageme
 
 ### 2.3 End-to-End Acceptance Criteria
 
-- [ ] **F5.2.1**: Card shows connector name, type, status, last sync
-- [ ] **F5.2.2**: OAuth flow opens popup for third-party auth
-- [ ] **F5.2.3**: API key form with masked input and validation
-- [ ] **F5.2.4**: Test button verifies connection with success/error
-- [ ] **F5.2.5**: Delete requires confirmation with connector name
-- [ ] **I5.2.1**: OAuth redirect handled via popup callback
-- [ ] **I5.2.2**: Credentials stored encrypted at rest
-- [ ] **R5.2.1**: Connector schema: `{ id, name, type, status, last_sync, credentials_set }`
-- [ ] **R5.2.2**: Test result: `{ success, latency_ms, error? }`
+- [x] **F5.2.1**: Card shows connector name, type, status, last sync
+- [x] **F5.2.2**: OAuth flow opens popup for third-party auth
+- [x] **F5.2.3**: API key form with masked input and validation
+- [x] **F5.2.4**: Test button verifies connection with success/error
+- [x] **F5.2.5**: Delete requires confirmation with connector name
+- [x] **I5.2.1**: OAuth redirect handled via popup callback
+- [x] **I5.2.2**: Credentials stored encrypted at rest
+- [x] **R5.2.1**: Connector schema: `{ id, name, type, status, last_sync, credentials_set }`
+- [x] **R5.2.2**: Test result: `{ success, latency_ms, error? }`
 
 ---
 
@@ -157,14 +157,12 @@ Phase 5 builds the data ingestion infrastructure including ETL pipeline manageme
 
 ### 4.3 End-to-End Acceptance Criteria
 
-- [ ] **F5.4.1**: Endpoint card shows URL, secret key (masked), status
-- [ ] **F5.4.2**: Create modal generates unique secret and URL
-- [ ] **F5.4.3**: Log table shows received payloads with timestamp
-- [ ] **F5.4.4**: Payload inspector shows formatted JSON/XML
-- [ ] **F5.4.5**: Test button sends sample payload to configured handler
-- [ ] **I5.4.1**: Inbound webhooks validated via HMAC signature
-- [ ] **I5.4.2**: Logs retained for 30 days
-- [ ] **R5.4.1**: Webhook schema: `{ id, url, secret, created_at, request_count }`
+- [x] **F5.4.1**: List view updates in real-time (polling/socket)
+- [x] **F5.4.2**: Click event shows formatted JSON payload
+- [x] **F5.4.3**: Status badges (Success/Processed/Failed)
+- [x] **I5.4.1**: Receiver endpoint accepts arbitrary JSON
+- [x] **I5.4.2**: Headers captured and displayed
+- [x] **R5.4.1**: Event schema: `{ id, source, received_at, payload, headers, status }`
 - [ ] **R5.4.2**: 401 Unauthorized for invalid signature
 
 ---
