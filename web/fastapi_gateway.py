@@ -1,6 +1,17 @@
 import sys
 import os
-print(f">>> [BOOTSTRAP] Loading fastapi_gateway.py (PID: {os.getpid()})...")
+import io
+
+# Force unbuffered output and UTF-8 on Windows
+if sys.platform == 'win32':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace', line_buffering=True)
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace', line_buffering=True)
+    except (AttributeError, io.UnsupportedOperation):
+        pass
+
+print(f">>> [BOOTSTRAP] Loading fastapi_gateway.py (PID: {os.getpid()})...", flush=True)
+
 import logging
 import asyncio
 from fastapi import FastAPI, Request
@@ -108,7 +119,8 @@ from web.api import execution_analytics_api
 from web.api import broker_health_api
 from web.api import brokerage_integration_api
 from web.api import backtest_api
-print(">>> [BOOTSTRAP] Importing administrative and legal API modules...")
+print(">>> [BOOTSTRAP] Importing administrative and legal API modules...", flush=True)
+
 from web.api import simulation_api
 from web.api import alerts_api
 from web.api import opportunities_api
@@ -133,7 +145,8 @@ from web.api import tax_reporting_api
 from web.api import wealth_planning_api
 from web.api import stress_test_api
 from web.api import orchestrator_api
-print(">>> [BOOTSTRAP] Importing core components and approval routes...")
+print(">>> [BOOTSTRAP] Importing core components and approval routes...", flush=True)
+
 from web.routes import approval_router
 import web.api.market as market_api
 
@@ -142,13 +155,15 @@ import web.api.market as market_api
 logger = logging.getLogger(__name__)
 
 # Initialize FastAPI App
-print(">>> [BOOTSTRAP] Initializing FastAPI App instance...")
+print(">>> [BOOTSTRAP] Initializing FastAPI App instance...", flush=True)
+
 app = FastAPI(
     title="Sovereign OS: AI Investor API",
     description="Unified API Gateway for the Sovereign AI Investor Organization.",
     version="1.0.0"
 )
-print(">>> [BOOTSTRAP] FastAPI App instance created.")
+print(">>> [BOOTSTRAP] FastAPI App instance created.", flush=True)
+
 
 # --- Debug Middleware for Event Loop Stalls ---
 @app.middleware("http")
@@ -332,9 +347,10 @@ _slack_service = None
 
 @app.on_event("startup")
 async def startup_event():
-    print(">>> [STARTUP] Running minimal startup...")
+    print(">>> [STARTUP] Running minimal startup...", flush=True)
     logger.info("Sovereign OS Gateway starting up (Minimal Mode)...")
-    print(">>> [STARTUP] Minimal startup completed.")
+    print(">>> [STARTUP] Minimal startup completed.", flush=True)
+
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -350,7 +366,8 @@ async def shutdown_event():
 
 if __name__ == "__main__":
     import uvicorn
-    print(">>> [BOOTSTRAP] Configuration complete. Starting Uvicorn...")
+    print(">>> [BOOTSTRAP] Configuration complete. Starting Uvicorn...", flush=True)
+
     uvicorn.run(
         app, 
         host="127.0.0.1", 

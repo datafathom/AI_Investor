@@ -20,11 +20,17 @@ sys.path.insert(0, str(_project_root))
 
 # Force UTF-8 and Line-Buffering on Windows to prevent terminal stalling
 if sys.platform == 'win32':
-    # Wrap buffer in TextIOWrapper with line_buffering=True
-    if not isinstance(sys.stdout, io.TextIOWrapper):
-        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace', line_buffering=True)
-    if not isinstance(sys.stderr, io.TextIOWrapper):
-        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace', line_buffering=True)
+    try:
+        # Python 3.7+ supports reconfigure for better line buffering control
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace', line_buffering=True)
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace', line_buffering=True)
+    except (AttributeError, io.UnsupportedOperation):
+        # Fallback for environments where reconfigure might fail or isn't available
+        if not isinstance(sys.stdout, io.TextIOWrapper):
+            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace', line_buffering=True)
+        if not isinstance(sys.stderr, io.TextIOWrapper):
+            sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace', line_buffering=True)
+
 
 # Delay heavy imports
 # from utils.registry.command_registry import CommandRegistry

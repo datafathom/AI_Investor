@@ -3,7 +3,7 @@ Columnist Department Package
 Phase 2 Implementation: The Data Forge
 """
 
-from agents.columnist.columnist_agents import (
+from agents.envoy.columnist_agents import (
     ScraperGeneralAgent,
     SentimentAnalystAgent,
     RumorTrackerAgent,
@@ -12,6 +12,7 @@ from agents.columnist.columnist_agents import (
     CatalystMapperAgent,
     get_columnist_agents,
 )
+
 
 __all__ = [
     "ScraperGeneralAgent",

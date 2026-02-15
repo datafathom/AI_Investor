@@ -25,7 +25,7 @@ from agents.refiner.autocoder_agent import AutocoderAgent
 from agents.stress_tester.chaos_agent import ChaosAgent
 
 # Department: Envoy
-from agents.envoy.columnist_agents import ColumnistAgent
+# Agent was split into individual columnist agents
 
 __all__ = [
     "BaseAgent",
@@ -38,6 +38,6 @@ __all__ = [
     "SearcherAgent",
     "StackerAgent",
     "AutocoderAgent",
-    "ChaosAgent",
-    "ColumnistAgent"
+    "ChaosAgent"
 ]
+

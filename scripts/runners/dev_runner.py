@@ -9,14 +9,20 @@ import threading
 from pathlib import Path
 import psutil
 
-# Fix Windows console encoding for emojis
+# Fix Windows console encoding for emojis and prevent stalling
 if sys.platform == 'win32':
     import io
-    # We use a more careful wrapping to avoid double-buffer hangs
-    if not isinstance(sys.stdout, io.TextIOWrapper):
-        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
-    if not isinstance(sys.stderr, io.TextIOWrapper):
-        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+    try:
+        # Python 3.7+ supports reconfigure for better line buffering control
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace', line_buffering=True)
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace', line_buffering=True)
+    except (AttributeError, io.UnsupportedOperation):
+        # Fallback for environments where reconfigure might fail or isn't available
+        if not isinstance(sys.stdout, io.TextIOWrapper):
+            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace', line_buffering=True)
+        if not isinstance(sys.stderr, io.TextIOWrapper):
+            sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace', line_buffering=True)
+
 
 # Configuration
 BACKEND_PORT = 5050
@@ -122,12 +128,13 @@ def start_dev_mode(check_infra: bool = True, slackbot: bool = True):
     backend_env["PYTHONPATH"] = str(PROJECT_ROOT)
     
     backend_cmd = [
-        python_exe, "-m", "uvicorn", "web.fastapi_gateway:app",
+        python_exe, "-u", "-m", "uvicorn", "web.fastapi_gateway:app",
         "--host", "127.0.0.1",
         "--port", str(BACKEND_PORT),
         "--reload",
         "--reload-dir", "web"
     ]
+
     
     backend_proc = subprocess.Popen(
         backend_cmd,
@@ -146,11 +153,13 @@ def start_dev_mode(check_infra: bool = True, slackbot: bool = True):
     t_backend.start()
 
     # BRIEF DELAY: Ensure backend has a head start on port 5050
-    print("Waiting for backend to bind to port...")
+    print("Waiting for backend to bind to port...", flush=True)
     time.sleep(5)
 
+
     # 4. Start Frontend (Vite)
-    print("Launching Frontend (Vite HMR)...")
+    print("Launching Frontend (Vite HMR)...", flush=True)
+
     frontend_dir = PROJECT_ROOT / "frontend"
     frontend_cmd = ["npm", "run", "dev", "--", "--port", str(FRONTEND_PORT)]
     # Windows needs shell=True for npm usually
@@ -239,5 +248,7 @@ def start_dev_no_db(slackbot: bool = True):
     # Force Mock Modes for services that check ports
     os.environ["NEO4J_MODE"] = "MOCK"
     os.environ["STORAGE_MODE"] = "MOCK"
+    os.environ["SQL_MODE"] = "MOCK"
     
     start_dev_mode(check_infra=False, slackbot=slackbot)
+
