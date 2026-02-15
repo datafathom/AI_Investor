@@ -21,7 +21,7 @@ class PromptLoader:
             self.prompts_dir = prompts_dir
         else:
             base_dir = os.path.dirname(os.path.abspath(__file__))
-            self.prompts_dir = os.path.join(base_dir, "prompts")
+            self.prompts_dir = os.path.join(base_dir, "_prompts")
             
         self.prompts_file = os.path.join(self.prompts_dir, "prompts.json")
         self._cache: List[Dict[str, str]] = []
@@ -88,7 +88,15 @@ class PromptLoader:
         agent_map = {
             "AutocoderAgent": "autocoder",
             "DebateChamberAgent": "debate",
-            "DepartmentAgent": "department_agent"
+            "DepartmentAgent": "department_agent",
+            "BacktestAgent": "backtest",
+            "ResearchAgent": "research",
+            "ConvictionAnalyzerAgent": "conviction",
+            "ProtectorAgent": "protector",
+            "SearcherAgent": "searcher",
+            "StackerAgent": "stacker",
+            "ChaosAgent": "chaos",
+            "ColumnistAgent": "columnist"
         }
         
         prefix = agent_map.get(agent_name)
@@ -123,7 +131,15 @@ class PromptLoader:
         agent_map = {
             "AutocoderAgent": "autocoder",
             "DebateChamberAgent": "debate",
-            "DepartmentAgent": "department_agent"
+            "DepartmentAgent": "department_agent",
+            "BacktestAgent": "backtest",
+            "ResearchAgent": "research",
+            "ConvictionAnalyzerAgent": "conviction",
+            "ProtectorAgent": "protector",
+            "SearcherAgent": "searcher",
+            "StackerAgent": "stacker",
+            "ChaosAgent": "chaos",
+            "ColumnistAgent": "columnist"
         }
         prefix = agent_map.get(agent_name)
         if not prefix:

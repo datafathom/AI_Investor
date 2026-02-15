@@ -112,11 +112,24 @@ export default defineConfig({
 
   // Optimize dependencies for better performance
   optimizeDeps: {
-    include: ['react-window', 'three', '@react-three/fiber', '@react-three/drei'],
+    include: [
+      'react-window', 
+      'three', 
+      '@react-three/fiber', 
+      '@react-three/drei',
+      'react-force-graph-3d',
+      '3d-force-graph',
+      'three-render-objects',
+      'react-kapsule',
+      'three-forcegraph',
+      'ngraph.forcelayout',
+      'ngraph.events'
+    ],
   },
 
   resolve: {
     alias: {
+      'three/webgpu': resolve(__dirname, 'node_modules/three/build/three.webgpu.js'),
       'three': resolve(__dirname, 'node_modules/three'),
       '@': resolve(__dirname, './src')
     }
@@ -160,12 +173,15 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true, // Generate source maps for debugging
+    commonjsOptions: {
+      // Handle CJS/ESM interop for packages like react-window
+      transformMixedEsModules: true,
+    },
     rollupOptions: {
       output: {
         manualChunks: {
           // Split vendor chunks for better caching
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'chart-vendor': ['recharts', 'chart.js', 'react-chartjs-2'],
           'ui-vendor': ['lucide-react', 'framer-motion'],
         },
       },

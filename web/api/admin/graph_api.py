@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/graph", tags=["Admin", "Infrastructure"])
 
 @router.get("/schema")
-async def get_graph_schema():
+def get_graph_schema():
     """Get the visual schema of the Neo4j graph (nodes and relationships)."""
     try:
         neo = get_neo4j()
@@ -17,7 +17,7 @@ async def get_graph_schema():
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/query")
-async def execute_cypher_query(query: str = Body(..., embed=True)):
+def execute_cypher_query(query: str = Body(..., embed=True)):
     """Execute a raw Cypher query against Neo4j."""
     try:
         neo = get_neo4j()
@@ -28,7 +28,7 @@ async def execute_cypher_query(query: str = Body(..., embed=True)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/nodes/count")
-async def get_node_counts():
+def get_node_counts():
     """Get counts of nodes grouped by label."""
     try:
         neo = get_neo4j()

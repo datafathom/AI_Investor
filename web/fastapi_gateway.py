@@ -1,3 +1,6 @@
+import sys
+import os
+print(f">>> [BOOTSTRAP] Loading fastapi_gateway.py (PID: {os.getpid()})...")
 import logging
 import asyncio
 from fastapi import FastAPI, Request
@@ -105,6 +108,7 @@ from web.api import execution_analytics_api
 from web.api import broker_health_api
 from web.api import brokerage_integration_api
 from web.api import backtest_api
+print(">>> [BOOTSTRAP] Importing administrative and legal API modules...")
 from web.api import simulation_api
 from web.api import alerts_api
 from web.api import opportunities_api
@@ -129,6 +133,7 @@ from web.api import tax_reporting_api
 from web.api import wealth_planning_api
 from web.api import stress_test_api
 from web.api import orchestrator_api
+print(">>> [BOOTSTRAP] Importing core components and approval routes...")
 from web.routes import approval_router
 import web.api.market as market_api
 
@@ -137,26 +142,32 @@ import web.api.market as market_api
 logger = logging.getLogger(__name__)
 
 # Initialize FastAPI App
+print(">>> [BOOTSTRAP] Initializing FastAPI App instance...")
 app = FastAPI(
     title="Sovereign OS: AI Investor API",
     description="Unified API Gateway for the Sovereign AI Investor Organization.",
     version="1.0.0"
 )
+print(">>> [BOOTSTRAP] FastAPI App instance created.")
 
 # --- Debug Middleware for Event Loop Stalls ---
 @app.middleware("http")
 async def log_request_time(request: Request, call_next):
     import time
     start_time = time.time()
+    logger.info(f"Incoming Request: {request.method} {request.url.path}")
     response = None
     try:
         response = await call_next(request)
+    except Exception as e:
+        logger.error(f"Error processing {request.method} {request.url.path}: {e}")
+        raise
     finally:
         process_time = time.time() - start_time
-        if process_time > 1.0: # Log any request taking more than 1s
+        if process_time > 1.0:
             logger.warning(f"🐢 SLOW REQUEST: {request.method} {request.url.path} took {process_time:.4f}s")
         else:
-            logger.debug(f"⚡ FAST REQUEST: {request.method} {request.url.path} took {process_time:.4f}s")
+            logger.info(f"⚡ COMPLETED: {request.method} {request.url.path} in {process_time:.4f}s")
     return response
 
 # Configure CORS
@@ -211,10 +222,10 @@ app.include_router(ai_assistant_api.router)
 app.include_router(ai_predictions_api.router)
 app.include_router(analytics_api.router)
 app.include_router(analysis_api.router)
-app.include_router(analysis_api.router)
+# app.include_router(analysis_api.router) (Duplicate)
 app.include_router(assets_api.router) # Now fully populated
 app.include_router(attribution_api.router)
-app.include_router(attribution_api.router)
+# app.include_router(attribution_api.router) (Duplicate)
 app.include_router(banking_api.router)
 app.include_router(billing_api.router)
 app.include_router(budgeting_api.router)
@@ -250,7 +261,7 @@ app.include_router(pricing_api.router)
 app.include_router(privacy_api.router)
 app.include_router(public_api.router)
 app.include_router(research_api.router)
-app.include_router(research_api.router)
+# app.include_router(research_api.router) (Duplicate)
 app.include_router(quantitative_api.router)
 app.include_router(retirement_api.router)
 app.include_router(search_api.router)
@@ -306,7 +317,7 @@ app.include_router(philanthropy_api.router)
 app.include_router(banking_api.router)
 app.include_router(crypto_api.router)
 app.include_router(defi_api.router)
-app.include_router(admin.router)
+# app.include_router(admin.router)
 
 # app.include_router(mission_api.router) # If found later
 
@@ -321,43 +332,9 @@ _slack_service = None
 
 @app.on_event("startup")
 async def startup_event():
-    global _slack_service
-    logger.info("Sovereign OS Gateway starting up...")
-    
-    async def init_services():
-        global _slack_service
-        try:
-            from services.notifications.slack_service import get_slack_service
-            _slack_service = get_slack_service()
-            
-            # 1. Announce Online (with timeout)
-            try:
-                await asyncio.wait_for(
-                    _slack_service.send_notification(
-                        text="🚀 *AI Investor Backend Online:* Unified Gateway is active.", 
-                        level="success"
-                    ),
-                    timeout=5.0
-                )
-            except Exception as e:
-                logger.warning(f"Slack notification failed: {e}")
-            
-            # 2. Start Bot Listener
-            asyncio.create_task(_slack_service.start_bot())
-            logger.info("📡 Slack Bot listener integration scheduled.")
-        except Exception as e:
-            logger.warning(f"Failed to initialize integrated Slack Bot: {e}")
-
-    # Start services in background
-    # asyncio.create_task(init_services())
-
-    # 3. Start Event Bus Broadcaster (Background)
-    try:
-        from web.ws_legacy.event_bus_ws import start_event_bus_broadcast
-        start_event_bus_broadcast()
-        logger.info("📡 Event Bus WS Broadcaster initialized.")
-    except Exception as e:
-        logger.error(f"Failed to initialize Event Bus WS Broadcaster: {e}")
+    print(">>> [STARTUP] Running minimal startup...")
+    logger.info("Sovereign OS Gateway starting up (Minimal Mode)...")
+    print(">>> [STARTUP] Minimal startup completed.")
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -373,6 +350,7 @@ async def shutdown_event():
 
 if __name__ == "__main__":
     import uvicorn
+    print(">>> [BOOTSTRAP] Configuration complete. Starting Uvicorn...")
     uvicorn.run(
         app, 
         host="127.0.0.1", 

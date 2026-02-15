@@ -1,0 +1,116 @@
+[
+  {
+    "timestamp": "2026-02-14T21:49:51.513485",
+    "route": "root",
+    "status": "LOGIN_TIMEOUT",
+    "console_errors": [
+      "Timed out waiting for dashboard markers."
+    ],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\physicist_results\\physicist_screenshots\\login_timeout_root_21_49_50.png",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-02-14T22:04:06.231479",
+    "route": "/admin/greeks-surface",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\physicist_results\\physicist_screenshots\\content_empty_admin_greeks-surface_22_04_05.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:04:36.320688",
+    "route": "/admin/options-flow",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\physicist_results\\physicist_screenshots\\content_empty_admin_options-flow_22_04_36.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:05:42.959900",
+    "route": "/admin/pnl-modeler",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\physicist_results\\physicist_screenshots\\content_empty_admin_pnl-modeler_22_05_42.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:06:11.049282",
+    "route": "/admin/position-greeks",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\physicist_results\\physicist_screenshots\\content_empty_admin_position-greeks_22_06_10.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:06:17.643531",
+    "route": "/physicist/expected-move",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\physicist_results\\physicist_screenshots\\not_implemented_physicist_expected-move_22_06_17.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:06:24.235353",
+    "route": "/physicist/margin",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\physicist_results\\physicist_screenshots\\not_implemented_physicist_margin_22_06_24.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:06:30.599089",
+    "route": "/physicist/morphing",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\physicist_results\\physicist_screenshots\\not_implemented_physicist_morphing_22_06_30.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:03:38.567862",
+    "route": "/dept/physicist",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\physicist_results\\physicist_screenshots\\success_dept_physicist_22_03_38.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  }
+]

@@ -2,8 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import './OptionsChain.css';
 import useSymbolLink from '../../hooks/useSymbolLink';
 import apiClient from '../../services/apiClient';
-import * as ReactWindow from 'react-window';
-const List = ReactWindow.FixedSizeList || ReactWindow.default?.FixedSizeList;
+import { List } from 'react-window';
 
 const Row = ({ index, style, data }) => {
   const item = data[index];

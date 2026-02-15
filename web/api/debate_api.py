@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
 from services.agents.debate_orchestrator import DebateOrchestrator
 
-router = APIRouter(prefix="/api/v1/debate", tags=["AI Debate"])
+router = APIRouter(prefix="/api/v1/ai/debate", tags=["AI Debate"])
 
 # Request Models
 class DebateStartRequest(BaseModel):
@@ -15,10 +15,20 @@ class ArgumentInjectRequest(BaseModel):
     sentiment: Optional[str] = "NEUTRAL"
 
 @router.post("/sessions")
+@router.post("/start")
 async def start_debate(request: DebateStartRequest):
     """Initialize a new debate session."""
     orchestrator = DebateOrchestrator()
     session = orchestrator.start_debate(request.ticker, request.context)
+    return session
+
+@router.get("/stream")
+async def stream_active_session():
+    """Streaming endpoint alias for the active session."""
+    orchestrator = DebateOrchestrator()
+    session = orchestrator.get_session() # Gets active session
+    if not session:
+         raise HTTPException(status_code=404, detail="No active session found")
     return session
 
 @router.get("/sessions/{session_id}")
@@ -32,6 +42,16 @@ async def get_debate_session(session_id: str):
         if not session:
              raise HTTPException(status_code=404, detail="Session not found")
     return session
+
+@router.post("/inject")
+async def inject_argument_alias(request: ArgumentInjectRequest):
+    """Inject argument into active session."""
+    orchestrator = DebateOrchestrator()
+    try:
+        session = orchestrator.inject_argument("user", request.argument, request.sentiment)
+        return session
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/sessions/{session_id}/intervene")
 async def inject_argument(session_id: str, request: ArgumentInjectRequest):

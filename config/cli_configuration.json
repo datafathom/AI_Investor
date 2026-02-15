@@ -551,7 +551,7 @@
                     "description": "Generate a date-stamped Postman Collection.",
                     "handler": "scripts.runners.api_docs:build_api_routes_postman"
                 },
-                "internal": {
+                "serve": {
                     "description": "Serve the futuristic Internal Documentation Portal.",
                     "handler": "scripts.runners.system_control:serve_internal_docs"
                 },
@@ -2894,7 +2894,7 @@
             "category": "Development & Infrastructure"
         },
         "vault": {
-            "description": "Cross-platform encrypted folder vault (AES-256).",
+            "description": "Secure file vault and encryption management.",
             "subcommands": {
                 "lock": {
                     "description": "Compress and encrypt a folder into a .vault file.",
@@ -2934,6 +2934,90 @@
                 }
             },
             "category": "Security & Governance"
+        },
+        "frontend": {
+            "description": "Frontend verification and management tools.",
+            "subcommands": {
+                "verify": {
+                    "description": "Verify frontend routes and components.",
+                    "flags": [
+                        {
+                            "name": "dept",
+                            "type": "string",
+                            "default": "",
+                            "help": "Department to verify"
+                        }
+                    ],
+                    "handler": "scripts.runners.frontend_verify_runner:verify_by_dept",
+                    "subcommands": {
+                        "urls": {
+                            "description": "Verify multiple URLs from a file (e.g., .md, .py).",
+                            "arguments": [
+                                {
+                                    "name": "file_path",
+                                    "type": "string",
+                                    "required": true,
+                                    "help": "Relative path to the file containing URLs"
+                                }
+                            ],
+                            "flags": [
+                                {
+                                    "name": "retries",
+                                    "type": "integer",
+                                    "default": 8,
+                                    "help": "Max retries per URL"
+                                }
+                            ],
+                            "handler": "scripts.runners.frontend_verify_runner:verify_urls"
+                        },
+                        "url": {
+                            "description": "Verify an individual frontend URL.",
+                            "arguments": [
+                                {
+                                    "name": "url",
+                                    "type": "string",
+                                    "required": true,
+                                    "help": "Full URL or relative route to verify"
+                                }
+                            ],
+                            "flags": [
+                                {
+                                    "name": "retries",
+                                    "type": "integer",
+                                    "default": 8,
+                                    "help": "Max retries"
+                                }
+                            ],
+                            "handler": "scripts.runners.frontend_verify_runner:verify_single_url"
+                        },
+                        "all-depts": {
+                            "description": "Run concurrent audit across all department route files.",
+                            "flags": [
+                                {
+                                    "name": "workers",
+                                    "type": "integer",
+                                    "default": 3,
+                                    "help": "Number of concurrent audit workers"
+                                },
+                                {
+                                    "name": "retries",
+                                    "type": "integer",
+                                    "default": 1,
+                                    "help": "Max retries per route"
+                                },
+                                {
+                                    "name": "skip",
+                                    "type": "string",
+                                    "default": "",
+                                    "help": "Comma-separated dept names to skip (e.g. admin,architect)"
+                                }
+                            ],
+                            "handler": "scripts.runners.audit_all_depts_runner:run_all_depts"
+                        }
+                    }
+                }
+            },
+            "category": "Development & Infrastructure"
         }
     }
 }

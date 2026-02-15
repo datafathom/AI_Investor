@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/storage", tags=["Admin", "Infrastructure"])
 
 @router.get("/pools")
-async def list_storage_pools():
+def list_storage_pools():
     """List ZFS storage pools and their status."""
     try:
         cloud = get_private_cloud()
@@ -17,7 +17,7 @@ async def list_storage_pools():
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/sync-status")
-async def get_sync_status():
+def get_sync_status():
     """Get status of off-site synchronization."""
     try:
         cloud = get_private_cloud()

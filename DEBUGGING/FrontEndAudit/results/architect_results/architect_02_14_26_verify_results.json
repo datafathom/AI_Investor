@@ -1,0 +1,184 @@
+[
+  {
+    "timestamp": "2026-02-14T22:56:19.102741",
+    "route": "/architect/construction-lab",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\architect_results\\architect_screenshots\\not_implemented_architect_construction-lab_22_56_18.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:56:23.267218",
+    "route": "/architect/legacy-storytelling",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\architect_results\\architect_screenshots\\not_implemented_architect_legacy-storytelling_22_56_23.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:56:27.468601",
+    "route": "/architect/real-estate-suite",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\architect_results\\architect_screenshots\\not_implemented_architect_real-estate-suite_22_56_27.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:56:31.665317",
+    "route": "/architect/allocation",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\architect_results\\architect_screenshots\\not_implemented_architect_allocation_22_56_31.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:56:40.400678",
+    "route": "/architect/capex",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\architect_results\\architect_screenshots\\not_implemented_architect_capex_22_56_40.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:56:44.526752",
+    "route": "/architect/goals",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\architect_results\\architect_screenshots\\not_implemented_architect_goals_22_56_44.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:56:48.754871",
+    "route": "/architect/inflation",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\architect_results\\architect_screenshots\\not_implemented_architect_inflation_22_56_48.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:56:53.200152",
+    "route": "/architect/legacy",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\architect_results\\architect_screenshots\\not_implemented_architect_legacy_22_56_52.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:56:57.897564",
+    "route": "/architect/liability",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\architect_results\\architect_screenshots\\not_implemented_architect_liability_22_56_57.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:57:02.773697",
+    "route": "/architect/retirement",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\architect_results\\architect_screenshots\\not_implemented_architect_retirement_22_57_02.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:57:07.332737",
+    "route": "/architect/tax",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\architect_results\\architect_screenshots\\not_implemented_architect_tax_22_57_07.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:57:12.147800",
+    "route": "/architect/vault",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\architect_results\\architect_screenshots\\not_implemented_architect_vault_22_57_11.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:56:13.908875",
+    "route": "/dept/architect",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\architect_results\\architect_screenshots\\success_dept_architect_22_56_12.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:56:36.164790",
+    "route": "/architect/blueprints",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\architect_results\\architect_screenshots\\success_architect_blueprints_22_56_36.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  }
+]

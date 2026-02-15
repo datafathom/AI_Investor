@@ -1,45 +1,34 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, TrendingDown, RefreshCcw, Activity } from "lucide-react";
-import { notify } from "@/components/ui/use-toast";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { AlertCircle, TrendingDown, ShieldAlert, RefreshCcw, Activity, Filter } from "lucide-react";
 import { motion } from "framer-motion";
 import apiClient from '@/services/apiClient';
 
 // Sub-components
-import FragilityScoreCard from '@/components/cards/FragilityScoreCard';
-import LiquidityTrapAlert from '@/components/alerts/LiquidityTrapAlert';
+import PassiveConcentrationHeatmap from '@/components/Charts/PassiveConcentrationHeatmap';
 import SectorFragilityTable from '@/components/tables/SectorFragilityTable';
-import PassiveConcentrationHeatmap from '@/components/charts/PassiveConcentrationHeatmap';
 
 const ForcedSellerMonitor = () => {
-    const [risks, setRisks] = useState([]);
-    const [heatmap, setHeatmap] = useState([]);
-    const [traps, setTraps] = useState([]);
+    const [stats, setStats] = useState(null);
+    const [fragilityData, setFragilityData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [searchQuery, setSearchQuery] = useState("");
 
     const fetchData = useCallback(async (silent = false) => {
         if (!silent) setLoading(true);
         try {
-            const [risksRes, heatmapRes, trapsRes] = await Promise.all([
+            const [statsRes, fragilityRes] = await Promise.all([
                 apiClient.get('/market-data/forced-sellers'),
-                apiClient.get('/market-data/forced-sellers/heatmap'),
-                apiClient.get('/market-data/forced-sellers/liquidity-traps')
+                apiClient.get('/market-data/forced-sellers/fragility')
             ]);
             
-            setRisks(risksRes || []);
-            setHeatmap(heatmapRes || []);
-            setTraps(trapsRes || []);
+            setStats(statsRes || null);
+            setFragilityData(fragilityRes || []);
             
         } catch (error) {
-            console.error("Failed to fetch data", error);
-            notify({ 
-                title: "Data Acquisition Error", 
-                body: "Failed to load market fragility metrics.", 
-                type: "error" 
-            });
+            console.error("Failed to fetch forced seller data", error);
         } finally {
             if (!silent) setLoading(false);
         }
@@ -47,111 +36,69 @@ const ForcedSellerMonitor = () => {
 
     useEffect(() => {
         fetchData();
-        const interval = setInterval(() => fetchData(true), 30000); // 30s background refresh
+        const interval = setInterval(() => fetchData(true), 30000);
         return () => clearInterval(interval);
     }, [fetchData]);
 
-    const filteredRisks = risks.filter(r => 
-        r.ticker.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
     return (
         <div className="p-8 space-y-8 max-w-[1600px] mx-auto text-slate-200">
-            {/* Header Section */}
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border-b border-slate-800 pb-8">
+            {/* Header */}
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                 <div>
-                    <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-red-500/10 rounded-lg border border-red-500/20">
-                            <TrendingDown className="h-6 w-6 text-red-500" />
-                        </div>
-                        <h1 className="text-4xl font-black tracking-tighter text-white uppercase italic">
-                            Forced Seller <span className="text-red-600">Monitor</span>
-                        </h1>
-                    </div>
-                    <p className="text-slate-400 font-mono text-sm max-w-2xl">
-                        STRUCTURAL FRAGILITY PROTOCOL v4.0 // Analyzing passive ownership concentration and liquidity vacuum risks across industrial nodes.
+                    <h1 className="text-4xl font-black tracking-tighter text-white uppercase italic flex items-center gap-3">
+                        <ShieldAlert className="h-10 w-10 text-red-600" />
+                        Forced Seller <span className="text-red-600">Monitor</span>
+                    </h1>
+                    <p className="text-slate-400 font-mono text-sm mt-2 uppercase tracking-[0.2em] opacity-70">
+                        Structural Vulnerability & Liquidation Risk Analysis // Institutional Flow Scan
                     </p>
                 </div>
-                
-                <div className="flex items-center gap-4 w-full lg:w-auto">
-                    <div className="relative flex-1 lg:w-80">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
-                        <Input 
-                            placeholder="SCAN TICKER..." 
-                            className="pl-10 bg-slate-900/50 border-slate-800 font-mono uppercase text-xs tracking-widest h-11"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                    </div>
-                    <Button 
-                        onClick={() => fetchData()} 
-                        variant="outline" 
-                        disabled={loading}
-                        className="bg-slate-900 border-slate-700 hover:bg-slate-800 h-11 gap-2"
-                    >
-                        <RefreshCcw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                        <span className="hidden sm:inline font-mono text-xs tracking-tighter">REFRESH_CORE</span>
-                    </Button>
-                </div>
+                <Button onClick={() => fetchData()} variant="outline" className="border-red-900/50 hover:bg-red-950/20">
+                    <RefreshCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                    REFRESH_SCAN
+                </Button>
             </div>
 
-            {/* Critical Alerts Layer */}
-            <LiquidityTrapAlert traps={traps} />
+            {/* High Level Risk Pulse */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card className="bg-red-950/20 border-red-900/30">
+                    <CardHeader className="pb-2">
+                        <CardDescription className="text-red-400 font-mono text-xs uppercase">Aggregate Fragility</CardDescription>
+                        <CardTitle className="text-4xl font-black text-white">{stats?.aggregate_fragility_score || '--'}/100</CardTitle>
+                    </CardHeader>
+                </Card>
+                <Card className="bg-slate-950/40 border-slate-800">
+                    <CardHeader className="pb-2">
+                        <CardDescription className="text-slate-400 font-mono text-xs uppercase">Liquidation Pressure</CardDescription>
+                        <CardTitle className="text-4xl font-black text-white">{stats?.liquid_pressure_index || '--'}</CardTitle>
+                    </CardHeader>
+                </Card>
+                <Card className="bg-slate-950/40 border-slate-800">
+                    <CardHeader className="pb-2">
+                        <CardDescription className="text-slate-400 font-mono text-xs uppercase">High Risk Sectors</CardDescription>
+                        <CardTitle className="text-4xl font-black text-white">{stats?.high_risk_sectors || 0}</CardTitle>
+                    </CardHeader>
+                </Card>
+            </div>
 
-            <Tabs defaultValue="overview" className="w-full">
-                <div className="flex items-center justify-between mb-6">
-                    <TabsList className="bg-slate-900/50 border border-slate-800 p-1">
-                        <TabsTrigger value="overview" className="data-[state=active]:bg-indigo-600 font-mono text-xs px-6 uppercase tracking-widest">Risk Grid</TabsTrigger>
-                        <TabsTrigger value="heatmap" className="data-[state=active]:bg-indigo-600 font-mono text-xs px-6 uppercase tracking-widest">Heatmap</TabsTrigger>
-                        <TabsTrigger value="sectors" className="data-[state=active]:bg-indigo-600 font-mono text-xs px-6 uppercase tracking-widest">Sector Audit</TabsTrigger>
-                    </TabsList>
-                    
-                    <div className="hidden md:flex items-center gap-2 text-[10px] font-mono text-slate-500 uppercase tracking-widest">
-                        <Activity className="h-3 w-3 animate-pulse text-green-500" />
-                        System Status: <span className="text-green-500">Live_Scan_Active</span>
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                {/* Heatmap Analysis */}
+                <div className="space-y-4">
+                    <div className="flex items-center gap-2 px-1">
+                        <Activity className="h-4 w-4 text-red-500" />
+                        <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">Structural Vulnerability Heatmap</h3>
                     </div>
+                    <PassiveConcentrationHeatmap data={fragilityData} />
                 </div>
 
-                {/* Grid View of Fragile Tickers */}
-                <TabsContent value="overview" className="mt-0">
-                    {loading && risks.length === 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-pulse">
-                            {[...Array(8)].map((_, i) => (
-                                <div key={i} className="h-48 rounded-xl bg-slate-900/50 border border-slate-800" />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {filteredRisks.map((risk) => (
-                                <FragilityScoreCard key={risk.ticker} data={risk} />
-                            ))}
-                            {filteredRisks.length === 0 && (
-                                <div className="col-span-full py-20 text-center border-2 border-dashed border-slate-800 rounded-2xl">
-                                    <p className="text-slate-500 font-mono uppercase tracking-widest">No structural anomalies detected for query.</p>
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </TabsContent>
-
-                {/* Heatmap View */}
-                <TabsContent value="heatmap" className="mt-0">
-                    <PassiveConcentrationHeatmap data={heatmap} />
-                </TabsContent>
-
-                {/* Detailed Sector Table */}
-                <TabsContent value="sectors" className="mt-0">
-                    <SectorFragilityTable data={heatmap} loading={loading} />
-                </TabsContent>
-            </Tabs>
-
-            {/* Industrial Footer/Status */}
-            <div className="pt-12 border-t border-slate-800/50 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] text-slate-600 font-mono uppercase tracking-[0.2em]">
-                <div className="flex items-center gap-6">
-                    <span>Alpha_Vantage_Node: EXT_READY</span>
-                    <span>SEC_Edgar_13F: FETCH_SUCCESS</span>
+                {/* Fragility Table */}
+                <div className="space-y-4">
+                    <div className="flex items-center gap-2 px-1">
+                        <Filter className="h-4 w-4 text-red-500" />
+                        <h3 className="text-xs font-black uppercase tracking-widest text-slate-400">Sector Fragility Breakdown</h3>
+                    </div>
+                    <SectorFragilityTable data={fragilityData} loading={loading} />
                 </div>
-                <div>Last Convergence: {new Date().toLocaleTimeString()}</div>
             </div>
         </div>
     );

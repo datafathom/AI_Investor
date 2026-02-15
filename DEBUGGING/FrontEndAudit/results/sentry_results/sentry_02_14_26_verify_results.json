@@ -1,0 +1,220 @@
+[
+  {
+    "timestamp": "2026-02-14T21:50:29.586337",
+    "route": "root",
+    "status": "LOGIN_TIMEOUT",
+    "console_errors": [
+      "Timed out waiting for dashboard markers."
+    ],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\sentry_results\\sentry_screenshots\\login_timeout_root_21_50_29.png",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-02-14T22:07:33.603110",
+    "route": "/admin/api-key-manager",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\sentry_results\\sentry_screenshots\\content_empty_admin_api-key-manager_22_07_33.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:08:00.733116",
+    "route": "/admin/fraud-center",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\sentry_results\\sentry_screenshots\\content_empty_admin_fraud-center_22_08_00.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:08:30.467513",
+    "route": "/admin/security-center",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\sentry_results\\sentry_screenshots\\content_empty_admin_security-center_22_08_30.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:08:57.244789",
+    "route": "/admin/security-logs",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\sentry_results\\sentry_screenshots\\content_empty_admin_security-logs_22_08_57.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:09:25.237722",
+    "route": "/admin/warden-panel",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\sentry_results\\sentry_screenshots\\content_empty_admin_warden-panel_22_09_24.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:09:36.646542",
+    "route": "/sentry/audit",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\sentry_results\\sentry_screenshots\\not_implemented_sentry_audit_22_09_36.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:09:45.392294",
+    "route": "/sentry/backups",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\sentry_results\\sentry_screenshots\\not_implemented_sentry_backups_22_09_45.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:09:52.104121",
+    "route": "/sentry/dark-web",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\sentry_results\\sentry_screenshots\\not_implemented_sentry_dark-web_22_09_51.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:09:58.665135",
+    "route": "/sentry/devices",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\sentry_results\\sentry_screenshots\\not_implemented_sentry_devices_22_09_58.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:10:05.387140",
+    "route": "/sentry/encryption",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\sentry_results\\sentry_screenshots\\not_implemented_sentry_encryption_22_10_05.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:10:17.237394",
+    "route": "/sentry/geo-logs",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\sentry_results\\sentry_screenshots\\not_implemented_sentry_geo-logs_22_10_16.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:10:23.685374",
+    "route": "/sentry/hardware",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\sentry_results\\sentry_screenshots\\not_implemented_sentry_hardware_22_10_23.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:10:30.235378",
+    "route": "/sentry/kill-switch",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\sentry_results\\sentry_screenshots\\not_implemented_sentry_kill-switch_22_10_30.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:10:36.847576",
+    "route": "/sentry/vault",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\sentry_results\\sentry_screenshots\\not_implemented_sentry_vault_22_10_36.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:07:07.379161",
+    "route": "/dept/sentry",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\sentry_results\\sentry_screenshots\\success_dept_sentry_22_07_06.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:10:11.987526",
+    "route": "/sentry/firewall",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\sentry_results\\sentry_screenshots\\success_sentry_firewall_22_10_11.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  }
+]

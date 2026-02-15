@@ -61,7 +61,7 @@ git checkout -b feature/your-feature-name
 pytest
 
 # Frontend tests
-cd frontend2 && npm test
+cd Frontend && npm test
 
 # E2E tests
 npm run test:e2e
@@ -230,12 +230,13 @@ test: add integration tests for legal flow
 ai-investor/
 ├── services/          # Backend services
 ├── web/              # Web API and routes
-├── frontend2/        # React frontend
+├── Frontend/         # React 19 + Vite 5 frontend
 ├── tests/            # Test files
-├── migrations/       # Database migrations
-├── scripts/          # Utility scripts
+├── scripts/          # CLI runners & utility scripts
+├── config/           # CLI configuration & color palette
 ├── docs/             # Documentation
-└── infra/            # Infrastructure configs
+├── DEBUGGING/        # Frontend audit tools & results
+└── cli.py            # Unified CLI entry point
 ```
 
 ---
@@ -251,4 +252,4 @@ Thank you for contributing! 🎉
 
 ---
 
-**Last Updated**: 2026-01-21
+**Last Updated**: 2026-02-14

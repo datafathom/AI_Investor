@@ -1,0 +1,220 @@
+[
+  {
+    "timestamp": "2026-02-14T21:51:19.292826",
+    "route": "root",
+    "status": "LOGIN_TIMEOUT",
+    "console_errors": [
+      "Timed out waiting for dashboard markers."
+    ],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\strategist_results\\strategist_screenshots\\login_timeout_root_21_51_18.png",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-02-14T22:12:12.388034",
+    "route": "/admin/rebalancer",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\strategist_results\\strategist_screenshots\\content_empty_admin_rebalancer_22_12_12.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:12:40.981676",
+    "route": "/admin/risk-dashboard",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\strategist_results\\strategist_screenshots\\content_empty_admin_risk-dashboard_22_12_40.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:13:08.144411",
+    "route": "/admin/screener-builder",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\strategist_results\\strategist_screenshots\\content_empty_admin_screener-builder_22_13_07.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:13:35.109121",
+    "route": "/admin/strategy-lab",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\strategist_results\\strategist_screenshots\\content_empty_admin_strategy-lab_22_13_34.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:14:02.157311",
+    "route": "/admin/strategy-library",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\strategist_results\\strategist_screenshots\\content_empty_admin_strategy-library_22_14_01.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:14:29.401225",
+    "route": "/admin/walk-forward",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\strategist_results\\strategist_screenshots\\content_empty_admin_walk-forward_22_14_29.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:14:36.511335",
+    "route": "/strategist/alpha-beta",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\strategist_results\\strategist_screenshots\\not_implemented_strategist_alpha-beta_22_14_36.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:14:51.666995",
+    "route": "/strategist/builder",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\strategist_results\\strategist_screenshots\\not_implemented_strategist_builder_22_14_50.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:14:59.817378",
+    "route": "/strategist/decay",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\strategist_results\\strategist_screenshots\\not_implemented_strategist_decay_22_14_59.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:15:06.287846",
+    "route": "/strategist/hub",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\strategist_results\\strategist_screenshots\\not_implemented_strategist_hub_22_15_06.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:15:13.152910",
+    "route": "/strategist/library",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\strategist_results\\strategist_screenshots\\not_implemented_strategist_library_22_15_12.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:15:19.697497",
+    "route": "/strategist/rebalance",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\strategist_results\\strategist_screenshots\\not_implemented_strategist_rebalance_22_15_19.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:15:26.581342",
+    "route": "/strategist/risk",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\strategist_results\\strategist_screenshots\\not_implemented_strategist_risk_22_15_26.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:15:33.195620",
+    "route": "/strategist/screener",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\strategist_results\\strategist_screenshots\\not_implemented_strategist_screener_22_15_32.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:15:39.744704",
+    "route": "/strategist/stress-test",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\strategist_results\\strategist_screenshots\\not_implemented_strategist_stress-test_22_15_39.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:11:45.684052",
+    "route": "/dept/strategist",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\strategist_results\\strategist_screenshots\\success_dept_strategist_22_11_45.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  }
+]

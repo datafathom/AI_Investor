@@ -83,7 +83,16 @@ export const DEPT_REGISTRY = {
       { path: "/orchestrator/graph", label: "Dependency Graph", description: "Visual explorer of Neo4j nodes and goal impacts." },
       { path: "/special/search", label: "Global Search Bar", description: "Spotlight search for any transaction or document." },
       { path: "/orchestrator/permissions", label: "Role Permissions", description: "Defining action boundaries for different personas." },
-      { path: "/orchestrator/layout", label: "Custom Layout Engine", description: "Drag-and-drop dashboard builder for saved workspaces." }
+      { path: "/orchestrator/layout", label: "Custom Layout Engine", description: "Drag-and-drop dashboard builder for saved workspaces." },
+      { path: "/orchestrator/autonomy-controller", label: "Autonomy Controller", description: "Configuring agent autonomy levels and boundaries." },
+      { path: "/orchestrator/consensus-visualizer", label: "Consensus Visualizer", description: "Visualizing agent consensus and conflict resolution." },
+      { path: "/orchestrator/fleet", label: "Agent Fleet", description: "Status and lifecycle management for all active agents." },
+      { path: "/orchestrator/os-health-dashboard", label: "OS Health Dashboard", description: "Operating system health and resource monitoring." },
+      { path: "/orchestrator/singularity", label: "Singularity", description: "Advanced system convergence metrics." },
+      { path: "/orchestrator/system-health", label: "System Health", description: "CPU, Memory, and Disk usage metrics." },
+      { path: "/orchestrator/tactical-command-center", label: "Tactical Command Center", description: "Mission-critical command and control interface." },
+      { path: "/orchestrator/task-queue", label: "Task Queue", description: "Managing agent task queues and priorities." },
+      { path: "/orchestrator/unified-alert-center", label: "Unified Alert Center", description: "Centralized notification and alert management." }
     ]
   },
   2: {
@@ -120,13 +129,15 @@ export const DEPT_REGISTRY = {
       { path: "/architect/allocation", label: "Asset Allocation Modeler", description: "Target-state builder for portfolio distribution." },
       { path: "/architect/blueprints", label: "Master Blueprints", description: "Mapping long-term financial goals to agent task graphs." },
       { path: "/architect/vault", label: "Insurance & Protection", description: "Centralized UI for policy limits and digital keys." },
-      { path: "/architect/vault", label: "Insurance & Protection", description: "Centralized UI for policy limits and digital keys." },
       { path: "/architect/legacy", label: "Estate & Legacy Planner", description: "Mapping asset distribution and ICE checklists." },
       { path: "/architect/liability", label: "Liability Structuralist", description: "Deep-dive interface for debt interest snowballs." },
       { path: "/architect/tax", label: "Tax Efficiency Blueprint", description: "Account-level asset placement for max growth." },
       { path: "/architect/inflation", label: "Inflation Adjuster", description: "Global toggle to see future values in today's dollars." },
       { path: "/architect/retirement", label: "Retirement Drawdown", description: "Year-by-year plan for account depletion sequences." },
-      { path: "/architect/capex", label: "CapEx Planner", description: "Planning for big hits like roofs, weddings, and cars." }
+      { path: "/architect/capex", label: "CapEx Planner", description: "Planning for big hits like roofs, weddings, and cars." },
+      { path: "/architect/construction-lab", label: "Construction Lab", description: "Testing ground for new financial structures." },
+      { path: "/architect/legacy-storytelling", label: "Legacy Storytelling", description: "Narrative builder for generational wealth transfer." },
+      { path: "/architect/real-estate-suite", label: "Real Estate Suite", description: "Comprehensive management for property portfolio." }
     ]
   },
   3: {
@@ -160,7 +171,7 @@ export const DEPT_REGISTRY = {
     ],
     subModules: [
       { path: "/data-scientist/research", label: "Data Research & Scraping", description: "Monitoring macro-economic indicators and holdings impact." },
-      { path: "/data-scientist/debate-arena", label: "Debate Arena", description: "Agent-to-agent conflict resolution and consensus building." },
+      { path: "/data-scientist/debate", label: "Debate Arena", description: "Agent-to-agent conflict resolution and consensus building." },
       { path: "/data-scientist/debate-history", label: "Debate History", description: "Audit trail of historical agent debates and transcripts." },
       { path: "/data-scientist/forced-sellers", label: "Forced Seller Monitor", description: "Identifying institutional liquidation pressure points." },
       { path: "/data-scientist/whale-flow", label: "Whale Flow Terminal", description: "Tracking large block trades and institutional accumulation." },
@@ -172,10 +183,16 @@ export const DEPT_REGISTRY = {
       { path: "/data-scientist/anomaly", label: "Anomaly Detection", description: "Highlighting spending spikes or standard deviation breaks." },
       { path: "/data-scientist/yield", label: "Yield Curve Analysis", description: "Tracking risk-free rates for market timing." },
       { path: "/data-scientist/arbitrage", label: "Stat-Arb Finder", description: "Searching for discrepancies in related assets." },
-      { path: "/data-scientist/factor-analysis-suite", label: "Factor Analysis Suite", description: "Decomposing returns into growth, value, and momentum." },
+      { path: "/data-scientist/factor-analysis", label: "Factor Analysis Suite", description: "Decomposing returns into growth, value, and momentum." },
       { path: "/data-scientist/fundamental-scanner", label: "Fundamental Scanner", description: "Screening assets based on balance sheet health." },
-      { path: "/data-scientist/quant-backtest-lab", label: "Quant Backtest Lab", description: "High-precision simulation for algorithmic models." },
-      { path: "/data-scientist/integrator", label: "External Data Integrator", description: "UI to import non-standard CSV/JSON financial sources." }
+      { path: "/data-scientist/quant-backtest", label: "Quant Backtest Lab", description: "High-precision simulation for algorithmic models." },
+      { path: "/data-scientist/integrator", label: "External Data Integrator", description: "UI to import non-standard CSV/JSON financial sources." },
+      { path: "/data-scientist/backtest-engine", label: "Backtest Engine", description: "High-fidelity backtesting with transaction costs." },
+      { path: "/data-scientist/correlation-risk", label: "Correlation Risk", description: "Identifying hidden correlation clusters across assets." },
+      { path: "/data-scientist/crypto-analytics", label: "Crypto Analytics", description: "On-chain and market analytics for digital assets." },
+      { path: "/data-scientist/data-pipeline-manager", label: "Data Pipeline Manager", description: "Orchestrating data ingestion and transformation flows." },
+      { path: "/data-scientist/data-quality-dashboard", label: "Data Quality Dashboard", description: "Monitoring data freshness, completeness, and accuracy." },
+      { path: "/data-scientist/data-validation", label: "Data Validation", description: "Automated validation rules for incoming data streams." }
     ]
   },
   4: {
@@ -216,7 +233,13 @@ export const DEPT_REGISTRY = {
       { path: "/strategist/alpha-beta", label: "Alpha/Beta Decomposition", description: "Source analysis: Skill Gains vs. Market Lift." },
       { path: "/strategist/hub", label: "Signal Confirmation Hub", description: "Green/Red checklist before execution is unlocked." },
       { path: "/strategist/decay", label: "Strategy Decay Monitor", description: "Tracking if an old strategy is losing its edge." },
-      { path: "/strategist/library", label: "Playbook Library", description: "Wiki of past strategies and retirement reasoning." }
+      { path: "/strategist/library", label: "Playbook Library", description: "Wiki of past strategies and retirement reasoning." },
+      { path: "/strategist/rebalancer", label: "Rebalancer", description: "Automated portfolio rebalancing engine." },
+      { path: "/strategist/risk-dashboard", label: "Risk Dashboard", description: "Comprehensive risk metrics and analytics." },
+      { path: "/strategist/screener-builder", label: "Screener Builder", description: "Building custom asset screening criteria." },
+      { path: "/strategist/strategy-lab", label: "Strategy Lab", description: "Experimental strategy development environment." },
+      { path: "/strategist/strategy-library", label: "Strategy Library", description: "Repository of tested trading strategies." },
+      { path: "/strategist/walk-forward", label: "Walk Forward Analysis", description: "Out-of-sample strategy validation testing." }
     ]
   },
   5: {
@@ -260,7 +283,17 @@ export const DEPT_REGISTRY = {
       { path: "/trader/zen", label: "Zen Mode", description: "Distraction-free UI showing only price and at-risk P&L." },
       { path: "/trader/ladder", label: "Ladder Interface", description: "Vertical price-ladder for precise futures order placement." },
       { path: "/trader/slippage", label: "Slippage Estimator", description: "Real-time cost calculator for bid-ask spreads." },
-      { path: "/trader/routing", label: "Multi-Route Gateway", description: "Broker-agnostic execution path selector for best fills." }
+      { path: "/trader/routing", label: "Multi-Route Gateway", description: "Broker-agnostic execution path selector for best fills." },
+      { path: "/trader/algo-order-entry", label: "Algo Order Entry", description: "Algorithmic order entry and scheduling." },
+      { path: "/trader/bracket-manager", label: "Bracket Manager", description: "Managing bracket and OCO order setups." },
+      { path: "/trader/dark-pool-access", label: "Dark Pool Access", description: "Routing orders to dark liquidity pools." },
+      { path: "/trader/execution-analytics", label: "Execution Analytics", description: "Post-trade analysis of execution quality." },
+      { path: "/trader/iceberg-slicer", label: "Iceberg Slicer", description: "Breaking large orders into hidden iceberg slices." },
+      { path: "/trader/multi-leg-builder", label: "Multi-Leg Builder", description: "Building complex multi-leg options strategies." },
+      { path: "/trader/order-management", label: "Order Management", description: "Live status of all active and pending orders." },
+      { path: "/trader/position-sizer", label: "Position Sizer", description: "Calculating optimal position sizes by risk budget." },
+      { path: "/trader/risk-limits", label: "Risk Limits", description: "Configuring hard loss limits and circuit breakers." },
+      { path: "/trader/smart-router", label: "Smart Router", description: "Intelligent order routing for best execution." }
     ]
   },
   6: {
@@ -295,7 +328,11 @@ export const DEPT_REGISTRY = {
     subModules: [
       { path: "/physicist/margin", label: "Margin Compression", description: "Monitoring volatility expansion impacts on capital." },
       { path: "/physicist/morphing", label: "Strategy Morphing", description: "Morphing losing spreads into different complex structures." },
-      { path: "/physicist/expected-move", label: "Expected Move", description: "Standard deviation cones for 30-day price projections." }
+      { path: "/physicist/expected-move", label: "Expected Move", description: "Standard deviation cones for 30-day price projections." },
+      { path: "/physicist/greeks-surface", label: "Greeks Surface", description: "3D volatility surface for options Greeks." },
+      { path: "/physicist/options-flow", label: "Options Flow", description: "Real-time institutional options order flow." },
+      { path: "/physicist/pnl-modeler", label: "P&L Modeler", description: "Scenario-based P&L projection for derivatives." },
+      { path: "/physicist/position-greeks", label: "Position Greeks", description: "Aggregate Greeks for the entire portfolio." }
     ]
   },
   7: {
@@ -341,7 +378,11 @@ export const DEPT_REGISTRY = {
       { path: "/hunter/crowdfunding", label: "Crowdfunding Ledger", description: "Managing investments across Republic/Wefunder platforms." },
       { path: "/hunter/exits", label: "Exit Strategy Modeler", description: "Defining Success Milestones for 10x winners." },
       { path: "/hunter/rumors", label: "Speculative News", description: "Aggregator for rumors, FDA approvals, and earnings leaks." },
-      { path: "/hunter/mining", label: "Resource Mining", description: "Tracking physical/digital gold, silver, and commodities." }
+      { path: "/hunter/mining", label: "Resource Mining", description: "Tracking physical/digital gold, silver, and commodities." },
+      { path: "/hunter/on-chain-terminal", label: "On-Chain Terminal", description: "Real-time blockchain transaction monitoring." },
+      { path: "/hunter/opportunity-tracker", label: "Opportunity Tracker", description: "Tracking alpha opportunities across markets." },
+      { path: "/hunter/private-equity-terminal", label: "Private Equity Terminal", description: "Deal flow and PE fund analytics." },
+      { path: "/hunter/watchlist-manager", label: "Watchlist Manager", description: "Managing and monitoring asset watchlists." }
     ]
   },
   8: {
@@ -384,7 +425,12 @@ export const DEPT_REGISTRY = {
       { path: "/sentry/kill-switch", label: "Emergency Kill Protocol", description: "One-click revocation of all API tokens and handshakes." },
       { path: "/sentry/backups", label: "Backup Integrity", description: "Monitoring the health and age of offline data backups." },
       { path: "/sentry/hardware", label: "Hardware Wallet Bridge", description: "Connecting cold storage devices for View-only modes." },
-      { path: "/sentry/audit", label: "Perimeter Audit", description: "Checking health of environment running the GUI." }
+      { path: "/sentry/audit", label: "Perimeter Audit", description: "Checking health of environment running the GUI." },
+      { path: "/sentry/api-key-manager", label: "API Key Manager", description: "Managing and rotating API keys and tokens." },
+      { path: "/sentry/fraud-center", label: "Fraud Center", description: "Centralized fraud detection and response." },
+      { path: "/sentry/security-center", label: "Security Center", description: "Consolidated security posture and vulnerabilities." },
+      { path: "/sentry/security-logs", label: "Security Logs", description: "Detailed security event and access logs." },
+      { path: "/sentry/warden-panel", label: "Warden Panel", description: "Admin control panel for security protocols." }
     ]
   },
   9: {
@@ -419,7 +465,10 @@ export const DEPT_REGISTRY = {
     subModules: [
       { path: "/steward/maintenance", label: "Maintenance Reserve", description: "Sunken Fund calculator for home and car repairs." },
       { path: "/steward/kill-list", label: "Subscription Kill-List", description: "Monthly report on unused services and tools." },
-      { path: "/steward/liquidity", label: "Net Worth vs Liquid", description: "Visualizing the gap between wealth and spendable cash." }
+      { path: "/steward/liquidity", label: "Net Worth vs Liquid", description: "Visualizing the gap between wealth and spendable cash." },
+      { path: "/steward/asset-inventory", label: "Asset Inventory", description: "Tracking physical and digital asset holdings." },
+      { path: "/steward/collectible-viewer", label: "Collectible Viewer", description: "Viewing and managing collectible asset portfolio." },
+      { path: "/steward/exit-planner", label: "Exit Planner", description: "Planning liquidation and exit strategies." }
     ]
   },
   10: {
@@ -504,7 +553,13 @@ export const DEPT_REGISTRY = {
       { path: "/lawyer/regulation", label: "Regulatory Feed", description: "Legislation tracker for new tax or SEC rule impacts." },
       { path: "/lawyer/beneficiaries", label: "Beneficiary Sync", description: "Ensuring 401k/IRA/Life beneficiaries match the Will." },
       { path: "/lawyer/signatures", label: "Digital Signatures", description: "PDF generator for family contracts and agreements." },
-      { path: "/lawyer/compliance", label: "Compliance Score", description: "0-100 rating of institutional audit readiness." }
+      { path: "/lawyer/compliance", label: "Compliance Score", description: "0-100 rating of institutional audit readiness." },
+      { path: "/lawyer/compliance-tracker", label: "Compliance Tracker", description: "Monitoring regulatory compliance status." },
+      { path: "/lawyer/doc-generator", label: "Doc Generator", description: "Automated legal document generation." },
+      { path: "/lawyer/filing-manager", label: "Filing Manager", description: "Managing tax filings and regulatory submissions." },
+      { path: "/lawyer/tax-harvester", label: "Tax Harvester", description: "Automated tax-loss harvesting engine." },
+      { path: "/lawyer/trade-surveillance", label: "Trade Surveillance", description: "Monitoring for insider trading and unusual patterns." },
+      { path: "/lawyer/trust-admin", label: "Trust Admin", description: "Managing trusts and fiduciary structures." }
     ]
   },
   12: {
@@ -547,7 +602,19 @@ export const DEPT_REGISTRY = {
       { path: "/auditor/mistakes", label: "Mistake Logger", description: "Wall of Learning for analyzed failure patterns." },
       { path: "/auditor/benchmarks", label: "The Benchmarker", description: "Comparative analysis against NASDAQ, Gold, or BTC." },
       { path: "/auditor/time-weighted", label: "Time-Weighted Returns", description: "Analyzing returns isolated from capital additions." },
-      { path: "/auditor/recovery", label: "Fee Recovery", description: "Identifying bank fees that can be disputed or reversed." }
+      { path: "/auditor/recovery", label: "Fee Recovery", description: "Identifying bank fees that can be disputed or reversed." },
+      { path: "/auditor/attribution-analysis", label: "Attribution Analysis", description: "Deep attribution analysis for portfolio decomposition." },
+      { path: "/auditor/discrepancy-resolution", label: "Discrepancy Resolution", description: "Automated resolution of ledger discrepancies." },
+      { path: "/auditor/fee-auditor", label: "Fee Auditor", description: "Commission and fee analysis for hidden cost discovery." },
+      { path: "/auditor/model-validator", label: "Model Validator", description: "Validating financial model accuracy and drift." },
+      { path: "/auditor/performance-attribution", label: "Performance Attribution", description: "Decomposing returns by sector, decision, and timing." },
+      { path: "/auditor/performance-report", label: "Performance Report", description: "Comprehensive performance reporting and analytics." },
+      { path: "/auditor/pricing-verifier", label: "Pricing Verifier", description: "Cross-referencing asset prices from multiple providers." },
+      { path: "/auditor/quality-incidents", label: "Quality Incidents", description: "Tracking and resolving data quality incidents." },
+      { path: "/auditor/reconciliation-dashboard", label: "Reconciliation Dashboard", description: "Unified view of cash and position breaks." },
+      { path: "/auditor/source-reputation", label: "Source Reputation", description: "Rating reliability of data sources and feeds." },
+      { path: "/auditor/tax-lot-analyzer", label: "Tax Lot Analyzer", description: "FIFO/LIFO lot analysis for tax optimization." },
+      { path: "/auditor/wealth-benchmark", label: "Wealth Benchmark", description: "Benchmarking wealth growth against indices." }
     ]
   },
   13: {
@@ -590,7 +657,12 @@ export const DEPT_REGISTRY = {
       { path: "/envoy/education", label: "Financial Education", description: "Curated library of books, videos, and influential notes." },
       { path: "/envoy/daf", label: "DAF Manager", description: "Managing Donor Advised Funds and tax-free growth." },
       { path: "/envoy/share", label: "External API Share", description: "Generating secret links for specific partner graph views." },
-      { path: "/envoy/crm", label: "Professional CRM", description: "Tracking every interaction with the Money Team." }
+      { path: "/envoy/crm", label: "Professional CRM", description: "Tracking every interaction with the Money Team." },
+      { path: "/envoy/donation-manager", label: "Donation Manager", description: "Tracking and managing charitable contributions." },
+      { path: "/envoy/giving-opportunity-finder", label: "Giving Opportunity Finder", description: "Discovering tax-advantaged giving opportunities." },
+      { path: "/envoy/impact-scorecard", label: "Impact Scorecard", description: "Measuring social and environmental investment impact." },
+      { path: "/envoy/investor-portal", label: "Investor Portal", description: "Shared view for co-investors and partners." },
+      { path: "/envoy/philanthropy-center", label: "Philanthropy Center", description: "Centralized management for philanthropic initiatives." }
     ]
   },
   14: {
@@ -613,7 +685,10 @@ export const DEPT_REGISTRY = {
       "voice_advocate",
       "logistics_researcher",
       "document_courier",
-      "executive_buffer"
+      "executive_buffer",
+      "general_purchasing_agent",
+      "travel_concierge_agent",
+      "personal_assistant_agent"
     ],
     primaryMetric: "pendingTasks",
     primaryMetricLabel: "Pending Tasks",
@@ -624,7 +699,8 @@ export const DEPT_REGISTRY = {
     ],
     subModules: [
       { path: "/orchestrator/terminal", label: "Terminal Workspace", description: "Access the unified command line interface." },
-      { path: "/orchestrator/mission-control", label: "Mission Control", description: "View the operational status of all systems." }
+      { path: "/orchestrator/mission-control", label: "Mission Control", description: "View the operational status of all systems." },
+      { path: "/front-office/executive-summary", label: "Executive Summary", description: "High-level overview of institutional health and alpha." }
     ]
   },
   15: {
@@ -694,7 +770,13 @@ export const DEPT_REGISTRY = {
     subModules: [
       { path: "/stress-tester/wargame", label: "War Game Simulator", description: "Extreme black swan simulations and cascade analysis." },
       { path: "/stress-tester/liquidation", label: "Liquidation Optimizer", description: "Planning exit paths for market-wide failures." },
-      { path: "/stress-tester/robustness", label: "Robustness Scorecard", description: "FRACTAL analysis of portfolio survivability." }
+      { path: "/stress-tester/robustness", label: "Robustness Scorecard", description: "FRACTAL analysis of portfolio survivability." },
+      { path: "/stress-tester/black-swan-generator", label: "Black Swan Generator", description: "Generating extreme tail-risk scenarios." },
+      { path: "/stress-tester/crash-simulator", label: "Crash Simulator", description: "Simulating market crashes and recovery paths." },
+      { path: "/stress-tester/liquidity-stress", label: "Liquidity Stress", description: "Testing portfolio liquidity under stress conditions." },
+      { path: "/stress-tester/robustness-lab", label: "Robustness Lab", description: "Testing strategy robustness under adversarial conditions." },
+      { path: "/stress-tester/wargame-arena", label: "Wargame Arena", description: "Multi-agent adversarial simulation environment." },
+      { path: "/stress-tester/web3-simulator", label: "Web3 Simulator", description: "Simulating DeFi protocol interactions and risks." }
     ]
   },
   17: {
@@ -714,7 +796,7 @@ export const DEPT_REGISTRY = {
     agents: [
       "hallucination_sentinel",
       "token_efficiency_reaper",
-      "agent_performance_reviewer",
+      "performance_reviewer_agent",
       "prompt_optimizer",
       "model_router",
       "context_window_manager"
@@ -729,7 +811,13 @@ export const DEPT_REGISTRY = {
     subModules: [
       { path: "/refiner/efficiency", label: "Token Efficiency", description: "Monitoring reaper performance and context usage." },
       { path: "/refiner/hallucination", label: "Hallucination Monitor", description: "Sentinel status for LLM drift and fact-checking." },
-      { path: "/refiner/prompts", label: "Prompt Evolution", description: "Optimization of agent baseline instructions." }
+      { path: "/refiner/prompts", label: "Prompt Evolution", description: "Optimization of agent baseline instructions." },
+      { path: "/refiner/agent-dna", label: "Agent DNA Viewer", description: "Inspecting agent configuration and prompt DNA." },
+      { path: "/refiner/autocoder", label: "Auto-Coder Dashboard", description: "Self-improving logic and code generation." },
+      { path: "/refiner/autocoder-sandbox", label: "Auto-Coder Sandbox", description: "Sandbox environment for testing auto-generated code." },
+      { path: "/refiner/evolution", label: "Evolution Engine", description: "Tracking agent capability evolution over time." },
+      { path: "/refiner/meta-optimizer", label: "Meta Optimizer", description: "Optimizing optimizer parameters and hypertuning." },
+      { path: "/refiner/prompt-tester", label: "Prompt Tester", description: "A/B testing prompts for agent performance." }
     ]
   },
   18: {
@@ -764,7 +852,18 @@ export const DEPT_REGISTRY = {
     subModules: [
       { path: "/banker/ledger", label: "Ledger Reconciliation", description: "Verifying the graph against external bank records." },
       { path: "/banker/recovery", label: "Fee Recovery Tracker", description: "Identifying bank fees that can be disputed or reversed." },
-      { path: "/banker/sweep", label: "Sweep Logic", description: "Configuring automated transfers between institutional nodes." }
+      { path: "/banker/sweep", label: "Sweep Logic", description: "Configuring automated transfers between institutional nodes." },
+      { path: "/banker/account-aggregator", label: "Account Aggregator", description: "Unified view of all external account balances." },
+      { path: "/banker/bank-manager", label: "Bank Manager", description: "Managing institutional bank relationships and accounts." },
+      { path: "/banker/crypto-wallet", label: "Crypto Wallet", description: "Managing cryptocurrency wallets and DeFi positions." },
+      { path: "/banker/defi-yield-dashboard", label: "DeFi Yield Dashboard", description: "Tracking yield farming and DeFi protocol returns." },
+      { path: "/banker/expense-manager", label: "Expense Manager", description: "Categorizing and tracking all outgoing expenditures." },
+      { path: "/banker/tax-liability-dashboard", label: "Tax Liability Dashboard", description: "Real-time estimated tax obligation tracker." },
+      { path: "/banker/transaction-ledger", label: "Transaction Ledger", description: "Master record of all financial movements." },
+      { path: "/banker/transaction-sync", label: "Transaction Sync", description: "Synchronizing transactions across institutions." },
+      { path: "/banker/transfer-center", label: "Transfer Center", description: "Initiating and tracking inter-account transfers." },
+      { path: "/banker/treasury-dashboard", label: "Treasury Dashboard", description: "Master view of all bank balances and liquidity." },
+      { path: "/banker/yield-optimizer", label: "Yield Optimizer", description: "Optimizing savings and yield across accounts." }
     ]
   },
   19: {
@@ -805,6 +904,36 @@ export const DEPT_REGISTRY = {
       { path: "/admin/transaction-ledger", label: "Transaction Ledger", description: "Master record of all system-wide financial movements." },
       { path: "/admin/deployments", label: "Red/Green/Blue Deploy", description: "Zero-downtime deployment controller." },
       { path: "/admin/features", label: "Feature Flag Management", description: "Hot-toggling system features and research modes." }
+    ]
+  },
+  19: {
+    id: 19,
+    name: "Media Team",
+    shortName: "Media",
+    slug: "media-team",
+    route: "/dept/media-team",
+    menuCategory: "Front Office",
+    icon: "video",
+    color: "#ec4899", // Pink
+    quadrant: QUADRANTS.HOUSEHOLD,
+    parentRole: PARENT_ROLES.GUARDIAN,
+    d3Type: D3_TYPES.TREEMAP,
+    description: "Multi-media content creation and asset management",
+    kafkaTopics: ["dept.19.events", "dept.19.metrics"],
+    agents: [
+      "article_synthesizer",
+      "visual_aesthetics_agent",
+      "video_director",
+      "document_drafter",
+      "mesh_architect",
+      "presentation_designer"
+    ],
+    primaryMetric: "assetsCreated",
+    primaryMetricLabel: "Assets",
+    primaryMetricUnit: "pcs",
+    subModules: [
+      { path: "/dept/media-team", label: "Media Studio", description: "Centralized content creation hub." },
+      { path: "/media/library", label: "Asset Library", description: "Search and manage images, videos, and 3D files." }
     ]
   }
 };

@@ -1,0 +1,197 @@
+[
+  {
+    "timestamp": "2026-02-14T21:44:58.129616",
+    "route": "/admin/account-aggregator",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\banker_results\\banker_screenshots\\content_empty_admin_account-aggregator_21_44_57.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:45:27.258589",
+    "route": "/admin/bank-manager",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\banker_results\\banker_screenshots\\content_empty_admin_bank-manager_21_45_27.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:46:00.046116",
+    "route": "/admin/defi-yield-dashboard",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\banker_results\\banker_screenshots\\content_empty_admin_defi-yield-dashboard_21_45_59.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:46:34.844252",
+    "route": "/admin/tax-liability-dashboard",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\banker_results\\banker_screenshots\\content_empty_admin_tax-liability-dashboard_21_46_34.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:47:07.675148",
+    "route": "/admin/transaction-sync",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\banker_results\\banker_screenshots\\content_empty_admin_transaction-sync_21_47_07.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:47:40.007942",
+    "route": "/admin/treasury-dashboard",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\banker_results\\banker_screenshots\\content_empty_admin_treasury-dashboard_21_47_39.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:47:50.183926",
+    "route": "/banker/ledger",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\banker_results\\banker_screenshots\\not_implemented_banker_ledger_21_47_49.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:47:57.098104",
+    "route": "/banker/recovery",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\banker_results\\banker_screenshots\\not_implemented_banker_recovery_21_47_56.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:48:03.313090",
+    "route": "/banker/sweep",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\banker_results\\banker_screenshots\\not_implemented_banker_sweep_21_48_03.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:44:31.257617",
+    "route": "/dept/banker",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\banker_results\\banker_screenshots\\success_dept_banker_21_44_30.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:45:33.587405",
+    "route": "/admin/crypto-wallet",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\banker_results\\banker_screenshots\\success_admin_crypto-wallet_21_45_33.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:46:08.000410",
+    "route": "/admin/expense-manager",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\banker_results\\banker_screenshots\\success_admin_expense-manager_21_46_07.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:46:41.238745",
+    "route": "/admin/transaction-ledger",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\banker_results\\banker_screenshots\\success_admin_transaction-ledger_21_46_41.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:47:14.296922",
+    "route": "/admin/transfer-center",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\banker_results\\banker_screenshots\\success_admin_transfer-center_21_47_14.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:47:46.014273",
+    "route": "/admin/yield-optimizer",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\banker_results\\banker_screenshots\\success_admin_yield-optimizer_21_47_45.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  }
+]

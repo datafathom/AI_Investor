@@ -1,0 +1,64 @@
+[
+  {
+    "timestamp": "2026-02-14T21:50:50.528398",
+    "route": "root",
+    "status": "LOGIN_TIMEOUT",
+    "console_errors": [
+      "Timed out waiting for dashboard markers."
+    ],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\special_results\\special_screenshots\\login_timeout_root_21_50_50.png",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-02-14T22:08:39.526038",
+    "route": "/mission-control",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\special_results\\special_screenshots\\success_mission-control_22_08_39.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:08:48.848003",
+    "route": "/mission-planner",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\special_results\\special_screenshots\\success_mission-planner_22_08_48.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:08:58.582802",
+    "route": "/mission-progress",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\special_results\\special_screenshots\\success_mission-progress_22_08_58.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:09:04.806534",
+    "route": "/missions",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\special_results\\special_screenshots\\success_missions_22_09_04.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  }
+]

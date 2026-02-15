@@ -1,0 +1,142 @@
+[
+  {
+    "timestamp": "2026-02-14T21:50:22.087859",
+    "route": "root",
+    "status": "LOGIN_TIMEOUT",
+    "console_errors": [
+      "Timed out waiting for dashboard markers."
+    ],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\refiner_results\\refiner_screenshots\\login_timeout_root_21_50_21.png",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-02-14T22:04:38.479786",
+    "route": "/admin/agent-dna",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\refiner_results\\refiner_screenshots\\content_empty_admin_agent-dna_22_04_38.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:06:13.168701",
+    "route": "/admin/autocoder/sandbox",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\refiner_results\\refiner_screenshots\\content_empty_admin_autocoder_sandbox_22_06_12.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:06:40.734433",
+    "route": "/admin/evolution",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\refiner_results\\refiner_screenshots\\content_empty_admin_evolution_22_06_40.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:07:09.739825",
+    "route": "/admin/meta-optimizer",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\refiner_results\\refiner_screenshots\\content_empty_admin_meta-optimizer_22_07_09.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:07:37.854308",
+    "route": "/admin/prompt-tester",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\refiner_results\\refiner_screenshots\\content_empty_admin_prompt-tester_22_07_37.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:07:44.389000",
+    "route": "/refiner/efficiency",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\refiner_results\\refiner_screenshots\\not_implemented_refiner_efficiency_22_07_44.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:07:50.777913",
+    "route": "/refiner/hallucination",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\refiner_results\\refiner_screenshots\\not_implemented_refiner_hallucination_22_07_50.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:07:57.274467",
+    "route": "/refiner/prompts",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\refiner_results\\refiner_screenshots\\not_implemented_refiner_prompts_22_07_57.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:04:12.898357",
+    "route": "/dept/refiner",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\refiner_results\\refiner_screenshots\\success_dept_refiner_22_04_12.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:05:47.054006",
+    "route": "/admin/autocoder",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\refiner_results\\refiner_screenshots\\success_admin_autocoder_22_05_46.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  }
+]

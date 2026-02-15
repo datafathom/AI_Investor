@@ -11,12 +11,20 @@ INPUT/OUTPUT:
 """
 
 import sys
+import io
 from pathlib import Path
-
 
 # Add project root to path
 _project_root = Path(__file__).parent
 sys.path.insert(0, str(_project_root))
+
+# Force UTF-8 and Line-Buffering on Windows to prevent terminal stalling
+if sys.platform == 'win32':
+    # Wrap buffer in TextIOWrapper with line_buffering=True
+    if not isinstance(sys.stdout, io.TextIOWrapper):
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace', line_buffering=True)
+    if not isinstance(sys.stderr, io.TextIOWrapper):
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace', line_buffering=True)
 
 # Delay heavy imports
 # from utils.registry.command_registry import CommandRegistry
@@ -65,7 +73,23 @@ def parse_args(command_path: list, cmd_def: dict, raw_args: list) -> tuple[dict,
                 flags[actual_flag_name] = True
             else:
                 if i + 1 < len(raw_args):
-                    flags[actual_flag_name] = raw_args[i + 1]
+                    val = raw_args[i + 1]
+                    target_type = flag_def.get("type", "string")
+                    
+                    if target_type == "integer":
+                        try:
+                            val = int(val)
+                        except ValueError:
+                            print(f"Error: Flag --{actual_flag_name} expects integer, got '{val}'", file=sys.stderr)
+                            sys.exit(1)
+                    elif target_type == "float":
+                        try:
+                            val = float(val)
+                        except ValueError:
+                            print(f"Error: Flag --{actual_flag_name} expects float, got '{val}'", file=sys.stderr)
+                            sys.exit(1)
+                            
+                    flags[actual_flag_name] = val
                     i += 1
         elif arg.startswith("-") and not arg.startswith("--"):
             short_name = arg[1:]
@@ -75,12 +99,44 @@ def parse_args(command_path: list, cmd_def: dict, raw_args: list) -> tuple[dict,
                     flags[flag_def["name"]] = True
                 else:
                     if i + 1 < len(raw_args):
-                        flags[flag_def["name"]] = raw_args[i + 1]
+                        val = raw_args[i + 1]
+                        target_type = flag_def.get("type", "string")
+                        
+                        if target_type == "integer":
+                            try:
+                                val = int(val)
+                            except ValueError:
+                                print(f"Error: Flag -{short_name} expects integer, got '{val}'", file=sys.stderr)
+                                sys.exit(1)
+                        elif target_type == "float":
+                            try:
+                                val = float(val)
+                            except ValueError:
+                                print(f"Error: Flag -{short_name} expects float, got '{val}'", file=sys.stderr)
+                                sys.exit(1)
+                                
+                        flags[flag_def["name"]] = val
                         i += 1
         else:
             if len(args) < len(arg_defs):
                 arg_def = arg_defs[len(args)]
-                args[arg_def["name"]] = arg
+                val = arg
+                target_type = arg_def.get("type", "string")
+                
+                if target_type == "integer":
+                    try:
+                        val = int(val)
+                    except ValueError:
+                        print(f"Error: Argument <{arg_def['name']}> expects integer, got '{val}'", file=sys.stderr)
+                        sys.exit(1)
+                elif target_type == "float":
+                    try:
+                        val = float(val)
+                    except ValueError:
+                        print(f"Error: Argument <{arg_def['name']}> expects float, got '{val}'", file=sys.stderr)
+                        sys.exit(1)
+                        
+                args[arg_def["name"]] = val
         
         i += 1
     
@@ -96,7 +152,7 @@ def parse_args(command_path: list, cmd_def: dict, raw_args: list) -> tuple[dict,
                 args[arg_def["name"]] = None
                 
     if missing_required:
-        print(f"Error: Missing required argument(s): {', '.join(missing_required)}", file=sys.stderr)
+        print(f"Error: Missing required argument(s): {', '.join(missing_required)}", file=sys.stderr, flush=True)
         # Usage hint
         usage = f"Usage: python cli.py {' '.join(command_path)}"
         for arg_def in arg_defs:
@@ -104,7 +160,7 @@ def parse_args(command_path: list, cmd_def: dict, raw_args: list) -> tuple[dict,
                 usage += f" <{arg_def['name']}>"
             else:
                 usage += f" [{arg_def['name']}]"
-        print(usage, file=sys.stderr)
+        print(usage, file=sys.stderr, flush=True)
         sys.exit(1)
 
     for flag_def in flag_defs:
@@ -225,7 +281,7 @@ def main():
             
     cmd_def = registry.get_command(command_path)
     if not cmd_def:
-        print(f"Error: Unknown command: {' '.join(command_path)}", file=sys.stderr)
+        print(f"Error: Unknown command: {' '.join(command_path)}", file=sys.stderr, flush=True)
         print_help(registry)
         sys.exit(1)
 
@@ -243,7 +299,7 @@ def main():
     
     handler = registry.get_handler(command_path)
     if not handler:
-        print(f"Error: Handler not found for: {' '.join(command_path)}", file=sys.stderr)
+        print(f"Error: Handler not found for: {' '.join(command_path)}", file=sys.stderr, flush=True)
         sys.exit(1)
     
     try:

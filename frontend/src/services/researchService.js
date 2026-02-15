@@ -1,6 +1,6 @@
 import apiClient from './apiClient';
 
-export const researchService = {
+const researchService = {
   getNotebooks: async () => {
     const response = await apiClient.get('/research/notebooks');
     return response.data;
@@ -30,3 +30,6 @@ export const researchService = {
     await apiClient.post(`/research/notebooks/${id}/restart`);
   }
 };
+
+export { researchService };
+export default researchService;

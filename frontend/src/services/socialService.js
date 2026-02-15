@@ -1,6 +1,6 @@
 import apiClient from './apiClient';
 
-export const socialService = {
+const socialService = {
   // Sentiment
   getTopSentiment: async (limit = 10) => {
     const response = await apiClient.get('/social/sentiment/top', { params: { limit } });
@@ -33,3 +33,6 @@ export const socialService = {
     return response.data;
   }
 };
+
+export { socialService };
+export default socialService;

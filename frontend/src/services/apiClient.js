@@ -54,6 +54,9 @@ apiClient.interceptors.request.use(
     // Set global loading state
     const setLoading = useStore.getState().setLoading;
     setLoading(true);
+    
+    const timestamp = new Date().toLocaleTimeString();
+    console.log(`[${timestamp}] [apiClient] REQUEST_OUT: ${config.method.toUpperCase()} ${config.url}`);
 
     if (!isAuthRequest) {
       // Add Auth Token if available - use getSync to avoid IndexedDB stalls
@@ -126,9 +129,13 @@ apiClient.interceptors.response.use(
       cache.set(config.url + JSON.stringify(config.params || {}), response.data, config.cacheTTL);
     }
 
+    const timestamp = new Date().toLocaleTimeString();
+    console.log(`[${timestamp}] [apiClient] RESPONSE_IN: ${response.config.method.toUpperCase()} ${response.config.url} [${response.status}]`);
     return response.data;
   },
   async (error) => {
+    const timestamp = new Date().toLocaleTimeString();
+    console.error(`[${timestamp}] [apiClient] RESPONSE_ERROR: ${error.config?.method?.toUpperCase()} ${error.config?.url}`, error.message);
     const setLoading = useStore.getState().setLoading;
     setLoading(false);
 

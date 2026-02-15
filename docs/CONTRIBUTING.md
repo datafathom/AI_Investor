@@ -79,7 +79,7 @@ Then create a Pull Request on GitHub.
 pytest
 
 # Frontend
-cd frontend2 && npm test
+cd Frontend && npm test
 ```
 
 ## Pull Request Process

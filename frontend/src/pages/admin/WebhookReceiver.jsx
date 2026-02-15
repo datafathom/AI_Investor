@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { webhookService } from '../../services/webhookService';
 import { toast } from 'sonner';
 import { Radio, RefreshCw, Code, CheckCircle, XCircle, Clock } from 'lucide-react';
-import ReactJson from 'react-json-view';
 
 const WebhookReceiver = () => {
   const [events, setEvents] = useState([]);
@@ -114,13 +113,9 @@ const WebhookReceiver = () => {
                                 <Code size={14} /> JSON Payload
                             </div>
                             <div className="p-4 bg-[#0d1117]">
-                                <ReactJson 
-                                    src={selectedEvent.payload} 
-                                    theme="isotope" 
-                                    displayDataTypes={false} 
-                                    enableClipboard={true}
-                                    style={{backgroundColor: 'transparent', fontSize: '13px'}}
-                                />
+                                <pre className="text-sm font-mono text-slate-300 whitespace-pre-wrap break-all overflow-x-auto">
+                                    {JSON.stringify(selectedEvent.payload, null, 2)}
+                                </pre>
                             </div>
                         </div>
                     </div>

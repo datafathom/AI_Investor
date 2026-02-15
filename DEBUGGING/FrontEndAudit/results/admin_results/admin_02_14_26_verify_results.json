@@ -1,0 +1,581 @@
+[
+  {
+    "timestamp": "2026-02-14T21:41:28.259640",
+    "route": "/admin/a-p-i-connector-hub",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_a-p-i-connector-hub_21_41_27.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:41:55.958332",
+    "route": "/admin/agent-logs",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_agent-logs_21_41_55.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:42:23.914142",
+    "route": "/admin/alert-center",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_alert-center_21_42_23.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:42:52.271781",
+    "route": "/admin/alert-config-page",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_alert-config-page_21_42_52.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:43:57.593553",
+    "route": "/admin/broker-connections",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_broker-connections_21_43_57.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:44:29.569413",
+    "route": "/admin/broker-health",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_broker-health_21_44_29.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:44:58.228963",
+    "route": "/admin/deployment-controller",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_deployment-controller_21_44_57.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:45:09.241301",
+    "route": "/admin/deployments",
+    "status": "FAILED",
+    "console_errors": [
+      "http://127.0.0.1:5173/src/components/controls/TrafficSlider.jsx - Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/admin/DeploymentController.jsx Object",
+      "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-OU5AQDZK.js?v=4e0ae901 902:12 Uncaught TypeError: Failed to fetch dynamically imported module: http:\u20260.1:5173/src/pages/admin/DeploymentController.jsx",
+      "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/admin/DeploymentController.jsx Object",
+      "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-OU5AQDZK.js?v=4e0ae901 902:12 Uncaught TypeError: Failed to fetch dynamically imported module: http:\u20260.1:5173/src/pages/admin/DeploymentController.jsx",
+      "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=4e0ae901 14031:30 \"The above error occurred in one of your React components:\\n\\n    at Lazy\\n    at RenderedRoute (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4131:5)\\n    at Routes (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4601:5)\\n    at AuthGuard (http://127.0.0.1:5173/src/components/AuthGuard.jsx:20:37)\\n    at RenderedRoute (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4131:5)\\n    at Routes (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4601:5)\\n    at Suspense\\n    at div\\n    at main\\n    at AuthGuard (http://127.0.0.1:5173/src/components/AuthGuard.jsx:20:37)\\n    at div\\n    at GlobalErrorBoundary (http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx:8:5)\\n    at AppContent (http://127.0.0.1:5173/src/App.jsx:615:20)\\n    at ToastProvider (http://127.0.0.1:5173/src/context/ToastContext.jsx:31:33)\\n    at ThemeProvider (http://127.0.0.1:5173/src/context/ThemeContext.jsx:29:33)\\n    at App\\n    at Router (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4544:15)\\n    at BrowserRouter (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:5290:5)\\n    at ErrorBoundaryClass (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:22:5)\\n    at ErrorBoundary (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:115:26)\\n\\nReact will try to recreate this component tree from scratch using the error boundary you provided, GlobalErrorBoundary.\"",
+      "http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx 14:12 \"Global Error Boundary caught an error\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/admin/DeploymentController.jsx Object",
+      "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/admin/DeploymentController.jsx Object",
+      "http://127.0.0.1:5173/src/components/Modals/RollbackConfirmModal.jsx - Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    ],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\failed_admin_deployments_21_45_06.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:45:46.957293",
+    "route": "/admin/environment-settings",
+    "status": "FAILED",
+    "console_errors": [
+      "http://127.0.0.1:5173/src/pages/admin/EnvironmentSettings.jsx - Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/admin/EnvironmentSettings.jsx Object",
+      "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-OU5AQDZK.js?v=4e0ae901 902:12 Uncaught TypeError: Failed to fetch dynamically imported module: http:\u2026.0.1:5173/src/pages/admin/EnvironmentSettings.jsx",
+      "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/admin/EnvironmentSettings.jsx Object",
+      "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-OU5AQDZK.js?v=4e0ae901 902:12 Uncaught TypeError: Failed to fetch dynamically imported module: http:\u2026.0.1:5173/src/pages/admin/EnvironmentSettings.jsx",
+      "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=4e0ae901 14031:30 \"The above error occurred in one of your React components:\\n\\n    at Lazy\\n    at RenderedRoute (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4131:5)\\n    at Routes (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4601:5)\\n    at AuthGuard (http://127.0.0.1:5173/src/components/AuthGuard.jsx:20:37)\\n    at RenderedRoute (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4131:5)\\n    at Routes (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4601:5)\\n    at Suspense\\n    at div\\n    at main\\n    at AuthGuard (http://127.0.0.1:5173/src/components/AuthGuard.jsx:20:37)\\n    at div\\n    at GlobalErrorBoundary (http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx:8:5)\\n    at AppContent (http://127.0.0.1:5173/src/App.jsx:615:20)\\n    at ToastProvider (http://127.0.0.1:5173/src/context/ToastContext.jsx:31:33)\\n    at ThemeProvider (http://127.0.0.1:5173/src/context/ThemeContext.jsx:29:33)\\n    at App\\n    at Router (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4544:15)\\n    at BrowserRouter (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:5290:5)\\n    at ErrorBoundaryClass (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:22:5)\\n    at ErrorBoundary (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:115:26)\\n\\nReact will try to recreate this component tree from scratch using the error boundary you provided, GlobalErrorBoundary.\"",
+      "http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx 14:12 \"Global Error Boundary caught an error\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/admin/EnvironmentSettings.jsx Object",
+      "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/admin/EnvironmentSettings.jsx Object",
+      "http://127.0.0.1:5173/src/services/apiClient.js 94:12 \"[9:45:42 PM] [apiClient] RESPONSE_ERROR: POST /system/error\" \"timeout of 30000ms exceeded\"",
+      "http://127.0.0.1:5173/src/services/apiClient.js 94:12 \"[9:45:42 PM] [apiClient] RESPONSE_ERROR: POST /system/error\" \"timeout of 30000ms exceeded\"",
+      "http://127.0.0.1:5173/src/services/apiClient.js 94:12 \"[9:45:42 PM] [apiClient] RESPONSE_ERROR: POST /system/error\" \"timeout of 30000ms exceeded\""
+    ],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\failed_admin_environment-settings_21_45_46.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:46:26.554911",
+    "route": "/admin/event-bus-monitor",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_event-bus-monitor_21_46_26.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:46:54.853155",
+    "route": "/admin/executive-summary",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_executive-summary_21_46_54.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:47:25.264845",
+    "route": "/admin/feature-flags-page",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_feature-flags-page_21_47_24.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:48:03.147198",
+    "route": "/admin/features",
+    "status": "FAILED",
+    "console_errors": [
+      "http://127.0.0.1:5173/src/components/cards/FeatureFlagCard.jsx - Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/admin/FeatureFlagManager.jsx Object",
+      "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-OU5AQDZK.js?v=4e0ae901 902:12 Uncaught TypeError: Failed to fetch dynamically imported module: http:\u20260.0.1:5173/src/pages/admin/FeatureFlagManager.jsx",
+      "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/admin/FeatureFlagManager.jsx Object",
+      "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-OU5AQDZK.js?v=4e0ae901 902:12 Uncaught TypeError: Failed to fetch dynamically imported module: http:\u20260.0.1:5173/src/pages/admin/FeatureFlagManager.jsx",
+      "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=4e0ae901 14031:30 \"The above error occurred in one of your React components:\\n\\n    at Lazy\\n    at RenderedRoute (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4131:5)\\n    at Routes (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4601:5)\\n    at AuthGuard (http://127.0.0.1:5173/src/components/AuthGuard.jsx:20:37)\\n    at RenderedRoute (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4131:5)\\n    at Routes (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4601:5)\\n    at Suspense\\n    at div\\n    at main\\n    at AuthGuard (http://127.0.0.1:5173/src/components/AuthGuard.jsx:20:37)\\n    at div\\n    at GlobalErrorBoundary (http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx:8:5)\\n    at AppContent (http://127.0.0.1:5173/src/App.jsx:615:20)\\n    at ToastProvider (http://127.0.0.1:5173/src/context/ToastContext.jsx:31:33)\\n    at ThemeProvider (http://127.0.0.1:5173/src/context/ThemeContext.jsx:29:33)\\n    at App\\n    at Router (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4544:15)\\n    at BrowserRouter (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:5290:5)\\n    at ErrorBoundaryClass (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:22:5)\\n    at ErrorBoundary (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:115:26)\\n\\nReact will try to recreate this component tree from scratch using the error boundary you provided, GlobalErrorBoundary.\"",
+      "http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx 14:12 \"Global Error Boundary caught an error\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/admin/FeatureFlagManager.jsx Object",
+      "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/admin/FeatureFlagManager.jsx Object",
+      "http://127.0.0.1:5173/src/services/apiClient.js 94:12 \"[9:47:58 PM] [apiClient] RESPONSE_ERROR: POST /system/error\" \"timeout of 30000ms exceeded\"",
+      "http://127.0.0.1:5173/src/services/apiClient.js 94:12 \"[9:47:58 PM] [apiClient] RESPONSE_ERROR: POST /system/error\" \"timeout of 30000ms exceeded\"",
+      "http://127.0.0.1:5173/src/services/apiClient.js 94:12 \"[9:47:58 PM] [apiClient] RESPONSE_ERROR: POST /system/error\" \"timeout of 30000ms exceeded\""
+    ],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\failed_admin_features_21_48_03.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:48:30.741677",
+    "route": "/admin/fleet",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_fleet_21_48_30.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:49:10.332211",
+    "route": "/admin/log-viewer",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_log-viewer_21_49_10.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:49:49.883241",
+    "route": "/admin/middleware-pipeline",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_middleware-pipeline_21_49_49.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:50:22.809667",
+    "route": "/admin/operations-dashboard",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_operations-dashboard_21_50_22.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:50:59.743978",
+    "route": "/admin/ops",
+    "status": "FAILED",
+    "console_errors": [
+      "http://127.0.0.1:5173/src/components/ui/scroll-area.jsx - Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/admin/OperationsDashboard.jsx Object",
+      "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-OU5AQDZK.js?v=4e0ae901 902:12 Uncaught TypeError: Failed to fetch dynamically imported module: http:\u2026.0.1:5173/src/pages/admin/OperationsDashboard.jsx",
+      "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/admin/OperationsDashboard.jsx Object",
+      "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-OU5AQDZK.js?v=4e0ae901 902:12 Uncaught TypeError: Failed to fetch dynamically imported module: http:\u2026.0.1:5173/src/pages/admin/OperationsDashboard.jsx",
+      "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=4e0ae901 14031:30 \"The above error occurred in one of your React components:\\n\\n    at Lazy\\n    at RenderedRoute (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4131:5)\\n    at Routes (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4601:5)\\n    at AuthGuard (http://127.0.0.1:5173/src/components/AuthGuard.jsx:20:37)\\n    at RenderedRoute (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4131:5)\\n    at Routes (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4601:5)\\n    at Suspense\\n    at div\\n    at main\\n    at AuthGuard (http://127.0.0.1:5173/src/components/AuthGuard.jsx:20:37)\\n    at div\\n    at GlobalErrorBoundary (http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx:8:5)\\n    at AppContent (http://127.0.0.1:5173/src/App.jsx:615:20)\\n    at ToastProvider (http://127.0.0.1:5173/src/context/ToastContext.jsx:31:33)\\n    at ThemeProvider (http://127.0.0.1:5173/src/context/ThemeContext.jsx:29:33)\\n    at App\\n    at Router (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:4544:15)\\n    at BrowserRouter (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=4e0ae901:5290:5)\\n    at ErrorBoundaryClass (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:22:5)\\n    at ErrorBoundary (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:115:26)\\n\\nReact will try to recreate this component tree from scratch using the error boundary you provided, GlobalErrorBoundary.\"",
+      "http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx 14:12 \"Global Error Boundary caught an error\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/admin/OperationsDashboard.jsx Object",
+      "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:5173/src/pages/admin/OperationsDashboard.jsx Object",
+      "http://127.0.0.1:5173/src/services/apiClient.js 94:12 \"[9:50:55 PM] [apiClient] RESPONSE_ERROR: POST /system/error\" \"timeout of 30000ms exceeded\"",
+      "http://127.0.0.1:5173/src/services/apiClient.js 94:12 \"[9:50:55 PM] [apiClient] RESPONSE_ERROR: POST /system/error\" \"timeout of 30000ms exceeded\"",
+      "http://127.0.0.1:5173/src/services/apiClient.js 94:12 \"[9:50:55 PM] [apiClient] RESPONSE_ERROR: POST /system/error\" \"timeout of 30000ms exceeded\""
+    ],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\failed_admin_ops_21_50_59.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:51:36.367996",
+    "route": "/admin/report-builder",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_report-builder_21_51_36.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:54:51.860679",
+    "route": "/admin/service-health-grid",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_service-health-grid_21_54_51.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:55:19.870678",
+    "route": "/admin/session-manager",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_session-manager_21_55_19.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:55:52.714773",
+    "route": "/admin/storage-manager",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_storage-manager_21_55_52.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:56:24.621415",
+    "route": "/admin/system-health",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_system-health_21_56_24.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:56:51.610394",
+    "route": "/admin/webhook-receiver",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_webhook-receiver_21_56_51.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:57:20.222665",
+    "route": "/admin/workspace-manager",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\content_empty_admin_workspace-manager_21_57_19.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:41:01.705016",
+    "route": "/dept/admin",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\success_dept_admin_21_40_58.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:43:00.353778",
+    "route": "/admin/alerts-config",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\success_admin_alerts-config_21_43_00.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:43:29.234717",
+    "route": "/admin/autocoder",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\success_admin_autocoder_21_43_28.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:45:53.740615",
+    "route": "/admin/estate-visualizer",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\success_admin_estate-visualizer_21_45_53.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:45:59.164033",
+    "route": "/admin/event-bus",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\success_admin_event-bus_21_45_58.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:48:36.823887",
+    "route": "/admin/gifting-optimizer",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\success_admin_gifting-optimizer_21_48_36.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:48:41.228685",
+    "route": "/admin/graph-browser",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\success_admin_graph-browser_21_48_41.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:48:45.208260",
+    "route": "/admin/health",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\success_admin_health_21_48_45.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:49:16.778462",
+    "route": "/admin/logs",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\success_admin_logs_21_49_16.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:49:21.530145",
+    "route": "/admin/middleware",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\success_admin_middleware_21_49_21.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:49:56.618367",
+    "route": "/admin/monitoring",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\success_admin_monitoring_21_49_56.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:51:06.346985",
+    "route": "/admin/order-management",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\success_admin_order-management_21_51_06.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:51:11.432252",
+    "route": "/admin/portfolio-overview",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\success_admin_portfolio-overview_21_51_11.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:55:26.506760",
+    "route": "/admin/storage",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\success_admin_storage_21_55_26.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:55:59.307480",
+    "route": "/admin/succession-modeler",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\success_admin_succession-modeler_21_55_59.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:57:32.430925",
+    "route": "/admin/workspaces",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\admin_results\\admin_screenshots\\success_admin_workspaces_21_57_31.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  }
+]

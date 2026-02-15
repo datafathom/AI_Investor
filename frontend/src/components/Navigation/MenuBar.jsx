@@ -8,10 +8,32 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import useEducationStore from "../../stores/educationStore";
-import { 
-  Settings, Search, Brain, Cpu, Target, TrendingUp, Shield, Grid, 
-  Home, ShieldCheck, Scale, Users, Briefcase, Clock, Zap, Landmark, Layout, Atom,
-  Crosshair, Activity, Terminal, Database, BookOpen, ShoppingBag, Bell
+import {
+  Settings,
+  Search,
+  Brain,
+  Cpu,
+  Target,
+  TrendingUp,
+  Shield,
+  Grid,
+  Home,
+  ShieldCheck,
+  Scale,
+  Users,
+  Briefcase,
+  Clock,
+  Zap,
+  Landmark,
+  Layout,
+  Atom,
+  Crosshair,
+  Activity,
+  Terminal,
+  Database,
+  BookOpen,
+  ShoppingBag,
+  Bell,
 } from "lucide-react";
 import CommandPalette from "../Layout/CommandPalette";
 import EnvVarsModal from "../admin/EnvVarsModal";
@@ -33,7 +55,10 @@ const STATIC_MENU_BEFORE = [
       { label: "Auto-Coder", action: "nav-path:/data-scientist/autocoder" },
       { label: "VR Cockpit", action: "nav-path:/special/vr" },
       { type: "divider" },
-      { label: "Options Analytics", action: "nav-path:/trader/options-analytics" },
+      {
+        label: "Options Analytics",
+        action: "nav-path:/trader/options-analytics",
+      },
       { label: "Backtest Portfolio", action: "nav-path:/strategist/backtest" },
       { label: "Virtual Brokerage", action: "nav-path:/strategist/brokerage" },
       { label: "Global Scanner", action: "nav-path:/trader/scanner" },
@@ -122,10 +147,22 @@ const STATIC_MENU_AFTER = [
       { label: "Workspace Manager", action: "nav-path:/admin/workspaces" },
       { label: "Environment Variables", action: "open-env-vars" },
       { label: "Feature Flags", action: "nav-path:/admin/features" },
-      { label: "Forced Seller Monitor", action: "nav-path:/data-scientist/forced-sellers" },
-      { label: "Whale Flow Terminal", action: "nav-path:/data-scientist/whale-flow" },
-      { label: "Technical Indicators", action: "nav-path:/data-scientist/indicators" },
-      { label: "Rule 144A Compliance", action: "nav-path:/legal/144a-compliance" },
+      {
+        label: "Forced Seller Monitor",
+        action: "nav-path:/data-scientist/forced-sellers",
+      },
+      {
+        label: "Whale Flow Terminal",
+        action: "nav-path:/data-scientist/whale-flow",
+      },
+      {
+        label: "Technical Indicators",
+        action: "nav-path:/data-scientist/indicators",
+      },
+      {
+        label: "Rule 144A Compliance",
+        action: "nav-path:/legal/144a-compliance",
+      },
       { type: "divider" },
       { label: "Developer Tools", action: "dev-tools", shortcut: "F12" },
       { label: "Console", action: "console" },
@@ -193,8 +230,9 @@ export default function MenuBar({
       // In a real app, this would use authService
       // setLocalUser(authService.getCurrentUser());
     };
-    window.addEventListener('user-profile-update', handleProfileUpdate);
-    return () => window.removeEventListener('user-profile-update', handleProfileUpdate);
+    window.addEventListener("user-profile-update", handleProfileUpdate);
+    return () =>
+      window.removeEventListener("user-profile-update", handleProfileUpdate);
   }, []);
 
   const AI_INVESTOR_IDS = [
@@ -212,92 +250,118 @@ export default function MenuBar({
   const finalMenuItems = useMemo(() => {
     // 1. Build Departments grouped by quadrant
     const allMissionRoutes = [
-      { label: "🎯 Global Mission Board", action: 'nav-special-missions', highlight: true },
-      { label: "🚀 Active Mission Control", action: "nav-special-mission-control", highlight: true },
+      {
+        label: "🎯 Global Mission Board",
+        action: "nav-special-missions",
+        highlight: true,
+      },
+      {
+        label: "🚀 Active Mission Control",
+        action: "nav-special-mission-control",
+        highlight: true,
+      },
       { label: "📊 Fleet Analytics", action: "nav-path:/special/fleet" },
       { label: "⚡ Scrum of Scrums", action: "nav-special-scrum" },
-      { label: "🖥️ Master Terminal", action: "nav-special-terminal" }
+      { label: "🖥️ Master Terminal", action: "nav-special-terminal" },
     ];
 
     const allSpecialTools = [
-      { label: "💼 Brokerage Account", action: "nav-path:/strategist/brokerage" },
+      {
+        label: "💼 Brokerage Account",
+        action: "nav-path:/strategist/brokerage",
+      },
       { label: "📱 Mobile Dashboard", action: "nav-path:/special/mobile" },
       { label: "🥽 VR Cockpit", action: "nav-path:/special/vr" },
       { label: "🧘 Zen Mode", action: "nav-path:/special/zen" },
       { label: "🏛️ Political Alpha", action: "nav-path:/special/political" },
       { label: "⚗️ Strategy Distillery", action: "nav-path:/special/strategy" },
       { label: "⚖️ Debate Chamber", action: "nav-path:/special/debate" },
-      { label: "📝 Paper Trading", action: "nav-path:/special/paper" }
+      { label: "📝 Paper Trading", action: "nav-path:/special/paper" },
+      { label: "📐 The Architect", action: "nav-path:/dept/architect" },
     ];
 
     const allDeptRoutes = Object.values(DEPT_REGISTRY)
-      .filter(dept => {
+      .filter((dept) => {
         // Exclude Admin from general list, we'll handle it separately for visibility
         if (dept.id === 19) return false;
-        
-        if (dept.minRole === 'admin') {
-          return currentUser?.role === 'admin' && currentUser?.username?.toLowerCase() === 'admin';
+
+        if (dept.minRole === "admin") {
+          return (
+            currentUser?.role === "admin" &&
+            currentUser?.username?.toLowerCase() === "admin"
+          );
         }
         return true;
       })
       .sort((a, b) => (a.name || "").localeCompare(b.name || ""))
-      .map(dept => {
-        const uniqueSubModules = (dept.subModules || []).filter(mod => mod.path !== dept.route);
+      .map((dept) => {
+        const uniqueSubModules = (dept.subModules || []).filter(
+          (mod) => mod.path !== dept.route,
+        );
         return {
           label: dept.name,
           icon: getIcon(dept.icon),
-          action: `nav-dept-${dept.id}`,
+          action: `nav-path:${dept.route}`,
           submenu: [
-            { label: `${dept.shortName} Dashboard`, action: `nav-dept-${dept.id}` },
-            ...uniqueSubModules.map(mod => ({
+            {
+              label: `${dept.shortName} Dashboard`,
+              action: `nav-path:${dept.route}`,
+            },
+            ...uniqueSubModules.map((mod) => ({
               label: mod.label,
-              action: `nav-path:${mod.path}`
-            }))
-          ]
+              action: `nav-path:${mod.path}`,
+            })),
+          ],
         };
       });
 
     // DEBUG: Log current user to debug admin visibility
-    console.log('[MenuBar] Admin Check:', { 
-        user: currentUser, 
-        role: currentUser?.role, 
-        username: currentUser?.username,
-        isAdmin: currentUser?.role === 'admin'
+    console.log("[MenuBar] Admin Check:", {
+      user: currentUser,
+      role: currentUser?.role,
+      username: currentUser?.username,
+      isAdmin: currentUser?.role === "admin",
     });
 
-    const isAdminUser = currentUser?.role === 'admin'; // Relaxed check: Role only
+    const isAdminUser = currentUser?.role === "admin"; // Relaxed check: Role only
     const adminDept = DEPT_REGISTRY[19];
-    const adminMenuItems = isAdminUser && adminDept ? [
-      {
-        label: "🛡️ Admin Controls",
-        icon: ShieldCheck,
-        action: `nav-dept-19`,
-        highlight: true,
-        submenu: [
-          { label: "Admin Dashboard", action: "nav-dept-19" },
-          ...(adminDept.subModules || [])
-            .filter(mod => mod.path !== adminDept.route)
-            .map(mod => ({
-              label: mod.label,
-              action: `nav-path:${mod.path}`
-            }))
-        ]
-      },
-      { type: "divider" }
-    ] : [];
+    const adminMenuItems =
+      isAdminUser && adminDept
+        ? [
+            {
+              label: "🛡️ Admin Controls",
+              icon: ShieldCheck,
+              action: `nav-path:/dept/admin`,
+              highlight: true,
+              submenu: [
+                { label: "Admin Dashboard", action: "nav-path:/dept/admin" },
+                ...(adminDept.subModules || [])
+                  .filter((mod) => mod.path !== adminDept.route)
+                  .map((mod) => ({
+                    label: mod.label,
+                    action: `nav-path:${mod.path}`,
+                  })),
+              ],
+            },
+            { type: "divider" },
+          ]
+        : [];
 
     const allWorkstationRoutes = Object.values(DEPT_REGISTRY)
-      .filter(dept => {
-        if (dept.minRole === 'admin') {
-          return currentUser?.role === 'admin' && currentUser?.username?.toLowerCase() === 'admin';
+      .filter((dept) => {
+        if (dept.minRole === "admin") {
+          return (
+            currentUser?.role === "admin" &&
+            currentUser?.username?.toLowerCase() === "admin"
+          );
         }
         return true;
       })
-      .flatMap(dept => 
-        (dept.subModules || []).map(mod => ({
+      .flatMap((dept) =>
+        (dept.subModules || []).map((mod) => ({
           label: `${dept.shortName}: ${mod.label}`,
-          action: `nav-path:${mod.path}`
-        }))
+          action: `nav-path:${mod.path}`,
+        })),
       );
 
     // 3. Combine dynamic Routes, STATIC_BEFORE, and STATIC_AFTER
@@ -309,31 +373,34 @@ export default function MenuBar({
           {
             label: "🎯 Missions & Fleet",
             submenu: allMissionRoutes,
-            highlight: true
+            highlight: true,
           },
           {
             label: "🚀 Special Operations",
-            submenu: allSpecialTools
+            submenu: allSpecialTools,
           },
           {
             label: "🏢 Department Dashboards",
             submenu: allDeptRoutes,
-            highlight: true
+            highlight: true,
           },
           {
             label: "🛠️ Agent Workstations",
-            submenu: allWorkstationRoutes
+            submenu: allWorkstationRoutes,
           },
           { type: "divider" },
           ...adminMenuItems,
           { label: "🖥️ Master Terminal", action: "nav-special-terminal" },
-          { label: "🎯 Mission Control", action: "nav-special-mission-control" },
+          {
+            label: "🎯 Mission Control",
+            action: "nav-special-mission-control",
+          },
           { label: "📊 Fleet Analytics", action: "nav-path:/special/fleet" },
           { type: "divider" },
-          { label: "🔐 Account Profile", action: "nav-path:/account" }
-        ]
+          { label: "🔐 Account Profile", action: "nav-path:/account" },
+        ],
       },
-      ...STATIC_MENU_AFTER
+      ...STATIC_MENU_AFTER,
     ];
 
     // 4. Inject Dynamic Widget Toggles (preserving legacy logic)
@@ -431,10 +498,10 @@ export default function MenuBar({
         label: "Account",
         items: localUser
           ? [
-              { 
-                type: "account-profile", 
-                label: localUser?.username || "Account", 
-                action: "nav-account" 
+              {
+                type: "account-profile",
+                label: localUser?.username || "Account",
+                action: "nav-account",
               },
               { type: "divider" },
               {
@@ -477,7 +544,19 @@ export default function MenuBar({
           : [{ label: "Sign In / Register", action: "signin" }],
       },
     ];
-  }, [widgetVisibility, widgetTitles, localUser, workspaces, activeWorkspace, globalLock, debugStates, toggleTheme, onLogout, onSignin, onMenuAction]);
+  }, [
+    widgetVisibility,
+    widgetTitles,
+    localUser,
+    workspaces,
+    activeWorkspace,
+    globalLock,
+    debugStates,
+    toggleTheme,
+    onLogout,
+    onSignin,
+    onMenuAction,
+  ]);
 
   // State for search
   const [searchQuery, setSearchQuery] = useState("");
@@ -493,21 +572,32 @@ export default function MenuBar({
 
       if (item.type === "account-profile") {
         return (
-          <div 
-            key={`profile-${index}`} 
+          <div
+            key={`profile-${index}`}
             className="menu-account-profile-item"
             onClick={(e) => handleMenuItemClick(item.action, e)}
           >
             <div className="profile-avatar-circle">
               {userForDisplay?.avatar ? (
-                <img src={userForDisplay.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                <img
+                  src={userForDisplay.avatar}
+                  alt="Avatar"
+                  className="w-full h-full object-cover"
+                />
               ) : (
-                <span className="profile-initials">{userForDisplay?.username?.charAt(0).toUpperCase() || 'A'}</span>
+                <span className="profile-initials">
+                  {userForDisplay?.username?.charAt(0).toUpperCase() || "A"}
+                </span>
               )}
             </div>
             <div className="profile-info">
-              <span className="profile-label">{userForDisplay?.username || "Account"}</span>
-              <span className="profile-subtitle">Signed in as {userForDisplay?.email || userForDisplay?.username || 'Admin'}</span>
+              <span className="profile-label">
+                {userForDisplay?.username || "Account"}
+              </span>
+              <span className="profile-subtitle">
+                Signed in as{" "}
+                {userForDisplay?.email || userForDisplay?.username || "Admin"}
+              </span>
             </div>
           </div>
         );
@@ -526,7 +616,10 @@ export default function MenuBar({
                 // Submenu headers are now clickable if they have an action
                 handleMenuItemClick(item.action, e);
               } else if (!hasSubmenu) {
-                if (typeof item.action === "string" && item.action.startsWith("toggle-widget-")) {
+                if (
+                  typeof item.action === "string" &&
+                  item.action.startsWith("toggle-widget-")
+                ) {
                   const widgetId = item.action.replace("toggle-widget-", "");
                   if (onToggleWidget) {
                     onToggleWidget(widgetId);
@@ -554,7 +647,11 @@ export default function MenuBar({
               <span className="menu-item-label">
                 {item.icon ? (
                   <span className="menu-label-with-icon">
-                    {typeof item.icon === 'string' ? item.icon : <item.icon size={14} className="menu-icon" />}
+                    {typeof item.icon === "string" ? (
+                      item.icon
+                    ) : (
+                      <item.icon size={14} className="menu-icon" />
+                    )}
                     {item.label}
                   </span>
                 ) : (
@@ -567,7 +664,11 @@ export default function MenuBar({
             <span className="menu-item-label">
               {item.icon ? (
                 <span className="menu-label-with-icon">
-                  {typeof item.icon === 'string' ? item.icon : <item.icon size={14} className="menu-icon" />}
+                  {typeof item.icon === "string" ? (
+                    item.icon
+                  ) : (
+                    <item.icon size={14} className="menu-icon" />
+                  )}
                   {item.label}
                 </span>
               ) : (
@@ -582,9 +683,7 @@ export default function MenuBar({
 
           {/* Recursive Sub-menu Rendering */}
           {hasSubmenu && (
-            <div className="menu-submenu">
-              {renderMenuItems(item.submenu)}
-            </div>
+            <div className="menu-submenu">{renderMenuItems(item.submenu)}</div>
           )}
         </div>
       );
@@ -651,11 +750,7 @@ export default function MenuBar({
     }
 
     // Handle Admin/Department Navigation
-    if (action?.startsWith("nav-dept-")) {
-      const deptId = action.replace("nav-dept-", "");
-      navigate(deptId === '19' ? '/dept/admin' : `/dept/${deptId}`);
-      return;
-    }
+    // Unified path-based navigation handled above via nav-path:
 
     if (action?.startsWith("nav-path:")) {
       const path = action.replace("nav-path:", "");
@@ -674,12 +769,16 @@ export default function MenuBar({
       handleMenuClick(menuLabel);
     } else if (event.key === "ArrowRight" && activeMenu === menuLabel) {
       event.preventDefault();
-      const currentIndex = finalMenuItems.findIndex((m) => m.label === menuLabel);
+      const currentIndex = finalMenuItems.findIndex(
+        (m) => m.label === menuLabel,
+      );
       const nextIndex = (currentIndex + 1) % finalMenuItems.length;
       setActiveMenu(finalMenuItems[nextIndex].label);
     } else if (event.key === "ArrowLeft" && activeMenu === menuLabel) {
       event.preventDefault();
-      const currentIndex = finalMenuItems.findIndex((m) => m.label === menuLabel);
+      const currentIndex = finalMenuItems.findIndex(
+        (m) => m.label === menuLabel,
+      );
       const prevIndex =
         (currentIndex - 1 + finalMenuItems.length) % finalMenuItems.length;
       setActiveMenu(finalMenuItems[prevIndex].label);
@@ -745,17 +844,29 @@ export default function MenuBar({
           {showLogCenter ? "Hide" : "Show"} Logs
         </button>
         {/* Education Mode Toggle */}
-        <div className="menu-bar-theme-toggle" role="group" aria-label="Education mode toggle" style={{ marginRight: '1rem' }}>
-            <span style={{ fontSize: '0.8rem' }}>🎓 Edu Mode</span>
-            <label className="switch">
-                <input
-                    type="checkbox"
-                    checked={useEducationStore((state) => state.isEducationMode)}
-                    onChange={useEducationStore((state) => state.toggleEducationMode)}
-                    aria-label="Toggle education mode"
-                />
-                <span className="slider" style={{ backgroundColor: useEducationStore.getState().isEducationMode ? '#06b6d4' : '#ccc' }} />
-            </label>
+        <div
+          className="menu-bar-theme-toggle"
+          role="group"
+          aria-label="Education mode toggle"
+          style={{ marginRight: "1rem" }}
+        >
+          <span style={{ fontSize: "0.8rem" }}>🎓 Edu Mode</span>
+          <label className="switch">
+            <input
+              type="checkbox"
+              checked={useEducationStore((state) => state.isEducationMode)}
+              onChange={useEducationStore((state) => state.toggleEducationMode)}
+              aria-label="Toggle education mode"
+            />
+            <span
+              className="slider"
+              style={{
+                backgroundColor: useEducationStore.getState().isEducationMode
+                  ? "#06b6d4"
+                  : "#ccc",
+              }}
+            />
+          </label>
         </div>
 
         <div

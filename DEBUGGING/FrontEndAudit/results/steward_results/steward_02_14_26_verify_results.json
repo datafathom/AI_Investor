@@ -1,0 +1,103 @@
+[
+  {
+    "timestamp": "2026-02-14T21:50:57.578627",
+    "route": "root",
+    "status": "LOGIN_TIMEOUT",
+    "console_errors": [
+      "Timed out waiting for dashboard markers."
+    ],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\steward_results\\steward_screenshots\\login_timeout_root_21_50_57.png",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-02-14T22:10:07.817743",
+    "route": "/admin/asset-inventory",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\steward_results\\steward_screenshots\\content_empty_admin_asset-inventory_22_10_07.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:10:35.216402",
+    "route": "/admin/collectible-viewer",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\steward_results\\steward_screenshots\\content_empty_admin_collectible-viewer_22_10_34.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:11:03.619008",
+    "route": "/admin/exit-planner",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\steward_results\\steward_screenshots\\content_empty_admin_exit-planner_22_11_03.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:11:16.961472",
+    "route": "/steward/kill-list",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\steward_results\\steward_screenshots\\not_implemented_steward_kill-list_22_11_16.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:11:25.858331",
+    "route": "/steward/liquidity",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\steward_results\\steward_screenshots\\not_implemented_steward_liquidity_22_11_25.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:11:34.052396",
+    "route": "/steward/maintenance",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\steward_results\\steward_screenshots\\not_implemented_steward_maintenance_22_11_33.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:09:41.707508",
+    "route": "/dept/steward",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\steward_results\\steward_screenshots\\success_dept_steward_22_09_41.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  }
+]

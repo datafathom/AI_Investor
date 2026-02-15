@@ -35,7 +35,7 @@ _users_db = {
         "id": "demo-user-001",
         "email": TEST_USER,
         "password": TEST_PASS,
-        "role": "trader",
+        "role": "admin",
         "verified": True
     }
 }

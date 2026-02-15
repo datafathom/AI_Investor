@@ -1,0 +1,142 @@
+[
+  {
+    "timestamp": "2026-02-14T21:51:27.632510",
+    "route": "root",
+    "status": "LOGIN_TIMEOUT",
+    "console_errors": [
+      "Timed out waiting for dashboard markers."
+    ],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\stresstester_results\\stresstester_screenshots\\login_timeout_root_21_51_27.png",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-02-14T22:12:56.896553",
+    "route": "/admin/liquidity-stress",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\stresstester_results\\stresstester_screenshots\\content_empty_admin_liquidity-stress_22_12_56.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:13:28.511108",
+    "route": "/admin/wargame-arena",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\stresstester_results\\stresstester_screenshots\\content_empty_admin_wargame-arena_22_13_28.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:13:55.353840",
+    "route": "/admin/web3-simulator",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\stresstester_results\\stresstester_screenshots\\content_empty_admin_web3-simulator_22_13_55.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:14:01.870955",
+    "route": "/stress-tester/liquidation",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\stresstester_results\\stresstester_screenshots\\not_implemented_stress-tester_liquidation_22_14_01.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:14:08.931192",
+    "route": "/stress-tester/robustness",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\stresstester_results\\stresstester_screenshots\\not_implemented_stress-tester_robustness_22_14_08.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:14:15.384317",
+    "route": "/stress-tester/wargame",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\stresstester_results\\stresstester_screenshots\\not_implemented_stress-tester_wargame_22_14_15.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:12:21.803324",
+    "route": "/dept/stress-tester",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\stresstester_results\\stresstester_screenshots\\success_dept_stress-tester_22_12_21.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:12:27.285007",
+    "route": "/admin/black-swan-generator",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\stresstester_results\\stresstester_screenshots\\success_admin_black-swan-generator_22_12_27.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:12:31.690846",
+    "route": "/admin/crash-simulator",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\stresstester_results\\stresstester_screenshots\\success_admin_crash-simulator_22_12_31.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:13:03.545261",
+    "route": "/admin/robustness-lab",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\stresstester_results\\stresstester_screenshots\\success_admin_robustness-lab_22_13_03.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  }
+]

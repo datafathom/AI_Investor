@@ -1,0 +1,443 @@
+[
+  {
+    "timestamp": "2026-02-14T21:47:06.688708",
+    "route": "root",
+    "status": "LOGIN_TIMEOUT",
+    "console_errors": [
+      "Timed out waiting for dashboard markers."
+    ],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\login_timeout_root_21_47_05.png",
+    "metadata": {}
+  },
+  {
+    "timestamp": "2026-02-14T21:56:18.778576",
+    "route": "/admin/backtest-engine",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\content_empty_admin_backtest-engine_21_56_18.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:56:45.791755",
+    "route": "/admin/correlation-risk",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\content_empty_admin_correlation-risk_21_56_45.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:57:12.806641",
+    "route": "/admin/crypto-analytics",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\content_empty_admin_crypto-analytics_21_57_12.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:57:49.052447",
+    "route": "/admin/data-quality-dashboard",
+    "status": "CONTENT_EMPTY",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\content_empty_admin_data-quality-dashboard_21_57_48.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:58:04.730502",
+    "route": "/data-scientist/anomaly",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\not_implemented_data-scientist_anomaly_21_58_04.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:58:12.200494",
+    "route": "/data-scientist/arbitrage",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\not_implemented_data-scientist_arbitrage_21_58_11.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:58:21.051705",
+    "route": "/data-scientist/backtest",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\not_implemented_data-scientist_backtest_21_58_20.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:58:29.614177",
+    "route": "/data-scientist/correlation",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\not_implemented_data-scientist_correlation_21_58_29.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:59:06.369152",
+    "route": "/data-scientist/debate-history",
+    "status": "FAILED",
+    "console_errors": [
+      "http://127.0.0.1:5050/api/v1/debate/history?ticker=&outcome= - Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "http://127.0.0.1:5173/src/services/apiClient.js 94:12 \"[9:59:02 PM] [apiClient] RESPONSE_ERROR: GET /debate/history\" \"Request failed with status code 404\"",
+      "http://127.0.0.1:5173/src/pages/data-scientist/DebateHistory.jsx 138:14 \"[DebateHistory] Load failed:\" AxiosError",
+      "http://127.0.0.1:5050/api/v1/debate/history?ticker=&outcome= - Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "http://127.0.0.1:5173/src/services/apiClient.js 94:12 \"[9:59:02 PM] [apiClient] RESPONSE_ERROR: GET /debate/history\" \"Request failed with status code 404\"",
+      "http://127.0.0.1:5173/src/pages/data-scientist/DebateHistory.jsx 138:14 \"[DebateHistory] Load failed:\" AxiosError"
+    ],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\failed_data-scientist_debate-history_21_59_06.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:00:09.771561",
+    "route": "/data-scientist/fundamental-scanner",
+    "status": "FAILED",
+    "console_errors": [
+      "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Cannot read properties of undefined (reading 'map')\n    at http://127.0.0.1:5173/src/components/builders/ScannerBuilder.jsx:65:31\n    at Array.map (<anonymous>)\n    at ScannerBuilder (http://127.0.0.1:5173/src/components/builders/ScannerBuilder.jsx:57:85)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:11548:26)\n    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:14582:28)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:15924:22)\n    at HTMLUnknownElement.callCallback2 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:3674:22)\n    at Object.invokeGuardedCallbackDev (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:3699:24)\n    at invokeGuardedCallback (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:3733:39)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:19765:15) Object",
+      "http://127.0.0.1:5173/src/components/builders/ScannerBuilder.jsx 64:30 Uncaught TypeError: Cannot read properties of undefined (reading 'map')",
+      "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Cannot read properties of undefined (reading 'map')\n    at http://127.0.0.1:5173/src/components/builders/ScannerBuilder.jsx:65:31\n    at Array.map (<anonymous>)\n    at ScannerBuilder (http://127.0.0.1:5173/src/components/builders/ScannerBuilder.jsx:57:85)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:11548:26)\n    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:14582:28)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:15924:22)\n    at HTMLUnknownElement.callCallback2 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:3674:22)\n    at Object.invokeGuardedCallbackDev (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:3699:24)\n    at invokeGuardedCallback (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:3733:39)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:19765:15) Object",
+      "http://127.0.0.1:5173/src/components/builders/ScannerBuilder.jsx 64:30 Uncaught TypeError: Cannot read properties of undefined (reading 'map')",
+      "http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44 14031:30 \"The above error occurred in the \\u003CScannerBuilder> component:\\n\\n    at ScannerBuilder (http://127.0.0.1:5173/src/components/builders/ScannerBuilder.jsx:20:34)\\n    at div\\n    at div\\n    at FundamentalScanner (http://127.0.0.1:5173/src/pages/data-scientist/FundamentalScanner.jsx:25:33)\\n    at RenderedRoute (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=051d5c44:4131:5)\\n    at Routes (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=051d5c44:4601:5)\\n    at Suspense\\n    at div\\n    at main\\n    at AuthGuard (http://127.0.0.1:5173/src/components/AuthGuard.jsx:20:37)\\n    at div\\n    at GlobalErrorBoundary (http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx:8:5)\\n    at AppContent (http://127.0.0.1:5173/src/App.jsx:615:20)\\n    at ToastProvider (http://127.0.0.1:5173/src/context/ToastContext.jsx:31:33)\\n    at ThemeProvider (http://127.0.0.1:5173/src/context/ThemeContext.jsx:29:33)\\n    at App\\n    at Router (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=051d5c44:4544:15)\\n    at BrowserRouter (http://127.0.0.1:5173/node_modules/.vite/deps/react-router-dom.js?v=051d5c44:5290:5)\\n    at ErrorBoundaryClass (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:22:5)\\n    at ErrorBoundary (http://127.0.0.1:5173/src/components/ErrorBoundary.jsx:115:26)\\n\\nReact will try to recreate this component tree from scratch using the error boundary you provided, GlobalErrorBoundary.\"",
+      "http://127.0.0.1:5173/src/components/GlobalErrorBoundary.jsx 14:12 \"Global Error Boundary caught an error\" TypeError: Cannot read properties of undefined (reading 'map')\n    at http://127.0.0.1:5173/src/components/builders/ScannerBuilder.jsx:65:31\n    at Array.map (<anonymous>)\n    at ScannerBuilder (http://127.0.0.1:5173/src/components/builders/ScannerBuilder.jsx:57:85)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:11548:26)\n    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:14582:28)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:15924:22)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:19753:22)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:19198:20)\n    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:19137:13)\n    at renderRootSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:19116:15) Object",
+      "http://127.0.0.1:5173/src/utils/errorTracking.js 54:10 \"[CaptureException]\" TypeError: Cannot read properties of undefined (reading 'map')\n    at http://127.0.0.1:5173/src/components/builders/ScannerBuilder.jsx:65:31\n    at Array.map (<anonymous>)\n    at ScannerBuilder (http://127.0.0.1:5173/src/components/builders/ScannerBuilder.jsx:57:85)\n    at renderWithHooks (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:11548:26)\n    at updateFunctionComponent (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:14582:28)\n    at beginWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:15924:22)\n    at beginWork$1 (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:19753:22)\n    at performUnitOfWork (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:19198:20)\n    at workLoopSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:19137:13)\n    at renderRootSync (http://127.0.0.1:5173/node_modules/.vite/deps/chunk-WRD5HZVH.js?v=051d5c44:19116:15) Object"
+    ],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\failed_data-scientist_fundamental-scanner_22_00_09.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": true,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:00:21.180189",
+    "route": "/data-scientist/integrator",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\not_implemented_data-scientist_integrator_22_00_20.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:00:36.943791",
+    "route": "/data-scientist/research",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\not_implemented_data-scientist_research_22_00_36.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:00:47.825907",
+    "route": "/data-scientist/sentiment",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\not_implemented_data-scientist_sentiment_22_00_47.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:01:12.197589",
+    "route": "/data-scientist/yield",
+    "status": "NOT_IMPLEMENTED",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\not_implemented_data-scientist_yield_22_01_11.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": true
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:55:53.147285",
+    "route": "/dept/data-scientist",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_dept_data-scientist_21_55_52.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:57:21.174069",
+    "route": "/admin/data-pipeline-manager",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_admin_data-pipeline-manager_21_57_20.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:57:57.948485",
+    "route": "/admin/data-validation",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_admin_data-validation_21_57_57.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:59:01.432863",
+    "route": "/data-scientist/debate",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_data-scientist_debate_21_59_00.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:59:12.728865",
+    "route": "/data-scientist/external-data-sources",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_data-scientist_external-data-sources_21_59_12.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:59:19.541372",
+    "route": "/data-scientist/factor-analysis",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_data-scientist_factor-analysis_21_59_19.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:59:24.533326",
+    "route": "/data-scientist/factor-analysis-suite",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_data-scientist_factor-analysis-suite_21_59_24.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:59:28.969721",
+    "route": "/data-scientist/forced-seller-monitor",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_data-scientist_forced-seller-monitor_21_59_28.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T21:59:34.221344",
+    "route": "/data-scientist/forced-sellers",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_data-scientist_forced-sellers_21_59_33.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:00:16.676827",
+    "route": "/data-scientist/indicators",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_data-scientist_indicators_22_00_16.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:00:27.776852",
+    "route": "/data-scientist/quant-backtest",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_data-scientist_quant-backtest_22_00_27.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:00:32.346412",
+    "route": "/data-scientist/quant-backtest-lab",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_data-scientist_quant-backtest-lab_22_00_32.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:00:43.517610",
+    "route": "/data-scientist/research-workspace",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_data-scientist_research-workspace_22_00_43.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:00:54.025328",
+    "route": "/data-scientist/social-sentiment-radar",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_data-scientist_social-sentiment-radar_22_00_53.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:00:58.416386",
+    "route": "/data-scientist/technical-indicators-page",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_data-scientist_technical-indicators-page_22_00_58.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:01:02.943459",
+    "route": "/data-scientist/whale-flow",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_data-scientist_whale-flow_22_01_02.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:01:07.257069",
+    "route": "/data-scientist/whale-flow-terminal",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_data-scientist_whale-flow-terminal_22_01_07.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  },
+  {
+    "timestamp": "2026-02-14T22:01:23.731597",
+    "route": "/debate/room",
+    "status": "SUCCESS",
+    "console_errors": [],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\datascientist_results\\datascientist_screenshots\\success_debate_room_22_01_23.png",
+    "metadata": {
+      "ui_failure_detected": false,
+      "content_loaded": true,
+      "content_empty": false,
+      "not_implemented": false
+    }
+  }
+]

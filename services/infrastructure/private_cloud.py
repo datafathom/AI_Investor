@@ -47,8 +47,8 @@ class PrivateCloudService:
         """
         Manually triggers a cloud synchronization.
         """
-        logger.info("Manual sync triggered.")
-        return {"status": "Sync started", "job_id": "sync-manual-123"}
+        logger.warning("Manual sync triggered but NOT YET IMPLEMENTED.")
+        return {"status": "error", "message": "NOT YET IMPLEMENTED"}
 
 # Singleton helper
 _cloud_instance = None

@@ -39,7 +39,7 @@ const BlackSwanGenerator = () => {
                             </div>
                             <div className="p-4 bg-slate-950 rounded">
                                 <div className="text-xs uppercase text-slate-500 font-bold mb-1">Tail Risk</div>
-                                <div className="font-bold text-white">Extreme (>3σ)</div>
+                                <div className="font-bold text-white">Extreme (&gt;3σ)</div>
                             </div>
                         </div>
 

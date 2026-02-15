@@ -29,6 +29,14 @@ async def list_forced_seller_risks(
     return service.get_top_fragile_tickers(limit=limit)
 
 
+@router.get("/fragility", response_model=List[Dict[str, Any]])
+async def get_all_fragility_scores(
+    service: ForcedSellerService = Depends(get_forced_seller_service)
+):
+    """Get fragility summary for indicators (sector-level heatmap)."""
+    return service.get_passive_heatmap()
+
+
 @router.get("/heatmap", response_model=List[Dict[str, Any]])
 async def get_passive_heatmap(
     service: ForcedSellerService = Depends(get_forced_seller_service)

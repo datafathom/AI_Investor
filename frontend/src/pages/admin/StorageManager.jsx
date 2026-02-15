@@ -32,10 +32,15 @@ const StorageManager = () => {
     const handleTriggerSync = async () => {
         setSyncing(true);
         try {
-            await apiClient.post('/admin/storage/sync/trigger');
-            fetchData();
+            const response = await apiClient.post('/admin/storage/sync/trigger');
+            if (response.status === 'error' && response.message === 'NOT YET IMPLEMENTED') {
+                alert('SYSTEM_ADVISORY: Storage synchronization bridge is NOT YET IMPLEMENTED in this phase.');
+            } else {
+                fetchData();
+            }
         } catch (error) {
             console.error("Error triggering sync:", error);
+            alert("SYSTEM_ERROR: Failed to communicate with storage subsystem.");
         } finally {
             setSyncing(false);
         }

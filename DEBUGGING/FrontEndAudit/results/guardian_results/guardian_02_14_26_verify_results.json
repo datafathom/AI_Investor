@@ -1,0 +1,12 @@
+[
+  {
+    "timestamp": "2026-02-14T22:01:53.479539",
+    "route": "root",
+    "status": "LOGIN_TIMEOUT",
+    "console_errors": [
+      "Timed out waiting for dashboard markers."
+    ],
+    "screenshot": "DEBUGGING\\FrontEndAudit\\results\\guardian_results\\guardian_screenshots\\login_timeout_root_22_01_53.png",
+    "metadata": {}
+  }
+]

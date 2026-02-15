@@ -147,7 +147,7 @@ def start_dev_mode(check_infra: bool = True, slackbot: bool = True):
 
     # BRIEF DELAY: Ensure backend has a head start on port 5050
     print("Waiting for backend to bind to port...")
-    time.sleep(2)
+    time.sleep(5)
 
     # 4. Start Frontend (Vite)
     print("Launching Frontend (Vite HMR)...")
@@ -236,7 +236,8 @@ def start_dev_no_db(slackbot: bool = True):
     print("Starting LIGHT DEV stack (Backend + Frontend ONLY)...")
     print("   Assuming infrastructure is running elsewhere (2-Node Mode).")
     
-    # We monkey-patch the check_port to always return True for this run
-    # OR we just copy the logic but skip the infra check. 
-    # Let's refactor start_dev_mode to accept a 'check_infra' arg.
+    # Force Mock Modes for services that check ports
+    os.environ["NEO4J_MODE"] = "MOCK"
+    os.environ["STORAGE_MODE"] = "MOCK"
+    
     start_dev_mode(check_infra=False, slackbot=slackbot)

@@ -35,9 +35,8 @@ def stop_all(**kwargs):
     # 1. Stop Docker
     docker_down()
     
-    # 2. Kill Host Processes
     stop_python_processes()
-    print("🔪 Killing Node Processes...")
+    print("[SYSTEM] Killing Node Processes...")
     try:
         subprocess.run("taskkill /F /IM node.exe /T", shell=True, stderr=subprocess.DEVNULL)
     except Exception as e:
@@ -50,7 +49,7 @@ def stop_python_processes(**kwargs):
     import subprocess
     import sys
     
-    print("🔪 Terminating all Python processes...")
+    print("[SYSTEM] Terminating all Python processes...")
     try:
         if sys.platform == "win32":
             subprocess.run("taskkill /F /IM python.exe /T", shell=True, stderr=subprocess.DEVNULL)
@@ -67,7 +66,7 @@ def stop_node_processes(**kwargs):
     import subprocess
     import sys
     
-    print("🔪 Terminating all Node.js processes...")
+    print("[SYSTEM] Terminating all Node.js processes...")
     try:
         if sys.platform == "win32":
             subprocess.run("taskkill /F /IM node.exe /T", shell=True, stderr=subprocess.DEVNULL)
